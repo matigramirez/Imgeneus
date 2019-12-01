@@ -1,6 +1,7 @@
 ﻿using Imgeneus.Database.Context;
 using Imgeneus.Database.Entities;
 using Imgeneus.Database.Repositories;
+using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 
 namespace Imgeneus.Database
@@ -8,22 +9,19 @@ namespace Imgeneus.Database
     public sealed class Database : IDatabase
     {
         /// <inheritdoc />
-        public IRepository<DbUser> Users { get; set; }
+        public DbSet<DbUser> Users { get => DatabaseContext.Users; }
 
         /// <inheritdoc />
-        public IRepository<DbCharacter> Charaters { get; set; }
+        public DbSet<DbCharacter> Charaters { get => DatabaseContext.Characters; }
 
         /// <inheritdoc />
-        public IRepository<DbCharacterItems> CharacterItems { get; set; }
+        public DbSet<DbCharacterItems> CharacterItems { get => DatabaseContext.CharacterItems; }
 
-        public DatabaseContext DatabaseContext { get; set; }
+        public DatabaseContext DatabaseContext { get; private set; }
 
         public Database(DatabaseContext databaseContext)
         {
             this.DatabaseContext = databaseContext;
-            this.Users = new RepositoryBase<DbUser>(databaseContext);
-            this.Charaters = new RepositoryBase<DbCharacter>(databaseContext);
-            this.CharacterItems = new RepositoryBase<DbCharacterItems>(databaseContext);
         }
 
         /// <inheritdoc />

@@ -25,7 +25,7 @@ namespace Imgeneus.World.Handlers
 
             using var database = DependencyContainer.Instance.Resolve<IDatabase>();
 
-            DbUser user = database.Users.Get(handshake.UserId);
+            DbUser user = database.Users.Find(handshake.UserId);
 
             WorldPacketFactory.SendAccountFaction(client, 2, 0);
         }

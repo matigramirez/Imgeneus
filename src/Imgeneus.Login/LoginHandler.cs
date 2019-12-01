@@ -7,6 +7,7 @@ using Imgeneus.Network.Data;
 using Imgeneus.Network.Packets;
 using Imgeneus.Network.Packets.Login;
 using System;
+using System.Linq;
 
 namespace Imgeneus.Login
 {
@@ -38,7 +39,7 @@ namespace Imgeneus.Login
             var loginServer = DependencyContainer.Instance.Resolve<ILoginServer>();
 
             using var database = DependencyContainer.Instance.Resolve<IDatabase>();
-            DbUser dbUser = database.Users.Get(x => x.Username.Equals(authenticationPacket.Username, StringComparison.OrdinalIgnoreCase));
+            DbUser dbUser = database.Users.SingleOrDefault(x => x.Username == authenticationPacket.Username);
 
             if (loginServer.IsClientConnected(dbUser.Id))
             {
@@ -100,16 +101,11 @@ namespace Imgeneus.Login
         {
             using var database = DependencyContainer.Instance.Resolve<IDatabase>();
 
-            DbUser dbUser = database.Users.Get(x => x.Username.Equals(username, StringComparison.OrdinalIgnoreCase));
+            DbUser dbUser = database.Users.SingleOrDefault(x => x.Username == username);
 
             if (dbUser == null)
             {
                 return AuthenticationResult.ACCOUNT_DONT_EXIST;
-            }
-
-            if (dbUser.IsDeleted)
-            {
-                return AuthenticationResult.ACCOUNT_IN_DELETE_PROCESS_1;
             }
 
             if (!dbUser.Password.Equals(password))

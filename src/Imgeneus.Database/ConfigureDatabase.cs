@@ -6,11 +6,11 @@ namespace Imgeneus.Database
 {
     public static class ConfigureDatabase
     {
-        private const string MySqlConnectionString =  "server=127.0.0.1;userid=root;pwd=your_password;port=3306;database=imgeneus;sslmode=none;";
+        private const string MsSqlConnectionString = "Data Source=127.0.0.1;Initial Catalog=PS_UserData;User ID=Shaiya;Password=Shaiya123";
 
         public static DbContextOptionsBuilder ConfigureCorrectDatabase(this DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseMySql(MySqlConnectionString);
+            optionsBuilder.UseSqlServer(MsSqlConnectionString);
             return optionsBuilder;
         }
 

@@ -29,7 +29,7 @@ namespace Imgeneus.Database.Context
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<DbUser>().HasIndex(c => new { c.Username, c.Email }).IsUnique();
+            modelBuilder.Entity<DbUser>().HasIndex(c => new { c.Username }).IsUnique();
         }
 
         /// <summary>

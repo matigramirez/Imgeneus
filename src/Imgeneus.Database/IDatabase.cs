@@ -1,6 +1,7 @@
 ﻿using Imgeneus.Database.Context;
 using Imgeneus.Database.Entities;
 using Imgeneus.Database.Repositories;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Threading.Tasks;
 
@@ -11,22 +12,22 @@ namespace Imgeneus.Database
         /// <summary>
         /// Gets or sets the database context.
         /// </summary>
-        DatabaseContext DatabaseContext { get; set; }
+        DatabaseContext DatabaseContext { get; }
 
         /// <summary>
         /// Gets the users.
         /// </summary>
-        public IRepository<DbUser> Users { get; set; }
+        public DbSet<DbUser> Users { get; }
 
         /// <summary>
         /// Gets the characters.
         /// </summary>
-        public IRepository<DbCharacter> Charaters { get; set; }
+        public DbSet<DbCharacter> Charaters { get; }
 
         /// <summary>
         /// Gets the characters.
         /// </summary>
-        public IRepository<DbCharacterItems> CharacterItems { get; set; }
+        public DbSet<DbCharacterItems> CharacterItems { get; }
 
         /// <summary>
         /// Complete the pending database operation.

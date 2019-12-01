@@ -1,5 +1,5 @@
 ﻿using System.IO;
-using System.Text.Json.Serialization;
+using System.Text.Json;
 
 namespace Imgeneus.Core.Helpers
 {
@@ -18,7 +18,7 @@ namespace Imgeneus.Core.Helpers
                 Save(path, new T());
             }
 
-            return JsonSerializer.Parse<T>(File.ReadAllText(path));
+            return JsonSerializer.Deserialize<T>(File.ReadAllText(path));
 
         }
 
@@ -35,7 +35,7 @@ namespace Imgeneus.Core.Helpers
                 Directory.CreateDirectory(Path.GetDirectoryName(path));
             }
 
-            File.WriteAllText(path, JsonSerializer.ToString<T>(value));
+            File.WriteAllText(path, JsonSerializer.Serialize(value));
         }
     }
 }

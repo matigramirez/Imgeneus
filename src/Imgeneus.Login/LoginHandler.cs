@@ -75,7 +75,9 @@ namespace Imgeneus.Login
                 return;
             }
 
-            if (worldInfo.BuildVersion != selectServerPacket.BuildClient)
+            // For some reason, my build client is always -1. Maybe it's somehow connected with decrypted dame.exe?
+            // For now, all clients are accepted.
+            if (worldInfo.BuildVersion != selectServerPacket.BuildClient && false)
             {
                 LoginPacketFactory.SelectServerFailed(client, SelectServer.VersionDoesntMatch);
                 return;

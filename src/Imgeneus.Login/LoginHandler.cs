@@ -74,7 +74,9 @@ namespace Imgeneus.Login
                 return;
             }
 
-            if (worldInfo.BuildVersion != selectServerPacket.BuildClient)
+            // For some reason, the current game.exe has version -1. Maybe this is somehow connected with decrypted packages?
+            // In any case, for now client version check is disabled.
+            if (worldInfo.BuildVersion != selectServerPacket.BuildClient && false)
             {
                 LoginPacketFactory.SelectServerFailed(client, SelectServer.VersionDoesntMatch);
                 return;

@@ -4,6 +4,9 @@ using Microsoft.EntityFrameworkCore.Design;
 
 namespace Imgeneus.Database
 {
+    /// <summary>
+    /// Factory used for db migrations.
+    /// </summary>
     public class DatabaseFactory : IDesignTimeDbContextFactory<DatabaseContext>
     {
         public DatabaseContext CreateDbContext(string[] args)

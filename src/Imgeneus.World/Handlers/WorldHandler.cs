@@ -29,5 +29,17 @@ namespace Imgeneus.World.Handlers
 
             WorldPacketFactory.SendAccountFaction(client, 2, 0);
         }
+
+        [PacketHandler(PacketType.CHECK_CHARACTER_AVAILABLE_NAME)]
+        public static void OnCheckAvailableName(WorldClient client, IPacketStream packet)
+        {
+            var checkNamePacket = new CheckCharacterAvailableNamePacket(packet);
+
+            using var database = DependencyContainer.Instance.Resolve<IDatabase>();
+            DbCharacter character = database.Charaters.Get(c => c.Name == checkNamePacket.CharacterName);
+
+            WorldPacketFactory.SendCharacterAvailability(client, character is null);
+
+        }
     }
 }

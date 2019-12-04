@@ -13,5 +13,13 @@ namespace Imgeneus.World.Packets
 
             client.SendPacket(packet);
         }
+
+        public static void SendCharacterAvailability(WorldClient client, bool isAvailable)
+        {
+            using var packet = new Packet(PacketType.CHECK_CHARACTER_AVAILABLE_NAME);
+            packet.Write(isAvailable);
+
+            client.SendPacket(packet);
+        }
     }
 }

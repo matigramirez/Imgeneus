@@ -29,22 +29,22 @@ namespace Imgeneus.Database.Entities
         public byte Slot { get; set; }
 
         /// <summary>
-        /// Gets or sets the character Family.
+        /// Gets or sets the character race.
         /// </summary>
         [Required]
-        public byte Race { get; set; }
+        public Race Race { get; set; }
 
         /// <summary>
-        /// Gets or sets the character Race.
+        /// Gets or sets the character profession.
         /// </summary>
         [Required]
-        public byte Class { get; set; }
+        public CharacterProfession Class { get; set; }
 
         /// <summary>
         /// Gets or sets the character mode.
         /// </summary>
         [Required]
-        public byte Mode { get; set; }
+        public Mode Mode { get; set; }
 
         /// <summary>
         /// Gets or sets the character hair.
@@ -71,7 +71,7 @@ namespace Imgeneus.Database.Entities
         /// Gets or sets the character gender.
         /// </summary>
         [Required]
-        public byte Gender { get; set; }
+        public Gender Gender { get; set; }
 
         /// <summary>
         /// Gets or sets the character spawn map.
@@ -223,5 +223,37 @@ namespace Imgeneus.Database.Entities
         /// </summary>
         [ForeignKey(nameof(UserId))]
         public DbUser User { get; set; }
+    }
+
+    public enum Mode : byte
+    {
+        Beginner,
+        Normal,
+        Hard,
+        Ultimate
+    }
+
+    public enum Gender : byte
+    {
+        Man,
+        Woman
+    }
+
+    public enum Race : byte
+    {
+        Human,
+        Elf,
+        Vail,
+        DeathEater
+    }
+
+    public enum CharacterProfession : byte
+    {
+        Fighter,
+        Defender,
+        Ranger,
+        Archer,
+        Mage,
+        Priest
     }
 }

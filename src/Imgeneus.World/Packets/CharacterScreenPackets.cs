@@ -21,5 +21,22 @@ namespace Imgeneus.World.Packets
 
             client.SendPacket(packet);
         }
+
+        public static void SendCreatedCharacter(WorldClient client, bool isCreated)
+        {
+            using var packet = new Packet(PacketType.CREATE_CHARACTER);
+
+            if (isCreated)
+            {
+                packet.Write(0); // 0 means character was created.
+            }
+            else
+            {
+                // Send nothing.
+            }
+
+
+            client.SendPacket(packet);
+        }
     }
 }

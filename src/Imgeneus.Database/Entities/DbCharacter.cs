@@ -1,5 +1,6 @@
 ﻿using Imgeneus.Database.Constants;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -224,6 +225,16 @@ namespace Imgeneus.Database.Entities
         /// </summary>
         [ForeignKey(nameof(UserId))]
         public DbUser User { get; set; }
+
+        /// <summary>
+        /// Items that belong this character.
+        /// </summary>
+        public ICollection<DbCharacterItems> Items { get; set; }
+
+        public DbCharacter()
+        {
+            Items = new HashSet<DbCharacterItems>();
+        }
     }
 
     public enum Mode : byte

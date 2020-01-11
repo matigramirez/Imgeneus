@@ -90,5 +90,16 @@ namespace Imgeneus.World.Handlers
             await database.CompleteAsync();
             WorldPacketFactory.SendCreatedCharacter(client, true);
         }
+
+        [PacketHandler(PacketType.SELECT_CHARACTER)]
+        public static void OnSelectCharacter(WorldClient client, IPacketStream packet)
+        {
+            var selectCharacterPacket = new SelectCharacterPacket(packet);
+
+            using var database = DependencyContainer.Instance.Resolve<IDatabase>();
+            var character = database.Charaters.Include(c => c.Items).Where(c => c.Id == selectCharacterPacket.CharacterId).FirstOrDefault();
+
+            WorldPacketFactory.SendSelectedCharacter(client, character);
+        }
     }
 }

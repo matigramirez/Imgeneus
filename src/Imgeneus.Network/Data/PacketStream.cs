@@ -149,23 +149,7 @@ namespace Imgeneus.Network.Data
 
         public void WriteString(string value)
         {
-            if (this.State != PacketStateType.Write)
-            {
-                throw new InvalidOperationException("Packet is in read-only mode.");
-            }
-
-            if (value == null)
-            {
-                throw new ArgumentNullException("The string value can't be null.");
-            }
-
-            byte[] buffer = new byte[value.Length];
-
-            byte[] stuff = Encoding.UTF8.GetBytes(value);
-
-            System.Buffer.BlockCopy(stuff, 0, buffer, 0, value.Length);
-
-            this.Write(buffer);
+            WriteString(value, value.Length);
         }
 
         /// <inheritdoc />

@@ -6,11 +6,9 @@ namespace Imgeneus.Database
 {
     public static class ConfigureDatabase
     {
-        private const string MySqlConnectionString = "server=127.0.0.1;userid=root;pwd=your_password;port=3306;database=shaiya;sslmode=none;";
-
-        public static DbContextOptionsBuilder ConfigureCorrectDatabase(this DbContextOptionsBuilder optionsBuilder)
+        public static DbContextOptionsBuilder ConfigureCorrectDatabase(this DbContextOptionsBuilder optionsBuilder, DatabaseConfiguration configuration)
         {
-            optionsBuilder.UseMySql(MySqlConnectionString);
+            optionsBuilder.UseMySql(configuration.ToString());
             return optionsBuilder;
         }
 
@@ -19,7 +17,7 @@ namespace Imgeneus.Database
         {
             return serviceCollection
                 .AddSingleton(configuration)
-                .AddDbContext<DatabaseContext>(options => options.ConfigureCorrectDatabase(), ServiceLifetime.Transient)
+                .AddDbContext<DatabaseContext>(options => options.ConfigureCorrectDatabase(configuration), ServiceLifetime.Transient)
                 .AddTransient<IDatabase, Database>();
         }
     }

@@ -1,4 +1,5 @@
-﻿using Imgeneus.Database.Context;
+﻿using Imgeneus.Core.Helpers;
+using Imgeneus.Database.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 
@@ -13,7 +14,8 @@ namespace Imgeneus.Database
         {
 
             DbContextOptionsBuilder optionsBuilder = new DbContextOptionsBuilder();
-            optionsBuilder.ConfigureCorrectDatabase();
+            var dbConfig = ConfigurationHelper.Load<DatabaseConfiguration>("config/database.json");
+            optionsBuilder.ConfigureCorrectDatabase(dbConfig);
 
             return new DatabaseContext(optionsBuilder.Options);
         }
@@ -21,7 +23,8 @@ namespace Imgeneus.Database
         public static IDatabase GetDatabase()
         {
             DbContextOptionsBuilder optionsBuilder = new DbContextOptionsBuilder();
-            optionsBuilder.ConfigureCorrectDatabase();
+            var dbConfig = ConfigurationHelper.Load<DatabaseConfiguration>("config/database.json");
+            optionsBuilder.ConfigureCorrectDatabase(dbConfig);
             DatabaseContext databaseContext = new DatabaseContext(optionsBuilder.Options);
             return new Database(databaseContext);
         }

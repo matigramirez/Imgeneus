@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Linq.Expressions;
 
 namespace Imgeneus.Database.Repositories
 {
@@ -63,6 +64,9 @@ namespace Imgeneus.Database.Repositories
 
         /// <inheritdoc />
         public IEnumerable<T> GetAll(Func<T, bool> func) => this.GetQueryable(this.context).Where(func).AsEnumerable();
+
+        /// <inheritdoc />
+        public IQueryable<T> Include(Expression<Func<T, object>> criteria) => context.Set<T>().Include(criteria);
 
         /// <inheritdoc />
         public int Count() => this.context.Set<T>().AsNoTracking().Count();

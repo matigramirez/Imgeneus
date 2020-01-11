@@ -7,6 +7,7 @@ using Imgeneus.Network.Data;
 using Imgeneus.Network.Packets;
 using Imgeneus.Network.Packets.Game;
 using Imgeneus.World.Packets;
+using System.Linq;
 
 namespace Imgeneus.World.Handlers
 {
@@ -21,14 +22,27 @@ namespace Imgeneus.World.Handlers
 
             using var sendPacket = new Packet(PacketType.GAME_HANDSHAKE);
 
-            sendPacket.Write<byte>(0);
+            sendPacket.Write(0);
             client.SendPacket(sendPacket);
 
             using var database = DependencyContainer.Instance.Resolve<IDatabase>();
 
-            DbUser user = database.Users.Get(handshake.UserId);
+            DbUser user = database.Users.Include(u => u.Characters).Where(u => u.Id == handshake.UserId).FirstOrDefault();
 
-            WorldPacketFactory.SendAccountFaction(client, 2, 0);
+            WorldPacketFactory.SendCharacterList(client, user.Characters);
+            WorldPacketFactory.SendAccountFaction(client, user);
+        }
+
+        [PacketHandler(PacketType.ACCOUNT_FACTION)]
+        public static async void OnAccountFraction(WorldClient client, IPacketStream packet)
+        {
+            var accountFractionPacket = new AccountFractionPacket(packet);
+
+            using var database = DependencyContainer.Instance.Resolve<IDatabase>();
+            DbUser user = database.Users.Get(client.UserID);
+            user.Faction = accountFractionPacket.Fraction;
+
+            await database.CompleteAsync();
         }
 
         [PacketHandler(PacketType.CHECK_CHARACTER_AVAILABLE_NAME)]
@@ -51,7 +65,7 @@ namespace Imgeneus.World.Handlers
             // Get number of user characters.
             var count = (byte)database.Charaters.Count(x => x.UserId == client.UserID);
 
-            if (count == Constants.MaxCharacters)
+            if (count == Constants.MaxCharacters - 1)
             {
                 // Max number is reached.
                 WorldPacketFactory.SendCreatedCharacter(client, false);

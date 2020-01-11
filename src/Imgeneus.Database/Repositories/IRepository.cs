@@ -2,6 +2,8 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Linq;
+using System.Linq.Expressions;
 
 namespace Imgeneus.Database.Repositories
 {
@@ -65,6 +67,11 @@ namespace Imgeneus.Database.Repositories
         /// <param name="func"></param>
         /// <returns></returns>
         IEnumerable<T> GetAll(Func<T, bool> func);
+
+        /// <summary>
+        /// Performs tables left join.
+        /// </summary>
+        IQueryable<T> Include(Expression<Func<T, object>> criteria);
 
         /// <summary>
         /// Get the total amount of records from the repository

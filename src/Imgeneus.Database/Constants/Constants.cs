@@ -3,8 +3,8 @@
     public static class Constants
     {
         /// <summary>
-        /// Max number of characters is 5. Starting with 0 index.
+        /// Max number of characters is 5.
         /// </summary>
-        public static byte MaxCharacters = 4;
+        public static byte MaxCharacters = 5;
     }
 }

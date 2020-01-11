@@ -50,8 +50,8 @@ namespace Imgeneus.Database.Entities
         /// <summary>
         /// Gets or sets the user current faction.
         /// </summary>
-        [DefaultValue(2)]
-        public byte Faction { get; set; }
+        [DefaultValue(Fraction.NotSelected)]
+        public Fraction Faction { get; set; }
 
         /// <summary>
         /// Gets or sets the user current maximum mode allowed.
@@ -91,5 +91,12 @@ namespace Imgeneus.Database.Entities
             this.Characters = new HashSet<DbCharacter>();
         }
 
+    }
+
+    public enum Fraction : byte
+    {
+        Light = 0,
+        Dark = 1,
+        NotSelected = 2
     }
 }

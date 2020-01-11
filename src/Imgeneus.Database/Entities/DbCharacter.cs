@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Imgeneus.Database.Constants;
+using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -76,7 +77,7 @@ namespace Imgeneus.Database.Entities
         /// <summary>
         /// Gets or sets the character spawn map.
         /// </summary>
-        public ushort Map { get; set; }
+        public Map Map { get; set; }
 
         /// <summary>
         /// Gets or sets the character X position.

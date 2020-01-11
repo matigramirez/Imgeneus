@@ -9,9 +9,10 @@ This repo also uses the best parts of these repos: [Drakkus/ShaiyaGenesis](https
 
 ## Build and run
 1. Build the project.
-2. Setup `Imgeneus.Database` as startup project. Open View -> Other Windows -> Package Manager Console and run `Update-Database`. This should create database and run migrations.
-3. Run Imgeneus.Login.exe (or Imgeneus.Login project).
-4. Run Imgeneus.World.exe (or Imgeneus.World project).
+2. Find file in `Imgeneus.Database\config\database.json`. Update there to your values.
+3. Setup `Imgeneus.Database` as startup project. Open View -> Other Windows -> Package Manager Console and run `Update-Database`. This should create database and run migrations.
+4. Run Imgeneus.Login.exe (or Imgeneus.Login project).
+5. Run Imgeneus.World.exe (or Imgeneus.World project).
 
 ## Details
 - Language:  `C# 8`

@@ -51,18 +51,15 @@ namespace Imgeneus.World.Packets
                     packet.Write(character.Intelligence);
                     packet.Write(character.Wisdom);
                     packet.Write(character.Luck);
+                    packet.Write(character.HealthPoints);
+                    packet.Write(character.ManaPoints);
+                    packet.Write(character.StaminaPoints);
 
                     // TODO: right now I'm investigating where which byte is used.
                     // In the end, all these values should come from the database.
                     // Now, if you want to test these hardcoded values, you should create a light fighter.
                     // Unknown bytes have assigned number.
 
-                    packet.WriteByte(0); // 0
-                    packet.WriteByte(0); // 1
-                    packet.WriteByte(0); // 2
-                    packet.WriteByte(0); // 3
-                    packet.WriteByte(0); // 4
-                    packet.WriteByte(0); // 5
                     packet.WriteByte(16); // Helmet type
                     packet.WriteByte(17); // Armor type
                     packet.WriteByte(18); // Pants type

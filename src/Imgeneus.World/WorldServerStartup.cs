@@ -17,7 +17,6 @@ namespace Imgeneus.World
     public sealed class WorldServerStartup : IProgramStartup
     {
         private const string WorldConfigFile = "config/world.json";
-        private const string DatabaseConfigFile = "config/database.json";
 
         /// <inheritdoc />
         public void Configure()
@@ -25,10 +24,9 @@ namespace Imgeneus.World
             PacketHandler<ISClient>.Initialize();
             PacketHandler<WorldClient>.Initialize();
 
-            var dbConfig = ConfigurationHelper.Load<DatabaseConfiguration>(DatabaseConfigFile);
             DependencyContainer.Instance
                 .GetServiceCollection()
-                .RegisterDatabaseServices(dbConfig);
+                .RegisterDatabaseServices();
 
             DependencyContainer.Instance.Register<IWorldServer, WorldServer>(ServiceLifetime.Singleton);
             DependencyContainer.Instance.Configure(services => services.AddLogging(builder =>

@@ -17,7 +17,6 @@ namespace Imgeneus.Login
     public sealed class LoginServerStartup : IProgramStartup
     {
         private const string LoginConfigFile = "config/login.json";
-        private const string DatabaseConfigFile = "config/database.json";
 
         /// <inheritdoc />
         public void Configure()
@@ -25,10 +24,9 @@ namespace Imgeneus.Login
             PacketHandler<LoginClient>.Initialize();
             PacketHandler<ISClient>.Initialize();
 
-            var dbConfig = ConfigurationHelper.Load<DatabaseConfiguration>(DatabaseConfigFile);
             DependencyContainer.Instance
                 .GetServiceCollection()
-                .RegisterDatabaseServices(dbConfig);
+                .RegisterDatabaseServices();
 
             DependencyContainer.Instance.Register<ILoginServer, LoginServer>(ServiceLifetime.Singleton);
             DependencyContainer.Instance.Configure(services => services.AddLogging(builder =>

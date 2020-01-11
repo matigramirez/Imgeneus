@@ -18,6 +18,9 @@
   </ItemGroup>
   
   <ItemGroup>
+    <None Update="config\database.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="NLog.Config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

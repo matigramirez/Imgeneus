@@ -8,6 +8,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Migrations\20200111213029_ChangePasswordLength.cs" />
+    <Compile Remove="Migrations\20200111213029_ChangePasswordLength.Designer.cs" />
+    <Compile Remove="Migrations\20200112193356_AddSkillsTable.cs" />
+    <Compile Remove="Migrations\20200112193356_AddSkillsTable.Designer.cs" />
+    <Compile Remove="Migrations\20200112203101_AddSkillsTable.cs" />
+    <Compile Remove="Migrations\20200112203101_AddSkillsTable.Designer.cs" />
+    <Compile Remove="Migrations\20200112213355_AddSkillsTable.cs" />
+    <Compile Remove="Migrations\20200112213355_AddSkillsTable.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="3.1.0">
       <PrivateAssets>all</PrivateAssets>
@@ -23,6 +34,12 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Imgeneus.Core\Imgeneus.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Migrations\sql\InitSkillData.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

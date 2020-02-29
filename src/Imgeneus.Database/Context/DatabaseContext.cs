@@ -22,6 +22,11 @@ namespace Imgeneus.Database.Context
         /// </summary>
         public DbSet<DbCharacterItems> CharacterItems { get; set; }
 
+        /// <summary>
+        /// Collection of skills. Taken from original db and change colums.
+        /// </summary>
+        public DbSet<DbSkill> Skills { get; set; }
+
         public DatabaseContext(DbContextOptions options) : base(options)
         {
         }

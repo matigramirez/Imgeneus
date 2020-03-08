@@ -34,6 +34,12 @@ namespace Imgeneus.Database.Context
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<DbUser>().HasIndex(c => new { c.Username, c.Email }).IsUnique();
+
+            modelBuilder.Entity<DbSkill>().HasIndex(s => new { s.SkillId, s.SkillLevel });
+
+            // Many to many relations.
+            modelBuilder.Entity<DbCharacterSkill>().HasKey(x => new { x.CharacterId, x.SkillId });
+            modelBuilder.Entity<DbCharacterSkill>().HasOne(pt => pt.Character).WithMany(p => p.Skills).HasForeignKey(pt => pt.CharacterId);
         }
 
         /// <summary>

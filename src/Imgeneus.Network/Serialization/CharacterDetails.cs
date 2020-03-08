@@ -4,7 +4,7 @@ using System.IO;
 
 namespace Imgeneus.Network.Serialization
 {
-    public class CharacterDetails
+    public class CharacterDetails : BaseSerializable
     {
         [FieldOrder(0)]
         public ushort Strength { get; }
@@ -100,14 +100,6 @@ namespace Imgeneus.Network.Serialization
             Deaths = character.Deaths;
             Victories = character.Victories;
             Defeats = character.Defeats;
-        }
-
-        public byte[] Serialize()
-        {
-            using var ms = new MemoryStream();
-            var serializer = new BinarySerializer();
-            serializer.Serialize(ms, this);
-            return ms.ToArray();
         }
     }
 }

@@ -16,14 +16,18 @@ namespace Imgeneus.Database
         /// <inheritdoc />
         public IRepository<DbCharacterItems> CharacterItems { get; set; }
 
+        /// <inheritdoc />
+        public IRepository<DbSkill> Skills { get; set; }
+
         public DatabaseContext DatabaseContext { get; set; }
 
         public Database(DatabaseContext databaseContext)
         {
-            this.DatabaseContext = databaseContext;
-            this.Users = new RepositoryBase<DbUser>(databaseContext);
-            this.Charaters = new RepositoryBase<DbCharacter>(databaseContext);
-            this.CharacterItems = new RepositoryBase<DbCharacterItems>(databaseContext);
+            DatabaseContext = databaseContext;
+            Users = new RepositoryBase<DbUser>(databaseContext);
+            Charaters = new RepositoryBase<DbCharacter>(databaseContext);
+            CharacterItems = new RepositoryBase<DbCharacterItems>(databaseContext);
+            Skills = new RepositoryBase<DbSkill>(databaseContext);
         }
 
         /// <inheritdoc />

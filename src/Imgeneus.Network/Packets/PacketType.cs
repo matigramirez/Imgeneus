@@ -34,5 +34,8 @@
 
         // Game 
         GAME_HANDSHAKE = 0xA301,
+
+        // Char skills
+        LEARN_NEW_SKILL = 0x209,
     }
 }

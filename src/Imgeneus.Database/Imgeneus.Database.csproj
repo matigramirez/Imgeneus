@@ -16,6 +16,12 @@
     <Compile Remove="Migrations\20200112203101_AddSkillsTable.Designer.cs" />
     <Compile Remove="Migrations\20200112213355_AddSkillsTable.cs" />
     <Compile Remove="Migrations\20200112213355_AddSkillsTable.Designer.cs" />
+    <Compile Remove="Migrations\20200301200636_AddManyToManyCharacterSkills.cs" />
+    <Compile Remove="Migrations\20200301200636_AddManyToManyCharacterSkills.Designer.cs" />
+    <Compile Remove="Migrations\20200308100240_AddDbCharacterSkill.cs" />
+    <Compile Remove="Migrations\20200308100240_AddDbCharacterSkill.Designer.cs" />
+    <Compile Remove="Migrations\20200308100426_AddDbCharacterSkill.cs" />
+    <Compile Remove="Migrations\20200308100426_AddDbCharacterSkill.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

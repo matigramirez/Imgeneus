@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Linq;
 using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.EntityFrameworkCore;
 
 namespace Imgeneus.Database.Repositories
 {
@@ -69,11 +71,6 @@ namespace Imgeneus.Database.Repositories
         IEnumerable<T> GetAll(Func<T, bool> func);
 
         /// <summary>
-        /// Performs tables left join.
-        /// </summary>
-        IQueryable<T> Include(Expression<Func<T, object>> criteria);
-
-        /// <summary>
         /// Get the total amount of records from the repository
         /// </summary>
         /// <returns></returns>
@@ -92,5 +89,7 @@ namespace Imgeneus.Database.Repositories
         /// <param name="predicate"></param>
         /// <returns></returns>
         bool HasAny(Func<T, bool> predicate);
+
+        DbSet<T> Set { get; }
     }
 }

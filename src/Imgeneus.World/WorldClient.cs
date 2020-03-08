@@ -19,6 +19,11 @@ namespace Imgeneus.World
         public int UserID { get; private set; }
 
         /// <summary>
+        /// Gets the client's logged char id.
+        /// </summary>
+        public int CharID { get; set; }
+
+        /// <summary>
         /// Check if the client is connected.
         /// </summary>
         public bool IsConnected => this.UserID != 0;

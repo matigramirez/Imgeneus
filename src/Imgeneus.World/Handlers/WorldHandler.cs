@@ -8,6 +8,7 @@ using Imgeneus.Network.Packets;
 using Imgeneus.Network.Packets.Game;
 using Imgeneus.World.Packets;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 
 namespace Imgeneus.World.Handlers
 {
@@ -27,7 +28,7 @@ namespace Imgeneus.World.Handlers
 
             using var database = DependencyContainer.Instance.Resolve<IDatabase>();
 
-            DbUser user = database.Users.Include(u => u.Characters).Where(u => u.Id == handshake.UserId).FirstOrDefault();
+            DbUser user = database.Users.Set.Include(u => u.Characters).Where(u => u.Id == handshake.UserId).FirstOrDefault();
 
             WorldPacketFactory.SendCharacterList(client, user.Characters);
             WorldPacketFactory.SendAccountFaction(client, user);
@@ -97,9 +98,57 @@ namespace Imgeneus.World.Handlers
             var selectCharacterPacket = new SelectCharacterPacket(packet);
 
             using var database = DependencyContainer.Instance.Resolve<IDatabase>();
-            var character = database.Charaters.Include(c => c.Items).Where(c => c.Id == selectCharacterPacket.CharacterId).FirstOrDefault();
+            var character = database.Charaters.Set
+                                              .Include(c => c.Skills).ThenInclude(cs => cs.Skill)
+                                              .Where(c => c.Id == selectCharacterPacket.CharacterId)
+                                              .FirstOrDefault();
 
             WorldPacketFactory.SendSelectedCharacter(client, character);
+        }
+
+        [PacketHandler(PacketType.LEARN_NEW_SKILL)]
+        public static async void OnNewSkillLearn(WorldClient client, IPacketStream packet)
+        {
+            var learnNewSkillsPacket = new LearnNewSkillPacket(packet);
+
+            using var database = DependencyContainer.Instance.Resolve<IDatabase>();
+
+            // Find learned skill.
+            var skill = database.Skills.GetAll(s => s.SkillId == learnNewSkillsPacket.SkillId && s.SkillLevel == learnNewSkillsPacket.SkillLevel).First();
+
+            // Find character.
+            var character = database.Charaters.Set
+                                              .Include(c => c.Skills)
+                                              .ThenInclude(s => s.Skill)
+                                              .Where(c => c.Id == client.CharID).First();
+            if (character.Skills.Any(s => s.SkillId == skill.Id))
+            {
+                // Character has already learned this skill.
+                // TODO: log it or throw exception?
+                return;
+            }
+
+            // Check if the character has enough skill points.
+            if (character.SkillPoint >= skill.SkillPoint)
+            {
+                // Save char and learned skill.
+                var charSkill = new DbCharacterSkill()
+                {
+                    CharacterId = client.CharID,
+                    SkillId = skill.Id
+                };
+                character.Skills.Add(charSkill);
+                character.SkillPoint -= skill.SkillPoint;
+                await database.CompleteAsync();
+
+                // Send response.
+                WorldPacketFactory.LearnedNewSkill(client, character, true);
+            }
+            else // Not enough skill points.
+            {
+                WorldPacketFactory.LearnedNewSkill(client, character, false);
+            }
+
         }
     }
 }

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore.Query;
 
 namespace Imgeneus.Database.Repositories
 {
@@ -66,9 +67,6 @@ namespace Imgeneus.Database.Repositories
         public IEnumerable<T> GetAll(Func<T, bool> func) => this.GetQueryable(this.context).Where(func).AsEnumerable();
 
         /// <inheritdoc />
-        public IQueryable<T> Include(Expression<Func<T, object>> criteria) => context.Set<T>().Include(criteria);
-
-        /// <inheritdoc />
         public int Count() => this.context.Set<T>().AsNoTracking().Count();
 
         /// <inheritdoc />
@@ -76,6 +74,8 @@ namespace Imgeneus.Database.Repositories
 
         /// <inheritdoc />
         public bool HasAny(Func<T, bool> predicate) => this.context.Set<T>().AsNoTracking().Any(predicate);
+
+        public DbSet<T> Set => context.Set<T>();
 
         /// <inheritdoc />
         protected virtual IQueryable<T> GetQueryable(DbContext context) => context.Set<T>().AsQueryable();

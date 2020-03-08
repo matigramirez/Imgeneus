@@ -1,7 +1,7 @@
-﻿using Imgeneus.Database.Context;
-using Imgeneus.Database.Entities;
-using Imgeneus.Database.Repositories;
+﻿using Imgeneus.Database.Entities;
+using Microsoft.EntityFrameworkCore;
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Imgeneus.Database
@@ -9,39 +9,33 @@ namespace Imgeneus.Database
     public interface IDatabase : IDisposable
     {
         /// <summary>
-        /// Gets or sets the database context.
-        /// </summary>
-        DatabaseContext DatabaseContext { get; set; }
-
-        /// <summary>
         /// Gets the users.
         /// </summary>
-        public IRepository<DbUser> Users { get; set; }
+        public DbSet<DbUser> Users { get; set; }
 
         /// <summary>
         /// Gets the characters.
         /// </summary>
-        public IRepository<DbCharacter> Charaters { get; set; }
+        public DbSet<DbCharacter> Characters { get; set; }
 
         /// <summary>
         /// Gets the characters.
         /// </summary>
-        public IRepository<DbCharacterItems> CharacterItems { get; set; }
+        public DbSet<DbCharacterItems> CharacterItems { get; set; }
 
         /// <summary>
         /// Gets the skills.
         /// </summary>
-        public IRepository<DbSkill> Skills { get; set; }
+        public DbSet<DbSkill> Skills { get; set; }
 
         /// <summary>
-        /// Complete the pending database operation.
+        /// Saves changes to database.
         /// </summary>
-        void Complete();
+        public int SaveChanges();
 
         /// <summary>
-        /// Complete the pending database operations in an asynchronous context.
+        /// Saves changes to database.
         /// </summary>
-        /// <returns></returns>
-        Task CompleteAsync();
+        public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
     }
 }

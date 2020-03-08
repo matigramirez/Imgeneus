@@ -28,7 +28,7 @@ namespace Imgeneus.World.Handlers
 
             using var database = DependencyContainer.Instance.Resolve<IDatabase>();
 
-            DbUser user = database.Users.Set.Include(u => u.Characters).Where(u => u.Id == handshake.UserId).FirstOrDefault();
+            DbUser user = database.Users.Include(u => u.Characters).Where(u => u.Id == handshake.UserId).FirstOrDefault();
 
             WorldPacketFactory.SendCharacterList(client, user.Characters);
             WorldPacketFactory.SendAccountFaction(client, user);
@@ -40,10 +40,10 @@ namespace Imgeneus.World.Handlers
             var accountFractionPacket = new AccountFractionPacket(packet);
 
             using var database = DependencyContainer.Instance.Resolve<IDatabase>();
-            DbUser user = database.Users.Get(client.UserID);
+            DbUser user = database.Users.Find(client.UserID);
             user.Faction = accountFractionPacket.Fraction;
 
-            await database.CompleteAsync();
+            await database.SaveChangesAsync();
         }
 
         [PacketHandler(PacketType.CHECK_CHARACTER_AVAILABLE_NAME)]
@@ -52,7 +52,7 @@ namespace Imgeneus.World.Handlers
             var checkNamePacket = new CheckCharacterAvailableNamePacket(packet);
 
             using var database = DependencyContainer.Instance.Resolve<IDatabase>();
-            DbCharacter character = database.Charaters.Get(c => c.Name == checkNamePacket.CharacterName);
+            DbCharacter character = database.Characters.FirstOrDefault(c => c.Name == checkNamePacket.CharacterName);
 
             WorldPacketFactory.SendCharacterAvailability(client, character is null);
         }
@@ -64,7 +64,7 @@ namespace Imgeneus.World.Handlers
             using var database = DependencyContainer.Instance.Resolve<IDatabase>();
 
             // Get number of user characters.
-            var count = (byte)database.Charaters.Count(x => x.UserId == client.UserID);
+            var count = (byte)database.Characters.Count(x => x.UserId == client.UserID);
 
             if (count == Constants.MaxCharacters - 1)
             {
@@ -87,8 +87,8 @@ namespace Imgeneus.World.Handlers
                 UserId = client.UserID
             };
 
-            await database.Charaters.CreateAsync(character);
-            await database.CompleteAsync();
+            await database.Characters.AddAsync(character);
+            await database.SaveChangesAsync();
             WorldPacketFactory.SendCreatedCharacter(client, true);
         }
 
@@ -98,10 +98,8 @@ namespace Imgeneus.World.Handlers
             var selectCharacterPacket = new SelectCharacterPacket(packet);
 
             using var database = DependencyContainer.Instance.Resolve<IDatabase>();
-            var character = database.Charaters.Set
-                                              .Include(c => c.Skills).ThenInclude(cs => cs.Skill)
-                                              .Where(c => c.Id == selectCharacterPacket.CharacterId)
-                                              .FirstOrDefault();
+            var character = database.Characters.Include(c => c.Skills).ThenInclude(cs => cs.Skill)
+                                              .FirstOrDefault(c => c.Id == selectCharacterPacket.CharacterId);
 
             WorldPacketFactory.SendSelectedCharacter(client, character);
         }
@@ -114,13 +112,12 @@ namespace Imgeneus.World.Handlers
             using var database = DependencyContainer.Instance.Resolve<IDatabase>();
 
             // Find learned skill.
-            var skill = database.Skills.GetAll(s => s.SkillId == learnNewSkillsPacket.SkillId && s.SkillLevel == learnNewSkillsPacket.SkillLevel).First();
+            var skill = database.Skills.First(s => s.SkillId == learnNewSkillsPacket.SkillId && s.SkillLevel == learnNewSkillsPacket.SkillLevel);
 
             // Find character.
-            var character = database.Charaters.Set
-                                              .Include(c => c.Skills)
-                                              .ThenInclude(s => s.Skill)
-                                              .Where(c => c.Id == client.CharID).First();
+            var character = database.Characters.Include(c => c.Skills)
+                                               .ThenInclude(s => s.Skill)
+                                               .Where(c => c.Id == client.CharID).First();
             if (character.Skills.Any(s => s.SkillId == skill.Id))
             {
                 // Character has already learned this skill.
@@ -139,7 +136,7 @@ namespace Imgeneus.World.Handlers
                 };
                 character.Skills.Add(charSkill);
                 character.SkillPoint -= skill.SkillPoint;
-                await database.CompleteAsync();
+                await database.SaveChangesAsync();
 
                 // Send response.
                 WorldPacketFactory.LearnedNewSkill(client, character, true);

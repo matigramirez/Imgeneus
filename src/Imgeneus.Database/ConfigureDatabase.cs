@@ -21,7 +21,7 @@ namespace Imgeneus.Database
             return serviceCollection
                 .AddSingleton(dbConfig)
                 .AddDbContext<DatabaseContext>(options => options.ConfigureCorrectDatabase(dbConfig), ServiceLifetime.Transient)
-                .AddTransient<IDatabase, Database>();
+                .AddTransient<IDatabase, DatabaseContext>();
         }
     }
 }

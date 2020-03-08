@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Storage;
 
 namespace Imgeneus.Database.Context
 {
-    public class DatabaseContext : DbContext
+    public class DatabaseContext : DbContext, IDatabase
     {
         /// <summary>
         /// Gets or sets users.

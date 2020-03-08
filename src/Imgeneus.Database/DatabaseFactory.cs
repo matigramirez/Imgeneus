@@ -19,14 +19,5 @@ namespace Imgeneus.Database
 
             return new DatabaseContext(optionsBuilder.Options);
         }
-
-        public static IDatabase GetDatabase()
-        {
-            DbContextOptionsBuilder optionsBuilder = new DbContextOptionsBuilder();
-            var dbConfig = ConfigurationHelper.Load<DatabaseConfiguration>("config/database.json");
-            optionsBuilder.ConfigureCorrectDatabase(dbConfig);
-            DatabaseContext databaseContext = new DatabaseContext(optionsBuilder.Options);
-            return new Database(databaseContext);
-        }
     }
 }

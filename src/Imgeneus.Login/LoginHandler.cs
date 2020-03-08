@@ -7,6 +7,7 @@ using Imgeneus.Network.Data;
 using Imgeneus.Network.Packets;
 using Imgeneus.Network.Packets.Login;
 using System;
+using System.Linq;
 
 namespace Imgeneus.Login
 {
@@ -38,7 +39,7 @@ namespace Imgeneus.Login
             var loginServer = DependencyContainer.Instance.Resolve<ILoginServer>();
 
             using var database = DependencyContainer.Instance.Resolve<IDatabase>();
-            DbUser dbUser = database.Users.Get(x => x.Username.Equals(authenticationPacket.Username, StringComparison.OrdinalIgnoreCase));
+            DbUser dbUser = database.Users.First(x => x.Username.Equals(authenticationPacket.Username, StringComparison.OrdinalIgnoreCase));
 
             if (loginServer.IsClientConnected(dbUser.Id))
             {
@@ -48,7 +49,7 @@ namespace Imgeneus.Login
 
             dbUser.LastConnectionTime = DateTime.Now;
             database.Users.Update(dbUser);
-            database.Complete();
+            database.SaveChanges();
 
             client.SetClientUserID(dbUser.Id);
 
@@ -57,7 +58,7 @@ namespace Imgeneus.Login
 
         [PacketHandler(PacketType.SELECT_SERVER)]
         public static void OnSelectServer(LoginClient client, IPacketStream packet)
-        { 
+        {
             if (packet.Length != 9)
             {
                 return;
@@ -102,7 +103,7 @@ namespace Imgeneus.Login
         {
             using var database = DependencyContainer.Instance.Resolve<IDatabase>();
 
-            DbUser dbUser = database.Users.Get(x => x.Username.Equals(username, StringComparison.OrdinalIgnoreCase));
+            DbUser dbUser = database.Users.FirstOrDefault(x => x.Username.Equals(username, StringComparison.OrdinalIgnoreCase));
 
             if (dbUser == null)
             {

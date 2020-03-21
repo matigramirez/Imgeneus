@@ -96,12 +96,12 @@ namespace Imgeneus.World.Packets
                     packet.WriteByte(0); // 8
                     packet.WriteByte(254); // Pet type id
                     packet.WriteByte(0); // Costume type id
-                    packet.WriteByte(21); // 11
-                    packet.WriteByte(57); // 12
-                    packet.WriteByte(1); // 13
-                    packet.WriteByte(21); // 14
-                    packet.WriteByte(57); // 15
-                    packet.WriteByte(1); // 16
+                    packet.WriteByte(0); // 11
+                    packet.WriteByte(0); // 12
+                    packet.WriteByte(0); // 13
+                    packet.WriteByte(0); // 14
+                    packet.WriteByte(0); // 15
+                    packet.WriteByte(0); // 16
 
                     for (int j = 0; j < 535; j++)
                         packet.WriteByte(0);
@@ -143,6 +143,14 @@ namespace Imgeneus.World.Packets
         {
             using var packet = new Packet(PacketType.CHARACTER_SKILLS);
             var bytes = new CharacterSkills(character).Serialize();
+            packet.Write(bytes);
+            client.SendPacket(packet);
+        }
+
+        public static void SendCharacterItems(WorldClient client, ICollection<DbCharacterItems> items)
+        {
+            using var packet = new Packet(PacketType.CHARACTER_ITEMS);
+            var bytes = new InventoryItems(items).Serialize();
             packet.Write(bytes);
             client.SendPacket(packet);
         }

@@ -23,7 +23,12 @@ namespace Imgeneus.Database.Context
         public DbSet<DbCharacterItems> CharacterItems { get; set; }
 
         /// <summary>
-        /// Collection of skills. Taken from original db and change colums.
+        /// Gets or sets chracter skills.
+        /// </summary>
+        public DbSet<DbCharacterSkill> CharacterSkills { get; set; }
+
+        /// <summary>
+        /// Collection of skills. Taken from original db.
         /// </summary>
         public DbSet<DbSkill> Skills { get; set; }
 
@@ -41,6 +46,8 @@ namespace Imgeneus.Database.Context
             modelBuilder.Entity<DbUser>().HasIndex(c => new { c.Username, c.Email }).IsUnique();
 
             modelBuilder.Entity<DbSkill>().HasIndex(s => new { s.SkillId, s.SkillLevel });
+
+            modelBuilder.Entity<DbItem>().HasKey(x => new { x.Type, x.TypeId });
 
             #region Many to many relations
             // Skills.

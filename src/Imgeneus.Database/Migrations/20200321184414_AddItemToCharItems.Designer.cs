@@ -3,14 +3,16 @@ using System;
 using Imgeneus.Database.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Imgeneus.Database.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20200321184414_AddItemToCharItems")]
+    partial class AddItemToCharItems
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -166,23 +168,10 @@ namespace Imgeneus.Database.Migrations
                     b.Property<DateTime>("CreationTime")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<int>("GemTypeId1")
-                        .HasColumnType("int");
-
-                    b.Property<int>("GemTypeId2")
-                        .HasColumnType("int");
-
-                    b.Property<int>("GemTypeId3")
-                        .HasColumnType("int");
-
-                    b.Property<int>("GemTypeId4")
-                        .HasColumnType("int");
-
-                    b.Property<int>("GemTypeId5")
-                        .HasColumnType("int");
-
-                    b.Property<int>("GemTypeId6")
-                        .HasColumnType("int");
+                    b.Property<byte[]>("Gems")
+                        .IsRequired()
+                        .HasColumnType("varbinary(6)")
+                        .HasMaxLength(6);
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("tinyint(1)");

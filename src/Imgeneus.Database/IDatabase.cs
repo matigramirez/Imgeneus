@@ -24,9 +24,19 @@ namespace Imgeneus.Database
         public DbSet<DbCharacterItems> CharacterItems { get; set; }
 
         /// <summary>
+        /// Gets or sets chracter skills.
+        /// </summary>
+        public DbSet<DbCharacterSkill> CharacterSkills { get; set; }
+
+        /// <summary>
         /// Gets the skills.
         /// </summary>
         public DbSet<DbSkill> Skills { get; set; }
+
+        /// <summary>
+        /// Collection of items. Taken from original db.
+        /// </summary>
+        public DbSet<DbItem> Items { get; set; }
 
         /// <summary>
         /// Saves changes to database.

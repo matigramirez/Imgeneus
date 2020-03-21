@@ -8,10 +8,8 @@ namespace Imgeneus.Database.Entities
     [Table("CharacterItems")]
     public sealed class DbCharacterItems : DbEntity
     {
-        [Required]
         public byte Type { get; set; }
 
-        [Required]
         public byte TypeId { get; set; }
 
         public byte Bag { get; set; }
@@ -23,9 +21,13 @@ namespace Imgeneus.Database.Entities
 
         public ushort Quality { get; set; }
 
-        [Required]
-        [MaxLength(6)]
-        public byte[] Gems { get; set; }
+        public int GemTypeId1 { get; set; }
+        public int GemTypeId2 { get; set; }
+        public int GemTypeId3 { get; set; }
+        public int GemTypeId4 { get; set; }
+        public int GemTypeId5 { get; set; }
+        public int GemTypeId6 { get; set; }
+
 
         [Required]
         [MaxLength(20)]
@@ -51,9 +53,11 @@ namespace Imgeneus.Database.Entities
         /// </summary>
         public DbCharacter Character { get; set; }
 
+        [ForeignKey(nameof(Type) + "," + nameof(TypeId))]
+        public DbItem Item { get; set; }
+
         public DbCharacterItems()
         {
-            Gems = new byte[6];
             CreationTime = DateTime.Now;
             Craftname = string.Empty;
         }

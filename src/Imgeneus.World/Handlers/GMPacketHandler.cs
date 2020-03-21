@@ -5,6 +5,7 @@ using Imgeneus.Network;
 using Imgeneus.Network.Data;
 using Imgeneus.Network.Packets;
 using Imgeneus.Network.Packets.Game;
+using Imgeneus.World.Packets;
 using System.Linq;
 
 namespace Imgeneus.World.Handlers
@@ -68,8 +69,13 @@ namespace Imgeneus.World.Handlers
                     Slot = (byte)freeSlot,
                     CharacterId = client.CharID
                 };
+
                 database.CharacterItems.Add(charItem);
                 await database.SaveChangesAsync();
+
+                var updatedItems = charItems.ToList();
+                updatedItems.Add(charItem);
+                WorldPacketFactory.SendCharacterItems(client, updatedItems);
             }
         }
     }

@@ -99,7 +99,8 @@ namespace Imgeneus.World.Handlers
 
             using var database = DependencyContainer.Instance.Resolve<IDatabase>();
             var character = database.Characters.Include(c => c.Skills).ThenInclude(cs => cs.Skill)
-                                              .FirstOrDefault(c => c.Id == selectCharacterPacket.CharacterId);
+                                               .Include(c => c.Items).ThenInclude(ci => ci.Item)
+                                               .FirstOrDefault(c => c.Id == selectCharacterPacket.CharacterId);
 
             WorldPacketFactory.SendSelectedCharacter(client, character);
         }

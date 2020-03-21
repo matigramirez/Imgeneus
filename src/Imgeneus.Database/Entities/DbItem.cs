@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Text;
 
 namespace Imgeneus.Database.Entities
 {
@@ -10,9 +7,9 @@ namespace Imgeneus.Database.Entities
     public class DbItem
     {
         /// <summary>
-        /// Primary key, unique id.
+        /// Unique id.
         /// </summary>
-        [Key, Column("ItemID"), Required]
+        [Column("ItemID"), Required]
         public int Id { get; set; }
 
         /// <summary>

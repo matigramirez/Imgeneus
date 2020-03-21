@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 
@@ -7,8 +6,6 @@ namespace Imgeneus.Database.Migrations
 {
     public partial class AddSkillsTable : Migration
     {
-        private const string MIGRATION_SQL_SCRIPT_FILE_NAME = @"Migrations\sql\InitSkillData.sql";
-
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
@@ -119,10 +116,6 @@ namespace Imgeneus.Database.Migrations
                 {
                     table.PrimaryKey("PK_Skills", x => x.Id);
                 });
-
-            // Set up init data.
-            var path = Path.Combine(AppContext.BaseDirectory, MIGRATION_SQL_SCRIPT_FILE_NAME);
-            migrationBuilder.Sql(File.ReadAllText(path));
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

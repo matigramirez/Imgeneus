@@ -22,6 +22,12 @@
     <Compile Remove="Migrations\20200308100240_AddDbCharacterSkill.Designer.cs" />
     <Compile Remove="Migrations\20200308100426_AddDbCharacterSkill.cs" />
     <Compile Remove="Migrations\20200308100426_AddDbCharacterSkill.Designer.cs" />
+    <Compile Remove="Migrations\20200321115415_AddItemsTable.cs" />
+    <Compile Remove="Migrations\20200321115415_AddItemsTable.Designer.cs" />
+    <Compile Remove="Migrations\20200321115508_AddItemsTable.cs" />
+    <Compile Remove="Migrations\20200321115508_AddItemsTable.Designer.cs" />
+    <Compile Remove="Migrations\20200321122019_AddItemsTable.cs" />
+    <Compile Remove="Migrations\20200321122019_AddItemsTable.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -43,8 +49,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="Migrations\sql\InitItemData.sql">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
     <None Update="Migrations\sql\InitSkillData.sql">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </None>
   </ItemGroup>
 

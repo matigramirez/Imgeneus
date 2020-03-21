@@ -42,9 +42,14 @@ namespace Imgeneus.Database.Context
 
             modelBuilder.Entity<DbSkill>().HasIndex(s => new { s.SkillId, s.SkillLevel });
 
-            // Many to many relations.
+            #region Many to many relations
+            // Skills.
             modelBuilder.Entity<DbCharacterSkill>().HasKey(x => new { x.CharacterId, x.SkillId });
             modelBuilder.Entity<DbCharacterSkill>().HasOne(pt => pt.Character).WithMany(p => p.Skills).HasForeignKey(pt => pt.CharacterId);
+
+            // Items
+            modelBuilder.Entity<DbCharacterItems>().HasOne(pt => pt.Character).WithMany(p => p.Items).HasForeignKey(pt => pt.CharacterId);
+            #endregion
         }
 
         /// <summary>

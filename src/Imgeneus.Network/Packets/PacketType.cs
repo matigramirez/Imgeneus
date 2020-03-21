@@ -14,7 +14,7 @@
         DELETE_CHARACTER = 0x0103,
         SELECT_CHARACTER = 0x0104,
         CHARACTER_DETAILS = 0x0105,
-        CHARACTER_INVENTORY = 0x0106,
+        CHARACTER_ITEMS = 0x0106,
         CHECK_CHARACTER_AVAILABLE_NAME = 0x0119,
 
         // Common
@@ -37,5 +37,8 @@
 
         // Char skills
         LEARN_NEW_SKILL = 0x209,
+
+        // GM commands
+        GM_COMMAND_GET_ITEM = 0xF702,
     }
 }

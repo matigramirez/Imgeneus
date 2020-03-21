@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Imgeneus.World.Handlers
 {
-    internal static class WorldHandler
+    internal static partial class WorldHandler
     {
         [PacketHandler(PacketType.GAME_HANDSHAKE)]
         public static void OnGameHandshake(WorldClient client, IPacketStream packet)

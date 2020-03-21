@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Text;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Imgeneus.Database.Entities
 {
@@ -13,6 +9,7 @@ namespace Imgeneus.Database.Entities
         public int SkillId { get; set; }
 
         public DbCharacter Character { get; set; }
+
         public DbSkill Skill { get; set; }
     }
 }

@@ -49,13 +49,13 @@ namespace Imgeneus.Database.Entities
         /// <summary>
         /// Gets or sets the character associated to this item.
         /// </summary>
-        [ForeignKey(nameof(CharacterId))]
         public DbCharacter Character { get; set; }
 
         public DbCharacterItems()
         {
-            this.Gems = new byte[6];
-            this.CreationTime = DateTime.Now;
+            Gems = new byte[6];
+            CreationTime = DateTime.Now;
+            Craftname = string.Empty;
         }
     }
 }

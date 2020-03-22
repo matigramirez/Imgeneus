@@ -78,7 +78,7 @@ namespace Imgeneus.World.Packets
                     packet.WriteByte(0); // 8
                     packet.WriteByte(120); // Pet type
                     packet.WriteByte(0); // Costume type
-                    packet.WriteByte(0); // 11
+                    packet.WriteByte(121); // Wings type
                     packet.WriteByte(56); // Helmet type id
                     packet.WriteByte(46); // Armor type id
                     packet.WriteByte(32); // Pants type id
@@ -96,7 +96,7 @@ namespace Imgeneus.World.Packets
                     packet.WriteByte(0); // 8
                     packet.WriteByte(254); // Pet type id
                     packet.WriteByte(0); // Costume type id
-                    packet.WriteByte(0); // 11
+                    packet.WriteByte(10); // Wings type id
                     packet.WriteByte(0); // 12
                     packet.WriteByte(0); // 13
                     packet.WriteByte(0); // 14

@@ -146,7 +146,65 @@ namespace Imgeneus.World.Handlers
             {
                 WorldPacketFactory.LearnedNewSkill(client, character, false);
             }
+        }
 
+        [PacketHandler(PacketType.INVENTORY_MOVE_ITEM)]
+        public static async void OnMoveItem(WorldClient client, IPacketStream packet)
+        {
+            var moveItemPacket = new MoveItemInInventoryPacket(packet);
+
+            using var database = DependencyContainer.Instance.Resolve<IDatabase>();
+
+            var charItems = database.CharacterItems.Where(ci => ci.CharacterId == client.CharID);
+
+            // Find source item.
+            var sourceItem = charItems.FirstOrDefault(ci => ci.Bag == moveItemPacket.CurrentBag && ci.Slot == moveItemPacket.CurrentSlot);
+
+            // Check, if any other item is at destination slot.
+            var destinationItem = charItems.FirstOrDefault(ci => ci.Bag == moveItemPacket.DestinationBag && ci.Slot == moveItemPacket.DestinationSlot);
+            if (destinationItem is null)
+            {
+                // No item at destination place.
+                // Since there is no destination item in database we will use source item as destination.
+                // The only change, that we need to do is to set new bag and slot.
+                destinationItem = sourceItem;
+                destinationItem.Bag = moveItemPacket.DestinationBag;
+                destinationItem.Slot = moveItemPacket.DestinationSlot;
+
+                // Clear old place. For this we need to create "empty" item, i.e. item with type and type_id and count == 0.
+                sourceItem = new DbCharacterItems();
+                sourceItem.Bag = moveItemPacket.CurrentBag;
+                sourceItem.Slot = moveItemPacket.CurrentSlot;
+            }
+            else
+            {
+                // There is some item at destination place.
+                if (sourceItem.Type == destinationItem.Type && sourceItem.TypeId == destinationItem.TypeId && destinationItem.IsJoinable)
+                {
+                    // Increase destination item count, if they are joinable.
+                    destinationItem.Count += sourceItem.Count;
+
+                    // This time unlike when destination was null, we have to remove source item from database.
+                    database.CharacterItems.Remove(sourceItem);
+
+                    // Clear old item. Again fake "empty" item with 0 type, type_id, count.
+                    sourceItem = new DbCharacterItems();
+                    sourceItem.Bag = moveItemPacket.CurrentBag;
+                    sourceItem.Slot = moveItemPacket.CurrentSlot;
+                }
+                else
+                {
+                    // Swap them.
+                    destinationItem.Bag = moveItemPacket.CurrentBag;
+                    destinationItem.Slot = moveItemPacket.CurrentSlot;
+
+                    sourceItem.Bag = moveItemPacket.DestinationBag;
+                    sourceItem.Slot = moveItemPacket.DestinationSlot;
+                }
+            }
+
+            await database.SaveChangesAsync();
+            WorldPacketFactory.SendMoveItem(client, sourceItem, destinationItem);
         }
     }
 }

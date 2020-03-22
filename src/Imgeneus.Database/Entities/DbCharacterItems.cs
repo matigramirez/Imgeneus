@@ -61,5 +61,37 @@ namespace Imgeneus.Database.Entities
             CreationTime = DateTime.Now;
             Craftname = string.Empty;
         }
+
+        /// <summary>
+        /// Consumables and lapis are joinable objects. I.e. count can be > 1.
+        /// </summary>
+        public bool IsJoinable
+        {
+            get
+            {
+                return
+                   // All consumables in game, checked via shaiya studio v0.8
+                   Type == 25 ||
+                   Type == 27 ||
+                   Type == 28 ||
+                   Type == 29 ||
+                   Type == 38 ||
+                   Type == 41 ||
+                   Type == 43 ||
+                   Type == 44 ||
+                   Type == 78 ||
+                   Type == 79 ||
+                   Type == 80 ||
+                   Type == 94 ||
+                   Type == 99 ||
+                   Type == 100 ||
+                   Type == 101 ||
+                   Type == 102 ||
+                   // All lapis in game, checked via shaiya studio v0.8
+                   Type == 30 ||
+                   Type == 95 ||
+                   Type == 98;
+            }
+        }
     }
 }

@@ -18,13 +18,15 @@ namespace Imgeneus.World.Handlers
             var getItemPacket = new GMGetItemPacket(packet);
 
             using var database = DependencyContainer.Instance.Resolve<IDatabase>();
-            var charItems = database.CharacterItems.Where(c => c.CharacterId == client.CharID);
+
+            // Get local copy of char items. ToList() will create copy.
+            var charItems = database.CharacterItems.Where(c => c.CharacterId == client.CharID).ToList();
 
             // Find free space.
             byte bagSlot = 0;
             int freeSlot = -1;
 
-            if (charItems.Count() > 0)
+            if (charItems.Count > 0)
             {
                 var maxBag = 5;
                 var maxSlots = 24;
@@ -73,9 +75,10 @@ namespace Imgeneus.World.Handlers
                 database.CharacterItems.Add(charItem);
                 await database.SaveChangesAsync();
 
-                var updatedItems = charItems.ToList();
-                updatedItems.Add(charItem);
-                WorldPacketFactory.SendCharacterItems(client, updatedItems);
+                // Since charItem is localcopy, if we don't want to create another call to database, we can use it.
+                // Just add to local copy the last item, that was added to database.
+                charItems.Add(charItem);
+                WorldPacketFactory.SendCharacterItems(client, charItems);
             }
         }
     }

@@ -51,7 +51,7 @@ namespace Imgeneus.Network.Serialization
 
             // Unknown bytes. Maybe enchant?
             UnknownBytes = new byte[27];
-            for (var i = 0; i < 27; i++) // 9
+            for (var i = 0; i < 27; i++)
             {
                 UnknownBytes[i] = 1;
             }
@@ -63,6 +63,7 @@ namespace Imgeneus.Network.Serialization
             UntilDate = dateBytes;
 
             // Something connect with dyed feature. Couldn't figure out this this yet.
+            // If all set to 1, you will see "Item dyed" string.
             ItemDyed = new byte[36];
             for (var i = 0; i < 36; i++)
             {

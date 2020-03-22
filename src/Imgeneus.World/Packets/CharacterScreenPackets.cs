@@ -146,13 +146,5 @@ namespace Imgeneus.World.Packets
             packet.Write(bytes);
             client.SendPacket(packet);
         }
-
-        public static void SendCharacterItems(WorldClient client, ICollection<DbCharacterItems> items)
-        {
-            using var packet = new Packet(PacketType.CHARACTER_ITEMS);
-            var bytes = new InventoryItems(items).Serialize();
-            packet.Write(bytes);
-            client.SendPacket(packet);
-        }
     }
 }

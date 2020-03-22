@@ -12,15 +12,14 @@ namespace Imgeneus.Network.Serialization
         [FieldOrder(1)]
         public byte[] Items { get; }
 
-        public InventoryItems(ICollection<DbCharacterItems> items)
+        public InventoryItems(IEnumerable<DbCharacterItems> items)
         {
-            ItemsCount = (byte)items.Count;
-
             var serializedItems = new List<byte>();
             foreach (var charItm in items)
             {
                 var serialized = new SerializedItem(charItm).Serialize();
                 serializedItems.AddRange(serialized);
+                ItemsCount++;
             }
             Items = serializedItems.ToArray();
         }

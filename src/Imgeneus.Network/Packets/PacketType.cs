@@ -40,5 +40,8 @@
 
         // GM commands
         GM_COMMAND_GET_ITEM = 0xF702,
+
+        // Inventory
+        INVENTORY_MOVE_ITEM = 0x204,
     }
 }

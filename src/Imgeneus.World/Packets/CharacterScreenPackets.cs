@@ -66,10 +66,10 @@ namespace Imgeneus.World.Packets
                     packet.WriteByte(18); // Pants type
                     packet.WriteByte(20); // Gauntlets type
                     packet.WriteByte(21); // Boots type
-
                     packet.WriteByte(2); // Weapon type 
                     packet.WriteByte(69); // Shield type
                     packet.WriteByte(24); // Cape type
+                    // I assume the next 6 bytes are 1 amulet, 2 rings, 2 bracelets, and 1 mount.
                     packet.WriteByte(0); // 3
                     packet.WriteByte(0); // 4
                     packet.WriteByte(0); // 5
@@ -79,12 +79,12 @@ namespace Imgeneus.World.Packets
                     packet.WriteByte(120); // Pet type
                     packet.WriteByte(0); // Costume type
                     packet.WriteByte(121); // Wings type
+
                     packet.WriteByte(56); // Helmet type id
                     packet.WriteByte(46); // Armor type id
                     packet.WriteByte(32); // Pants type id
                     packet.WriteByte(53); // Gauntlets type id
                     packet.WriteByte(54); // Boots type id
-
                     packet.WriteByte(5); // Weapon type id
                     packet.WriteByte(245); // Shield type id
                     packet.WriteByte(94); // Cape type id
@@ -94,16 +94,51 @@ namespace Imgeneus.World.Packets
                     packet.WriteByte(0); // 6
                     packet.WriteByte(0); // 7
                     packet.WriteByte(0); // 8
-                    packet.WriteByte(254); // Pet type id
+                    packet.WriteByte(5); // Pet type id
                     packet.WriteByte(0); // Costume type id
                     packet.WriteByte(10); // Wings type id
-                    packet.WriteByte(0); // 12
-                    packet.WriteByte(0); // 13
-                    packet.WriteByte(0); // 14
-                    packet.WriteByte(0); // 15
-                    packet.WriteByte(0); // 16
 
-                    for (int j = 0; j < 535; j++)
+                    // From here it's dyed colors.
+                    packet.Write(true); // Helmet is dyed.
+                    packet.Write(true); // Armor is dyed.
+                    packet.Write(true); // Pants is dyed.
+                    packet.Write(true); // Gauntlets is dyed.
+                    packet.Write(true); // Boots is dyed.
+                    packet.Write(true); // Weapon is dyed.
+                    packet.Write(true); // Shield is dyed.
+                    packet.Write(true); // Cape is dyed, although capes are not dyedable.
+                    // Now 6 bytes, which I assume are accessories and mount.
+                    packet.Write(true);
+                    packet.Write(true);
+                    packet.Write(true);
+                    packet.Write(true);
+                    packet.Write(true);
+                    packet.Write(true);
+                    packet.Write(true); // Pet is dyed.
+                    packet.Write(true); // Costume is dyed.
+                    packet.Write(true); // Wings is dyed.
+
+                    // From here i think it's description of color.
+                    // In any case, colors look awful...
+                    packet.WriteByte(0);
+                    packet.WriteByte(0);
+                    packet.WriteByte(0);
+                    packet.WriteByte(0);
+                    packet.WriteByte(255); // Blue
+                    packet.WriteByte(255); // Green
+                    packet.WriteByte(255); // Red (?), not sure
+
+                    packet.WriteByte(0); // ?
+                    // Armor
+                    packet.WriteByte(255); // Red
+                    packet.WriteByte(255); // Blue
+                    packet.WriteByte(0); // Green
+
+                    packet.WriteByte(255); // Blue
+                    packet.WriteByte(0); // Green
+                    packet.WriteByte(0); // Red (?), not sure
+
+                    for (int j = 0; j < 509; j++)
                         packet.WriteByte(0);
 
                     packet.Write(character.Name);

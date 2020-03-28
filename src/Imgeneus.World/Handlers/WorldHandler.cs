@@ -231,5 +231,27 @@ namespace Imgeneus.World.Handlers
                 // TODO: send equipment update to all characters nearby.
             }
         }
+
+        [PacketHandler(PacketType.CHARACTER_MOVE)]
+        public static async void OnMoveCharacter(WorldClient client, IPacketStream packet)
+        {
+            var movePacket = new MoveCharacterPacket(packet);
+
+            if (movePacket.MovementType == MovementType.Moving)
+            {
+                // TODO: send update to other clients.
+            }
+            else // Stopped moving, we can save to database.
+            {
+                using var database = DependencyContainer.Instance.Resolve<IDatabase>();
+                var character = database.Characters.Find(client.CharID);
+                character.Angle = movePacket.Angle;
+                character.PosX = movePacket.X;
+                character.PosY = movePacket.Y;
+                character.PosZ = movePacket.Z;
+                await database.SaveChangesAsync();
+            }
+
+        }
     }
 }

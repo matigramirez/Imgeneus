@@ -28,7 +28,10 @@ namespace Imgeneus.World.Handlers
 
             using var database = DependencyContainer.Instance.Resolve<IDatabase>();
 
-            DbUser user = database.Users.Include(u => u.Characters).Where(u => u.Id == handshake.UserId).FirstOrDefault();
+            DbUser user = database.Users.Include(u => u.Characters)
+                                        .ThenInclude(c => c.Items)
+                                        .Where(u => u.Id == handshake.UserId)
+                                        .FirstOrDefault();
 
             WorldPacketFactory.SendCharacterList(client, user.Characters);
             WorldPacketFactory.SendAccountFaction(client, user);
@@ -64,14 +67,24 @@ namespace Imgeneus.World.Handlers
             using var database = DependencyContainer.Instance.Resolve<IDatabase>();
 
             // Get number of user characters.
-            var count = (byte)database.Characters.Count(x => x.UserId == client.UserID);
+            var characters = database.Characters.Where(x => x.UserId == client.UserID);
 
-            if (count == Constants.MaxCharacters - 1)
+            if (characters.Count() == Constants.MaxCharacters - 1)
             {
                 // Max number is reached.
                 WorldPacketFactory.SendCreatedCharacter(client, false);
+                return;
             }
 
+            byte freeSlot = 0;
+            for (byte i = 0; i < Constants.MaxCharacters; i++)
+            {
+                if (!characters.Any(c => c.Slot == i))
+                {
+                    freeSlot = i;
+                    break;
+                }
+            }
             DbCharacter character = new DbCharacter()
             {
                 Name = createCharacterPacket.CharacterName,
@@ -83,7 +96,7 @@ namespace Imgeneus.World.Handlers
                 Class = createCharacterPacket.Class,
                 Gender = createCharacterPacket.Gender,
                 Level = 1,
-                Slot = count,
+                Slot = freeSlot,
                 UserId = client.UserID
             };
 

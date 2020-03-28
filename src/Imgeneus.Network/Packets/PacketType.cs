@@ -43,5 +43,6 @@
 
         // Inventory
         INVENTORY_MOVE_ITEM = 0x204,
+        SEND_EQUIPMENT = 0x0507,
     }
 }

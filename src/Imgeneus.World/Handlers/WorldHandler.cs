@@ -205,6 +205,14 @@ namespace Imgeneus.World.Handlers
 
             await database.SaveChangesAsync();
             WorldPacketFactory.SendMoveItem(client, sourceItem, destinationItem);
+
+            if (sourceItem.Bag == 0 || destinationItem.Bag == 0)
+            {
+                // Send equipment update to character.
+                WorldPacketFactory.SendEquipment(client, client.CharID, sourceItem.Bag == 0 ? sourceItem : destinationItem);
+
+                // TODO: send equipment update to all characters nearby.
+            }
         }
     }
 }

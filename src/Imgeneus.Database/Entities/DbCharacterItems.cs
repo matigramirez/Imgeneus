@@ -93,5 +93,10 @@ namespace Imgeneus.Database.Entities
                    Type == 98;
             }
         }
+
+        public bool IsCloakSlot
+        {
+            get => Slot == 7;
+        }
     }
 }

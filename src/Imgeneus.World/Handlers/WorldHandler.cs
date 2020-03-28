@@ -67,9 +67,9 @@ namespace Imgeneus.World.Handlers
             using var database = DependencyContainer.Instance.Resolve<IDatabase>();
 
             // Get number of user characters.
-            var characters = database.Characters.Where(x => x.UserId == client.UserID);
+            var characters = database.Characters.Where(x => x.UserId == client.UserID).ToList();
 
-            if (characters.Count() == Constants.MaxCharacters - 1)
+            if (characters.Count == Constants.MaxCharacters - 1)
             {
                 // Max number is reached.
                 WorldPacketFactory.SendCreatedCharacter(client, false);
@@ -101,8 +101,12 @@ namespace Imgeneus.World.Handlers
             };
 
             await database.Characters.AddAsync(character);
-            await database.SaveChangesAsync();
-            WorldPacketFactory.SendCreatedCharacter(client, true);
+            if (await database.SaveChangesAsync() > 0)
+            {
+                characters.Add(character);
+                WorldPacketFactory.SendCreatedCharacter(client, true);
+                WorldPacketFactory.SendCharacterList(client, characters);
+            }
         }
 
         [PacketHandler(PacketType.SELECT_CHARACTER)]

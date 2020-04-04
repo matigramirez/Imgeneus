@@ -277,7 +277,8 @@ namespace Imgeneus.Database.Entities
         public int Sell { get; set; }
 
         /// <summary>
-        /// ?
+        /// Grade is used to generate drop from mob. Each mob has drop rate of some items, that are part of some grade.
+        /// Imagine fox lvl2 it's drop grade is 1, which is apple, gold apple and green apple.
         /// </summary>
         [Required]
         public ushort Grade { get; set; }

@@ -42,6 +42,11 @@ namespace Imgeneus.Database.Context
         /// </summary>
         public DbSet<DbMob> Mobs { get; set; }
 
+        /// <summary>
+        /// Available drop from a monster. Taken from original db.
+        /// </summary>
+        public DbSet<DbMobItems> MobItems { get; set; }
+
         public DatabaseContext(DbContextOptions options) : base(options)
         {
         }
@@ -53,6 +58,8 @@ namespace Imgeneus.Database.Context
             modelBuilder.Entity<DbSkill>().HasIndex(s => new { s.SkillId, s.SkillLevel });
 
             modelBuilder.Entity<DbItem>().HasKey(x => new { x.Type, x.TypeId });
+
+            modelBuilder.Entity<DbMobItems>().HasKey(x => new { x.MobId, x.ItemOrder });
 
             #region Many to many relations
             // Skills.

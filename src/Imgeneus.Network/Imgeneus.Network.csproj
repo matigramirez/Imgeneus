@@ -7,10 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="BinarySerializer" Version="8.4.3" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\Imgeneus.Database\Imgeneus.Database.csproj" />
   </ItemGroup>
 

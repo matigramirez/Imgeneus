@@ -1,14 +1,14 @@
-﻿using Imgeneus.Database.Entities;
-using Imgeneus.Network.Data;
+﻿using Imgeneus.Network.Data;
 using Imgeneus.Network.Packets;
 using Imgeneus.Network.Serialization;
+using Imgeneus.World.Game.Player;
 using System.Collections.Generic;
 
 namespace Imgeneus.World.Packets
 {
     public static partial class WorldPacketFactory
     {
-        public static void SendCharacterItems(WorldClient client, IEnumerable<DbCharacterItems> items)
+        public static void SendCharacterItems(WorldClient client, IEnumerable<Item> items)
         {
             using var packet = new Packet(PacketType.CHARACTER_ITEMS);
             var bytes = new InventoryItems(items).Serialize();
@@ -16,7 +16,7 @@ namespace Imgeneus.World.Packets
             client.SendPacket(packet);
         }
 
-        public static void SendMoveItem(WorldClient client, DbCharacterItems sourceItem, DbCharacterItems destinationItem)
+        public static void SendMoveItem(WorldClient client, Item sourceItem, Item destinationItem)
         {
             using var packet = new Packet(PacketType.INVENTORY_MOVE_ITEM);
 
@@ -29,7 +29,7 @@ namespace Imgeneus.World.Packets
             client.SendPacket(packet);
         }
 
-        public static void SendEquipment(WorldClient client, int charId, DbCharacterItems item)
+        public static void SendEquipment(WorldClient client, int charId, Item item)
         {
             using var packet = new Packet(PacketType.SEND_EQUIPMENT);
             packet.Write(charId);

@@ -9,6 +9,7 @@ using Imgeneus.Network.Packets.Game;
 using Imgeneus.World.Packets;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using Imgeneus.World.Game;
 
 namespace Imgeneus.World.Handlers
 {
@@ -113,120 +114,46 @@ namespace Imgeneus.World.Handlers
         public static void OnSelectCharacter(WorldClient client, IPacketStream packet)
         {
             var selectCharacterPacket = new SelectCharacterPacket(packet);
+            var gameWorld = DependencyContainer.Instance.Resolve<IGameWorld>();
+            var player = gameWorld.LoadPlayer(selectCharacterPacket.CharacterId);
 
-            using var database = DependencyContainer.Instance.Resolve<IDatabase>();
-            var character = database.Characters.Include(c => c.Skills).ThenInclude(cs => cs.Skill)
-                                               .Include(c => c.Items).ThenInclude(ci => ci.Item)
-                                               .FirstOrDefault(c => c.Id == selectCharacterPacket.CharacterId);
-
-            WorldPacketFactory.SendSelectedCharacter(client, character);
+            WorldPacketFactory.SendSelectedCharacter(client, player);
         }
 
         [PacketHandler(PacketType.LEARN_NEW_SKILL)]
         public static async void OnNewSkillLearn(WorldClient client, IPacketStream packet)
         {
             var learnNewSkillsPacket = new LearnNewSkillPacket(packet);
-
-            using var database = DependencyContainer.Instance.Resolve<IDatabase>();
-
-            // Find learned skill.
-            var skill = database.Skills.First(s => s.SkillId == learnNewSkillsPacket.SkillId && s.SkillLevel == learnNewSkillsPacket.SkillLevel);
-
-            // Find character.
-            var character = database.Characters.Include(c => c.Skills)
-                                               .ThenInclude(s => s.Skill)
-                                               .Where(c => c.Id == client.CharID).First();
-            if (character.Skills.Any(s => s.SkillId == skill.Id))
+            var gameWorld = DependencyContainer.Instance.Resolve<IGameWorld>();
+            var player = gameWorld.Players.FirstOrDefault(p => p.Id == client.CharID);
+            if (player is null)
             {
-                // Character has already learned this skill.
-                // TODO: log it or throw exception?
+                // Not sure if it's really possible... Player should not be null.
                 return;
             }
-
-            // Check if the character has enough skill points.
-            if (character.SkillPoint >= skill.SkillPoint)
-            {
-                // Save char and learned skill.
-                var charSkill = new DbCharacterSkill()
-                {
-                    CharacterId = client.CharID,
-                    SkillId = skill.Id
-                };
-                character.Skills.Add(charSkill);
-                character.SkillPoint -= skill.SkillPoint;
-                await database.SaveChangesAsync();
-
-                // Send response.
-                WorldPacketFactory.LearnedNewSkill(client, character, true);
-            }
-            else // Not enough skill points.
-            {
-                WorldPacketFactory.LearnedNewSkill(client, character, false);
-            }
+            var successful = await player.LearnNewSkill(learnNewSkillsPacket.SkillId, learnNewSkillsPacket.SkillLevel);
+            WorldPacketFactory.LearnedNewSkill(client, player, successful);
         }
 
         [PacketHandler(PacketType.INVENTORY_MOVE_ITEM)]
         public static async void OnMoveItem(WorldClient client, IPacketStream packet)
         {
             var moveItemPacket = new MoveItemInInventoryPacket(packet);
-
-            using var database = DependencyContainer.Instance.Resolve<IDatabase>();
-
-            var charItems = database.CharacterItems.Where(ci => ci.CharacterId == client.CharID);
-
-            // Find source item.
-            var sourceItem = charItems.FirstOrDefault(ci => ci.Bag == moveItemPacket.CurrentBag && ci.Slot == moveItemPacket.CurrentSlot);
-
-            // Check, if any other item is at destination slot.
-            var destinationItem = charItems.FirstOrDefault(ci => ci.Bag == moveItemPacket.DestinationBag && ci.Slot == moveItemPacket.DestinationSlot);
-            if (destinationItem is null)
+            var gameWorld = DependencyContainer.Instance.Resolve<IGameWorld>();
+            var player = gameWorld.Players.FirstOrDefault(p => p.Id == client.CharID);
+            if (player is null)
             {
-                // No item at destination place.
-                // Since there is no destination item in database we will use source item as destination.
-                // The only change, that we need to do is to set new bag and slot.
-                destinationItem = sourceItem;
-                destinationItem.Bag = moveItemPacket.DestinationBag;
-                destinationItem.Slot = moveItemPacket.DestinationSlot;
-
-                // Clear old place. For this we need to create "empty" item, i.e. item with type and type_id and count == 0.
-                sourceItem = new DbCharacterItems();
-                sourceItem.Bag = moveItemPacket.CurrentBag;
-                sourceItem.Slot = moveItemPacket.CurrentSlot;
-            }
-            else
-            {
-                // There is some item at destination place.
-                if (sourceItem.Type == destinationItem.Type && sourceItem.TypeId == destinationItem.TypeId && destinationItem.IsJoinable)
-                {
-                    // Increase destination item count, if they are joinable.
-                    destinationItem.Count += sourceItem.Count;
-
-                    // This time unlike when destination was null, we have to remove source item from database.
-                    database.CharacterItems.Remove(sourceItem);
-
-                    // Clear old item. Again fake "empty" item with 0 type, type_id, count.
-                    sourceItem = new DbCharacterItems();
-                    sourceItem.Bag = moveItemPacket.CurrentBag;
-                    sourceItem.Slot = moveItemPacket.CurrentSlot;
-                }
-                else
-                {
-                    // Swap them.
-                    destinationItem.Bag = moveItemPacket.CurrentBag;
-                    destinationItem.Slot = moveItemPacket.CurrentSlot;
-
-                    sourceItem.Bag = moveItemPacket.DestinationBag;
-                    sourceItem.Slot = moveItemPacket.DestinationSlot;
-                }
+                // Not sure if it's really possible... Player should not be null.
+                return;
             }
 
-            await database.SaveChangesAsync();
-            WorldPacketFactory.SendMoveItem(client, sourceItem, destinationItem);
+            var items = await player.MoveItem(moveItemPacket.CurrentBag, moveItemPacket.CurrentSlot, moveItemPacket.DestinationBag, moveItemPacket.DestinationSlot);
+            WorldPacketFactory.SendMoveItem(client, items.sourceItem, items.destinationItem);
 
-            if (sourceItem.Bag == 0 || destinationItem.Bag == 0)
+            if (items.sourceItem.Bag == 0 || items.destinationItem.Bag == 0)
             {
                 // Send equipment update to character.
-                WorldPacketFactory.SendEquipment(client, client.CharID, sourceItem.Bag == 0 ? sourceItem : destinationItem);
+                WorldPacketFactory.SendEquipment(client, client.CharID, items.sourceItem.Bag == 0 ? items.sourceItem : items.destinationItem);
 
                 // TODO: send equipment update to all characters nearby.
             }
@@ -236,22 +163,15 @@ namespace Imgeneus.World.Handlers
         public static async void OnMoveCharacter(WorldClient client, IPacketStream packet)
         {
             var movePacket = new MoveCharacterPacket(packet);
-
-            if (movePacket.MovementType == MovementType.Moving)
+            var gameWorld = DependencyContainer.Instance.Resolve<IGameWorld>();
+            var player = gameWorld.Players.FirstOrDefault(p => p.Id == client.CharID);
+            if (player is null)
             {
-                // TODO: send update to other clients.
-            }
-            else // Stopped moving, we can save to database.
-            {
-                using var database = DependencyContainer.Instance.Resolve<IDatabase>();
-                var character = database.Characters.Find(client.CharID);
-                character.Angle = movePacket.Angle;
-                character.PosX = movePacket.X;
-                character.PosY = movePacket.Y;
-                character.PosZ = movePacket.Z;
-                await database.SaveChangesAsync();
+                // Not sure if it's really possible... Player should not be null.
+                return;
             }
 
+            await player.Move(movePacket.MovementType, movePacket.X, movePacket.Y, movePacket.Z, movePacket.Angle);
         }
     }
 }

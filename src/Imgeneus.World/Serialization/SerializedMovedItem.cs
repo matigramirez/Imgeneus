@@ -1,8 +1,5 @@
 ﻿using BinarySerialization;
-using Imgeneus.Database.Entities;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using Imgeneus.World.Game.Player;
 
 namespace Imgeneus.Network.Serialization
 {
@@ -38,7 +35,7 @@ namespace Imgeneus.Network.Serialization
         [FieldOrder(9)]
         public byte[] UnknownBytes2 { get; }
 
-        public SerializedMovedItem(DbCharacterItems item)
+        public SerializedMovedItem(Item item)
         {
             Bag = item.Bag;
             Slot = item.Slot;

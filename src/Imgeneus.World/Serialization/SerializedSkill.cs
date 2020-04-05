@@ -1,5 +1,5 @@
 ﻿using BinarySerialization;
-using Imgeneus.Database.Entities;
+using Imgeneus.World.Game.Player;
 
 namespace Imgeneus.Network.Serialization
 {
@@ -17,11 +17,11 @@ namespace Imgeneus.Network.Serialization
         [FieldOrder(3)]
         public int CooldownInSeconds { get; }
 
-        public SerializedSkill(DbCharacterSkill character)
+        public SerializedSkill(Skill skill)
         {
-            SkillId = character.Skill.SkillId;
-            SkillLevel = character.Skill.SkillLevel;
-            CooldownInSeconds = 0; // TODO: add cooldown to DbCharacterSkill.
+            SkillId = skill.SkillId;
+            SkillLevel = skill.SkillLevel;
+            CooldownInSeconds = skill.CooldownInSeconds;
         }
     }
 }

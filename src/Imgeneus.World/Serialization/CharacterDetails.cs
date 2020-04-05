@@ -1,6 +1,5 @@
 ﻿using BinarySerialization;
-using Imgeneus.Database.Entities;
-using System.IO;
+using Imgeneus.World.Game.Player;
 
 namespace Imgeneus.Network.Serialization
 {
@@ -81,7 +80,7 @@ namespace Imgeneus.Network.Serialization
         [FieldOrder(24)]
         public string GuildName { get => "TestGuildName"; }
 
-        public CharacterDetails(DbCharacter character)
+        public CharacterDetails(Character character)
         {
             Strength = character.Strength;
             Dexterity = character.Dexterity;

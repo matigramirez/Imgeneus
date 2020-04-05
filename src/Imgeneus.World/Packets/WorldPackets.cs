@@ -3,12 +3,13 @@ using Imgeneus.Database.Entities;
 using Imgeneus.Network.Data;
 using Imgeneus.Network.Packets;
 using Imgeneus.Network.Serialization;
+using Imgeneus.World.Game.Player;
 
 namespace Imgeneus.World.Packets
 {
     public static partial class WorldPacketFactory
     {
-        public static void SendSelectedCharacter(WorldClient client, DbCharacter character)
+        public static void SendSelectedCharacter(WorldClient client, Character character)
         {
             client.CharID = character.Id;
 
@@ -18,12 +19,12 @@ namespace Imgeneus.World.Packets
             client.SendPacket(packet);
 
             SendCharacterDetails(client, character);
-            SendCharacterItems(client, character.Items);
+            SendCharacterItems(client, character.InventoryItems);
             SendLearnedSkills(client, character);
             SendBlessAmount(client);
         }
 
-        private static void SendCharacterDetails(WorldClient client, DbCharacter character)
+        private static void SendCharacterDetails(WorldClient client, Character character)
         {
             using var packet = new Packet(PacketType.CHARACTER_DETAILS);
             var bytes = new CharacterDetails(character).Serialize();

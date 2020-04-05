@@ -1,5 +1,6 @@
 ﻿using BinarySerialization;
 using Imgeneus.Database.Entities;
+using Imgeneus.World.Game.Player;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -16,7 +17,7 @@ namespace Imgeneus.Network.Serialization
         [FieldOrder(2)]
         public byte[] Skills { get; }
 
-        public CharacterSkills(DbCharacter character)
+        public CharacterSkills(Character character)
         {
             CharSkillPoints = character.SkillPoint;
             SkillsCount = (byte)character.Skills.Count;

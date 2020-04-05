@@ -65,7 +65,7 @@ namespace Imgeneus.World.Game.Player
         {
             using var database = DependencyContainer.Instance.Resolve<IDatabase>();
 
-            if (Skills.Any(s => s.SkillId == skillId))
+            if (Skills.Any(s => s.SkillId == skillId && s.SkillLevel == skillLevel))
             {
                 // Character has already learned this skill.
                 // TODO: log it or throw exception?
@@ -95,7 +95,9 @@ namespace Imgeneus.World.Game.Player
             if (savedEntries > 0)
             {
                 SkillPoint = dbCharacter.SkillPoint;
-                Skills.Add(Skill.FromDbSkill(dbSkill));
+                var skill = Skill.FromDbSkill(dbSkill);
+                Skills.Add(skill);
+                _logger.LogDebug($"Character {Id} learned skill {skill.SkillId} of level {skill.SkillLevel}");
                 return true;
             }
             else

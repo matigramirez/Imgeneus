@@ -5,7 +5,6 @@ using Imgeneus.Database.Entities;
 using Imgeneus.Network.Packets.Game;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -24,9 +23,16 @@ namespace Imgeneus.World.Game.Player
 
         public int Id;
         public string Name;
+        public Fraction Country;
         public ushort Level;
         public Map Map;
+        public Race Race;
+        public CharacterProfession Class;
         public Mode Mode;
+        public byte Hair;
+        public byte Face;
+        public byte Height;
+        public Gender Gender;
         public float PosX;
         public float PosY;
         public float PosZ;
@@ -48,6 +54,11 @@ namespace Imgeneus.World.Game.Player
         public ushort Deaths;
         public ushort Victories;
         public ushort Defeats;
+        public bool IsAdmin;
+        public byte Motion;
+        public bool IsDead;
+        public bool HasParty;
+        public bool IsPartyLead;
 
         #endregion
 
@@ -306,7 +317,13 @@ namespace Imgeneus.World.Game.Player
                 Name = dbCharacter.Name,
                 Level = dbCharacter.Level,
                 Map = dbCharacter.Map,
+                Race = dbCharacter.Race,
+                Class = dbCharacter.Class,
                 Mode = dbCharacter.Mode,
+                Hair = dbCharacter.Hair,
+                Face = dbCharacter.Face,
+                Height = dbCharacter.Height,
+                Gender = dbCharacter.Gender,
                 PosX = dbCharacter.PosX,
                 PosY = dbCharacter.PosY,
                 PosZ = dbCharacter.PosZ,
@@ -327,7 +344,9 @@ namespace Imgeneus.World.Game.Player
                 Kills = dbCharacter.Kills,
                 Deaths = dbCharacter.Deaths,
                 Victories = dbCharacter.Victories,
-                Defeats = dbCharacter.Defeats
+                Defeats = dbCharacter.Defeats,
+                IsAdmin = dbCharacter.User.Authority == 0,
+                Country = dbCharacter.User.Faction
             };
 
             character.Skills.AddRange(dbCharacter.Skills.Select(s => Skill.FromDbSkill(s.Skill)));

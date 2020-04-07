@@ -1,4 +1,5 @@
 ﻿using Imgeneus.World.Game.Player;
+using System;
 using System.Collections.Concurrent;
 
 namespace Imgeneus.World.Game
@@ -9,6 +10,11 @@ namespace Imgeneus.World.Game
     public interface IGameWorld
     {
         /// <summary>
+        /// Event, that is fired, when new player enters the map.
+        /// </summary>
+        public event Action<Character> OnPlayerEnteredMap;
+
+        /// <summary>
         /// Connected players.
         /// </summary>
         BlockingCollection<Character> Players { get; }
@@ -17,5 +23,10 @@ namespace Imgeneus.World.Game
         /// Loads player into game world.
         /// </summary>
         Character LoadPlayer(int characterId);
+
+        /// <summary>
+        /// Loads player into map and send notification other players.
+        /// </summary>
+        Character LoadPlayerInMap(int characterId);
     }
 }

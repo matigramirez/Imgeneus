@@ -34,7 +34,12 @@
 
         // Game 
         GAME_HANDSHAKE = 0xA301,
-        CHARACTER_MOVE = 0x501,
+        PING = 0xA303,
+        CHARACTER_ENTERED_MAP = 0x0201,
+        CHARACTER_SHAPE = 0x0303,
+        CHARACTER_DEAD = 0x0405,
+        CHARACTER_MOVE = 0x0501,
+        CHARACTER_MOTION = 0x0506,
         BLESS_AMOUNT = 0x0211,
 
         // Char skills

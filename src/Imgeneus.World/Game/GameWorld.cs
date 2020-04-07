@@ -3,6 +3,7 @@ using Imgeneus.Database;
 using Imgeneus.World.Game.Player;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Concurrent;
 using System.Linq;
 
@@ -23,6 +24,9 @@ namespace Imgeneus.World.Game
         #region Players
 
         /// <inheritdoc />
+        public event Action<Character> OnPlayerEnteredMap;
+
+        /// <inheritdoc />
         public BlockingCollection<Character> Players { get; private set; } = new BlockingCollection<Character>();
 
         /// <inheritdoc />
@@ -31,12 +35,26 @@ namespace Imgeneus.World.Game
             using var database = DependencyContainer.Instance.Resolve<IDatabase>();
             var dbCharacter = database.Characters.Include(c => c.Skills).ThenInclude(cs => cs.Skill)
                                                .Include(c => c.Items).ThenInclude(ci => ci.Item)
+                                               .Include(c => c.User)
                                                .FirstOrDefault(c => c.Id == characterId);
             var newPlayer = Character.FromDbCharacter(dbCharacter);
 
             Players.Add(newPlayer);
             _logger.LogDebug($"Player {newPlayer.Id} connected to game world");
+
             return newPlayer;
+        }
+
+        /// <inheritdoc />
+        public Character LoadPlayerInMap(int characterId)
+        {
+            var player = Players.FirstOrDefault(p => p.Id == characterId);
+
+            // TODO: implement maps. For now just notify other players, that new player arrived.
+
+            OnPlayerEnteredMap?.Invoke(player);
+
+            return player;
         }
 
         #endregion

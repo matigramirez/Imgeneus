@@ -38,6 +38,14 @@ namespace Imgeneus.World.Handlers
             WorldPacketFactory.SendAccountFaction(client, user);
         }
 
+        [PacketHandler(PacketType.PING)]
+        public static void OnPing(WorldClient client, IPacketStream packet)
+        {
+            using var sendPacket = new Packet(PacketType.PING);
+            sendPacket.Write(0);
+            client.SendPacket(sendPacket);
+        }
+
         [PacketHandler(PacketType.ACCOUNT_FACTION)]
         public static async void OnAccountFraction(WorldClient client, IPacketStream packet)
         {
@@ -172,6 +180,19 @@ namespace Imgeneus.World.Handlers
             }
 
             await player.Move(movePacket.MovementType, movePacket.X, movePacket.Y, movePacket.Z, movePacket.Angle);
+        }
+
+        [PacketHandler(PacketType.CHARACTER_ENTERED_MAP)]
+        public static void OnCharacterEnteredMap(WorldClient client, IPacketStream packet)
+        {
+            var gameWorld = DependencyContainer.Instance.Resolve<IGameWorld>();
+            gameWorld.LoadPlayerInMap(client.CharID);
+
+            // Send newly connected player all connected players.
+            foreach (var player in gameWorld.Players.Where(c => c.Id != client.CharID))
+            {
+                WorldPacketFactory.CharacterConnectedToMap(client, player);
+            }
         }
     }
 }

@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Linq;
 using Imgeneus.Database.Entities;
 using Imgeneus.Network.Data;
 using Imgeneus.Network.Packets;
+using Imgeneus.Network.Packets.Game;
 using Imgeneus.Network.Serialization;
 using Imgeneus.World.Game.Player;
+using Imgeneus.World.Serialization;
 
 namespace Imgeneus.World.Packets
 {
@@ -71,6 +74,21 @@ namespace Imgeneus.World.Packets
             }
 
             client.SendPacket(packet);
+        }
+
+        public static void CharacterConnectedToMap(WorldClient client, Character character)
+        {
+            using var packet0 = new Packet(PacketType.CHARACTER_ENTERED_MAP);
+            packet0.Write(new CharacterEnteredMap(character).Serialize());
+            client.SendPacket(packet0);
+
+            using var packet1 = new Packet(PacketType.CHARACTER_MOVE);
+            packet1.Write(new CharacterMove(character).Serialize());
+            client.SendPacket(packet1);
+
+            using var packet2 = new Packet(PacketType.CHARACTER_SHAPE);
+            packet2.Write(new CharacterShape(character).Serialize());
+            client.SendPacket(packet2);
         }
     }
 }

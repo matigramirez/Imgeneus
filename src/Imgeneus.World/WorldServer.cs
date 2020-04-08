@@ -1,5 +1,5 @@
 ﻿using Imgeneus.Core.Structures.Configuration;
-using Imgeneus.Network.Packets.Game;
+using Imgeneus.Database.Constants;
 using Imgeneus.Network.Server;
 using Imgeneus.World.Game;
 using Imgeneus.World.Game.Player;
@@ -37,6 +37,16 @@ namespace Imgeneus.World
         {
             _gameWorld.OnPlayerEnteredMap += GameWorld_OnPlayerConnected;
             _gameWorld.OnPlayerMove += GameWorld_OnPlayerMove;
+            _gameWorld.OnPlayerMotion += GameWorld_OnPlayerMotion;
+        }
+
+        private void GameWorld_OnPlayerMotion(int characterId, Motion motion)
+        {
+            // Send notification each player about motion.
+            foreach (var client in clients)
+            {
+                WorldPacketFactory.CharacterMotion(client.Value, characterId, motion);
+            }
         }
 
         private void GameWorld_OnPlayerConnected(Character newPlayer)

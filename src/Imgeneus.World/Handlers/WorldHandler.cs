@@ -181,11 +181,20 @@ namespace Imgeneus.World.Handlers
             var gameWorld = DependencyContainer.Instance.Resolve<IGameWorld>();
             gameWorld.LoadPlayerInMap(client.CharID);
 
-            // Send newly connected player all connected players.
+            // Send to newly connected player all currently connected players.
             foreach (var player in gameWorld.Players.Where(c => c.Id != client.CharID))
             {
                 WorldPacketFactory.CharacterConnectedToMap(client, player);
             }
+        }
+
+        [PacketHandler(PacketType.CHARACTER_MOTION)]
+        public static void OnCharacterMotion(WorldClient client, IPacketStream packet)
+        {
+            var motionPacket = new MotionPacket(packet);
+
+            var gameWorld = DependencyContainer.Instance.Resolve<IGameWorld>();
+            gameWorld.PlayerSendMotion(client.CharID, motionPacket.Motion);
         }
     }
 }

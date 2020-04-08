@@ -1,4 +1,5 @@
 ﻿using BinarySerialization;
+using Imgeneus.Database.Constants;
 using Imgeneus.Database.Entities;
 using Imgeneus.Network.Serialization;
 using Imgeneus.World.Game.Player;
@@ -16,7 +17,7 @@ namespace Imgeneus.World.Serialization
         public bool IsDead { get; }
 
         [FieldOrder(2)]
-        public byte Motion { get; }
+        public Motion Motion { get; }
 
         [FieldOrder(3)]
         public Fraction Country { get; }

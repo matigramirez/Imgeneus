@@ -1,5 +1,6 @@
 ﻿using Imgeneus.Core.DependencyInjection;
 using Imgeneus.Database;
+using Imgeneus.Database.Constants;
 using Imgeneus.Network.Packets.Game;
 using Imgeneus.World.Game.Player;
 using Microsoft.EntityFrameworkCore;
@@ -30,6 +31,9 @@ namespace Imgeneus.World.Game
 
         /// <inheritdoc />
         public event Action<Character> OnPlayerMove;
+
+        /// <inheritdoc />
+        public event Action<int, Motion> OnPlayerMotion;
 
         /// <inheritdoc />
         public BlockingCollection<Character> Players { get; private set; } = new BlockingCollection<Character>();
@@ -84,6 +88,17 @@ namespace Imgeneus.World.Game
             OnPlayerEnteredMap?.Invoke(player);
 
             return player;
+        }
+
+        /// <inheritdoc />
+        public void PlayerSendMotion(int characterId, Motion motion)
+        {
+            if (motion == Motion.None || motion == Motion.Sit)
+            {
+                var player = Players.First(p => p.Id == characterId);
+                player.Motion = motion;
+            }
+            OnPlayerMotion?.Invoke(characterId, motion);
         }
 
         #endregion

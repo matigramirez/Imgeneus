@@ -1,4 +1,5 @@
-﻿using Imgeneus.Network.Packets.Game;
+﻿using Imgeneus.Database.Constants;
+using Imgeneus.Network.Packets.Game;
 using Imgeneus.World.Game.Player;
 using System;
 using System.Collections.Concurrent;
@@ -15,6 +16,11 @@ namespace Imgeneus.World.Game
         /// Event, that is fired, when new player enters the map.
         /// </summary>
         public event Action<Character> OnPlayerEnteredMap;
+
+        /// <summary>
+        /// Event, that is fired, when player sends motion.
+        /// </summary>
+        public event Action<int, Motion> OnPlayerMotion;
 
         /// <summary>
         /// Connected players.
@@ -46,5 +52,12 @@ namespace Imgeneus.World.Game
         /// <param name="Z">z coordinate</param>
         /// <param name="angle">rotation angle</param>
         Task PlayerMoves(int characterId, MovementType movementType, float X, float Y, float Z, ushort angle);
+
+        /// <summary>
+        /// Character sends some motion.
+        /// </summary>
+        /// <param name="characterId">id of character</param>
+        /// <param name="motion">motion type</param>
+        void PlayerSendMotion(int characterId, Motion motion);
     }
 }

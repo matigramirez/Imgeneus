@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using Imgeneus.Database.Constants;
 using Imgeneus.Database.Entities;
 using Imgeneus.Network.Data;
 using Imgeneus.Network.Packets;
@@ -95,6 +96,14 @@ namespace Imgeneus.World.Packets
         {
             using var packet = new Packet(PacketType.CHARACTER_MOVE);
             packet.Write(new CharacterMove(character).Serialize());
+            client.SendPacket(packet);
+        }
+
+        public static void CharacterMotion(WorldClient client, int characterId, Motion motion)
+        {
+            using var packet = new Packet(PacketType.CHARACTER_MOTION);
+            packet.Write(characterId);
+            packet.WriteByte((byte)motion);
             client.SendPacket(packet);
         }
     }

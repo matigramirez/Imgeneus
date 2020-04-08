@@ -54,7 +54,11 @@ namespace Imgeneus.World.Game.Player
         public ushort Victories;
         public ushort Defeats;
         public bool IsAdmin;
-        public byte Motion;
+
+        /// <summary>
+        /// Motion, like sit.
+        /// </summary>
+        public Motion Motion;
 
         /// <summary>
         ///  Set to 1 if you want character running or to 0 if character is "walking".

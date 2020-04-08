@@ -130,6 +130,12 @@ namespace Imgeneus.World.Game.Player
 
         #endregion
 
+        #region Buffs
+
+        public List<ActiveBuff> ActiveBuffs { get; private set; } = new List<ActiveBuff>();
+
+        #endregion
+
         #region Inventory
 
         public List<Item> InventoryItems { get; private set; } = new List<Item>();
@@ -331,6 +337,7 @@ namespace Imgeneus.World.Game.Player
             };
 
             character.Skills.AddRange(dbCharacter.Skills.Select(s => Skill.FromDbSkill(s.Skill)));
+            character.ActiveBuffs.AddRange(dbCharacter.ActiveBuffs.Select(b => ActiveBuff.FromDbCharacterActiveBuff(b)));
             character.InventoryItems.AddRange(dbCharacter.Items.Select(i => Item.FromDbItem(i)));
 
             return character;

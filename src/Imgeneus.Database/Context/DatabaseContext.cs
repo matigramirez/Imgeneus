@@ -32,6 +32,8 @@ namespace Imgeneus.Database.Context
         /// </summary>
         public DbSet<DbSkill> Skills { get; set; }
 
+        public DbSet<DbCharacterActiveBuff> ActiveBuffs { get; set; }
+
         /// <summary>
         /// Collection of items. Taken from original db.
         /// </summary>
@@ -65,6 +67,9 @@ namespace Imgeneus.Database.Context
             // Skills.
             modelBuilder.Entity<DbCharacterSkill>().HasKey(x => new { x.CharacterId, x.SkillId });
             modelBuilder.Entity<DbCharacterSkill>().HasOne(pt => pt.Character).WithMany(p => p.Skills).HasForeignKey(pt => pt.CharacterId);
+
+            // Active buffs.
+            modelBuilder.Entity<DbCharacterActiveBuff>().HasOne(b => b.Character).WithMany(c => c.ActiveBuffs).HasForeignKey(b => b.CharacterId);
 
             // Items
             modelBuilder.Entity<DbCharacterItems>().HasOne(pt => pt.Character).WithMany(p => p.Items).HasForeignKey(pt => pt.CharacterId);

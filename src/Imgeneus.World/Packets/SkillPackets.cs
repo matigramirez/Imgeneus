@@ -1,7 +1,9 @@
 ﻿using Imgeneus.Database.Entities;
 using Imgeneus.Network.Data;
 using Imgeneus.Network.Packets;
+using Imgeneus.Network.Serialization;
 using Imgeneus.World.Game.Player;
+using Imgeneus.World.Serialization;
 
 namespace Imgeneus.World.Packets
 {
@@ -20,6 +22,21 @@ namespace Imgeneus.World.Packets
                 packet.Write(1);
             }
 
+            client.SendPacket(packet);
+        }
+
+        private static void SendLearnedSkills(WorldClient client, Character character)
+        {
+            using var packet = new Packet(PacketType.CHARACTER_SKILLS);
+            var bytes = new CharacterSkills(character).Serialize();
+            packet.Write(bytes);
+            client.SendPacket(packet);
+        }
+
+        private static void SendActiveBuffs(WorldClient client, Character character)
+        {
+            using var packet = new Packet(PacketType.CHARACTER_ACTIVE_BUFFS);
+            packet.Write(new CharacterActiveBuffs(character.ActiveBuffs).Serialize());
             client.SendPacket(packet);
         }
     }

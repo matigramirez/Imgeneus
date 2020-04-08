@@ -236,6 +236,11 @@ namespace Imgeneus.Database.Entities
         /// </summary>
         public ICollection<DbCharacterSkill> Skills { get; set; }
 
+        /// <summary>
+        /// Active buffs.
+        /// </summary>
+        public ICollection<DbCharacterActiveBuff> ActiveBuffs { get; set; }
+
         public DbCharacter()
         {
             Items = new HashSet<DbCharacterItems>();

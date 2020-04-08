@@ -25,6 +25,7 @@ namespace Imgeneus.World.Packets
             SendCharacterDetails(client, character);
             SendCharacterItems(client, character.InventoryItems);
             SendLearnedSkills(client, character);
+            SendActiveBuffs(client, character);
             SendBlessAmount(client);
         }
 

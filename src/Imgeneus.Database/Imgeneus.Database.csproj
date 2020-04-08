@@ -40,6 +40,8 @@
     <Compile Remove="Migrations\20200404083638_AddMob.Designer.cs" />
     <Compile Remove="Migrations\20200404085529_AddMobItems.cs" />
     <Compile Remove="Migrations\20200404085529_AddMobItems.Designer.cs" />
+    <Compile Remove="Migrations\20200408181336_AddCharacterActiveBuffs1.cs" />
+    <Compile Remove="Migrations\20200408181336_AddCharacterActiveBuffs1.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

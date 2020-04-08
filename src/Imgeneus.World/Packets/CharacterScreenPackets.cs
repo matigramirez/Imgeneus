@@ -3,7 +3,6 @@ using Imgeneus.Database.Entities;
 using Imgeneus.Network.Data;
 using Imgeneus.Network.Packets;
 using Imgeneus.Network.Serialization;
-using Imgeneus.World.Game.Player;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -64,14 +63,6 @@ namespace Imgeneus.World.Packets
             }
 
 
-            client.SendPacket(packet);
-        }
-
-        private static void SendLearnedSkills(WorldClient client, Character character)
-        {
-            using var packet = new Packet(PacketType.CHARACTER_SKILLS);
-            var bytes = new CharacterSkills(character).Serialize();
-            packet.Write(bytes);
             client.SendPacket(packet);
         }
     }

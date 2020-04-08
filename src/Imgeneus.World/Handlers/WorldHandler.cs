@@ -172,14 +172,7 @@ namespace Imgeneus.World.Handlers
         {
             var movePacket = new MoveCharacterPacket(packet);
             var gameWorld = DependencyContainer.Instance.Resolve<IGameWorld>();
-            var player = gameWorld.Players.FirstOrDefault(p => p.Id == client.CharID);
-            if (player is null)
-            {
-                // Not sure if it's really possible... Player should not be null.
-                return;
-            }
-
-            await player.Move(movePacket.MovementType, movePacket.X, movePacket.Y, movePacket.Z, movePacket.Angle);
+            await gameWorld.PlayerMoves(client.CharID, movePacket.MovementType, movePacket.X, movePacket.Y, movePacket.Z, movePacket.Angle);
         }
 
         [PacketHandler(PacketType.CHARACTER_ENTERED_MAP)]

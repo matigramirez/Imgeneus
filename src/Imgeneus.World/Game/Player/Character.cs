@@ -2,7 +2,6 @@
 using Imgeneus.Database;
 using Imgeneus.Database.Constants;
 using Imgeneus.Database.Entities;
-using Imgeneus.Network.Packets.Game;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
@@ -56,6 +55,13 @@ namespace Imgeneus.World.Game.Player
         public ushort Defeats;
         public bool IsAdmin;
         public byte Motion;
+
+        /// <summary>
+        ///  Set to 1 if you want character running or to 0 if character is "walking".
+        ///  Used to change with Tab in previous episodes.
+        /// </summary>
+        public byte MoveMotion = 1;
+
         public bool IsDead;
         public bool HasParty;
         public bool IsPartyLead;
@@ -273,35 +279,6 @@ namespace Imgeneus.World.Game.Player
             }
 
             return (sourceItem, destinationItem);
-        }
-
-        #endregion
-
-        #region Move
-
-        public async Task Move(MovementType movementType, float X, float Y, float Z, ushort angle)
-        {
-            PosX = X;
-            PosY = Y;
-            PosZ = Z;
-            Angle = angle;
-
-            if (movementType == MovementType.Moving)
-            {
-                // TODO: send update to other clients.
-            }
-            else
-            {
-                using var database = DependencyContainer.Instance.Resolve<IDatabase>();
-                var dbCharacter = database.Characters.Find(Id);
-                dbCharacter.Angle = angle;
-                dbCharacter.PosX = X;
-                dbCharacter.PosY = Y;
-                dbCharacter.PosZ = Z;
-                await database.SaveChangesAsync();
-            }
-
-            _logger.LogDebug($"Character {Id} moved to x={PosX} y={PosY} z={PosZ} angle={Angle}");
         }
 
         #endregion

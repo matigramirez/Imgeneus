@@ -1,5 +1,4 @@
 ﻿using BinarySerialization;
-using Imgeneus.Database.Entities;
 using Imgeneus.World.Game.Player;
 using System.Collections.Generic;
 
@@ -18,7 +17,7 @@ namespace Imgeneus.Network.Serialization
             var serializedItems = new List<byte>();
             foreach (var charItm in items)
             {
-                var serialized = new SerializedItem(charItm).Serialize();
+                var serialized = new InventoryItem(charItm).Serialize();
                 serializedItems.AddRange(serialized);
                 ItemsCount++;
             }

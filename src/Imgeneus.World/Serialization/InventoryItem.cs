@@ -1,11 +1,10 @@
 ﻿using BinarySerialization;
-using Imgeneus.Database.Entities;
 using Imgeneus.World.Game.Player;
 using System;
 
 namespace Imgeneus.Network.Serialization
 {
-    public class SerializedItem : BaseSerializable
+    public class InventoryItem : BaseSerializable
     {
         [FieldOrder(0)]
         public byte Bag { get; }
@@ -40,7 +39,7 @@ namespace Imgeneus.Network.Serialization
         [FieldOrder(10)]
         public byte[] ItemDyed { get; }
 
-        public SerializedItem(Item item)
+        public InventoryItem(Item item)
         {
             Bag = item.Bag;
             Slot = item.Slot;

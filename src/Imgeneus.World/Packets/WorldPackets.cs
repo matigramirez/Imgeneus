@@ -90,5 +90,12 @@ namespace Imgeneus.World.Packets
             packet2.Write(new CharacterShape(character).Serialize());
             client.SendPacket(packet2);
         }
+
+        public static void CharacterMoves(WorldClient client, Character character)
+        {
+            using var packet = new Packet(PacketType.CHARACTER_MOVE);
+            packet.Write(new CharacterMove(character).Serialize());
+            client.SendPacket(packet);
+        }
     }
 }

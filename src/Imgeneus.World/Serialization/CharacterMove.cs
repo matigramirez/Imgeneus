@@ -27,7 +27,7 @@ namespace Imgeneus.World.Serialization
         public CharacterMove(Character character)
         {
             CharId = character.Id;
-            Motion = character.Motion;
+            Motion = character.MoveMotion;
             Angle = character.Angle;
             PosX = character.PosX;
             PosY = character.PosY;

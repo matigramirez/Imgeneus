@@ -1,4 +1,5 @@
 ﻿using Imgeneus.Core.Structures.Configuration;
+using Imgeneus.Network.Packets.Game;
 using Imgeneus.Network.Server;
 using Imgeneus.World.Game;
 using Imgeneus.World.Game.Player;
@@ -35,6 +36,7 @@ namespace Imgeneus.World
         private void ConnectToGameWorld()
         {
             _gameWorld.OnPlayerEnteredMap += GameWorld_OnPlayerConnected;
+            _gameWorld.OnPlayerMove += GameWorld_OnPlayerMove;
         }
 
         private void GameWorld_OnPlayerConnected(Character newPlayer)
@@ -43,6 +45,15 @@ namespace Imgeneus.World
             foreach (var client in clients.Where(c => c.Value.CharID != 0 && c.Value.CharID != newPlayer.Id))
             {
                 WorldPacketFactory.CharacterConnectedToMap(client.Value, newPlayer);
+            }
+        }
+
+        private void GameWorld_OnPlayerMove(Character character)
+        {
+            // Send other clients notification, that user is moving.
+            foreach (var client in clients.Where(c => c.Value.CharID != 0 && c.Value.CharID != character.Id))
+            {
+                WorldPacketFactory.CharacterMoves(client.Value, character);
             }
         }
 

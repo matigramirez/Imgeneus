@@ -17,7 +17,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Imgeneus.World", "src\Imgen
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UnitTests", "UnitTests", "{D2B05B8D-E630-4702-A4E9-5A028DAF9EEE}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Imgeneus.World.Tests", "src\UnitTests\Imgeneus.World.Test\Imgeneus.World.Tests.csproj", "{D3CDC69A-46E8-459C-BFDA-99C2FA8C5BF1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Imgeneus.World.Tests", "src\UnitTests\Imgeneus.World.Tests\Imgeneus.World.Tests.csproj", "{D3CDC69A-46E8-459C-BFDA-99C2FA8C5BF1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

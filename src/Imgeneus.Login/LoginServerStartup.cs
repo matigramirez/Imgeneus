@@ -32,7 +32,11 @@ namespace Imgeneus.Login
             DependencyContainer.Instance.Configure(services => services.AddLogging(builder =>
             {
                 builder.AddFilter("Microsoft", LogLevel.Warning);
+#if DEBUG
                 builder.SetMinimumLevel(LogLevel.Trace);
+#else
+                builder.SetMinimumLevel(LogLevel.Information);
+#endif
                 builder.AddNLog(new NLogProviderOptions
                 {
                     CaptureMessageTemplates = true,

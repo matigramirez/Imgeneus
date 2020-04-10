@@ -37,7 +37,7 @@ namespace Imgeneus.World
 #if DEBUG
                 builder.SetMinimumLevel(LogLevel.Trace);
 #else
-                builder.SetMinimumLevel(LogLevel.Warning);
+                builder.SetMinimumLevel(LogLevel.Information);
 #endif
                 builder.AddNLog(new NLogProviderOptions
                 {

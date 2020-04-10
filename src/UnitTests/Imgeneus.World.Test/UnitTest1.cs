@@ -1,14 +1,13 @@
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 
 namespace Imgeneus.World.Test
 {
-    [TestClass]
     public class UnitTest1
     {
-        [TestMethod]
+        [Fact]
         public void TestMethod1()
         {
-            Assert.IsTrue(true);
+            Assert.Equal(1, 1);
         }
     }
 }

@@ -46,4 +46,4 @@ steps:
   displayName: Publish build artifacts
   inputs:
     pathtoPublish: '$(Build.ArtifactStagingDirectory)'
-    artifactName: 'Imgeneus'
+    artifactName: 'Imgeneus.Windows'

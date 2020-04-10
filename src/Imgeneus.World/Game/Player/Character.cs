@@ -14,9 +14,9 @@ namespace Imgeneus.World.Game.Player
     public class Character
     {
         private readonly ILogger<Character> _logger;
-        public Character()
+        public Character(ILogger<Character> logger)
         {
-            _logger = DependencyContainer.Instance.Resolve<ILogger<Character>>();
+            _logger = logger;
         }
 
         #region Character info
@@ -390,9 +390,9 @@ namespace Imgeneus.World.Game.Player
         /// <summary>
         /// Creates character from database information.
         /// </summary>
-        public static Character FromDbCharacter(DbCharacter dbCharacter)
+        public static Character FromDbCharacter(DbCharacter dbCharacter, ILogger<Character> logger)
         {
-            var character = new Character()
+            var character = new Character(logger)
             {
                 Id = dbCharacter.Id,
                 Name = dbCharacter.Name,

@@ -56,7 +56,7 @@ namespace Imgeneus.World.Game
                                                .Include(c => c.ActiveBuffs).ThenInclude(cb => cb.Skill)
                                                .Include(c => c.User)
                                                .FirstOrDefault(c => c.Id == characterId);
-            var newPlayer = Character.FromDbCharacter(dbCharacter);
+            var newPlayer = Character.FromDbCharacter(dbCharacter, DependencyContainer.Instance.Resolve<ILogger<Character>>());
 
             Players.TryAdd(newPlayer.Id, newPlayer);
             _logger.LogDebug($"Player {newPlayer.Id} connected to game world");

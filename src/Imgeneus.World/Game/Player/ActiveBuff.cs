@@ -9,7 +9,7 @@ namespace Imgeneus.World.Game.Player
 
         public DateTime ResetTime { get; set; }
 
-        public int CountDownInSeconds { get => 100; } // TODO: implement countdown. It's reset time - now.
+        public int CountDownInSeconds { get => (int)ResetTime.Subtract(DateTime.UtcNow).TotalSeconds; }
 
         public ushort SkillId { get; set; }
 

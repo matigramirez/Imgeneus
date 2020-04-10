@@ -32,6 +32,9 @@ namespace Imgeneus.Database.Context
         /// </summary>
         public DbSet<DbSkill> Skills { get; set; }
 
+        /// <summary>
+        /// Collection of characters' active buffs.
+        /// </summary>
         public DbSet<DbCharacterActiveBuff> ActiveBuffs { get; set; }
 
         /// <summary>

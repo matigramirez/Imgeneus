@@ -12,7 +12,7 @@ namespace Imgeneus.Network.Serialization
         public byte SkillLevel { get; }
 
         [FieldOrder(2)]
-        public byte UnknownByte { get; }
+        public byte Number { get; }
 
         [FieldOrder(3)]
         public int CooldownInSeconds { get; }
@@ -21,6 +21,7 @@ namespace Imgeneus.Network.Serialization
         {
             SkillId = skill.SkillId;
             SkillLevel = skill.SkillLevel;
+            Number = skill.Number;
             CooldownInSeconds = skill.CooldownInSeconds;
         }
     }

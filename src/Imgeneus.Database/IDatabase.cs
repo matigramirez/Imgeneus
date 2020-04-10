@@ -39,6 +39,11 @@ namespace Imgeneus.Database
         public DbSet<DbItem> Items { get; set; }
 
         /// <summary>
+        /// Collection of characters' active buffs.
+        /// </summary>
+        public DbSet<DbCharacterActiveBuff> ActiveBuffs { get; set; }
+
+        /// <summary>
         /// Saves changes to database.
         /// </summary>
         public int SaveChanges();

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations.Schema;
+using Imgeneus.Database.Constants;
 
 namespace Imgeneus.Database.Entities
 {
@@ -92,9 +93,9 @@ namespace Imgeneus.Database.Entities
         public byte TypeEffect { get; set; }
 
         /// <summary>
-        /// TODO: ?
+        /// Type detail describes what skill does.
         /// </summary>
-        public ushort TypeDetail { get; set; }
+        public TypeDetail TypeDetail { get; set; }
 
         /// <summary>
         /// Skill requires TODO: ?. Maybe this can migrate to bool value...
@@ -192,7 +193,7 @@ namespace Imgeneus.Database.Entities
         public byte ReadyTime { get; set; }
 
         /// <summary>
-        /// TODO: ? maybe it's cooldown?
+        /// Time after which skill can be used again.
         /// </summary>
         public ushort ResetTime { get; set; }
 
@@ -227,9 +228,9 @@ namespace Imgeneus.Database.Entities
         public byte SuccessValue { get; set; }
 
         /// <summary>
-        /// TODO: ?
+        /// What target is required for this skill.
         /// </summary>
-        public byte TargetType { get; set; }
+        public TargetType TargetType { get; set; }
 
         /// <summary>
         /// TODO: ?
@@ -242,7 +243,8 @@ namespace Imgeneus.Database.Entities
         public byte MultiAttack { get; set; }
 
         /// <summary>
-        /// TODO: ? it was ushort in original db. But I could not migrate it! Changed to int.
+        /// Time for example for buffs. This time shows how long the skill will be applied.
+        /// NB! It was ushort in original db. But I could not migrate it! Changed to int.
         /// </summary>
         public int KeepTime { get; set; }
 

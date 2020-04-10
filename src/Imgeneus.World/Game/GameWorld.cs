@@ -36,6 +36,12 @@ namespace Imgeneus.World.Game
         public event Action<int, Motion> OnPlayerMotion;
 
         /// <inheritdoc />
+        public event Action<Character, Skill> OnPlayerUsedSkill;
+
+        /// <inheritdoc />
+        public event Action<Character, ActiveBuff> OnPlayerGotBuff;
+
+        /// <inheritdoc />
         public BlockingCollection<Character> Players { get; private set; } = new BlockingCollection<Character>();
 
         /// <inheritdoc />
@@ -100,6 +106,23 @@ namespace Imgeneus.World.Game
                 player.Motion = motion;
             }
             OnPlayerMotion?.Invoke(characterId, motion);
+        }
+
+        /// <inheritdoc />
+        public async Task PlayerUsedSkill(int characterId, byte skillNumber)
+        {
+            var player = Players.First(p => p.Id == characterId);
+            var skill = player.Skills.First(s => s.Number == skillNumber);
+
+            // TODO: implement use of all skills.
+            // For now, just for testing I'm implementing buff to character.
+            if (skill.Type == TypeDetail.Buff && (skill.TargetType == TargetType.Caster || skill.TargetType == TargetType.PartyMembers))
+            {
+                var buff = await player.AddActiveBuff(skill);
+                OnPlayerGotBuff?.Invoke(player, buff);
+            }
+
+            OnPlayerUsedSkill?.Invoke(player, skill);
         }
 
         #endregion

@@ -4,6 +4,7 @@ using Imgeneus.Database.Constants;
 using Imgeneus.Database.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -101,22 +102,57 @@ namespace Imgeneus.World.Game.Player
                 return false;
             }
 
+            byte skillNumber = 0;
+
+            // Find out if the character has already learned the same skill, but lower level.
+            // Find character.
+            var dbCharacter = database.Characters.Include(c => c.Skills)
+                                               .Where(c => c.Id == Id).First();
+
+            var isSkillLearned = Skills.FirstOrDefault(s => s.SkillId == skillId);
+            // If there is skil of lower level => delete it.
+            if (isSkillLearned != null)
+            {
+                var skillToRemove = dbCharacter.Skills.First(s => s.SkillId == isSkillLearned.Id);
+                dbCharacter.Skills.Remove(skillToRemove);
+                skillNumber = skillToRemove.Number;
+            }
+            // No such skill. Generate new number.
+            else
+            {
+                if (Skills.Any())
+                {
+                    // Find the next skill number.
+                    skillNumber = Skills.Select(s => s.Number).Max();
+                    skillNumber++;
+                }
+                else
+                {
+                    // No learned skills at all.
+                }
+            }
+
             // Save char and learned skill.
             var charSkill = new DbCharacterSkill()
             {
                 CharacterId = Id,
-                SkillId = dbSkill.Id
+                SkillId = dbSkill.Id,
+                Skill = dbSkill,
+                Number = skillNumber
             };
-            // Find character.
-            var dbCharacter = database.Characters.Include(c => c.Skills)
-                                               .Where(c => c.Id == Id).First();
+
             dbCharacter.Skills.Add(charSkill);
             dbCharacter.SkillPoint -= dbSkill.SkillPoint;
             var savedEntries = await database.SaveChangesAsync();
             if (savedEntries > 0)
             {
                 SkillPoint = dbCharacter.SkillPoint;
-                var skill = Skill.FromDbSkill(dbSkill);
+                var skill = Skill.FromDbSkill(charSkill);
+
+                // Remove previously learned skill.
+                if (isSkillLearned != null) Skills.Remove(isSkillLearned);
+
+                // Add new skill.
                 Skills.Add(skill);
                 _logger.LogDebug($"Character {Id} learned skill {skill.SkillId} of level {skill.SkillLevel}");
                 return true;
@@ -132,7 +168,65 @@ namespace Imgeneus.World.Game.Player
 
         #region Buffs
 
+        /// <summary>
+        /// AActive buffs, that increase character characteristic, attack, defense etc.
+        /// Don't update it directly, use instead "AddActiveBuff".
+        /// </summary>
         public List<ActiveBuff> ActiveBuffs { get; private set; } = new List<ActiveBuff>();
+
+        /// <summary>
+        /// Updates collection of active buffs. Also writes changes to database.
+        /// </summary>
+        /// <param name="skill">skill, that client sends</param>
+        /// <returns>Newly added or updated active buff</returns>
+        public async Task<ActiveBuff> AddActiveBuff(Skill skill)
+        {
+            using var database = DependencyContainer.Instance.Resolve<IDatabase>();
+
+            var resetTime = DateTime.UtcNow.AddSeconds(skill.KeepTime);
+            var buff = ActiveBuffs.FirstOrDefault(b => b.SkillId == skill.SkillId);
+            if (buff != null) // We already have such buff. Try to update reset time.
+            {
+                if (buff.SkillLevel > skill.SkillLevel)
+                {
+                    // Do nothing, if character already has higher lvl buff.
+                    return buff;
+                }
+                else
+                {
+                    // If bufs are the same level, we should only update reset time.
+                    if (buff.SkillLevel == skill.SkillLevel)
+                    {
+                        var dbBuff = database.ActiveBuffs.First(b => b.CharacterId == Id && b.SkillId == skill.Id);
+                        dbBuff.ResetTime = resetTime;
+                        buff.ResetTime = resetTime;
+                        await database.SaveChangesAsync();
+                        _logger.LogDebug($"Character {Id} got buff {buff.SkillId} of level {buff.SkillLevel}. Buff will be active next {buff.CountDownInSeconds} seconds");
+                    }
+                }
+            }
+            else
+            {
+                // TODO: find a way to preload skills without calling database each time!
+                var dbSkill = database.Skills.FirstOrDefault(s => s.Id == skill.Id);
+
+                // It's a new buff, add it to database.
+                var dbBuff = database.ActiveBuffs.Add(new DbCharacterActiveBuff()
+                {
+                    CharacterId = Id,
+                    SkillId = skill.Id,
+                    ResetTime = resetTime,
+                    Skill = dbSkill
+                });
+                await database.SaveChangesAsync();
+
+                buff = ActiveBuff.FromDbCharacterActiveBuff(dbBuff.Entity);
+                ActiveBuffs.Add(buff);
+                _logger.LogDebug($"Character {Id} got buff {buff.SkillId} of level {buff.SkillLevel}. Buff will be active next ${buff.CountDownInSeconds} seconds");
+            }
+
+            return buff;
+        }
 
         #endregion
 
@@ -336,11 +430,26 @@ namespace Imgeneus.World.Game.Player
                 Country = dbCharacter.User.Faction
             };
 
-            character.Skills.AddRange(dbCharacter.Skills.Select(s => Skill.FromDbSkill(s.Skill)));
+            ClearOutdatedValues(dbCharacter);
+
+            character.Skills.AddRange(dbCharacter.Skills.Select(s => Skill.FromDbSkill(s)));
             character.ActiveBuffs.AddRange(dbCharacter.ActiveBuffs.Select(b => ActiveBuff.FromDbCharacterActiveBuff(b)));
             character.InventoryItems.AddRange(dbCharacter.Items.Select(i => Item.FromDbItem(i)));
 
             return character;
+        }
+
+        /// <summary>
+        ///  TODO: maybe it's better to have db procedure for this?
+        ///  For now, we will clear old values, when character is loaded.
+        /// </summary>
+        private static void ClearOutdatedValues(DbCharacter dbCharacter)
+        {
+            using var database = DependencyContainer.Instance.Resolve<IDatabase>();
+            var outdatedBuffs = dbCharacter.ActiveBuffs.Where(b => b.ResetTime < DateTime.UtcNow);
+            database.ActiveBuffs.RemoveRange(outdatedBuffs);
+
+            database.SaveChanges();
         }
     }
 }

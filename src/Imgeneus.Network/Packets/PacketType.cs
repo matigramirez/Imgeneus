@@ -40,6 +40,11 @@
         CHARACTER_DEAD = 0x0405,
         CHARACTER_MOVE = 0x0501,
         CHARACTER_MOTION = 0x0506,
+        USE_SKILL = 0x0511,
+        BUFF_SELF = 0x050D, // 1293
+        BUFF_PARTY = 0x0C04, // 3076
+        BUFF_RAID = 0x0C0E, // 3086
+        SKILL_RANGE = 0x0511, // 1297
         BLESS_AMOUNT = 0x0211,
 
         // Char skills

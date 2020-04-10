@@ -1,4 +1,5 @@
-﻿using Imgeneus.Database.Entities;
+﻿using System;
+using Imgeneus.Database.Entities;
 using Imgeneus.Network.Data;
 using Imgeneus.Network.Packets;
 using Imgeneus.Network.Serialization;
@@ -37,6 +38,22 @@ namespace Imgeneus.World.Packets
         {
             using var packet = new Packet(PacketType.CHARACTER_ACTIVE_BUFFS);
             packet.Write(new CharacterActiveBuffs(character.ActiveBuffs).Serialize());
+            client.SendPacket(packet);
+        }
+
+        public static void CharacterUseSkill(WorldClient client, int characterId, Skill skill)
+        {
+            // Just plays skill animation.
+            using var packet = new Packet(PacketType.SKILL_RANGE);
+            packet.Write(new SkillRange(true, characterId, characterId, skill, new ushort[3] { 0, 0, 0 }).Serialize());
+            client.SendPacket(packet);
+        }
+
+        public static void CharacterGetBuff(WorldClient client, ActiveBuff buff)
+        {
+            // Adds skill to active bufs.
+            using var packet = new Packet(PacketType.BUFF_SELF);
+            packet.Write(new SerializedActiveBuff(buff).Serialize());
             client.SendPacket(packet);
         }
     }

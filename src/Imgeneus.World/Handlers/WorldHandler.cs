@@ -196,5 +196,14 @@ namespace Imgeneus.World.Handlers
             var gameWorld = DependencyContainer.Instance.Resolve<IGameWorld>();
             gameWorld.PlayerSendMotion(client.CharID, motionPacket.Motion);
         }
+
+        [PacketHandler(PacketType.USE_SKILL)]
+        public static async void OnSkillUsed(WorldClient client, IPacketStream packet)
+        {
+            var skillPacket = new UsedSkillPacket(packet);
+
+            var gameWorld = DependencyContainer.Instance.Resolve<IGameWorld>();
+            await gameWorld.PlayerUsedSkill(client.CharID, skillPacket.SkillNumber);
+        }
     }
 }

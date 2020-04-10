@@ -38,6 +38,8 @@ namespace Imgeneus.World
             _gameWorld.OnPlayerEnteredMap += GameWorld_OnPlayerConnected;
             _gameWorld.OnPlayerMove += GameWorld_OnPlayerMove;
             _gameWorld.OnPlayerMotion += GameWorld_OnPlayerMotion;
+            _gameWorld.OnPlayerGotBuff += GameWorld_OnPlayerGotBuff;
+            _gameWorld.OnPlayerUsedSkill += GameWorld_OnPlayerUsedSkill;
         }
 
         private void GameWorld_OnPlayerMotion(int characterId, Motion motion)
@@ -64,6 +66,21 @@ namespace Imgeneus.World
             foreach (var client in clients.Where(c => c.Value.CharID != 0 && c.Value.CharID != character.Id))
             {
                 WorldPacketFactory.CharacterMoves(client.Value, character);
+            }
+        }
+
+        private void GameWorld_OnPlayerGotBuff(Character character, ActiveBuff buff)
+        {
+            var senderClient = clients.First(c => c.Value.CharID == character.Id).Value;
+            WorldPacketFactory.CharacterGetBuff(senderClient, buff);
+        }
+
+        private void GameWorld_OnPlayerUsedSkill(Character character, Skill skill)
+        {
+            // Send other clients notification, that user used some skill.
+            foreach (var client in clients.Where(c => c.Value.CharID != 0))
+            {
+                WorldPacketFactory.CharacterUseSkill(client.Value, character.Id, skill);
             }
         }
 

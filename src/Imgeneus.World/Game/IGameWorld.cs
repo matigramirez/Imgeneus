@@ -23,6 +23,16 @@ namespace Imgeneus.World.Game
         public event Action<int, Motion> OnPlayerMotion;
 
         /// <summary>
+        /// Event, that is fired, when player gets buff.
+        /// </summary>
+        public event Action<Character, ActiveBuff> OnPlayerGotBuff;
+
+        /// <summary>
+        /// Event, that is fired, when player uses skill.
+        /// </summary>
+        public event Action<Character, Skill> OnPlayerUsedSkill;
+
+        /// <summary>
         /// Connected players.
         /// </summary>
         BlockingCollection<Character> Players { get; }
@@ -59,5 +69,12 @@ namespace Imgeneus.World.Game
         /// <param name="characterId">id of character</param>
         /// <param name="motion">motion type</param>
         void PlayerSendMotion(int characterId, Motion motion);
+
+        /// <summary>
+        /// Character used some skill.
+        /// </summary>
+        /// <param name="characterId">id of character</param>
+        /// <param name="skillNumber">unique number of skill; unique is per character(maybe?)</param>
+        Task PlayerUsedSkill(int characterId, byte skillNumber);
     }
 }

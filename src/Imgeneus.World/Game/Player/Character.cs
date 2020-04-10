@@ -222,7 +222,7 @@ namespace Imgeneus.World.Game.Player
 
                 buff = ActiveBuff.FromDbCharacterActiveBuff(dbBuff.Entity);
                 ActiveBuffs.Add(buff);
-                _logger.LogDebug($"Character {Id} got buff {buff.SkillId} of level {buff.SkillLevel}. Buff will be active next ${buff.CountDownInSeconds} seconds");
+                _logger.LogDebug($"Character {Id} got buff {buff.SkillId} of level {buff.SkillLevel}. Buff will be active next {buff.CountDownInSeconds} seconds");
             }
 
             return buff;

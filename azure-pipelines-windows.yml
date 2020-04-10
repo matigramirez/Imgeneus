@@ -32,6 +32,11 @@ steps:
   inputs:
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
+    testSelector: 'testAssemblies'
+    testAssemblyVer2: | # Required when testSelector == TestAssemblies
+      **\*test*.dll
+      !**\*TestAdapter.dll
+      !**\obj\** 
 
 - task: DotNetCoreCLI@2
   displayName: Publish

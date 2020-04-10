@@ -11,9 +11,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Imgeneus.Login", "src\Imgen
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Imgeneus.Core", "src\Imgeneus.Core\Imgeneus.Core.csproj", "{67B07FCE-F1E6-4601-A95F-6954FAFA1F46}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Imgeneus.Database", "src\Imgeneus.Database\Imgeneus.Database.csproj", "{56531C6B-67E1-4D7E-AA9F-BCDD16EFF7EC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Imgeneus.Database", "src\Imgeneus.Database\Imgeneus.Database.csproj", "{56531C6B-67E1-4D7E-AA9F-BCDD16EFF7EC}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Imgeneus.World", "src\Imgeneus.World\Imgeneus.World.csproj", "{298B6E85-1E9B-4359-97DA-D9B0EB087306}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UnitTests", "UnitTests", "{D2B05B8D-E630-4702-A4E9-5A028DAF9EEE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Imgeneus.World.Test", "Imgeneus.World.Test\Imgeneus.World.Test.csproj", "{D3CDC69A-46E8-459C-BFDA-99C2FA8C5BF1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -41,6 +45,10 @@ Global
 		{298B6E85-1E9B-4359-97DA-D9B0EB087306}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{298B6E85-1E9B-4359-97DA-D9B0EB087306}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{298B6E85-1E9B-4359-97DA-D9B0EB087306}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D3CDC69A-46E8-459C-BFDA-99C2FA8C5BF1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D3CDC69A-46E8-459C-BFDA-99C2FA8C5BF1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D3CDC69A-46E8-459C-BFDA-99C2FA8C5BF1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D3CDC69A-46E8-459C-BFDA-99C2FA8C5BF1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -48,6 +56,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{5BC94713-FCD3-44F6-9247-8D2546E93BA2} = {C78BD729-47A2-4F2C-B0E2-9B4AE19D815E}
 		{298B6E85-1E9B-4359-97DA-D9B0EB087306} = {C78BD729-47A2-4F2C-B0E2-9B4AE19D815E}
+		{D3CDC69A-46E8-459C-BFDA-99C2FA8C5BF1} = {D2B05B8D-E630-4702-A4E9-5A028DAF9EEE}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3A8AB363-41C3-47B4-A23E-E2D938C14AEC}

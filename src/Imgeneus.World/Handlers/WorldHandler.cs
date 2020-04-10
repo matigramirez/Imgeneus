@@ -133,12 +133,7 @@ namespace Imgeneus.World.Handlers
         {
             var learnNewSkillsPacket = new LearnNewSkillPacket(packet);
             var gameWorld = DependencyContainer.Instance.Resolve<IGameWorld>();
-            var player = gameWorld.Players.FirstOrDefault(p => p.Id == client.CharID);
-            if (player is null)
-            {
-                // Not sure if it's really possible... Player should not be null.
-                return;
-            }
+            var player = gameWorld.Players[client.CharID];
             var successful = await player.LearnNewSkill(learnNewSkillsPacket.SkillId, learnNewSkillsPacket.SkillLevel);
             WorldPacketFactory.LearnedNewSkill(client, player, successful);
         }
@@ -148,13 +143,7 @@ namespace Imgeneus.World.Handlers
         {
             var moveItemPacket = new MoveItemInInventoryPacket(packet);
             var gameWorld = DependencyContainer.Instance.Resolve<IGameWorld>();
-            var player = gameWorld.Players.FirstOrDefault(p => p.Id == client.CharID);
-            if (player is null)
-            {
-                // Not sure if it's really possible... Player should not be null.
-                return;
-            }
-
+            var player = gameWorld.Players[client.CharID];
             var items = await player.MoveItem(moveItemPacket.CurrentBag, moveItemPacket.CurrentSlot, moveItemPacket.DestinationBag, moveItemPacket.DestinationSlot);
             WorldPacketFactory.SendMoveItem(client, items.sourceItem, items.destinationItem);
 
@@ -182,9 +171,9 @@ namespace Imgeneus.World.Handlers
             gameWorld.LoadPlayerInMap(client.CharID);
 
             // Send to newly connected player all currently connected players.
-            foreach (var player in gameWorld.Players.Where(c => c.Id != client.CharID))
+            foreach (var player in gameWorld.Players.Where(c => c.Value.Id != client.CharID))
             {
-                WorldPacketFactory.CharacterConnectedToMap(client, player);
+                WorldPacketFactory.CharacterConnectedToMap(client, player.Value);
             }
         }
 

@@ -95,8 +95,7 @@ namespace Imgeneus.Login
         [PacketHandler(PacketType.CLOSE_CONNECTION)]
         public static void OnCloseConnection(LoginClient client, IPacketStream packet)
         {
-            throw new NotImplementedException();
-            // TODO: Disconnect client from Internal-Server and World Server
+            client.Disconnect();
         }
 
         public static AuthenticationResult Authentication(string username, string password)

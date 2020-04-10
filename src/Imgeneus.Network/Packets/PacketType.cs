@@ -35,7 +35,8 @@
         // Game 
         GAME_HANDSHAKE = 0xA301,
         PING = 0xA303,
-        CHARACTER_ENTERED_MAP = 0x0201,
+        CHARACTER_ENTERED_MAP = 0x0201, // 513
+        CHARACTER_LEFT_MAP = 0x0202,  // 514
         CHARACTER_SHAPE = 0x0303,
         CHARACTER_DEAD = 0x0405,
         CHARACTER_MOVE = 0x0501,

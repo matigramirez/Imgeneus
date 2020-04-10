@@ -18,6 +18,11 @@ namespace Imgeneus.World.Game
         public event Action<Character> OnPlayerEnteredMap;
 
         /// <summary>
+        /// Event, that is fired, when player leaves the map.
+        /// </summary>
+        public event Action<Character> OnPlayerLeftMap;
+
+        /// <summary>
         /// Event, that is fired, when player sends motion.
         /// </summary>
         public event Action<int, Motion> OnPlayerMotion;
@@ -33,9 +38,9 @@ namespace Imgeneus.World.Game
         public event Action<Character, Skill> OnPlayerUsedSkill;
 
         /// <summary>
-        /// Connected players.
+        /// Connected players. Key is character id, value is character.
         /// </summary>
-        BlockingCollection<Character> Players { get; }
+        ConcurrentDictionary<int, Character> Players { get; }
 
         /// <summary>
         /// Loads player into game world.
@@ -46,6 +51,11 @@ namespace Imgeneus.World.Game
         /// Loads player into map and send notification other players.
         /// </summary>
         Character LoadPlayerInMap(int characterId);
+
+        /// <summary>
+        /// Removes player from game world.
+        /// </summary>
+        void RemovePlayer(int characterId);
 
         /// <summary>
         /// Event, that is fired, when the player moves.

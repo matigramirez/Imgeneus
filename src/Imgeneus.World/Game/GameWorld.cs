@@ -30,6 +30,9 @@ namespace Imgeneus.World.Game
         public event Action<Character> OnPlayerEnteredMap;
 
         /// <inheritdoc />
+        public event Action<Character> OnPlayerLeftMap;
+
+        /// <inheritdoc />
         public event Action<Character> OnPlayerMove;
 
         /// <inheritdoc />
@@ -42,7 +45,7 @@ namespace Imgeneus.World.Game
         public event Action<Character, ActiveBuff> OnPlayerGotBuff;
 
         /// <inheritdoc />
-        public BlockingCollection<Character> Players { get; private set; } = new BlockingCollection<Character>();
+        public ConcurrentDictionary<int, Character> Players { get; private set; } = new ConcurrentDictionary<int, Character>();
 
         /// <inheritdoc />
         public Character LoadPlayer(int characterId)
@@ -55,7 +58,7 @@ namespace Imgeneus.World.Game
                                                .FirstOrDefault(c => c.Id == characterId);
             var newPlayer = Character.FromDbCharacter(dbCharacter);
 
-            Players.Add(newPlayer);
+            Players.TryAdd(newPlayer.Id, newPlayer);
             _logger.LogDebug($"Player {newPlayer.Id} connected to game world");
 
             return newPlayer;
@@ -64,7 +67,7 @@ namespace Imgeneus.World.Game
         /// <inheritdoc />
         public async Task PlayerMoves(int characterId, MovementType movementType, float X, float Y, float Z, ushort angle)
         {
-            var player = Players.FirstOrDefault(p => p.Id == characterId);
+            var player = Players[characterId];
             player.PosX = X;
             player.PosY = Y;
             player.PosZ = Z;
@@ -88,7 +91,7 @@ namespace Imgeneus.World.Game
         /// <inheritdoc />
         public Character LoadPlayerInMap(int characterId)
         {
-            var player = Players.FirstOrDefault(p => p.Id == characterId);
+            var player = Players[characterId];
 
             // TODO: implement maps. For now just notify other players, that new player arrived.
 
@@ -98,11 +101,27 @@ namespace Imgeneus.World.Game
         }
 
         /// <inheritdoc />
+        public void RemovePlayer(int characterId)
+        {
+            Character player;
+            if (Players.TryRemove(characterId, out player))
+            {
+                OnPlayerLeftMap?.Invoke(player);
+                _logger.LogDebug($"Player {characterId} left game world");
+            }
+            else
+            {
+                _logger.LogError($"Couldn't remove player {characterId} from game world");
+            }
+
+        }
+
+        /// <inheritdoc />
         public void PlayerSendMotion(int characterId, Motion motion)
         {
             if (motion == Motion.None || motion == Motion.Sit)
             {
-                var player = Players.First(p => p.Id == characterId);
+                var player = Players[characterId];
                 player.Motion = motion;
             }
             OnPlayerMotion?.Invoke(characterId, motion);
@@ -111,7 +130,7 @@ namespace Imgeneus.World.Game
         /// <inheritdoc />
         public async Task PlayerUsedSkill(int characterId, byte skillNumber)
         {
-            var player = Players.First(p => p.Id == characterId);
+            var player = Players[characterId];
             var skill = player.Skills.First(s => s.Number == skillNumber);
 
             // TODO: implement use of all skills.

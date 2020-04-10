@@ -93,6 +93,13 @@ namespace Imgeneus.World.Packets
             client.SendPacket(packet2);
         }
 
+        public static void CharacterLeftMap(WorldClient client, Character character)
+        {
+            using var packet = new Packet(PacketType.CHARACTER_LEFT_MAP);
+            packet.Write(character.Id);
+            client.SendPacket(packet);
+        }
+
         public static void CharacterMoves(WorldClient client, Character character)
         {
             using var packet = new Packet(PacketType.CHARACTER_MOVE);

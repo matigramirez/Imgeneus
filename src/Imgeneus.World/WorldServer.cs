@@ -36,6 +36,7 @@ namespace Imgeneus.World
         private void ConnectToGameWorld()
         {
             _gameWorld.OnPlayerEnteredMap += GameWorld_OnPlayerConnected;
+            _gameWorld.OnPlayerLeftMap += GameWorld_OnPlayerLeftMap;
             _gameWorld.OnPlayerMove += GameWorld_OnPlayerMove;
             _gameWorld.OnPlayerMotion += GameWorld_OnPlayerMotion;
             _gameWorld.OnPlayerGotBuff += GameWorld_OnPlayerGotBuff;
@@ -57,6 +58,15 @@ namespace Imgeneus.World
             foreach (var client in clients.Where(c => c.Value.CharID != 0 && c.Value.CharID != newPlayer.Id))
             {
                 WorldPacketFactory.CharacterConnectedToMap(client.Value, newPlayer);
+            }
+        }
+
+        private void GameWorld_OnPlayerLeftMap(Character player)
+        {
+            // Send other clients notification, that user has left the map.
+            foreach (var client in clients.Where(c => c.Value.CharID != 0 && c.Value.CharID != player.Id))
+            {
+                WorldPacketFactory.CharacterLeftMap(client.Value, player);
             }
         }
 
@@ -97,6 +107,14 @@ namespace Imgeneus.World
         protected override void OnError(Exception exception)
         {
             _logger.LogInformation($"World Server error: {exception.Message}");
+        }
+
+        /// <inheritdoc />
+        protected override void OnClientDisconnected(WorldClient client)
+        {
+            base.OnClientDisconnected(client);
+
+            _gameWorld.RemovePlayer(client.CharID);
         }
     }
 }

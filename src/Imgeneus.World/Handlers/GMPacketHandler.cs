@@ -5,7 +5,6 @@ using Imgeneus.Network.Packets;
 using Imgeneus.Network.Packets.Game;
 using Imgeneus.World.Game;
 using Imgeneus.World.Packets;
-using System.Linq;
 
 namespace Imgeneus.World.Handlers
 {
@@ -18,7 +17,7 @@ namespace Imgeneus.World.Handlers
 
             var gameWorld = DependencyContainer.Instance.Resolve<IGameWorld>();
 
-            var player = gameWorld.Players.FirstOrDefault(p => p.Id == client.CharID);
+            var player = gameWorld.Players[client.CharID];
             await player.AddItemToInventory(getItemPacket.Type, getItemPacket.TypeId, getItemPacket.Count);
 
             WorldPacketFactory.SendCharacterItems(client, player.InventoryItems);

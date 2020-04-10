@@ -19,13 +19,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="config\database.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="NLog.Config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="xcopy &quot;$(ProjectDir)\..\Imgeneus.Database\config\*.*&quot; &quot;$(ProjectDir)$(OutDir)config\&quot;" />
-  </Target>
 
 </Project>

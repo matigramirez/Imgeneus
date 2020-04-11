@@ -198,14 +198,24 @@ namespace Imgeneus.World.Handlers
         [PacketHandler(PacketType.TARGET_SELECT_MOB)]
         public static void OnMobInTarget(WorldClient client, IPacketStream packet)
         {
-            var mobInTargetPacket = new MobInTargetPacket(packet);
+            var targetPacket = new TargetPacket(packet);
             var gameWorld = DependencyContainer.Instance.Resolve<IGameWorld>();
-            var mob = gameWorld.GetMob(client.CharID, mobInTargetPacket.TargetId);
+            var mob = gameWorld.GetMob(client.CharID, targetPacket.TargetId);
 
             if (mob != null)
             {
                 WorldPacketFactory.MobInTarget(client, mob);
             }
+        }
+
+        [PacketHandler(PacketType.TARGET_SELECT_CHARACTER)]
+        public static void OnCharacterInTarget(WorldClient client, IPacketStream packet)
+        {
+            var targetPacket = new TargetPacket(packet);
+            var gameWorld = DependencyContainer.Instance.Resolve<IGameWorld>();
+            var player = gameWorld.Players[(int)targetPacket.TargetId];
+
+            WorldPacketFactory.PlayerInTarget(client, player);
         }
     }
 }

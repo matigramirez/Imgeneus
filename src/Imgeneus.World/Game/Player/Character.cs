@@ -45,7 +45,7 @@ namespace Imgeneus.World.Game.Player
         public ushort Intelligence;
         public ushort Luck;
         public ushort Wisdom;
-        public ushort HealthPoints;
+        public int HealthPoints;
         public ushort ManaPoints;
         public ushort StaminaPoints;
         public uint Exp;

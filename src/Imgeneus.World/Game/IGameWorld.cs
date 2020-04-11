@@ -100,5 +100,12 @@ namespace Imgeneus.World.Game
         /// Event, that is fired, when mob enters the map.
         /// </summary>
         public event Action<Mob> OnMobEnter;
+
+        /// <summary>
+        /// Gets mob by its' id.
+        /// </summary>
+        /// <param name="characterId">characted id is possibly needed to get map id</param>
+        /// <param name="mobId">mob id</param>
+        public Mob GetMob(int characterId, uint mobId);
     }
 }

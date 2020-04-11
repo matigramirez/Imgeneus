@@ -41,6 +41,7 @@
         CHARACTER_DEAD = 0x0405,
         CHARACTER_MOVE = 0x0501,
         CHARACTER_MOTION = 0x0506,
+        TARGET_SELECT_MOB = 0x0305, // 773
         USE_SKILL = 0x0511,
         BUFF_SELF = 0x050D, // 1293
         BUFF_PARTY = 0x0C04, // 3076

@@ -11,5 +11,10 @@
         /// Unique id inside of a game world.
         /// </summary>
         public uint GlobalId { get; }
+
+        /// <summary>
+        /// Current health.
+        /// </summary>
+        public int CurrentHP { get; }
     }
 }

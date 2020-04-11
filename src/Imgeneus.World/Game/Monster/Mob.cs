@@ -16,6 +16,9 @@ namespace Imgeneus.World.Game.Monster
         /// <inheritdoc />
         public uint GlobalId { get; private set; }
 
+        /// <inheritdoc />
+        public int CurrentHP { get; set; }
+
         /// <summary>
         /// Mob id from database.
         /// </summary>
@@ -40,7 +43,8 @@ namespace Imgeneus.World.Game.Monster
         {
             return new Mob(globalId, logger)
             {
-                MobId = mob.Id
+                MobId = mob.Id,
+                CurrentHP = mob.HP
             };
         }
     }

@@ -194,5 +194,18 @@ namespace Imgeneus.World.Handlers
             var gameWorld = DependencyContainer.Instance.Resolve<IGameWorld>();
             await gameWorld.PlayerUsedSkill(client.CharID, skillPacket.SkillNumber);
         }
+
+        [PacketHandler(PacketType.TARGET_SELECT_MOB)]
+        public static void OnMobInTarget(WorldClient client, IPacketStream packet)
+        {
+            var mobInTargetPacket = new MobInTargetPacket(packet);
+            var gameWorld = DependencyContainer.Instance.Resolve<IGameWorld>();
+            var mob = gameWorld.GetMob(client.CharID, mobInTargetPacket.TargetId);
+
+            if (mob != null)
+            {
+                WorldPacketFactory.MobInTarget(client, mob);
+            }
+        }
     }
 }

@@ -175,6 +175,7 @@ namespace Imgeneus.World.Game
         /// <inheritdoc />
         public event Action<Mob> OnMobEnter;
 
+        /// <inheritdoc />
         public void GMCreateMob(int characterId, ushort mobId)
         {
             var player = Players[characterId];
@@ -195,6 +196,13 @@ namespace Imgeneus.World.Game
             Mobs.Add(mob);
             _logger.LogDebug($"Mob {mob.MobId} entered game world");
             OnMobEnter?.Invoke(mob);
+        }
+
+        /// <inheritdoc />
+        public Mob GetMob(int characterId, uint mobId)
+        {
+            var mob = Mobs.FirstOrDefault(m => m.GlobalId == mobId);
+            return mob;
         }
 
         #endregion

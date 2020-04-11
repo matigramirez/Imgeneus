@@ -13,5 +13,12 @@ namespace Imgeneus.World.Packets
             packet.Write(new MobEnter(mob).Serialize());
             client.SendPacket(packet);
         }
+
+        public static void MobInTarget(WorldClient client, Mob mob)
+        {
+            using var packet = new Packet(PacketType.TARGET_SELECT_MOB);
+            packet.Write(new MobInTarget(mob).Serialize());
+            client.SendPacket(packet);
+        }
     }
 }

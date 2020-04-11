@@ -2,11 +2,13 @@
 using Imgeneus.Database;
 using Imgeneus.Database.Constants;
 using Imgeneus.Network.Packets.Game;
+using Imgeneus.World.Game.Monster;
 using Imgeneus.World.Game.Player;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -23,6 +25,26 @@ namespace Imgeneus.World.Game
         {
             _logger = DependencyContainer.Instance.Resolve<ILogger<GameWorld>>();
         }
+
+        #region Global id
+
+        private static uint _currentGlobalId;
+        private readonly object _currentGlobalIdMutex = new object();
+
+        /// <summary>
+        /// Each object in game has its' own global id.
+        /// Call this method, when you need to get new global id.
+        /// </summary>
+        private uint GenerateGlobalId()
+        {
+            lock (_currentGlobalIdMutex)
+            {
+                _currentGlobalId++;
+            }
+            return _currentGlobalId;
+        }
+
+        #endregion
 
         #region Players
 
@@ -142,6 +164,37 @@ namespace Imgeneus.World.Game
             }
 
             OnPlayerUsedSkill?.Invoke(player, skill);
+        }
+
+        #endregion
+
+        #region Mobs
+
+        public List<Mob> Mobs = new List<Mob>();
+
+        /// <inheritdoc />
+        public event Action<Mob> OnMobEnter;
+
+        public void GMCreateMob(int characterId, ushort mobId)
+        {
+            var player = Players[characterId];
+            if (!player.IsAdmin)
+            {
+                return;
+            }
+
+            // TODO: this should be part of map implementation.
+            using var database = DependencyContainer.Instance.Resolve<IDatabase>();
+            var mob = Mob.FromDbMob(GenerateGlobalId(), database.Mobs.First(m => m.Id == mobId), DependencyContainer.Instance.Resolve<ILogger<Mob>>());
+
+            // TODO: mobs should be generated near character, not on his position directly.
+            mob.PosX = player.PosX;
+            mob.PosY = player.PosY;
+            mob.PosZ = player.PosZ;
+
+            Mobs.Add(mob);
+            _logger.LogDebug($"Mob {mob.MobId} entered game world");
+            OnMobEnter?.Invoke(mob);
         }
 
         #endregion

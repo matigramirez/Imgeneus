@@ -2,6 +2,7 @@
 using Imgeneus.Database.Constants;
 using Imgeneus.Network.Server;
 using Imgeneus.World.Game;
+using Imgeneus.World.Game.Monster;
 using Imgeneus.World.Game.Player;
 using Imgeneus.World.InternalServer;
 using Imgeneus.World.Packets;
@@ -41,6 +42,7 @@ namespace Imgeneus.World
             _gameWorld.OnPlayerMotion += GameWorld_OnPlayerMotion;
             _gameWorld.OnPlayerGotBuff += GameWorld_OnPlayerGotBuff;
             _gameWorld.OnPlayerUsedSkill += GameWorld_OnPlayerUsedSkill;
+            _gameWorld.OnMobEnter += GameWorld_OnMobEnter;
         }
 
         private void GameWorld_OnPlayerMotion(int characterId, Motion motion)
@@ -91,6 +93,15 @@ namespace Imgeneus.World
             foreach (var client in clients.Where(c => c.Value.CharID != 0))
             {
                 WorldPacketFactory.CharacterUseSkill(client.Value, character.Id, skill);
+            }
+        }
+
+        private void GameWorld_OnMobEnter(Mob mob)
+        {
+            // Send notification each player, that mob entered.
+            foreach (var client in clients)
+            {
+                WorldPacketFactory.MobEntered(client.Value, mob);
             }
         }
 

@@ -1,6 +1,4 @@
-﻿using System;
-using Imgeneus.Database.Entities;
-using Imgeneus.Network.Data;
+﻿using Imgeneus.Network.Data;
 using Imgeneus.Network.Packets;
 using Imgeneus.Network.Serialization;
 using Imgeneus.World.Game.Player;

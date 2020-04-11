@@ -44,6 +44,16 @@ namespace Imgeneus.Database
         public DbSet<DbCharacterActiveBuff> ActiveBuffs { get; set; }
 
         /// <summary>
+        /// Collection of mobs. Taken from original db.
+        /// </summary>
+        public DbSet<DbMob> Mobs { get; set; }
+
+        /// <summary>
+        /// Available drop from a monster. Taken from original db.
+        /// </summary>
+        public DbSet<DbMobItems> MobItems { get; set; }
+
+        /// <summary>
         /// Saves changes to database.
         /// </summary>
         public int SaveChanges();

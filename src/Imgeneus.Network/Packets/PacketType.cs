@@ -48,11 +48,15 @@
         SKILL_RANGE = 0x0511, // 1297
         BLESS_AMOUNT = 0x0211,
 
+        // Mobs
+        MOB_ENTER = 0x0601, // 1537
+
         // Char skills
         LEARN_NEW_SKILL = 0x209,
 
         // GM commands
         GM_COMMAND_GET_ITEM = 0xF702,
+        GM_CREATE_MOB = 0xF704, // 63236
 
         // Inventory
         INVENTORY_MOVE_ITEM = 0x204,

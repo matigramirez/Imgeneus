@@ -1,5 +1,6 @@
 ﻿using Imgeneus.Database.Constants;
 using Imgeneus.Network.Packets.Game;
+using Imgeneus.World.Game.Monster;
 using Imgeneus.World.Game.Player;
 using System;
 using System.Collections.Concurrent;
@@ -86,5 +87,18 @@ namespace Imgeneus.World.Game
         /// <param name="characterId">id of character</param>
         /// <param name="skillNumber">unique number of skill; unique is per character(maybe?)</param>
         Task PlayerUsedSkill(int characterId, byte skillNumber);
+
+        /// <summary>
+        /// GM command, that creates mob near the character.
+        /// </summary>
+        /// <param name="characterId">character id, near which mobs are going to be created</param>
+        /// <param name="mobId">mob id</param>
+        void GMCreateMob(int characterId, ushort mobId);
+
+        /// <summary>
+        /// TODO: move it to map.
+        /// Event, that is fired, when mob enters the map.
+        /// </summary>
+        public event Action<Mob> OnMobEnter;
     }
 }

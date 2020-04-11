@@ -22,5 +22,17 @@ namespace Imgeneus.World.Handlers
 
             WorldPacketFactory.SendCharacterItems(client, player.InventoryItems);
         }
+
+        [PacketHandler(PacketType.GM_CREATE_MOB)]
+        public static void OnGMCreateMob(WorldClient client, IPacketStream packet)
+        {
+            var getItemPacket = new GMCreateMobPacket(packet);
+
+            var gameWorld = DependencyContainer.Instance.Resolve<IGameWorld>();
+
+            for (var i = 0; i < getItemPacket.NumberOfMobs; i++)
+                gameWorld.GMCreateMob(client.CharID, getItemPacket.MobId);
+        }
     }
 }
+

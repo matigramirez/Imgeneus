@@ -21,6 +21,13 @@ namespace Imgeneus.World.Packets
             client.SendPacket(packet);
         }
 
+        public static void MobAttack(WorldClient client, Mob mob, int targetId)
+        {
+            using var packet = new Packet(PacketType.MOB_ATTACK);
+            packet.Write(new MobAttack(mob, targetId).Serialize());
+            client.SendPacket(packet);
+        }
+
         public static void MobInTarget(WorldClient client, Mob mob)
         {
             using var packet = new Packet(PacketType.TARGET_SELECT_MOB);

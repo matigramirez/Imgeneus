@@ -179,6 +179,9 @@ namespace Imgeneus.World.Game
         public event Action<Mob> OnMobMove;
 
         /// <inheritdoc />
+        public event Action<Mob, int> OnMobAttack;
+
+        /// <inheritdoc />
         public void GMCreateMob(int characterId, ushort mobId)
         {
             var player = Players[characterId];
@@ -209,6 +212,13 @@ namespace Imgeneus.World.Game
             //    OnMobMove?.Invoke(sender);
             //};
             //mob.EmulateMovement();
+
+            // Emulates mob attack within 3 seconds after it's created.
+            //mob.OnAttack += (mob, playerId) =>
+            //{
+            //    OnMobAttack?.Invoke(mob, playerId);
+            //};
+            //mob.EmulateAttack();
         }
 
         /// <inheritdoc />

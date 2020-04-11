@@ -64,7 +64,29 @@ namespace Imgeneus.World.Game.Monster
 
         }
 
+        public int TargetId;
+
+        /// <summary>
+        /// TODO: remove me! This is only for attack emulation.
+        /// </summary>
+        public void EmulateAttack()
+        {
+            var timer = new Timer();
+            timer.Interval = 3000; // 3 seconds.
+            timer.Elapsed += (s, e) =>
+            {
+                timer.Stop();
+                OnAttack?.Invoke(this, TargetId);
+            };
+            timer.Start();
+        }
+
         public event Action<Mob> OnMove;
+
+        /// <summary>
+        /// Event, that is fired, when mob attacks some user.
+        /// </summary>
+        public event Action<Mob, int> OnAttack;
 
         public static Mob FromDbMob(uint globalId, DbMob mob, ILogger<Mob> logger)
         {

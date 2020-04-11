@@ -108,6 +108,12 @@ namespace Imgeneus.World.Game
         public event Action<Mob> OnMobMove;
 
         /// <summary>
+        /// TODO: move it to map.
+        /// Event, that is fired, when mob attacks the player.
+        /// </summary>
+        public event Action<Mob, int> OnMobAttack;
+
+        /// <summary>
         /// Gets mob by its' id.
         /// </summary>
         /// <param name="characterId">characted id is possibly needed to get map id</param>

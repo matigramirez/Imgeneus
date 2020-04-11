@@ -52,6 +52,7 @@
 
         // Mobs
         MOB_ENTER = 0x0601, // 1537
+        MOB_MOVE = 0x0603, // 1539
 
         // Char skills
         LEARN_NEW_SKILL = 0x209,

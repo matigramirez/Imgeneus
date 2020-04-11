@@ -176,6 +176,9 @@ namespace Imgeneus.World.Game
         public event Action<Mob> OnMobEnter;
 
         /// <inheritdoc />
+        public event Action<Mob> OnMobMove;
+
+        /// <inheritdoc />
         public void GMCreateMob(int characterId, ushort mobId)
         {
             var player = Players[characterId];
@@ -196,6 +199,16 @@ namespace Imgeneus.World.Game
             Mobs.Add(mob);
             _logger.LogDebug($"Mob {mob.MobId} entered game world");
             OnMobEnter?.Invoke(mob);
+
+            // TODO: I'm investigating all available mob packets now.
+            // Remove it, when start working on AI implementation!
+
+            // Emulates mob move within 3 seconds after it's created.
+            //mob.OnMove += (sender) =>
+            //{
+            //    OnMobMove?.Invoke(sender);
+            //};
+            //mob.EmulateMovement();
         }
 
         /// <inheritdoc />

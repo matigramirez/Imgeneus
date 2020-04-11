@@ -43,6 +43,7 @@ namespace Imgeneus.World
             _gameWorld.OnPlayerGotBuff += GameWorld_OnPlayerGotBuff;
             _gameWorld.OnPlayerUsedSkill += GameWorld_OnPlayerUsedSkill;
             _gameWorld.OnMobEnter += GameWorld_OnMobEnter;
+            _gameWorld.OnMobMove += GameWorld_OnMobMove;
         }
 
         private void GameWorld_OnPlayerMotion(int characterId, Motion motion)
@@ -102,6 +103,15 @@ namespace Imgeneus.World
             foreach (var client in clients)
             {
                 WorldPacketFactory.MobEntered(client.Value, mob);
+            }
+        }
+
+        private void GameWorld_OnMobMove(Mob mob)
+        {
+            // Send notification each player, that mob moved.
+            foreach (var client in clients)
+            {
+                WorldPacketFactory.MobMove(client.Value, mob);
             }
         }
 

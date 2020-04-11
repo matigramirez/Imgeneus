@@ -1,5 +1,7 @@
 ﻿using Imgeneus.Database.Entities;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Timers;
 
 namespace Imgeneus.World.Game.Monster
 {
@@ -39,6 +41,31 @@ namespace Imgeneus.World.Game.Monster
         /// </summary>
         public float PosZ;
 
+        /// <summary>
+        /// Describes if mob is "walking" or "running".
+        /// </summary>
+        public MobMotion MoveMotion;
+
+        /// <summary>
+        /// TODO: remove me! This is only for move emulation.
+        /// </summary>
+        public void EmulateMovement()
+        {
+            var timer = new Timer();
+            timer.Interval = 3000; // 3 seconds.
+            timer.Elapsed += (s, e) =>
+            {
+                timer.Stop();
+                PosX += 5;
+                PosZ += 5;
+                OnMove?.Invoke(this);
+            };
+            timer.Start();
+
+        }
+
+        public event Action<Mob> OnMove;
+
         public static Mob FromDbMob(uint globalId, DbMob mob, ILogger<Mob> logger)
         {
             return new Mob(globalId, logger)
@@ -47,5 +74,11 @@ namespace Imgeneus.World.Game.Monster
                 CurrentHP = mob.HP
             };
         }
+    }
+
+    public enum MobMotion : byte
+    {
+        Walk = 0,
+        Run = 1
     }
 }

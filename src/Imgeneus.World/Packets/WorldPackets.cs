@@ -1,13 +1,8 @@
-﻿using System;
-using System.Linq;
-using Imgeneus.Database.Constants;
-using Imgeneus.Database.Entities;
+﻿using Imgeneus.Database.Entities;
 using Imgeneus.Network.Data;
 using Imgeneus.Network.Packets;
-using Imgeneus.Network.Packets.Game;
-using Imgeneus.Network.Serialization;
 using Imgeneus.World.Game.Player;
-using Imgeneus.World.Serialization;
+using System;
 
 namespace Imgeneus.World.Packets
 {
@@ -23,18 +18,11 @@ namespace Imgeneus.World.Packets
             client.SendPacket(packet);
 
             SendCharacterDetails(client, character);
+            SendCurrentHitpoints(client, character);
             SendCharacterItems(client, character.InventoryItems);
             SendLearnedSkills(client, character);
             SendActiveBuffs(client, character);
             SendBlessAmount(client);
-        }
-
-        private static void SendCharacterDetails(WorldClient client, Character character)
-        {
-            using var packet = new Packet(PacketType.CHARACTER_DETAILS);
-            var bytes = new CharacterDetails(character).Serialize();
-            packet.Write(bytes);
-            client.SendPacket(packet);
         }
 
         private static void SendBlessAmount(WorldClient client)
@@ -78,41 +66,6 @@ namespace Imgeneus.World.Packets
             client.SendPacket(packet);
         }
 
-        public static void CharacterConnectedToMap(WorldClient client, Character character)
-        {
-            using var packet0 = new Packet(PacketType.CHARACTER_ENTERED_MAP);
-            packet0.Write(new CharacterEnteredMap(character).Serialize());
-            client.SendPacket(packet0);
 
-            using var packet1 = new Packet(PacketType.CHARACTER_MOVE);
-            packet1.Write(new CharacterMove(character).Serialize());
-            client.SendPacket(packet1);
-
-            using var packet2 = new Packet(PacketType.CHARACTER_SHAPE);
-            packet2.Write(new CharacterShape(character).Serialize());
-            client.SendPacket(packet2);
-        }
-
-        public static void CharacterLeftMap(WorldClient client, Character character)
-        {
-            using var packet = new Packet(PacketType.CHARACTER_LEFT_MAP);
-            packet.Write(character.Id);
-            client.SendPacket(packet);
-        }
-
-        public static void CharacterMoves(WorldClient client, Character character)
-        {
-            using var packet = new Packet(PacketType.CHARACTER_MOVE);
-            packet.Write(new CharacterMove(character).Serialize());
-            client.SendPacket(packet);
-        }
-
-        public static void CharacterMotion(WorldClient client, int characterId, Motion motion)
-        {
-            using var packet = new Packet(PacketType.CHARACTER_MOTION);
-            packet.Write(characterId);
-            packet.WriteByte((byte)motion);
-            client.SendPacket(packet);
-        }
     }
 }

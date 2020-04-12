@@ -45,9 +45,6 @@ namespace Imgeneus.World.Game.Player
         public ushort Intelligence;
         public ushort Luck;
         public ushort Wisdom;
-        public int HealthPoints;
-        public ushort ManaPoints;
-        public ushort StaminaPoints;
         public uint Exp;
         public uint Gold;
         public ushort Kills;
@@ -70,6 +67,14 @@ namespace Imgeneus.World.Game.Player
         public bool IsDead;
         public bool HasParty;
         public bool IsPartyLead;
+
+        public int CurrentHP;
+        public int CurrentMP;
+        public int CurrentSP;
+
+        public int MaxHP { get => CurrentHP * 2; } // TODO: implement max HP. For now return current * 2.
+        public int MaxMP { get => CurrentMP * 2; } // TODO: implement max HP. For now return current * 2.
+        public int MaxSP { get => CurrentSP * 2; } // TODO: implement max HP. For now return current * 2.
 
         #endregion
 
@@ -417,9 +422,9 @@ namespace Imgeneus.World.Game.Player
                 Intelligence = dbCharacter.Intelligence,
                 Luck = dbCharacter.Luck,
                 Wisdom = dbCharacter.Wisdom,
-                HealthPoints = dbCharacter.HealthPoints,
-                StaminaPoints = dbCharacter.StaminaPoints,
-                ManaPoints = dbCharacter.ManaPoints,
+                CurrentHP = dbCharacter.HealthPoints,
+                CurrentMP = dbCharacter.StaminaPoints,
+                CurrentSP = dbCharacter.ManaPoints,
                 Exp = dbCharacter.Exp,
                 Gold = dbCharacter.Gold,
                 Kills = dbCharacter.Kills,

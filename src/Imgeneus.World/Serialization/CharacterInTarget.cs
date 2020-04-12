@@ -18,8 +18,8 @@ namespace Imgeneus.World.Serialization
         public CharacterInTarget(Character character)
         {
             TargetId = (uint)character.Id;
-            MaxHP = character.HealthPoints;
-            CurrentHP = character.HealthPoints; // TODO: implement current HP
+            MaxHP = character.MaxHP;
+            CurrentHP = character.CurrentHP;
         }
     }
 }

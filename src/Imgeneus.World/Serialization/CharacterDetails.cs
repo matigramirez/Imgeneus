@@ -30,13 +30,13 @@ namespace Imgeneus.Network.Serialization
         public ushort SkillPoint { get; }
 
         [FieldOrder(8)]
-        public int MaxHP { get => 100; } // TODO: calculate it base on rec value.
+        public int MaxHP { get; }
 
         [FieldOrder(9)]
-        public int MaxMP { get => 200; } // TODO: calculate it base on wis value.
+        public int MaxMP { get; }
 
         [FieldOrder(10)]
-        public int MaxSP { get => 300; } // TODO: calculate it base on dex value.
+        public int MaxSP { get; }
 
         [FieldOrder(11)]
         public ushort Angle { get; }
@@ -99,6 +99,9 @@ namespace Imgeneus.Network.Serialization
             Deaths = character.Deaths;
             Victories = character.Victories;
             Defeats = character.Defeats;
+            MaxHP = character.MaxHP;
+            MaxMP = character.MaxMP;
+            MaxSP = character.MaxSP;
         }
     }
 }

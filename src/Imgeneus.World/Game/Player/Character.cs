@@ -261,7 +261,8 @@ namespace Imgeneus.World.Game.Player
             OnGotBuff?.Invoke(this, buff);
 
             // Notify TCP connection about new buff.
-            WorldPacketFactory.CharacterGetBuff(Client, buff);
+            if (Client != null)
+                WorldPacketFactory.CharacterGetBuff(Client, buff);
             return buff;
         }
 

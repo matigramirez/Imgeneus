@@ -4,11 +4,10 @@ using Imgeneus.Database.Constants;
 using Imgeneus.Network.Packets.Game;
 using Imgeneus.World.Game.Monster;
 using Imgeneus.World.Game.Player;
+using Imgeneus.World.Game.Zone;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -24,24 +23,24 @@ namespace Imgeneus.World.Game
         public GameWorld()
         {
             _logger = DependencyContainer.Instance.Resolve<ILogger<GameWorld>>();
+
+            InitMaps();
         }
 
-        #region Global id
-
-        private static uint _currentGlobalId;
-        private readonly object _currentGlobalIdMutex = new object();
+        #region Maps 
 
         /// <summary>
-        /// Each object in game has its' own global id.
-        /// Call this method, when you need to get new global id.
+        /// Thread-safe dictionary of maps. Where key is map id.
         /// </summary>
-        private uint GenerateGlobalId()
+        public ConcurrentDictionary<ushort, Map> Maps { get; private set; } = new ConcurrentDictionary<ushort, Map>();
+
+        /// <summary>
+        /// Initializes maps with startup values like mobs, npc, areas, obelisks etc.
+        /// </summary>
+        private void InitMaps()
         {
-            lock (_currentGlobalIdMutex)
-            {
-                _currentGlobalId++;
-            }
-            return _currentGlobalId;
+            // TODO: init maps here. For now create 0-map(DWaterBorderland, Lvl 40-80)
+            Maps.TryAdd(0, new Map(0, DependencyContainer.Instance.Resolve<ILogger<Map>>()));
         }
 
         #endregion
@@ -49,28 +48,10 @@ namespace Imgeneus.World.Game
         #region Players
 
         /// <inheritdoc />
-        public event Action<Character> OnPlayerEnteredMap;
-
-        /// <inheritdoc />
-        public event Action<Character> OnPlayerLeftMap;
-
-        /// <inheritdoc />
-        public event Action<Character> OnPlayerMove;
-
-        /// <inheritdoc />
-        public event Action<int, Motion> OnPlayerMotion;
-
-        /// <inheritdoc />
-        public event Action<Character, Skill> OnPlayerUsedSkill;
-
-        /// <inheritdoc />
-        public event Action<Character, ActiveBuff> OnPlayerGotBuff;
-
-        /// <inheritdoc />
         public ConcurrentDictionary<int, Character> Players { get; private set; } = new ConcurrentDictionary<int, Character>();
 
         /// <inheritdoc />
-        public Character LoadPlayer(int characterId)
+        public Character LoadPlayer(int characterId, WorldClient client)
         {
             using var database = DependencyContainer.Instance.Resolve<IDatabase>();
             var dbCharacter = database.Characters.Include(c => c.Skills).ThenInclude(cs => cs.Skill)
@@ -79,6 +60,7 @@ namespace Imgeneus.World.Game
                                                .Include(c => c.User)
                                                .FirstOrDefault(c => c.Id == characterId);
             var newPlayer = Character.FromDbCharacter(dbCharacter, DependencyContainer.Instance.Resolve<ILogger<Character>>());
+            newPlayer.Client = client;
 
             Players.TryAdd(newPlayer.Id, newPlayer);
             _logger.LogDebug($"Player {newPlayer.Id} connected to game world");
@@ -90,36 +72,15 @@ namespace Imgeneus.World.Game
         public async Task PlayerMoves(int characterId, MovementType movementType, float X, float Y, float Z, ushort angle)
         {
             var player = Players[characterId];
-            player.PosX = X;
-            player.PosY = Y;
-            player.PosZ = Z;
-            player.Angle = angle;
-            OnPlayerMove?.Invoke(player);
-
-            if (movementType == MovementType.Stopped)
-            {
-                using var database = DependencyContainer.Instance.Resolve<IDatabase>();
-                var dbCharacter = database.Characters.Find(characterId);
-                dbCharacter.Angle = angle;
-                dbCharacter.PosX = X;
-                dbCharacter.PosY = Y;
-                dbCharacter.PosZ = Z;
-                await database.SaveChangesAsync();
-            }
-
-            _logger.LogDebug($"Character {player.Id} moved to x={player.PosX} y={player.PosY} z={player.PosZ} angle={player.Angle}");
+            var map = Maps[player.Map];
+            await map.PlayerMoves(characterId, movementType, X, Y, Z, angle);
         }
 
         /// <inheritdoc />
-        public Character LoadPlayerInMap(int characterId)
+        public void LoadPlayerInMap(int characterId)
         {
             var player = Players[characterId];
-
-            // TODO: implement maps. For now just notify other players, that new player arrived.
-
-            OnPlayerEnteredMap?.Invoke(player);
-
-            return player;
+            Maps[player.Map].LoadPlayer(player);
         }
 
         /// <inheritdoc />
@@ -128,12 +89,19 @@ namespace Imgeneus.World.Game
             Character player;
             if (Players.TryRemove(characterId, out player))
             {
-                OnPlayerLeftMap?.Invoke(player);
                 _logger.LogDebug($"Player {characterId} left game world");
+
+                var map = Maps[player.Map];
+                map.UnloadPlayer(player);
+                player.ClearConnection();
             }
             else
             {
-                _logger.LogError($"Couldn't remove player {characterId} from game world");
+                // 0 means, that connection with client was lost, when he was in character selection screen.
+                if (characterId != 0)
+                {
+                    _logger.LogError($"Couldn't remove player {characterId} from game world");
+                }
             }
 
         }
@@ -141,45 +109,20 @@ namespace Imgeneus.World.Game
         /// <inheritdoc />
         public void PlayerSendMotion(int characterId, Motion motion)
         {
-            if (motion == Motion.None || motion == Motion.Sit)
-            {
-                var player = Players[characterId];
-                player.Motion = motion;
-            }
-            OnPlayerMotion?.Invoke(characterId, motion);
+            var player = Players[characterId];
+            Maps[player.Map].PlayerSendMotion(characterId, motion);
         }
 
         /// <inheritdoc />
         public async Task PlayerUsedSkill(int characterId, byte skillNumber)
         {
             var player = Players[characterId];
-            var skill = player.Skills.First(s => s.Number == skillNumber);
-
-            // TODO: implement use of all skills.
-            // For now, just for testing I'm implementing buff to character.
-            if (skill.Type == TypeDetail.Buff && (skill.TargetType == TargetType.Caster || skill.TargetType == TargetType.PartyMembers))
-            {
-                var buff = await player.AddActiveBuff(skill);
-                OnPlayerGotBuff?.Invoke(player, buff);
-            }
-
-            OnPlayerUsedSkill?.Invoke(player, skill);
+            await player.UseSkill(skillNumber);
         }
 
         #endregion
 
         #region Mobs
-
-        public List<Mob> Mobs = new List<Mob>();
-
-        /// <inheritdoc />
-        public event Action<Mob> OnMobEnter;
-
-        /// <inheritdoc />
-        public event Action<Mob> OnMobMove;
-
-        /// <inheritdoc />
-        public event Action<Mob, int> OnMobAttack;
 
         /// <inheritdoc />
         public void GMCreateMob(int characterId, ushort mobId)
@@ -192,39 +135,22 @@ namespace Imgeneus.World.Game
 
             // TODO: this should be part of map implementation.
             using var database = DependencyContainer.Instance.Resolve<IDatabase>();
-            var mob = Mob.FromDbMob(GenerateGlobalId(), database.Mobs.First(m => m.Id == mobId), DependencyContainer.Instance.Resolve<ILogger<Mob>>());
+            var mob = Mob.FromDbMob(database.Mobs.First(m => m.Id == mobId), DependencyContainer.Instance.Resolve<ILogger<Mob>>());
 
             // TODO: mobs should be generated near character, not on his position directly.
             mob.PosX = player.PosX;
             mob.PosY = player.PosY;
             mob.PosZ = player.PosZ;
 
-            Mobs.Add(mob);
-            _logger.LogDebug($"Mob {mob.MobId} entered game world");
-            OnMobEnter?.Invoke(mob);
-
-            // TODO: I'm investigating all available mob packets now.
-            // Remove it, when start working on AI implementation!
-
-            // Emulates mob move within 3 seconds after it's created.
-            //mob.OnMove += (sender) =>
-            //{
-            //    OnMobMove?.Invoke(sender);
-            //};
-            //mob.EmulateMovement();
-
-            // Emulates mob attack within 3 seconds after it's created.
-            //mob.OnAttack += (mob, playerId) =>
-            //{
-            //    OnMobAttack?.Invoke(mob, playerId);
-            //};
-            //mob.EmulateAttack(characterId);
+            Maps[player.Map].AddMob(mob);
         }
 
         /// <inheritdoc />
-        public Mob GetMob(int characterId, uint mobId)
+        public Mob GetMob(int characterId, int mobId)
         {
-            var mob = Mobs.FirstOrDefault(m => m.GlobalId == mobId);
+            var player = Players[characterId];
+            var map = Maps[player.Map];
+            var mob = map.GetMob(mobId);
             return mob;
         }
 

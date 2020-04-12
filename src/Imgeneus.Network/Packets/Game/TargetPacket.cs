@@ -4,11 +4,11 @@ namespace Imgeneus.Network.Packets.Game
 {
     public struct TargetPacket
     {
-        public uint TargetId { get; }
+        public int TargetId { get; }
 
         public TargetPacket(IPacketStream packet)
         {
-            TargetId = packet.Read<uint>();
+            TargetId = packet.Read<int>();
         }
     }
 }

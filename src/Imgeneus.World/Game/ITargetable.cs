@@ -10,7 +10,7 @@
         /// <summary>
         /// Unique id inside of a game world.
         /// </summary>
-        public uint GlobalId { get; }
+        public int Id { get; }
 
         /// <summary>
         /// Current health.

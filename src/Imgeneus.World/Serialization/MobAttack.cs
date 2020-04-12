@@ -10,7 +10,7 @@ namespace Imgeneus.World.Serialization
         public bool IsSuccess;
 
         [FieldOrder(1)]
-        public uint MobId;
+        public int MobId;
 
         [FieldOrder(2)]
         public int TargetId;
@@ -21,7 +21,7 @@ namespace Imgeneus.World.Serialization
         public MobAttack(Mob mob, int targetId)
         {
             IsSuccess = true; // I assume it's critical or not critical hit.
-            MobId = mob.GlobalId;
+            MobId = mob.Id;
             TargetId = targetId;
             Damage = new ushort[3]; // TODO: write damage here.
             Damage[0] = 10; // Health damage

@@ -41,7 +41,7 @@ namespace Imgeneus.Network.Serialization
         public Gender Gender;
 
         [FieldOrder(10)]
-        public Map Map;
+        public ushort Map;
 
         [FieldOrder(11)]
         public ushort Strength;

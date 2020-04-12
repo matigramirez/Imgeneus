@@ -4,11 +4,11 @@ namespace Imgeneus.Network.Packets.Game
 {
     public struct MobStatePacket
     {
-        public uint MobId { get; }
+        public int MobId { get; }
 
         public MobStatePacket(IPacketStream packet)
         {
-            MobId = packet.Read<uint>();
+            MobId = packet.Read<int>();
         }
     }
 }

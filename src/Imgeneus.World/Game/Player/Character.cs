@@ -2,6 +2,7 @@
 using Imgeneus.Database;
 using Imgeneus.Database.Constants;
 using Imgeneus.Database.Entities;
+using Imgeneus.World.Packets;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
@@ -11,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Imgeneus.World.Game.Player
 {
-    public class Character
+    public class Character : ITargetable
     {
         private readonly ILogger<Character> _logger;
         public Character(ILogger<Character> logger)
@@ -21,11 +22,11 @@ namespace Imgeneus.World.Game.Player
 
         #region Character info
 
-        public int Id;
+        public int Id { get; private set; }
         public string Name;
         public Fraction Country;
         public ushort Level;
-        public Map Map;
+        public ushort Map;
         public Race Race;
         public CharacterProfession Class;
         public Mode Mode;
@@ -33,10 +34,6 @@ namespace Imgeneus.World.Game.Player
         public byte Face;
         public byte Height;
         public Gender Gender;
-        public float PosX;
-        public float PosY;
-        public float PosZ;
-        public ushort Angle;
         public ushort StatPoint;
         public ushort SkillPoint;
         public ushort Strength;
@@ -68,9 +65,9 @@ namespace Imgeneus.World.Game.Player
         public bool HasParty;
         public bool IsPartyLead;
 
-        public int CurrentHP;
-        public int CurrentMP;
-        public int CurrentSP;
+        public int CurrentHP { get; set; }
+        public int CurrentMP { get; set; }
+        public int CurrentSP { get; set; }
 
         public int MaxHP { get => CurrentHP * 2; } // TODO: implement max HP. For now return current * 2.
         public int MaxMP { get => CurrentMP * 2; } // TODO: implement max HP. For now return current * 2.
@@ -80,7 +77,15 @@ namespace Imgeneus.World.Game.Player
 
         #region Skills
 
+        /// <summary>
+        /// Collection of available skills.
+        /// </summary>
         public List<Skill> Skills { get; private set; } = new List<Skill>();
+
+        /// <summary>
+        /// Event, that is fired, when player uses skill.
+        /// </summary>
+        public event Action<Character, Skill> OnUsedSkill;
 
         /// <summary>
         /// Player learns new skill.
@@ -169,12 +174,35 @@ namespace Imgeneus.World.Game.Player
             }
         }
 
+        /// <summary>
+        /// Make character use skill.
+        /// </summary>
+        /// <param name="skillNumber">unique number of skill; unique is per character(maybe?)</param>
+        public async Task UseSkill(byte skillNumber)
+        {
+            var skill = Skills.First(s => s.Number == skillNumber);
+
+            // TODO: implement use of all skills.
+            // For now, just for testing I'm implementing buff to character.
+            if (skill.Type == TypeDetail.Buff && (skill.TargetType == TargetType.Caster || skill.TargetType == TargetType.PartyMembers))
+            {
+                var buff = await AddActiveBuff(skill);
+            }
+
+            OnUsedSkill?.Invoke(this, skill);
+        }
+
         #endregion
 
         #region Buffs
 
         /// <summary>
-        /// AActive buffs, that increase character characteristic, attack, defense etc.
+        /// Event, that is fired, when player gets new active buff. Maybe we should notify party mmbers?
+        /// </summary>
+        public event Action<Character, ActiveBuff> OnGotBuff;
+
+        /// <summary>
+        /// Active buffs, that increase character characteristic, attack, defense etc.
         /// Don't update it directly, use instead "AddActiveBuff".
         /// </summary>
         public List<ActiveBuff> ActiveBuffs { get; private set; } = new List<ActiveBuff>();
@@ -230,6 +258,10 @@ namespace Imgeneus.World.Game.Player
                 _logger.LogDebug($"Character {Id} got buff {buff.SkillId} of level {buff.SkillLevel}. Buff will be active next {buff.CountDownInSeconds} seconds");
             }
 
+            OnGotBuff?.Invoke(this, buff);
+
+            // Notify TCP connection about new buff.
+            WorldPacketFactory.CharacterGetBuff(Client, buff);
             return buff;
         }
 
@@ -392,6 +424,43 @@ namespace Imgeneus.World.Game.Player
 
         #endregion
 
+        #region Move
+
+        public float PosX { get; private set; }
+        public float PosY { get; private set; }
+        public float PosZ { get; private set; }
+        public ushort Angle { get; private set; }
+
+        /// <summary>
+        /// Updates player position. Saves change to database if needed.
+        /// </summary>
+        /// <param name="x">new x</param>
+        /// <param name="y">new y</param>
+        /// <param name="z">new z</param>
+        /// <param name="saveChangesToDB">set it to true, if this change should be saved to database</param>
+        public async Task UpdatePosition(float x, float y, float z, ushort angle, bool saveChangesToDB)
+        {
+            PosX = x;
+            PosY = y;
+            PosZ = z;
+            Angle = angle;
+
+            _logger.LogDebug($"Character {Id} moved to x={PosX} y={PosY} z={PosZ} angle={Angle}");
+
+            if (saveChangesToDB)
+            {
+                using var database = DependencyContainer.Instance.Resolve<IDatabase>();
+                var dbCharacter = database.Characters.Find(Id);
+                dbCharacter.Angle = angle;
+                dbCharacter.PosX = PosX;
+                dbCharacter.PosY = PosY;
+                dbCharacter.PosZ = PosZ;
+                await database.SaveChangesAsync();
+            }
+        }
+
+        #endregion
+
         /// <summary>
         /// Creates character from database information.
         /// </summary>
@@ -456,5 +525,39 @@ namespace Imgeneus.World.Game.Player
 
             database.SaveChanges();
         }
+
+        #region Network
+
+        private WorldClient _client;
+
+        /// <summary>
+        /// TCP connection with client.
+        /// </summary>
+        public WorldClient Client
+        {
+            get => _client;
+
+            set
+            {
+                if (_client is null)
+                {
+                    _client = value;
+                }
+                else
+                {
+                    throw new ArgumentException("TCP connection can not be set twice");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Removes TCP connection.
+        /// </summary>
+        public void ClearConnection()
+        {
+            _client = null;
+        }
+
+        #endregion
     }
 }

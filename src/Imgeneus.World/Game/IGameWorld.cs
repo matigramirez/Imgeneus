@@ -2,7 +2,6 @@
 using Imgeneus.Network.Packets.Game;
 using Imgeneus.World.Game.Monster;
 using Imgeneus.World.Game.Player;
-using System;
 using System.Collections.Concurrent;
 using System.Threading.Tasks;
 
@@ -14,31 +13,6 @@ namespace Imgeneus.World.Game
     public interface IGameWorld
     {
         /// <summary>
-        /// Event, that is fired, when new player enters the map.
-        /// </summary>
-        public event Action<Character> OnPlayerEnteredMap;
-
-        /// <summary>
-        /// Event, that is fired, when player leaves the map.
-        /// </summary>
-        public event Action<Character> OnPlayerLeftMap;
-
-        /// <summary>
-        /// Event, that is fired, when player sends motion.
-        /// </summary>
-        public event Action<int, Motion> OnPlayerMotion;
-
-        /// <summary>
-        /// Event, that is fired, when player gets buff.
-        /// </summary>
-        public event Action<Character, ActiveBuff> OnPlayerGotBuff;
-
-        /// <summary>
-        /// Event, that is fired, when player uses skill.
-        /// </summary>
-        public event Action<Character, Skill> OnPlayerUsedSkill;
-
-        /// <summary>
         /// Connected players. Key is character id, value is character.
         /// </summary>
         ConcurrentDictionary<int, Character> Players { get; }
@@ -46,22 +20,20 @@ namespace Imgeneus.World.Game
         /// <summary>
         /// Loads player into game world.
         /// </summary>
-        Character LoadPlayer(int characterId);
+        /// <param name="characterId">id of character in databse</param>
+        /// <param name="client">TCP connection with client</param>
+        /// <returns>character, that is loaded into game world</returns>
+        Character LoadPlayer(int characterId, WorldClient client);
 
         /// <summary>
         /// Loads player into map and send notification other players.
         /// </summary>
-        Character LoadPlayerInMap(int characterId);
+        void LoadPlayerInMap(int characterId);
 
         /// <summary>
         /// Removes player from game world.
         /// </summary>
         void RemovePlayer(int characterId);
-
-        /// <summary>
-        /// Event, that is fired, when the player moves.
-        /// </summary>
-        public event Action<Character> OnPlayerMove;
 
         /// <summary>
         /// Updates player's position and notifies aboyt this update.
@@ -96,28 +68,10 @@ namespace Imgeneus.World.Game
         void GMCreateMob(int characterId, ushort mobId);
 
         /// <summary>
-        /// TODO: move it to map.
-        /// Event, that is fired, when mob enters the map.
-        /// </summary>
-        public event Action<Mob> OnMobEnter;
-
-        /// <summary>
-        /// TODO: move it to map.
-        /// Event, that is fired, when mob moves to new position.
-        /// </summary>
-        public event Action<Mob> OnMobMove;
-
-        /// <summary>
-        /// TODO: move it to map.
-        /// Event, that is fired, when mob attacks the player.
-        /// </summary>
-        public event Action<Mob, int> OnMobAttack;
-
-        /// <summary>
         /// Gets mob by its' id.
         /// </summary>
         /// <param name="characterId">characted id is possibly needed to get map id</param>
         /// <param name="mobId">mob id</param>
-        public Mob GetMob(int characterId, uint mobId);
+        public Mob GetMob(int characterId, int mobId);
     }
 }

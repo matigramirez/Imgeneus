@@ -7,7 +7,7 @@ namespace Imgeneus.World.Serialization
     public class MobMove : BaseSerializable
     {
         [FieldOrder(0)]
-        public uint GlobalId { get; }
+        public int GlobalId { get; }
 
         [FieldOrder(1)]
         public MobMotion Motion { get; }
@@ -20,7 +20,7 @@ namespace Imgeneus.World.Serialization
 
         public MobMove(Mob mob)
         {
-            GlobalId = mob.GlobalId;
+            GlobalId = mob.Id;
             Motion = mob.MoveMotion;
             PosX = mob.PosX;
             PosZ = mob.PosZ;

@@ -7,7 +7,7 @@ namespace Imgeneus.World.Serialization
     public class MobEnter : BaseSerializable
     {
         [FieldOrder(0)]
-        public uint GlobalId { get; }
+        public int GlobalId { get; }
 
         [FieldOrder(1)]
         public bool IsNew { get; }
@@ -23,7 +23,7 @@ namespace Imgeneus.World.Serialization
 
         public MobEnter(Mob mob)
         {
-            GlobalId = mob.GlobalId;
+            GlobalId = mob.Id;
             IsNew = true; // TODO: find out when it can be false;
             MobId = mob.MobId;
             PosX = mob.PosX;

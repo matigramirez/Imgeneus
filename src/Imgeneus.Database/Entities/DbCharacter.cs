@@ -76,9 +76,9 @@ namespace Imgeneus.Database.Entities
         public Gender Gender { get; set; }
 
         /// <summary>
-        /// Gets or sets the character spawn map.
+        /// Gets or sets the character current map.
         /// </summary>
-        public Map Map { get; set; }
+        public ushort Map { get; set; }
 
         /// <summary>
         /// Gets or sets the character X position.

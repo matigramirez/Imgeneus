@@ -9,14 +9,30 @@ namespace Imgeneus.World.Game.Monster
     {
         private readonly ILogger<Mob> _logger;
 
-        public Mob(uint globalId, ILogger<Mob> logger)
+        public Mob(ILogger<Mob> logger)
         {
             _logger = logger;
-            GlobalId = globalId;
         }
 
+        private int _id;
+
         /// <inheritdoc />
-        public uint GlobalId { get; private set; }
+        public int Id
+        {
+            get => _id;
+            set
+            {
+                if (_id == 0)
+                {
+                    _id = value;
+                }
+                else
+                {
+                    throw new ArgumentException("Mob id can not be set twice.");
+                }
+
+            }
+        }
 
         /// <inheritdoc />
         public int CurrentHP { get; set; }
@@ -89,9 +105,9 @@ namespace Imgeneus.World.Game.Monster
         /// </summary>
         public event Action<Mob, int> OnAttack;
 
-        public static Mob FromDbMob(uint globalId, DbMob mob, ILogger<Mob> logger)
+        public static Mob FromDbMob(DbMob mob, ILogger<Mob> logger)
         {
-            return new Mob(globalId, logger)
+            return new Mob(logger)
             {
                 MobId = mob.Id,
                 CurrentHP = mob.HP

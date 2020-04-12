@@ -217,5 +217,20 @@ namespace Imgeneus.World.Handlers
 
             WorldPacketFactory.PlayerInTarget(client, player);
         }
+
+        [PacketHandler(PacketType.MOB_GET_STATE)]
+        public static void OnMobGetState(WorldClient client, IPacketStream packet)
+        {
+            var mobStatePacket = new MobStatePacket(packet);
+            var gameWorld = DependencyContainer.Instance.Resolve<IGameWorld>();
+            var mob = gameWorld.GetMob(client.CharID, mobStatePacket.MobId);
+
+            using var packet1 = new Packet(PacketType.MOB_GET_STATE);
+            packet1.Write(mob.MobId);
+            packet1.Write(mob.CurrentHP);
+            packet1.Write<byte>(1); // attack speed
+            packet1.Write<byte>(1); // move speed
+            client.SendPacket(packet1);
+        }
     }
 }

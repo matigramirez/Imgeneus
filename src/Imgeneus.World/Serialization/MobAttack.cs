@@ -24,6 +24,9 @@ namespace Imgeneus.World.Serialization
             MobId = mob.GlobalId;
             TargetId = targetId;
             Damage = new ushort[3]; // TODO: write damage here.
+            Damage[0] = 10; // Health damage
+            Damage[1] = 5; // Stamina damage
+            Damage[2] = 3; // Mana damage
         }
     }
 }

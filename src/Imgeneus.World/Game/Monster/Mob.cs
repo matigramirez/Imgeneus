@@ -69,8 +69,9 @@ namespace Imgeneus.World.Game.Monster
         /// <summary>
         /// TODO: remove me! This is only for attack emulation.
         /// </summary>
-        public void EmulateAttack()
+        public void EmulateAttack(int targetId)
         {
+            TargetId = targetId;
             var timer = new Timer();
             timer.Interval = 3000; // 3 seconds.
             timer.Elapsed += (s, e) =>

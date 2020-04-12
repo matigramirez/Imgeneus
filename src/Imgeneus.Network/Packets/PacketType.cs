@@ -42,6 +42,7 @@
         CHARACTER_MOVE = 0x0501,
         CHARACTER_MOTION = 0x0506,
         CHARACTER_CURRENT_HITPOINTS = 0x0521, // 1313
+        CHARACTER_ABSORPTION_DAMAGE = 0x0525, // 1317
         TARGET_SELECT_MOB = 0x0305, // 773
         TARGET_SELECT_CHARACTER = 0x302, // 770
         USE_SKILL = 0x0511,
@@ -53,6 +54,7 @@
 
         // Mobs
         MOB_ENTER = 0x0601, // 1537
+        MOB_GET_STATE = 0x0304, // 772
         MOB_MOVE = 0x0603, // 1539
         MOB_ATTACK = 0x605, // 1541
 

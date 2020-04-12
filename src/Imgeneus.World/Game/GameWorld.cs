@@ -218,7 +218,7 @@ namespace Imgeneus.World.Game
             //{
             //    OnMobAttack?.Invoke(mob, playerId);
             //};
-            //mob.EmulateAttack();
+            //mob.EmulateAttack(characterId);
         }
 
         /// <inheritdoc />

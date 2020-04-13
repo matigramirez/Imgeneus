@@ -283,6 +283,11 @@ namespace Imgeneus.World.Game.Player
 
         #region Inventory
 
+        /// <summary>
+        /// Event, that is fired, when some equipment of character changes.
+        /// </summary>
+        public event Action<Character, Item> OnEquipmentChanged;
+
         public List<Item> InventoryItems { get; private set; } = new List<Item>();
 
         /// <summary>
@@ -428,9 +433,10 @@ namespace Imgeneus.World.Game.Player
 
             if (sourceItem.Bag == 0 || destinationItem.Bag == 0)
             {
-                // TODO: send update, that equipment changed.
-                var slot = sourceItem.Bag == 0 ? sourceItem.Slot : destinationItem.Slot;
-                _logger.LogDebug($"Character {Id} changed equipment on slot {slot}");
+                var equipmentItem = sourceItem.Bag == 0 ? sourceItem : destinationItem;
+                OnEquipmentChanged?.Invoke(this, equipmentItem);
+
+                _logger.LogDebug($"Character {Id} changed equipment on slot {equipmentItem.Slot}");
             }
 
             return (sourceItem, destinationItem);

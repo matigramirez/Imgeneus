@@ -49,27 +49,6 @@ namespace Imgeneus.World.Packets
             client.SendPacket(answerPacket);
         }
 
-        internal void SendEquipment(WorldClient client, Character character, Item item)
-        {
-            using var packet = new Packet(PacketType.SEND_EQUIPMENT);
-            packet.Write(character.Id);
-
-            packet.WriteByte(item.Slot);
-            packet.WriteByte(item.Type);
-            packet.WriteByte(item.TypeId);
-            packet.WriteByte(20); // TODO: implement enchant here.
-
-            if (item.IsCloakSlot)
-            {
-                for (var i = 0; i < 6; i++) // Something about cloak.
-                {
-                    packet.WriteByte(0);
-                }
-            }
-
-            client.SendPacket(packet);
-        }
-
         internal void SendLearnedSkills(WorldClient client, Character character)
         {
             using var packet = new Packet(PacketType.CHARACTER_SKILLS);
@@ -91,7 +70,7 @@ namespace Imgeneus.World.Packets
             client.SendPacket(packet);
         }
 
-        internal void SendMoveItemInInventory(WorldClient client, Item sourceItem, Item destinationItem, Character character)
+        internal void SendMoveItemInInventory(WorldClient client, Item sourceItem, Item destinationItem)
         {
             // Send move item.
             using var packet = new Packet(PacketType.INVENTORY_MOVE_ITEM);
@@ -103,13 +82,6 @@ namespace Imgeneus.World.Packets
             packet.Write(bytes);
 
             client.SendPacket(packet);
-
-            // Send equipment update to character.
-            if (sourceItem.Bag == 0 || destinationItem.Bag == 0)
-            {
-                // TODO: send equipment update to all characters nearby.
-                SendEquipment(client, character, sourceItem.Bag == 0 ? sourceItem : destinationItem);
-            }
         }
 
         internal void SetMobInTarget(WorldClient client, Mob target)

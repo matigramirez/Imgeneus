@@ -1,4 +1,5 @@
-﻿using Imgeneus.Database.Constants;
+﻿using System;
+using Imgeneus.Database.Constants;
 using Imgeneus.Network.Data;
 using Imgeneus.Network.Packets;
 using Imgeneus.World.Game.Monster;
@@ -74,6 +75,27 @@ namespace Imgeneus.World.Packets
         {
             using var packet = new Packet(PacketType.MOB_ATTACK);
             packet.Write(new MobAttack(mob, targetId).Serialize());
+            client.SendPacket(packet);
+        }
+
+        internal void SendCharacterChangedEquipment(WorldClient client, int characterId, Item equipmentItem)
+        {
+            using var packet = new Packet(PacketType.SEND_EQUIPMENT);
+            packet.Write(characterId);
+
+            packet.WriteByte(equipmentItem.Slot);
+            packet.WriteByte(equipmentItem.Type);
+            packet.WriteByte(equipmentItem.TypeId);
+            packet.WriteByte(20); // TODO: implement enchant here.
+
+            if (equipmentItem.IsCloakSlot)
+            {
+                for (var i = 0; i < 6; i++) // Something about cloak.
+                {
+                    packet.WriteByte(0);
+                }
+            }
+
             client.SendPacket(packet);
         }
     }

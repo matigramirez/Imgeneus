@@ -155,7 +155,7 @@ namespace Imgeneus.World.Game.Player
         private async Task HandleMoveItem(MoveItemInInventoryPacket moveItemPacket)
         {
             var items = await MoveItem(moveItemPacket.CurrentBag, moveItemPacket.CurrentSlot, moveItemPacket.DestinationBag, moveItemPacket.DestinationSlot);
-            _packetsHelper.SendMoveItemInInventory(Client, items.sourceItem, items.destinationItem, this);
+            _packetsHelper.SendMoveItemInInventory(Client, items.sourceItem, items.destinationItem);
         }
 
         private async Task HandleLearnNewSkill(LearnNewSkillPacket learnNewSkillsPacket)

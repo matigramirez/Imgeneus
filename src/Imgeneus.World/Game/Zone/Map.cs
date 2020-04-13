@@ -71,6 +71,7 @@ namespace Imgeneus.World.Game.Zone
                 character.OnPositionChanged += Character_OnPositionChanged;
                 character.OnMotion += Character_OnMotion;
                 character.OnSeekForTarget += Character_OnTargetChanged;
+                character.OnEquipmentChanged += Character_OnEquipmentChanged;
 
                 if (character.IsAdmin)
                 {
@@ -102,6 +103,14 @@ namespace Imgeneus.World.Game.Zone
 
                 character.OnUsedSkill -= Character_OnUsedSkill;
                 character.OnPositionChanged -= Character_OnPositionChanged;
+                character.OnMotion -= Character_OnMotion;
+                character.OnSeekForTarget -= Character_OnTargetChanged;
+                character.OnEquipmentChanged -= Character_OnEquipmentChanged;
+
+                if (character.IsAdmin)
+                {
+                    character.Client.OnPacketArrived -= Client_OnPacketArrived;
+                }
             }
 
             return success;
@@ -164,6 +173,20 @@ namespace Imgeneus.World.Game.Zone
             else
             {
                 sender.Target = Players[targetId];
+            }
+        }
+
+        /// <summary>
+        /// Notifies other players, that this player changed equipment.
+        /// </summary>
+        /// <param name="sender">player, that changed equipment</param>
+        /// <param name="equipmentItem">item, that was worn</param>
+        private void Character_OnEquipmentChanged(Character sender, Item equipmentItem)
+        {
+            // Notify all players about new item.
+            foreach (var player in Players)
+            {
+                _packetHelper.SendCharacterChangedEquipment(player.Value.Client, sender.Id, equipmentItem);
             }
         }
 

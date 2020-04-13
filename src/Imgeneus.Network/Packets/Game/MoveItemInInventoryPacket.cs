@@ -2,7 +2,7 @@
 
 namespace Imgeneus.Network.Packets.Game
 {
-    public struct MoveItemInInventoryPacket
+    public struct MoveItemInInventoryPacket : IDeserializedPacket
     {
         public byte CurrentBag { get; }
 

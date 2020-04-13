@@ -3,7 +3,7 @@ using Imgeneus.Network.Data;
 
 namespace Imgeneus.Network.Packets.Game
 {
-    public struct AccountFractionPacket
+    public struct AccountFractionPacket : IDeserializedPacket
     {
         public Fraction Fraction { get; }
 

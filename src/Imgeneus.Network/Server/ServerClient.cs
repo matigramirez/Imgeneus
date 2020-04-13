@@ -1,7 +1,10 @@
 ﻿using Imgeneus.Network.Common;
 using Imgeneus.Network.Data;
+using Imgeneus.Network.Packets;
+using System;
 using System.Collections.Generic;
 using System.Net.Sockets;
+using static Imgeneus.Network.Server.IServerClient;
 
 namespace Imgeneus.Network.Server
 {
@@ -49,5 +52,11 @@ namespace Imgeneus.Network.Server
         /// <inheritdoc />
         public virtual void SendPacketToAll(IPacketStream packet)
             => this.Server.SendPacketToAll(packet.Buffer);
+
+        /// <inheritdoc />
+        public abstract Dictionary<PacketType, PacketDeserializeHandler> PacketHandlers
+        {
+            get;
+        }
     }
 }

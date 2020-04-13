@@ -2,7 +2,7 @@
 
 namespace Imgeneus.Network.Packets.Game
 {
-    public struct GMCreateMobPacket
+    public struct GMCreateMobPacket : IDeserializedPacket
     {
         public ushort MobId { get; }
 

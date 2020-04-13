@@ -12,12 +12,15 @@ using System.Threading.Tasks;
 
 namespace Imgeneus.World.Game.Player
 {
-    public class Character : ITargetable
+    public partial class Character : ITargetable
     {
         private readonly ILogger<Character> _logger;
+        private readonly CharacterPacketsHelper _packetsHelper;
+
         public Character(ILogger<Character> logger)
         {
             _logger = logger;
+            _packetsHelper = new CharacterPacketsHelper();
         }
 
         #region Character info
@@ -51,11 +54,6 @@ namespace Imgeneus.World.Game.Player
         public bool IsAdmin;
 
         /// <summary>
-        /// Motion, like sit.
-        /// </summary>
-        public Motion Motion;
-
-        /// <summary>
         ///  Set to 1 if you want character running or to 0 if character is "walking".
         ///  Used to change with Tab in previous episodes.
         /// </summary>
@@ -72,6 +70,20 @@ namespace Imgeneus.World.Game.Player
         public int MaxHP { get => CurrentHP * 2; } // TODO: implement max HP. For now return current * 2.
         public int MaxMP { get => CurrentMP * 2; } // TODO: implement max HP. For now return current * 2.
         public int MaxSP { get => CurrentSP * 2; } // TODO: implement max HP. For now return current * 2.
+
+        #endregion
+
+        #region Motion
+
+        /// <summary>
+        /// Event, that is fires, when character makes any motion.
+        /// </summary>
+        public event Action<Character, Motion> OnMotion;
+
+        /// <summary>
+        /// Motion, like sit.
+        /// </summary>
+        public Motion Motion;
 
         #endregion
 
@@ -262,7 +274,8 @@ namespace Imgeneus.World.Game.Player
 
             // Notify TCP connection about new buff.
             if (Client != null)
-                WorldPacketFactory.CharacterGetBuff(Client, buff);
+                SendGetBuff(buff);
+
             return buff;
         }
 
@@ -427,6 +440,11 @@ namespace Imgeneus.World.Game.Player
 
         #region Move
 
+        /// <summary>
+        /// Event, that is fired, when character changes his/her position.
+        /// </summary>
+        public event Action<Character> OnPositionChanged;
+
         public float PosX { get; private set; }
         public float PosY { get; private set; }
         public float PosZ { get; private set; }
@@ -457,6 +475,31 @@ namespace Imgeneus.World.Game.Player
                 dbCharacter.PosY = PosY;
                 dbCharacter.PosZ = PosZ;
                 await database.SaveChangesAsync();
+            }
+
+            OnPositionChanged?.Invoke(this);
+        }
+
+        #endregion
+
+        #region Target
+
+        /// <summary>
+        /// Player fire this event to map in order to get target.
+        /// </summary>
+        public event Action<Character, int, TargetEntity> OnSeekForTarget;
+
+        private ITargetable _target;
+        public ITargetable Target
+        {
+            get => _target; set
+            {
+                _target = value;
+
+                if (_target != null)
+                {
+                    TargetChanged(Target);
+                }
             }
         }
 
@@ -527,38 +570,5 @@ namespace Imgeneus.World.Game.Player
             database.SaveChanges();
         }
 
-        #region Network
-
-        private WorldClient _client;
-
-        /// <summary>
-        /// TCP connection with client.
-        /// </summary>
-        public WorldClient Client
-        {
-            get => _client;
-
-            set
-            {
-                if (_client is null)
-                {
-                    _client = value;
-                }
-                else
-                {
-                    throw new ArgumentException("TCP connection can not be set twice");
-                }
-            }
-        }
-
-        /// <summary>
-        /// Removes TCP connection.
-        /// </summary>
-        public void ClearConnection()
-        {
-            _client = null;
-        }
-
-        #endregion
     }
 }

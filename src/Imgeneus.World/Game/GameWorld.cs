@@ -1,6 +1,5 @@
 ﻿using Imgeneus.Core.DependencyInjection;
 using Imgeneus.Database;
-using Imgeneus.Database.Constants;
 using Imgeneus.Network.Packets.Game;
 using Imgeneus.World.Game.Monster;
 using Imgeneus.World.Game.Player;
@@ -9,7 +8,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System.Collections.Concurrent;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace Imgeneus.World.Game
 {
@@ -64,16 +62,17 @@ namespace Imgeneus.World.Game
 
             Players.TryAdd(newPlayer.Id, newPlayer);
             _logger.LogDebug($"Player {newPlayer.Id} connected to game world");
+            newPlayer.Client.OnPacketArrived += Client_OnPacketArrived;
 
             return newPlayer;
         }
 
-        /// <inheritdoc />
-        public async Task PlayerMoves(int characterId, MovementType movementType, float X, float Y, float Z, ushort angle)
+        private void Client_OnPacketArrived(WorldClient sender, IDeserializedPacket packet)
         {
-            var player = Players[characterId];
-            var map = Maps[player.Map];
-            await map.PlayerMoves(characterId, movementType, X, Y, Z, angle);
+            if (packet is CharacterEnteredMapPacket)
+            {
+                LoadPlayerInMap(sender.CharID);
+            }
         }
 
         /// <inheritdoc />
@@ -91,6 +90,8 @@ namespace Imgeneus.World.Game
             {
                 _logger.LogDebug($"Player {characterId} left game world");
 
+                player.Client.OnPacketArrived -= Client_OnPacketArrived;
+
                 var map = Maps[player.Map];
                 map.UnloadPlayer(player);
                 player.ClearConnection();
@@ -104,54 +105,6 @@ namespace Imgeneus.World.Game
                 }
             }
 
-        }
-
-        /// <inheritdoc />
-        public void PlayerSendMotion(int characterId, Motion motion)
-        {
-            var player = Players[characterId];
-            Maps[player.Map].PlayerSendMotion(characterId, motion);
-        }
-
-        /// <inheritdoc />
-        public async Task PlayerUsedSkill(int characterId, byte skillNumber)
-        {
-            var player = Players[characterId];
-            await player.UseSkill(skillNumber);
-        }
-
-        #endregion
-
-        #region Mobs
-
-        /// <inheritdoc />
-        public void GMCreateMob(int characterId, ushort mobId)
-        {
-            var player = Players[characterId];
-            if (!player.IsAdmin)
-            {
-                return;
-            }
-
-            // TODO: this should be part of map implementation.
-            using var database = DependencyContainer.Instance.Resolve<IDatabase>();
-            var mob = Mob.FromDbMob(database.Mobs.First(m => m.Id == mobId), DependencyContainer.Instance.Resolve<ILogger<Mob>>());
-
-            // TODO: mobs should be generated near character, not on his position directly.
-            mob.PosX = player.PosX;
-            mob.PosY = player.PosY;
-            mob.PosZ = player.PosZ;
-
-            Maps[player.Map].AddMob(mob);
-        }
-
-        /// <inheritdoc />
-        public Mob GetMob(int characterId, int mobId)
-        {
-            var player = Players[characterId];
-            var map = Maps[player.Map];
-            var mob = map.GetMob(mobId);
-            return mob;
         }
 
         #endregion

@@ -1,5 +1,7 @@
 ﻿using Imgeneus.Network.Common;
 using Imgeneus.Network.Data;
+using Imgeneus.Network.Packets;
+using Imgeneus.Network.Packets.Game;
 using System;
 using System.Collections.Generic;
 
@@ -53,5 +55,12 @@ namespace Imgeneus.Network.Server
         /// </summary>
         /// <param name="packet">Packet</param>
         void SendPacketToAll(IPacketStream packet);
+
+        public delegate IDeserializedPacket PacketDeserializeHandler(IPacketStream stream);
+
+        /// <summary>
+        /// This dictionary contains inofmation how oacket stream should be transformed based on packet type.
+        /// </summary>
+        Dictionary<PacketType, PacketDeserializeHandler> PacketHandlers { get; }
     }
 }

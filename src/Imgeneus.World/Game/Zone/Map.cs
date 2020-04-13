@@ -5,13 +5,9 @@ using Imgeneus.Network.Packets.Game;
 using Imgeneus.World.Game.Monster;
 using Imgeneus.World.Game.Player;
 using Imgeneus.World.Packets;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace Imgeneus.World.Game.Zone
 {
@@ -23,6 +19,7 @@ namespace Imgeneus.World.Game.Zone
         #region Constructor
 
         private readonly ILogger<Map> _logger;
+        private readonly MapPacketsHelper _packetHelper;
 
         /// <summary>
         /// Map id.
@@ -33,6 +30,7 @@ namespace Imgeneus.World.Game.Zone
         {
             Id = id;
             _logger = logger;
+            _packetHelper = new MapPacketsHelper();
         }
 
         #endregion
@@ -62,14 +60,22 @@ namespace Imgeneus.World.Game.Zone
                     if (loadedPlayer.Key != character.Id)
                     {
                         // Notify players in this map, that new player arrived.
-                        WorldPacketFactory.CharacterConnectedToMap(loadedPlayer.Value.Client, character);
+                        _packetHelper.SendCharacterConnectedToMap(loadedPlayer.Value.Client, character);
 
                         // Notify new player, about already loaded player.
-                        WorldPacketFactory.CharacterConnectedToMap(character.Client, loadedPlayer.Value);
+                        _packetHelper.SendCharacterConnectedToMap(character.Client, loadedPlayer.Value);
                     }
                 }
 
                 character.OnUsedSkill += Character_OnUsedSkill;
+                character.OnPositionChanged += Character_OnPositionChanged;
+                character.OnMotion += Character_OnMotion;
+                character.OnSeekForTarget += Character_OnTargetChanged;
+
+                if (character.IsAdmin)
+                {
+                    character.Client.OnPacketArrived += Client_OnPacketArrived;
+                }
             }
 
             return success;
@@ -91,35 +97,27 @@ namespace Imgeneus.World.Game.Zone
                 // Send other clients notification, that user has left the map.
                 foreach (var player in Players)
                 {
-                    WorldPacketFactory.CharacterLeftMap(player.Value.Client, removedCharacter);
+                    _packetHelper.SendCharacterLeftMap(player.Value.Client, removedCharacter);
                 }
 
                 character.OnUsedSkill -= Character_OnUsedSkill;
+                character.OnPositionChanged -= Character_OnPositionChanged;
             }
 
             return success;
         }
 
         /// <summary>
-        /// Updates player position and notifies other players about position change.
+        /// Notifies other players about position change.
         /// </summary>
-        /// <param name="characterId">id of character</param>
-        /// <param name="movementType">if character is running or stopped</param>
-        /// <param name="x">new x</param>
-        /// <param name="y">new y</param>
-        /// <param name="z">new z</param>
-        /// <param name="angle"></param>
-        public async Task PlayerMoves(int characterId, MovementType movementType, float x, float y, float z, ushort angle)
+        private void Character_OnPositionChanged(Character movedPlayer)
         {
-            var movedPlayer = Players[characterId];
-            await movedPlayer.UpdatePosition(x, y, z, angle, movementType == MovementType.Stopped);
-
             // Send other clients notification, that user is moving.
             foreach (var player in Players)
             {
-                if (player.Key != characterId)
+                if (player.Key != movedPlayer.Id)
                 {
-                    WorldPacketFactory.CharacterMoves(player.Value.Client, movedPlayer);
+                    _packetHelper.SendCharacterMoves(player.Value.Client, movedPlayer);
                 }
             }
         }
@@ -127,22 +125,12 @@ namespace Imgeneus.World.Game.Zone
         /// <summary>
         /// When player sends motion, we should resend this motion to all other players on this map.
         /// </summary>
-        /// <param name="characterId">id of player</param>
-        /// <param name="motion">motion</param>
-        public void PlayerSendMotion(int characterId, Motion motion)
+        private void Character_OnMotion(Character playerWithMotion, Motion motion)
         {
-            var playerWithMotion = Players[characterId];
-            if (motion == Motion.None || motion == Motion.Sit)
-            {
-                playerWithMotion.Motion = motion;
-            }
-
-            _logger.LogDebug($"Character {playerWithMotion.Id} sends motion {motion}");
-
             // Notify all players about new motion.
             foreach (var player in Players)
             {
-                WorldPacketFactory.CharacterMotion(player.Value.Client, characterId, motion);
+                _packetHelper.SendCharacterMotion(player.Value.Client, playerWithMotion.Id, motion);
             }
         }
 
@@ -156,7 +144,53 @@ namespace Imgeneus.World.Game.Zone
             // Notify all players about used skill.
             foreach (var player in Players)
             {
-                WorldPacketFactory.CharacterUseSkill(player.Value.Client, sender.Id, skill);
+                // Just plays skill animation.
+                _packetHelper.SendCharacterUsedSkilll(player.Value.Client, sender, sender, skill);
+            }
+        }
+
+        /// <summary>
+        /// Sets target based on what target character wants to get.
+        /// </summary>
+        /// <param name="sender">character, that seeks for target</param>
+        /// <param name="targetId">target Id</param>
+        /// <param name="targetType">mob or another player</param>
+        private void Character_OnTargetChanged(Character sender, int targetId, TargetEntity targetType)
+        {
+            if (targetType == TargetEntity.Mob)
+            {
+                sender.Target = Mobs[targetId];
+            }
+            else
+            {
+                sender.Target = Players[targetId];
+            }
+        }
+
+        /// <summary>
+        /// Handles special packets, as GM packets mob creation etc.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="packet"></param>
+        private void Client_OnPacketArrived(WorldClient sender, IDeserializedPacket packet)
+        {
+            switch (packet)
+            {
+                case GMCreateMobPacket gMCreateMobPacket:
+                    // TODO: find out way to preload all awailable mobs.
+                    using (var database = DependencyContainer.Instance.Resolve<IDatabase>())
+                    {
+                        var mob = Mob.FromDbMob(database.Mobs.First(m => m.Id == gMCreateMobPacket.MobId), DependencyContainer.Instance.Resolve<ILogger<Mob>>());
+
+                        var gmPlayer = Players[sender.CharID];
+                        // TODO: mobs should be generated near character, not on his position directly.
+                        mob.PosX = gmPlayer.PosX;
+                        mob.PosY = gmPlayer.PosY;
+                        mob.PosZ = gmPlayer.PosZ;
+
+                        AddMob(mob);
+                    }
+                    break;
             }
         }
 
@@ -200,8 +234,9 @@ namespace Imgeneus.World.Game.Zone
 
                 foreach (var player in Players)
                 {
-                    WorldPacketFactory.MobEntered(player.Value.Client, mob);
+                    _packetHelper.SendMobEntered(player.Value.Client, mob);
                 }
+
 
                 // TODO: I'm investigating all available mob packets now.
                 // Remove it, when start working on AI implementation!
@@ -211,7 +246,7 @@ namespace Imgeneus.World.Game.Zone
                 //{
                 //    foreach (var player in Players)
                 //    {
-                //        WorldPacketFactory.MobMove(player.Value.Client, sender);
+                //        _packetHelper.SendMobEntered(player.Value.Client, sender);
                 //    }
                 //};
                 //mob.EmulateMovement();
@@ -222,7 +257,7 @@ namespace Imgeneus.World.Game.Zone
                 //    // Send notification each player, that mob attacked.
                 //    foreach (var player in Players)
                 //    {
-                //        WorldPacketFactory.MobAttack(player.Value.Client, mob, playerId);
+                //        _packetHelper.SendMobAttack(player.Value.Client, mob, playerId);
                 //    }
                 //};
                 //mob.EmulateAttack(Players.First().Key);

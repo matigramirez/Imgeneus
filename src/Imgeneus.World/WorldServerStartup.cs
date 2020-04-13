@@ -23,7 +23,6 @@ namespace Imgeneus.World
         public void Configure()
         {
             PacketHandler<ISClient>.Initialize();
-            PacketHandler<WorldClient>.Initialize();
 
             DependencyContainer.Instance
                 .GetServiceCollection()

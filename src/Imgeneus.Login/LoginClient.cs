@@ -5,6 +5,7 @@ using Imgeneus.Network.Packets;
 using Imgeneus.Network.Server;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
 using System.Net.Sockets;
 
 namespace Imgeneus.Login
@@ -77,5 +78,12 @@ namespace Imgeneus.Login
                 this.logger.LogDebug(exception.InnerException?.StackTrace);
             }
         }
+
+        /// <summary>
+        /// PacketHandlers is replacement for PacketHandler<T>. Right now implemented only for world client.
+        /// If I have some time and mood, I'll implement it for login server too. Until then leave it unimplemented.
+        /// Check how it's done im world server.
+        /// </summary>
+        public override Dictionary<PacketType, IServerClient.PacketDeserializeHandler> PacketHandlers => throw new NotImplementedException();
     }
 }

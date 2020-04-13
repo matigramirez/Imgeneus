@@ -2,7 +2,7 @@
 
 namespace Imgeneus.Network.Packets.Game
 {
-    public struct CheckCharacterAvailableNamePacket
+    public struct CheckCharacterAvailableNamePacket : IDeserializedPacket
     {
         /// <summary>
         /// Chacter name, that client sends.

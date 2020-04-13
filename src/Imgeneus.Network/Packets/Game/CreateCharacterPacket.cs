@@ -3,7 +3,7 @@ using Imgeneus.Network.Data;
 
 namespace Imgeneus.Network.Packets.Game
 {
-    public struct CreateCharacterPacket
+    public struct CreateCharacterPacket : IDeserializedPacket
     {
         public Race Race { get; }
 

@@ -2,10 +2,13 @@
 using Imgeneus.Network;
 using Imgeneus.Network.Data;
 using Imgeneus.Network.Packets;
+using Imgeneus.Network.Packets.Game;
 using Imgeneus.Network.Server;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
 using System.Net.Sockets;
+using static Imgeneus.Network.Server.IServerClient;
 
 namespace Imgeneus.World
 {
@@ -28,6 +31,8 @@ namespace Imgeneus.World
         /// </summary>
         public bool IsConnected => this.UserID != 0;
 
+        public event Action<WorldClient, IDeserializedPacket> OnPacketArrived;
+
         public WorldClient(IServer server, Socket acceptedSocket)
             : base(server, acceptedSocket)
         {
@@ -44,7 +49,14 @@ namespace Imgeneus.World
 
             try
             {
-                if (!PacketHandler<WorldClient>.Invoke(this, packet, packet.PacketType))
+                PacketDeserializeHandler handler;
+
+                if (PacketHandlers.TryGetValue(packet.PacketType, out handler))
+                {
+                    var deserializedPacket = handler.Invoke(packet);
+                    OnPacketArrived?.Invoke(this, deserializedPacket);
+                }
+                else
                 {
                     if (Enum.IsDefined(typeof(PacketType), packet.PacketType))
                     {
@@ -76,5 +88,32 @@ namespace Imgeneus.World
 
             this.UserID = userID;
         }
+
+        /// <summary>
+        /// All packets transformations available for world server. Add new packets here.
+        /// </summary>
+        private readonly Dictionary<PacketType, PacketDeserializeHandler> _packetHandlers = new Dictionary<PacketType, PacketDeserializeHandler>()
+        {
+            { PacketType.GAME_HANDSHAKE, (s) => new HandshakePacket(s) },
+            { PacketType.PING, (s) => new PingPacket(s) },
+            { PacketType.ACCOUNT_FACTION, (s) => new AccountFractionPacket(s) },
+            { PacketType.CHECK_CHARACTER_AVAILABLE_NAME, (s) => new CheckCharacterAvailableNamePacket(s) },
+            { PacketType.CREATE_CHARACTER, (s) => new CreateCharacterPacket(s) },
+            { PacketType.SELECT_CHARACTER, (s) => new SelectCharacterPacket(s) },
+            { PacketType.LEARN_NEW_SKILL, (s) => new LearnNewSkillPacket(s) },
+            { PacketType.INVENTORY_MOVE_ITEM, (s) => new MoveItemInInventoryPacket(s) },
+            { PacketType.CHARACTER_MOVE, (s) => new MoveCharacterPacket(s) },
+            { PacketType.CHARACTER_ENTERED_MAP, (s) => new CharacterEnteredMapPacket(s) },
+            { PacketType.CHARACTER_MOTION, (s) => new MotionPacket(s) },
+            { PacketType.USE_SKILL, (s) => new UsedSkillPacket(s) },
+            { PacketType.TARGET_SELECT_MOB, (s) => new MobInTargetPacket(s) },
+            { PacketType.TARGET_SELECT_CHARACTER, (s) => new PlayerInTargetPacket(s) },
+            { PacketType.GM_CREATE_MOB, (s) => new GMCreateMobPacket(s) },
+            { PacketType.GM_COMMAND_GET_ITEM, (s) => new GMGetItemPacket(s) }
+
+        };
+
+        /// <inheritdoc />
+        public override Dictionary<PacketType, PacketDeserializeHandler> PacketHandlers => _packetHandlers;
     }
 }

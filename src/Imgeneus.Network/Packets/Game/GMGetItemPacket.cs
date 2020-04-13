@@ -2,7 +2,7 @@
 
 namespace Imgeneus.Network.Packets.Game
 {
-    public struct GMGetItemPacket
+    public struct GMGetItemPacket : IDeserializedPacket
     {
         public byte Type { get; set; }
 

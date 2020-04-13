@@ -2,7 +2,7 @@
 
 namespace Imgeneus.Network.Packets.Game
 {
-    public struct MoveCharacterPacket
+    public struct MoveCharacterPacket : IDeserializedPacket
     {
         /// <summary>
         /// If it's 132 character stopped moving, if it's 129 character is continuously moving.

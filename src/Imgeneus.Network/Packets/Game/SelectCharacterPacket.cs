@@ -2,7 +2,7 @@
 
 namespace Imgeneus.Network.Packets.Game
 {
-    public struct SelectCharacterPacket
+    public struct SelectCharacterPacket : IDeserializedPacket
     {
         /// <summary>
         /// Id of character, that should be loaded.

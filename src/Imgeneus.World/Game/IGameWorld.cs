@@ -34,44 +34,5 @@ namespace Imgeneus.World.Game
         /// Removes player from game world.
         /// </summary>
         void RemovePlayer(int characterId);
-
-        /// <summary>
-        /// Updates player's position and notifies aboyt this update.
-        /// </summary>
-        /// <param name="characterId">id of character</param>
-        /// <param name="movementType">running or stopped</param>
-        /// <param name="X">x coordinate</param>
-        /// <param name="Y">y coordinate</param>
-        /// <param name="Z">z coordinate</param>
-        /// <param name="angle">rotation angle</param>
-        Task PlayerMoves(int characterId, MovementType movementType, float X, float Y, float Z, ushort angle);
-
-        /// <summary>
-        /// Character sends some motion.
-        /// </summary>
-        /// <param name="characterId">id of character</param>
-        /// <param name="motion">motion type</param>
-        void PlayerSendMotion(int characterId, Motion motion);
-
-        /// <summary>
-        /// Character used some skill.
-        /// </summary>
-        /// <param name="characterId">id of character</param>
-        /// <param name="skillNumber">unique number of skill; unique is per character(maybe?)</param>
-        Task PlayerUsedSkill(int characterId, byte skillNumber);
-
-        /// <summary>
-        /// GM command, that creates mob near the character.
-        /// </summary>
-        /// <param name="characterId">character id, near which mobs are going to be created</param>
-        /// <param name="mobId">mob id</param>
-        void GMCreateMob(int characterId, ushort mobId);
-
-        /// <summary>
-        /// Gets mob by its' id.
-        /// </summary>
-        /// <param name="characterId">characted id is possibly needed to get map id</param>
-        /// <param name="mobId">mob id</param>
-        public Mob GetMob(int characterId, int mobId);
     }
 }

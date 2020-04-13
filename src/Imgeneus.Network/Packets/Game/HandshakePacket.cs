@@ -3,7 +3,7 @@ using System;
 
 namespace Imgeneus.Network.Packets.Game
 {
-    public struct HandshakePacket : IEquatable<HandshakePacket>
+    public struct HandshakePacket : IEquatable<HandshakePacket>, IDeserializedPacket
     {
         public int UserId { get; }
 

@@ -2,7 +2,7 @@
 
 namespace Imgeneus.Network.Packets.Game
 {
-    public struct UsedSkillPacket
+    public struct UsedSkillPacket : IDeserializedPacket
     {
         public byte SkillNumber { get; }
 

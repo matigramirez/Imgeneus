@@ -1,6 +1,7 @@
 ﻿using Imgeneus.Network.Data;
 using System;
 using System.Collections.Concurrent;
+using System.Linq;
 using System.Net.Sockets;
 using System.Threading.Tasks;
 
@@ -85,7 +86,26 @@ namespace Imgeneus.Network.Server.Internal
             Task.Run(() =>
             {
                 using IPacketStream packet = new PacketStream(packetData);
-                client.HandlePacket(packet);
+                if (packet.PacketType != Packets.PacketType.LOGIN_HANDSHAKE)
+                {
+                    byte[] encryptedBytes = packetData.Skip(2).ToArray();
+                    byte[] decrypted = client.CryptoManager.DecryptAES(encryptedBytes);
+
+                    var finalDecrypted = new byte[packetData.Length];
+                    finalDecrypted[0] = packetData[0];
+                    finalDecrypted[1] = packetData[1];
+
+                    for (var i = 0; i < decrypted.Length; i++)
+                    {
+                        finalDecrypted[i + 2] = decrypted[i];
+                    }
+                    using IPacketStream decryptedPacket = new PacketStream(finalDecrypted);
+                    client.HandlePacket(decryptedPacket);
+                }
+                else // Handshake packets are not encrypted.
+                {
+                    client.HandlePacket(packet);
+                }
             });
         }
 

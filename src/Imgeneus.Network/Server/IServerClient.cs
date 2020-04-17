@@ -33,29 +33,13 @@ namespace Imgeneus.Network.Server
         /// <summary>
         /// Sends a packet to this client.
         /// </summary>
-        /// <param name="packet"></param>
-        void SendPacket(IPacketStream packet);
+        /// <param name="packet">packet to send</param>
+        /// <param name="shouldEncrypt">flag, that indicates if the packet should be encrypted. By default any packet is encrypted.</param>
+        void SendPacket(IPacketStream packet, bool shouldEncrypt = true);
 
         /// <summary>
-        /// Sends a packet to an other client.
+        /// Delegate, that return deserialized packet.
         /// </summary>
-        /// <param name="client">Other client</param>
-        /// <param name="packet">Packet</param>
-        void SendPacketTo(IServerClient client, IPacketStream packet);
-
-        /// <summary>
-        /// Sends a packet to collection of clients.
-        /// </summary>
-        /// <param name="clients">Collection of clients</param>
-        /// <param name="packet">Packet</param>
-        void SendPacketTo(IEnumerable<IServerClient> clients, IPacketStream packet);
-
-        /// <summary>
-        /// Sends a packet to every connected clients on the server.
-        /// </summary>
-        /// <param name="packet">Packet</param>
-        void SendPacketToAll(IPacketStream packet);
-
         public delegate IDeserializedPacket PacketDeserializeHandler(IPacketStream stream);
 
         /// <summary>

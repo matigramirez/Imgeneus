@@ -2,6 +2,7 @@
 using Imgeneus.Database;
 using Imgeneus.Database.Constants;
 using Imgeneus.Network.Packets.Game;
+using Imgeneus.Network.Server;
 using Imgeneus.World.Game.Monster;
 using Imgeneus.World.Game.Player;
 using Imgeneus.World.Packets;
@@ -195,7 +196,7 @@ namespace Imgeneus.World.Game.Zone
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="packet"></param>
-        private void Client_OnPacketArrived(WorldClient sender, IDeserializedPacket packet)
+        private void Client_OnPacketArrived(ServerClient sender, IDeserializedPacket packet)
         {
             switch (packet)
             {
@@ -205,7 +206,7 @@ namespace Imgeneus.World.Game.Zone
                     {
                         var mob = Mob.FromDbMob(database.Mobs.First(m => m.Id == gMCreateMobPacket.MobId), DependencyContainer.Instance.Resolve<ILogger<Mob>>());
 
-                        var gmPlayer = Players[sender.CharID];
+                        var gmPlayer = Players[((WorldClient)sender).CharID];
                         // TODO: mobs should be generated near character, not on his position directly.
                         mob.PosX = gmPlayer.PosX;
                         mob.PosY = gmPlayer.PosY;

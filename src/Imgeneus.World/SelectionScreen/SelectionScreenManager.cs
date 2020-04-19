@@ -6,6 +6,7 @@ using Imgeneus.Network.Data;
 using Imgeneus.Network.Packets;
 using Imgeneus.Network.Packets.Game;
 using Imgeneus.Network.Serialization;
+using Imgeneus.Network.Server;
 using Imgeneus.World.Game;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -32,7 +33,7 @@ namespace Imgeneus.World.SelectionScreen
             _client.OnPacketArrived -= Client_OnPacketArrived;
         }
 
-        private void Client_OnPacketArrived(WorldClient sender, IDeserializedPacket packet)
+        private void Client_OnPacketArrived(ServerClient sender, IDeserializedPacket packet)
         {
             switch (packet)
             {
@@ -55,15 +56,14 @@ namespace Imgeneus.World.SelectionScreen
         }
 
         /// <summary>
-        /// TODO: refactor me later!
         /// Call this right after gameshake to get user characters.
         /// </summary>
-        public void AfterGameshake(HandshakePacket handshake)
+        public void AfterGameshake(int userId)
         {
             using var database = DependencyContainer.Instance.Resolve<IDatabase>();
             DbUser user = database.Users.Include(u => u.Characters)
                                         .ThenInclude(c => c.Items)
-                                        .Where(u => u.Id == handshake.UserId)
+                                        .Where(u => u.Id == userId)
                                         .FirstOrDefault();
 
             SendCharacterList(user.Characters);

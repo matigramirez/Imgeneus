@@ -31,7 +31,8 @@ namespace Imgeneus.World
         /// </summary>
         public bool IsConnected => this.UserID != 0;
 
-        public event Action<WorldClient, IDeserializedPacket> OnPacketArrived;
+        /// <inheritdoc />
+        public override event Action<ServerClient, IDeserializedPacket> OnPacketArrived;
 
         public WorldClient(IServer server, Socket acceptedSocket)
             : base(server, acceptedSocket)

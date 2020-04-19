@@ -2,12 +2,14 @@
 using Imgeneus.Network.Data;
 using Imgeneus.Network.Packets;
 using Imgeneus.Network.Packets.Game;
+using Imgeneus.Network.Packets.InternalServer;
 using Imgeneus.Network.Server;
 using Imgeneus.World.Game;
 using Imgeneus.World.InternalServer;
 using Imgeneus.World.SelectionScreen;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 
 namespace Imgeneus.World
@@ -30,6 +32,7 @@ namespace Imgeneus.World
             _worldConfiguration = configuration;
             _gameWorld = gameWorld;
             InterClient = new ISClient(configuration);
+            InterClient.OnPacketArrived += InterClient_OnPacketArrived; ;
         }
 
         protected override void OnStart()
@@ -68,19 +71,28 @@ namespace Imgeneus.World
             client.OnPacketArrived += Client_OnPacketArrived;
         }
 
-        private void Client_OnPacketArrived(WorldClient sender, IDeserializedPacket packet)
+        private void Client_OnPacketArrived(ServerClient sender, IDeserializedPacket packet)
         {
             if (packet is HandshakePacket)
             {
                 var handshake = (HandshakePacket)packet;
-                sender.SetClientUserID(handshake.UserId);
+                (sender as WorldClient).SetClientUserID(handshake.UserId);
 
-                // TODO: refactor it with packet encryption.
-                using var sendPacket = new Packet(PacketType.GAME_HANDSHAKE);
-                sendPacket.Write(0);
-                sender.SendPacket(sendPacket);
+                // As soon as we change id, we should update id in dictionary.
+                clients.TryRemove(sender.Id, out var client);
+                SelectionScreenManagers.Remove(sender.Id, out var manager);
 
-                SelectionScreenManagers[sender.Id].AfterGameshake(handshake);
+                // Now give client new id.
+                client.Id = handshake.SessionId;
+
+                // Return client back to dictionary.
+                clients.TryAdd(client.Id, client);
+                SelectionScreenManagers.Add(client.Id, manager);
+
+                // Send request to login server and get client key.
+                using var requestPacket = new Packet(PacketType.AES_KEY_REQUEST);
+                requestPacket.Write(sender.Id.ToByteArray());
+                InterClient.SendPacket(requestPacket);
             }
 
             if (packet is PingPacket)
@@ -89,10 +101,32 @@ namespace Imgeneus.World
             }
         }
 
+        private void InterClient_OnPacketArrived(IDeserializedPacket packet)
+        {
+            // Packet, that login server sends, when user tries to connect world server.
+            if (packet is AesKeyResponsePacket)
+            {
+                var aesPacket = (AesKeyResponsePacket)packet;
+
+                clients.TryGetValue(aesPacket.Guid, out var worldClient);
+
+                worldClient.CryptoManager.GenerateAES(aesPacket.Key, aesPacket.IV);
+
+                // Maybe I need to refactor this?
+                using var sendPacket = new Packet(PacketType.GAME_HANDSHAKE);
+                sendPacket.WriteByte(0); // 0 means there was no error.
+                sendPacket.WriteByte(2); // no idea what is it, it just works.
+                sendPacket.Write(worldClient.CryptoManager.IV);
+                worldClient.SendPacket(sendPacket);
+
+                SelectionScreenManagers[worldClient.Id].AfterGameshake(worldClient.UserID);
+            }
+        }
+
         #region Screen selection
 
         /// <summary>
-        /// 
+        /// Screen selection manager helps with packets, that must be sent right after gameshake.
         /// </summary>
         private readonly Dictionary<Guid, SelectionScreenManager> SelectionScreenManagers = new Dictionary<Guid, SelectionScreenManager>();
 

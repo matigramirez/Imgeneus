@@ -1,9 +1,11 @@
 ﻿using Imgeneus.Network.Common;
 using Imgeneus.Network.Data;
 using Imgeneus.Network.Packets;
+using Imgeneus.Network.Packets.Game;
 using Imgeneus.Network.Server.Crypto;
 using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Net.Sockets;
 using static Imgeneus.Network.Server.IServerClient;
 
@@ -15,12 +17,17 @@ namespace Imgeneus.Network.Server
         public IServer Server { get; internal set; }
 
         /// <inheritdoc />
-        public string RemoteEndPoint { get; }
+        public EndPoint RemoteEndPoint { get; }
 
         /// <summary>
         /// Crypto manager is responsible for the whole cryptography.
         /// </summary>
         public CryptoManager CryptoManager { get; private set; }
+
+        /// <summary>
+        /// Event, that is fired, when new packet arrives.
+        /// </summary>
+        public abstract event Action<ServerClient, IDeserializedPacket> OnPacketArrived;
 
         /// <summary>
         /// Creates a new <see cref="ServerClient"/> instance.
@@ -30,8 +37,8 @@ namespace Imgeneus.Network.Server
             : base(acceptedSocket)
         {
             Server = server;
-            RemoteEndPoint = acceptedSocket.RemoteEndPoint.ToString();
-            CryptoManager = new CryptoManager();
+            RemoteEndPoint = acceptedSocket.RemoteEndPoint;
+            CryptoManager = new CryptoManager(this);
         }
 
         /// <inheritdoc />

@@ -3,7 +3,6 @@ using Imgeneus.Database.Entities;
 using Imgeneus.Network.Data;
 using Imgeneus.Network.Packets;
 using Imgeneus.Network.Packets.Login;
-using System;
 using System.Linq;
 
 namespace Imgeneus.Login.Packets
@@ -14,21 +13,11 @@ namespace Imgeneus.Login.Packets
         {
             using Packet packet = new Packet(PacketType.LOGIN_HANDSHAKE);
 
-            var publicKey = client.CryptoManager.GenerateRSA();
-            var exponent = publicKey.Exponent.ToByteArrayUnsigned();
-            var modulus = publicKey.Modulus.ToByteArrayUnsigned();
-
-            // There is small problem: client expects little-endian bytes,
-            // but BigInteger in c# is big-endian bytes.
-            // So, in order to get right value on client side, we have to reverse bytes.
-            Array.Reverse(exponent);
-            Array.Reverse(modulus);
-
             packet.Write<byte>(0);
-            packet.Write((byte)exponent.Length);
-            packet.Write((byte)modulus.Length);
-            packet.WritePaddedBytes(exponent, 64); // max 64
-            packet.WritePaddedBytes(modulus, 128); // max 128
+            packet.Write<byte>((byte)client.CryptoManager.RSAPublicExponent.Length); // Exponent length
+            packet.Write((byte)client.CryptoManager.RSAModulus.Length);
+            packet.WritePaddedBytes(client.CryptoManager.RSAPublicExponent, 64);
+            packet.WritePaddedBytes(client.CryptoManager.RSAModulus, 128);
 
             client.SendPacket(packet, false);
         }
@@ -63,7 +52,7 @@ namespace Imgeneus.Login.Packets
             client.SendPacket(packet);
         }
 
-        public static void AuthenticationFailed(LoginClient client, AuthenticationResult result, DbUser user)
+        public static void AuthenticationSuccess(LoginClient client, AuthenticationResult result, DbUser user)
         {
             using var packet = new Packet(PacketType.LOGIN_REQUEST);
 

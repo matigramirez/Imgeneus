@@ -2,6 +2,8 @@
 using Imgeneus.Login.InternalServer;
 using Imgeneus.Login.Packets;
 using Imgeneus.Network.InternalServer;
+using Imgeneus.Network.Packets.Game;
+using Imgeneus.Network.Packets.Login;
 using Imgeneus.Network.Server;
 using Microsoft.Extensions.Logging;
 using System;
@@ -43,10 +45,41 @@ namespace Imgeneus.Login
             this.InterServer.Start();
         }
 
+        /// <summary>
+        /// Login managers for each client.
+        /// </summary>
+        private readonly Dictionary<Guid, LoginManager> LoginManagers = new Dictionary<Guid, LoginManager>();
+
         /// <inheritdoc />
         protected override void OnClientConnected(LoginClient client)
         {
+            base.OnClientConnected(client);
+
             LoginPacketFactory.SendLoginHandshake(client);
+
+            LoginManagers.Add(client.Id, new LoginManager(client));
+            client.OnPacketArrived += Client_OnPacketArrived;
+        }
+
+        protected override void OnClientDisconnected(LoginClient client)
+        {
+            base.OnClientDisconnected(client);
+
+            LoginManagers.Remove(client.Id, out var manager);
+            manager.Dispose();
+            client.OnPacketArrived -= Client_OnPacketArrived;
+        }
+
+        private void Client_OnPacketArrived(ServerClient sender, IDeserializedPacket packet)
+        {
+            if (packet is LoginHandshakePacket)
+            {
+                var handshakePacket = (LoginHandshakePacket)packet;
+                var decryptedNumber = sender.CryptoManager.DecryptRSA(handshakePacket.EncyptedNumber);
+                sender.CryptoManager.GenerateAES(decryptedNumber);
+
+                InterServer.LoginClients.TryAdd(sender.Id, (LoginClient)sender);
+            }
         }
 
         /// <inheritdoc />

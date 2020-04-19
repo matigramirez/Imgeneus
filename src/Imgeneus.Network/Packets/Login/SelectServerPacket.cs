@@ -1,9 +1,10 @@
 ﻿using Imgeneus.Network.Data;
+using Imgeneus.Network.Packets.Game;
 using System;
 
 namespace Imgeneus.Network.Packets.Login
 {
-    public struct SelectServerPacket : IEquatable<SelectServerPacket>
+    public struct SelectServerPacket : IEquatable<SelectServerPacket>, IDeserializedPacket
     {
         public byte WorldId { get; }
 

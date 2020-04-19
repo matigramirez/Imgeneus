@@ -22,8 +22,6 @@ namespace Imgeneus.World
         /// <inheritdoc />
         public void Configure()
         {
-            PacketHandler<ISClient>.Initialize();
-
             DependencyContainer.Instance
                 .GetServiceCollection()
                 .RegisterDatabaseServices();

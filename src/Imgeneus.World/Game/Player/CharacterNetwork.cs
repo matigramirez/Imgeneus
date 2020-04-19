@@ -3,6 +3,7 @@ using Imgeneus.Database.Entities;
 using Imgeneus.Network.Data;
 using Imgeneus.Network.Packets;
 using Imgeneus.Network.Packets.Game;
+using Imgeneus.Network.Server;
 using Imgeneus.World.Game.Monster;
 using Microsoft.Extensions.Logging;
 using System;
@@ -53,7 +54,7 @@ namespace Imgeneus.World.Game.Player
         /// </summary>
         /// <param name="sender">TCP connection with client</param>
         /// <param name="packet">packet, that clients sends</param>
-        private async void Client_OnPacketArrived(WorldClient sender, IDeserializedPacket packet)
+        private async void Client_OnPacketArrived(ServerClient sender, IDeserializedPacket packet)
         {
             switch (packet)
             {

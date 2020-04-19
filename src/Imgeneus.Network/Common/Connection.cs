@@ -10,7 +10,7 @@ namespace Imgeneus.Network.Common
         /// <summary>
         /// Gets the connection unique idenfified.
         /// </summary>
-        public Guid Id { get; }
+        public Guid Id { get; set; }
 
 
         /// <summary>

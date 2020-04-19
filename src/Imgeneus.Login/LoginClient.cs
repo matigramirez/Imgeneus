@@ -2,11 +2,14 @@
 using Imgeneus.Network;
 using Imgeneus.Network.Data;
 using Imgeneus.Network.Packets;
+using Imgeneus.Network.Packets.Game;
+using Imgeneus.Network.Packets.Login;
 using Imgeneus.Network.Server;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Net.Sockets;
+using static Imgeneus.Network.Server.IServerClient;
 
 namespace Imgeneus.Login
 {
@@ -23,6 +26,9 @@ namespace Imgeneus.Login
         /// Check if the client is connected.
         /// </summary>
         public bool IsConnected => this.UserId != 0;
+
+        /// <inheritdoc />
+        public override event Action<ServerClient, IDeserializedPacket> OnPacketArrived;
 
         /// <summary>
         /// Creates a new <see cref="LoginClient"/> instance.
@@ -60,7 +66,14 @@ namespace Imgeneus.Login
 
             try
             {
-                if (!PacketHandler<LoginClient>.Invoke(this, packet, packet.PacketType))
+                PacketDeserializeHandler handler;
+
+                if (PacketHandlers.TryGetValue(packet.PacketType, out handler))
+                {
+                    var deserializedPacket = handler.Invoke(packet);
+                    OnPacketArrived?.Invoke(this, deserializedPacket);
+                }
+                else
                 {
                     if (Enum.IsDefined(typeof(PacketType), packet.PacketType))
                     {
@@ -79,11 +92,16 @@ namespace Imgeneus.Login
             }
         }
 
+        private readonly Dictionary<PacketType, PacketDeserializeHandler> _packetHandlers = new Dictionary<PacketType, PacketDeserializeHandler>()
+        {
+            { PacketType.LOGIN_HANDSHAKE, (s) => new LoginHandshakePacket(s) },
+            { PacketType.LOGIN_REQUEST, (s) => new AuthenticationPacket(s) },
+            { PacketType.SELECT_SERVER, (s) =>  new SelectServerPacket(s) }
+        };
+
         /// <summary>
-        /// PacketHandlers is replacement for PacketHandler<T>. Right now implemented only for world client.
-        /// If I have some time and mood, I'll implement it for login server too. Until then leave it unimplemented.
-        /// Check how it's done im world server.
+        /// All awailable packet handlers for login client.
         /// </summary>
-        public override Dictionary<PacketType, IServerClient.PacketDeserializeHandler> PacketHandlers => throw new NotImplementedException();
+        public override Dictionary<PacketType, PacketDeserializeHandler> PacketHandlers => _packetHandlers;
     }
 }

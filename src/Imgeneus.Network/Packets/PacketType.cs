@@ -7,6 +7,8 @@
         SERVER_INFO = 6,
         UPDATE_SERVER = 7,
         DISSCONNECT_USER = 8,
+        AES_KEY_RESPONSE = 9,
+        AES_KEY_REQUEST = 10,
 
         // Character
         CHARACTER_LIST = 0x0101,

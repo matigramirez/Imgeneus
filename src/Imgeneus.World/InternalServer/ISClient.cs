@@ -2,8 +2,13 @@
 using Imgeneus.Core.Structures.Configuration;
 using Imgeneus.Network.Client;
 using Imgeneus.Network.Data;
+using Imgeneus.Network.Packets;
+using Imgeneus.Network.Packets.Game;
+using Imgeneus.Network.Packets.InternalServer;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
+using static Imgeneus.Network.Server.IServerClient;
 
 namespace Imgeneus.World.InternalServer
 {
@@ -23,9 +28,28 @@ namespace Imgeneus.World.InternalServer
         /// </summary>
         public WorldConfiguration WorldConfiguration { get; }
 
+        public event Action<IDeserializedPacket> OnPacketArrived;
+
         public override void HandlePacket(IPacketStream packet)
         {
-            throw new NotImplementedException();
+            PacketDeserializeHandler handler;
+
+            if (PacketHandlers.TryGetValue(packet.PacketType, out handler))
+            {
+                var deserializedPacket = handler.Invoke(packet);
+                OnPacketArrived?.Invoke(deserializedPacket);
+            }
+            else
+            {
+                if (Enum.IsDefined(typeof(PacketType), packet.PacketType))
+                {
+                    this.logger.LogWarning("Received an unimplemented packet {0}.", packet.PacketType);
+                }
+                else
+                {
+                    this.logger.LogWarning("Received an unknown packet 0x{0}.", ((ushort)packet.PacketType).ToString("X2"));
+                }
+            }
         }
 
         protected override void OnConnected()
@@ -43,5 +67,13 @@ namespace Imgeneus.World.InternalServer
         {
             this.logger.LogError($"Internal-Server socket error: {exception.Message}");
         }
+
+        /// <summary>
+        /// All packets transformations available for internal server.
+        /// </summary>
+        private readonly Dictionary<PacketType, PacketDeserializeHandler> PacketHandlers = new Dictionary<PacketType, PacketDeserializeHandler>()
+        {
+             { PacketType.AES_KEY_RESPONSE, (s) => new AesKeyResponsePacket(s) },
+        };
     }
 }

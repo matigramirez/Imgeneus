@@ -14,7 +14,9 @@ namespace Imgeneus.Network.Client
         private readonly ClientConnector connector;
         private ClientReceiver receiver;
         private ClientSender sender;
-        private SocketAsyncEventArgs connectSocket;
+        private SocketAsyncEventArgs connectSocketArgs;
+        private SocketAsyncEventArgs sendSocketArgs;
+        private SocketAsyncEventArgs receiveSocketArgs;
 
         /// <inheritdoc />
         public bool IsConnected => this.Socket.Connected;
@@ -33,6 +35,14 @@ namespace Imgeneus.Network.Client
         {
             this.ClientConfiguration = clientConfiguration;
             this.connector = new ClientConnector(this);
+
+            this.connectSocketArgs = CreateSocketEventArgs(null);
+            this.connectSocketArgs.RemoteEndPoint = NetworkHelper.CreateIPEndPoint(this.ClientConfiguration.Host, this.ClientConfiguration.Port);
+
+
+            this.sendSocketArgs = CreateSocketEventArgs(null);
+
+            this.receiveSocketArgs = CreateSocketEventArgs(1024);
         }
 
         /// <inheritdoc />
@@ -70,19 +80,17 @@ namespace Imgeneus.Network.Client
                 throw new ArgumentException($"Invalid buffer size '{this.ClientConfiguration.BufferSize}' in configuration.", nameof(this.ClientConfiguration.BufferSize));
             }
 
-            this.sender = new ClientSender(this.CreateSocketEventArgs(null));
-            this.receiver = new ClientReceiver(this);
-            this.connectSocket = this.CreateSocketEventArgs(null);
-            this.connectSocket.RemoteEndPoint = NetworkHelper.CreateIPEndPoint(this.ClientConfiguration.Host, this.ClientConfiguration.Port);
-
-            SocketError error = this.connector.Connect(this.connectSocket);
+            SocketError error = this.connector.Connect(this.connectSocketArgs);
 
             if (!this.IsConnected && error != SocketError.Success)
             {
                 this.OnError(new InvalidOperationException("No se puede conectar con el servidor."));
                 return;
             }
-            
+
+            this.sender = new ClientSender(sendSocketArgs);
+            this.receiver = new ClientReceiver(this, receiveSocketArgs);
+
             this.IsRunning = true;
             this.sender.Start();
         }
@@ -97,7 +105,7 @@ namespace Imgeneus.Network.Client
             this.IsRunning = false;
             this.Socket.Disconnect(true);
             this.sender.Stop();
-            this.connectSocket.Dispose();
+            this.connectSocketArgs.Dispose();
         }
 
         /// <inheritdoc />
@@ -178,7 +186,9 @@ namespace Imgeneus.Network.Client
             this.sender.Dispose();
             this.connector.Dispose();
             base.Dispose(disposing);
-            this.connectSocket.Dispose();
+            this.connectSocketArgs.Dispose();
+            this.sendSocketArgs.Dispose();
+            this.receiveSocketArgs.Dispose();
         }
     }
 }

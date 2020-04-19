@@ -21,9 +21,6 @@ namespace Imgeneus.Login
         /// <inheritdoc />
         public void Configure()
         {
-            PacketHandler<LoginClient>.Initialize();
-            PacketHandler<ISClient>.Initialize();
-
             DependencyContainer.Instance
                 .GetServiceCollection()
                 .RegisterDatabaseServices();

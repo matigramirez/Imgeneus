@@ -1,4 +1,5 @@
 ﻿using Imgeneus.Network.Data;
+using Imgeneus.Network.Packets;
 using System;
 using System.Collections.Concurrent;
 using System.Linq;
@@ -86,7 +87,9 @@ namespace Imgeneus.Network.Server.Internal
             Task.Run(() =>
             {
                 using IPacketStream packet = new PacketStream(packetData);
-                if (packet.PacketType != Packets.PacketType.LOGIN_HANDSHAKE)
+                if (packet.PacketType != PacketType.LOGIN_HANDSHAKE && packet.PacketType != PacketType.GAME_HANDSHAKE &&
+                    // TODO: this internal packets should be also encrypted somehow.
+                    packet.PacketType != PacketType.AUTH_SERVER && packet.PacketType != PacketType.AES_KEY_REQUEST)
                 {
                     byte[] encryptedBytes = packetData.Skip(2).ToArray();
                     byte[] decrypted = client.CryptoManager.DecryptAES(encryptedBytes);

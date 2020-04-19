@@ -1,9 +1,10 @@
 ﻿using Imgeneus.Network.Data;
+using Imgeneus.Network.Packets.Game;
 using System;
 
 namespace Imgeneus.Network.Packets.Login
 {
-    public struct AuthenticationPacket : IEquatable<AuthenticationPacket>
+    public struct AuthenticationPacket : IEquatable<AuthenticationPacket>, IDeserializedPacket
     {
         public string Username { get; }
 

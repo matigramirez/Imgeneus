@@ -9,9 +9,14 @@ namespace Imgeneus.Network.Client.Internal
     {
         private readonly IClient client;
 
-        public ClientReceiver(IClient client)
+        public ClientReceiver(IClient client, SocketAsyncEventArgs args)
         {
             this.client = client;
+
+            if (!this.client.Socket.ReceiveAsync(args))
+            {
+                this.Receive(args);
+            }
         }
 
         /// <summary>
@@ -41,10 +46,6 @@ namespace Imgeneus.Network.Client.Internal
                 {
                     this.Receive(e);
                 }
-            }
-            else
-            {
-                this.client.Disconnect();
             }
         }
     }

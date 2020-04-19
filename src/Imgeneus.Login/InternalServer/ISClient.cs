@@ -3,11 +3,14 @@ using Imgeneus.Network;
 using Imgeneus.Network.Data;
 using Imgeneus.Network.InternalServer;
 using Imgeneus.Network.Packets;
+using Imgeneus.Network.Packets.Game;
+using Imgeneus.Network.Packets.InternalServer;
 using Imgeneus.Network.Server;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Net.Sockets;
+using static Imgeneus.Network.Server.IServerClient;
 
 namespace Imgeneus.Login.InternalServer
 {
@@ -36,7 +39,14 @@ namespace Imgeneus.Login.InternalServer
 
             try
             {
-                if (!PacketHandler<ISClient>.Invoke(this, packet, packet.PacketType))
+                PacketDeserializeHandler handler;
+
+                if (PacketHandlers.TryGetValue(packet.PacketType, out handler))
+                {
+                    var deserializedPacket = handler.Invoke(packet);
+                    OnPacketArrived?.Invoke(this, deserializedPacket);
+                }
+                else
                 {
                     if (Enum.IsDefined(typeof(PacketType), packet.PacketType))
                     {
@@ -64,11 +74,19 @@ namespace Imgeneus.Login.InternalServer
             this.WorldServerInfo = worldServerInfo;
         }
 
+        private readonly Dictionary<PacketType, PacketDeserializeHandler> _packetHandlers = new Dictionary<PacketType, PacketDeserializeHandler>()
+        {
+            { PacketType.AUTH_SERVER, (s) => new AuthenticateServerPacket(s) },
+            { PacketType.AES_KEY_REQUEST, (s) => new AesKeyRequestPacket(s) }
+        };
+
+        public override event Action<ServerClient, IDeserializedPacket> OnPacketArrived;
+
         /// <summary>
         /// PacketHandlers is replacement for PacketHandler<T>. Right now implemented only for world client.
         /// If I have some time and mood, I'll implement it for internal server too. Until then leave it unimplemented.
         /// Check how it's done im world server.
         /// </summary>
-        public override Dictionary<PacketType, IServerClient.PacketDeserializeHandler> PacketHandlers => throw new NotImplementedException();
+        public override Dictionary<PacketType, PacketDeserializeHandler> PacketHandlers => _packetHandlers;
     }
 }

@@ -4,6 +4,7 @@ using Imgeneus.Network.Packets;
 using Imgeneus.Network.Packets.Game;
 using System;
 using System.Collections.Generic;
+using System.Net;
 
 namespace Imgeneus.Network.Server
 {
@@ -17,7 +18,7 @@ namespace Imgeneus.Network.Server
         /// <summary>
         /// Gets the remote end point (IP and port) for this client.
         /// </summary>
-        string RemoteEndPoint { get; }
+        EndPoint RemoteEndPoint { get; }
 
         /// <summary>
         /// Disconnects the current <see cref="IServerClient"/>.

@@ -1,6 +1,7 @@
 ﻿using Imgeneus.Core.DependencyInjection;
 using Imgeneus.Database;
 using Imgeneus.Network.Packets.Game;
+using Imgeneus.Network.Server;
 using Imgeneus.World.Game.Monster;
 using Imgeneus.World.Game.Player;
 using Imgeneus.World.Game.Zone;
@@ -67,11 +68,11 @@ namespace Imgeneus.World.Game
             return newPlayer;
         }
 
-        private void Client_OnPacketArrived(WorldClient sender, IDeserializedPacket packet)
+        private void Client_OnPacketArrived(ServerClient sender, IDeserializedPacket packet)
         {
             if (packet is CharacterEnteredMapPacket)
             {
-                LoadPlayerInMap(sender.CharID);
+                LoadPlayerInMap(((WorldClient)sender).CharID);
             }
         }
 

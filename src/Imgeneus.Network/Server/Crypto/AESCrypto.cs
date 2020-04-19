@@ -11,7 +11,7 @@ namespace Imgeneus.Network.Server.Crypto
     /// This code has some bug. It works fine only with the very first login packet(A102).
     /// After 1 packet it doesn't recognize new packets.
     /// I give up trying to find out what is the problem.
-    /// If someone event finds this code and fixes it I'll pay him/her 100$.
+    /// If someone ever finds this code and fixes it I'll pay him/her 100$.
     /// </summary>
     public class AESCrypto
     {

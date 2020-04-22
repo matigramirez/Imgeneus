@@ -49,7 +49,7 @@ namespace Imgeneus.Network.Server.Internal
                 var receivedBuffer = new byte[e.BytesTransferred];
                 Buffer.BlockCopy(e.Buffer, e.Offset, receivedBuffer, 0, e.BytesTransferred);
 
-                ServerReceiver.DispatchPacket(client, receivedBuffer);
+                DispatchPacket(client, receivedBuffer);
 
                 if (!client.Socket.ReceiveAsync(e))
                 {
@@ -82,34 +82,31 @@ namespace Imgeneus.Network.Server.Internal
         /// </summary>
         /// <param name="client">the client.</param>
         /// <param name="packetData">Received packet data.</param>
-        private static void DispatchPacket(ServerClient client, byte[] packetData)
+        private void DispatchPacket(ServerClient client, byte[] packetData)
         {
-            Task.Run(() =>
+            using IPacketStream packet = new PacketStream(packetData);
+            if (packet.PacketType != PacketType.LOGIN_HANDSHAKE && packet.PacketType != PacketType.GAME_HANDSHAKE &&
+                // TODO: this internal packets should be also encrypted somehow.
+                packet.PacketType != PacketType.AUTH_SERVER && packet.PacketType != PacketType.AES_KEY_REQUEST)
             {
-                using IPacketStream packet = new PacketStream(packetData);
-                if (packet.PacketType != PacketType.LOGIN_HANDSHAKE && packet.PacketType != PacketType.GAME_HANDSHAKE &&
-                    // TODO: this internal packets should be also encrypted somehow.
-                    packet.PacketType != PacketType.AUTH_SERVER && packet.PacketType != PacketType.AES_KEY_REQUEST)
-                {
-                    byte[] encryptedBytes = packetData.Skip(2).ToArray();
-                    byte[] decrypted = client.CryptoManager.DecryptAES(encryptedBytes);
+                byte[] encryptedBytes = packetData.Skip(2).ToArray();
+                byte[] decrypted = client.CryptoManager.DecryptAES(encryptedBytes);
 
-                    var finalDecrypted = new byte[packetData.Length];
-                    finalDecrypted[0] = packetData[0];
-                    finalDecrypted[1] = packetData[1];
+                var finalDecrypted = new byte[packetData.Length];
+                finalDecrypted[0] = packetData[0];
+                finalDecrypted[1] = packetData[1];
 
-                    for (var i = 0; i < decrypted.Length; i++)
-                    {
-                        finalDecrypted[i + 2] = decrypted[i];
-                    }
-                    using IPacketStream decryptedPacket = new PacketStream(finalDecrypted);
-                    client.HandlePacket(decryptedPacket);
-                }
-                else // Handshake packets are not encrypted.
+                for (var i = 0; i < decrypted.Length; i++)
                 {
-                    client.HandlePacket(packet);
+                    finalDecrypted[i + 2] = decrypted[i];
                 }
-            });
+                using IPacketStream decryptedPacket = new PacketStream(finalDecrypted);
+                client.HandlePacket(decryptedPacket);
+            }
+            else // Handshake packets are not encrypted.
+            {
+                client.HandlePacket(packet);
+            }
         }
 
         /// <summary>

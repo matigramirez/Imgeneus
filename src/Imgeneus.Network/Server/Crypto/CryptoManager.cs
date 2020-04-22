@@ -137,6 +137,10 @@ namespace Imgeneus.Network.Server.Crypto
         public Aes128CounterMode AesSend { get; private set; }
         public ICryptoTransform CryptoSend { get; private set; }
 
+        private readonly object receiveMutext = new object();
+
+        private readonly object sendMutext = new object();
+
         /// <summary>
         /// Generates aes based on rsa decrypted number.
         /// Used only in login server.
@@ -190,11 +194,12 @@ namespace Imgeneus.Network.Server.Crypto
         /// <returns>decrypted bytes</returns>
         public byte[] DecryptAES(byte[] encryptedBytes)
         {
-            byte[] decryptedContent = new byte[encryptedBytes.Length];
-
-            CryptoRecv.TransformBlock(encryptedBytes, 0, encryptedBytes.Length, decryptedContent, 0);
-
-            return decryptedContent;
+            lock (receiveMutext)
+            {
+                byte[] decryptedContent = new byte[encryptedBytes.Length];
+                CryptoRecv.TransformBlock(encryptedBytes, 0, encryptedBytes.Length, decryptedContent, 0);
+                return decryptedContent;
+            }
         }
 
         /// <summary>
@@ -204,10 +209,12 @@ namespace Imgeneus.Network.Server.Crypto
         /// <returns>encrypted bytes</returns>
         public byte[] EncryptAES(byte[] bytesToEnrypt)
         {
-            byte[] encryptedBytes = new byte[bytesToEnrypt.Length];
-            CryptoSend.TransformBlock(bytesToEnrypt, 0, bytesToEnrypt.Length, encryptedBytes, 0);
-
-            return encryptedBytes;
+            lock (sendMutext)
+            {
+                byte[] encryptedBytes = new byte[bytesToEnrypt.Length];
+                CryptoSend.TransformBlock(bytesToEnrypt, 0, bytesToEnrypt.Length, encryptedBytes, 0);
+                return encryptedBytes;
+            }
         }
 
         #endregion

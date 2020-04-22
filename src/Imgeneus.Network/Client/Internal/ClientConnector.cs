@@ -59,10 +59,8 @@ namespace Imgeneus.Network.Client.Internal
         /// <returns>The socket error code.</returns>
         private SocketError InternalConnect(SocketAsyncEventArgs connectSocketEvent)
         {
-            if (!this.client.Socket.ConnectAsync(connectSocketEvent))
-            {
-                this.autoConnectEvent.WaitOne(this.client.ClientConfiguration.ConnectionTimeout);
-            }
+            this.client.Socket.ConnectAsync(connectSocketEvent);
+            this.autoConnectEvent.WaitOne(this.client.ClientConfiguration.ConnectionTimeout);
 
             return connectSocketEvent.SocketError;
         }

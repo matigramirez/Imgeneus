@@ -8,6 +8,9 @@ namespace Imgeneus.Network.Client
 {
     /// <summary>
     /// Provides a mechanism for creating managed TCP clients.
+    /// TODO: maybe I need to rethink this implementation later, it's a little messy.
+    /// On the other hand, this client is only used for inter server communication (game server <=> login server).
+    /// Maybe I'll rethink this implementation during encryption implementation between game and login servers.
     /// </summary>
     public abstract class Client : Connection, IClient
     {
@@ -19,7 +22,7 @@ namespace Imgeneus.Network.Client
         private SocketAsyncEventArgs receiveSocketArgs;
 
         /// <inheritdoc />
-        public bool IsConnected => this.Socket.Connected;
+        public bool IsConnected => Socket.Connected;
 
         /// <inheritdoc />
         public bool IsRunning { get; private set; }
@@ -33,66 +36,53 @@ namespace Imgeneus.Network.Client
         /// <param name="socketConnection"></param>
         protected Client(ClientConfiguration clientConfiguration)
         {
-            this.ClientConfiguration = clientConfiguration;
-            this.connector = new ClientConnector(this);
+            ClientConfiguration = clientConfiguration;
+            connector = new ClientConnector(this);
 
-            this.connectSocketArgs = CreateSocketEventArgs(null);
-            this.connectSocketArgs.RemoteEndPoint = NetworkHelper.CreateIPEndPoint(this.ClientConfiguration.Host, this.ClientConfiguration.Port);
+            connectSocketArgs = CreateSocketEventArgs(null);
+            connectSocketArgs.RemoteEndPoint = NetworkHelper.CreateIPEndPoint(ClientConfiguration.Host, ClientConfiguration.Port);
 
 
-            this.sendSocketArgs = CreateSocketEventArgs(null);
+            sendSocketArgs = CreateSocketEventArgs(null);
+            sendSocketArgs.RemoteEndPoint = NetworkHelper.CreateIPEndPoint(ClientConfiguration.Host, ClientConfiguration.Port);
 
-            this.receiveSocketArgs = CreateSocketEventArgs(1024);
+            receiveSocketArgs = CreateSocketEventArgs(1024);
+            receiveSocketArgs.RemoteEndPoint = NetworkHelper.CreateIPEndPoint(ClientConfiguration.Host, ClientConfiguration.Port);
         }
 
         /// <inheritdoc />
         public void Connect()
         {
-            if (this.IsRunning)
-            {
+            if (IsRunning)
                 throw new InvalidOperationException("Client is already running.");
-            }
 
-            if (this.IsConnected)
-            {
+            if (IsConnected)
                 throw new InvalidOperationException("Client is already connected to remote host.");
-            }
 
-            if (this.ClientConfiguration == null)
+            if (ClientConfiguration == null)
+                throw new ArgumentNullException(nameof(ClientConfiguration), "Undefined Client configuration.");
+
+            if (ClientConfiguration.Port <= 0)
+                throw new ArgumentException($"Invalid port number '{ClientConfiguration.Port}' in configuration.", nameof(ClientConfiguration.Port));
+
+            if (NetworkHelper.BuildIPAddress(ClientConfiguration.Host) == null)
+                throw new ArgumentException($"Invalid host address '{ClientConfiguration.Host}' in configuration", nameof(ClientConfiguration.Host));
+
+            SocketError error = connector.Connect(connectSocketArgs);
+
+            if (!IsConnected && error != SocketError.Success)
             {
-                throw new ArgumentNullException(nameof(this.ClientConfiguration), "Undefined Client configuration.");
-            }
-
-            if (this.ClientConfiguration.Port <= 0)
-            {
-                throw new ArgumentException($"Invalid port number '{this.ClientConfiguration.Port}' in configuration.", nameof(this.ClientConfiguration.Port));
-
-            }
-
-            if (NetworkHelper.BuildIPAddress(this.ClientConfiguration.Host) == null)
-            {
-                throw new ArgumentException($"Invalid host address '{this.ClientConfiguration.Host}' in configuration", nameof(this.ClientConfiguration.Host));
-            }
-
-
-            if (this.ClientConfiguration.BufferSize <= 0)
-            {
-                throw new ArgumentException($"Invalid buffer size '{this.ClientConfiguration.BufferSize}' in configuration.", nameof(this.ClientConfiguration.BufferSize));
-            }
-
-            SocketError error = this.connector.Connect(this.connectSocketArgs);
-
-            if (!this.IsConnected && error != SocketError.Success)
-            {
-                this.OnError(new InvalidOperationException("No se puede conectar con el servidor."));
+                OnError(new InvalidOperationException("Could not connect to login server."));
                 return;
             }
 
-            this.sender = new ClientSender(sendSocketArgs);
-            this.receiver = new ClientReceiver(this, receiveSocketArgs);
+            receiver = new ClientReceiver(this);
+            if (!Socket.ReceiveAsync(receiveSocketArgs))
+            {
+                receiver.Receive(receiveSocketArgs);
+            }
 
-            this.IsRunning = true;
-            this.sender.Start();
+            IsRunning = true;
         }
 
         /// <inheritdoc />
@@ -102,17 +92,18 @@ namespace Imgeneus.Network.Client
             {
                 return;
             }
-            this.IsRunning = false;
-            this.Socket.Disconnect(true);
-            this.sender.Stop();
-            this.connectSocketArgs.Dispose();
+            IsRunning = false;
+            Socket.Disconnect(true);
+            sender.Stop();
+            connectSocketArgs.Dispose();
         }
 
         /// <inheritdoc />
         public abstract void HandlePacket(IPacketStream packet);
 
         /// <inheritdoc />
-        public void SendPacket(IPacketStream packet) => this.sender.AddPacketToQueue(new PacketData(this, packet.Buffer));
+        public void SendPacket(IPacketStream packet) => sender.AddPacketToQueue(new PacketData(this, packet.Buffer));
+
         /// <summary>
         /// Triggered when the client is connected to the remote end point.
         /// </summary>
@@ -141,7 +132,7 @@ namespace Imgeneus.Network.Client
                 UserToken = this
             };
 
-            socketEvent.Completed += this.OnSocketCompleted;
+            socketEvent.Completed += OnSocketCompleted;
             if (bufferSize.HasValue)
             {
                 socketEvent.SetBuffer(new byte[bufferSize.Value], 0, bufferSize.Value);
@@ -155,40 +146,42 @@ namespace Imgeneus.Network.Client
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        internal void OnSocketCompleted(object sender, SocketAsyncEventArgs e)
+        internal void OnSocketCompleted(object s, SocketAsyncEventArgs e)
         {
             try
             {
                 switch (e.LastOperation)
                 {
                     case SocketAsyncOperation.Connect:
-                        this.OnConnected();
-                        this.connector.ReleaseConnectorLock();
+                        sender = new ClientSender(sendSocketArgs);
+                        sender.Start();
+                        OnConnected();
+                        connector.ReleaseConnectorLock();
                         break;
                     case SocketAsyncOperation.Receive:
-                        this.receiver.Receive(e);
+                        receiver.Receive(e);
                         break;
                     case SocketAsyncOperation.Send:
-                        this.sender.SendOperationCompleted(e);
+                        sender.SendOperationCompleted(e);
                         break;
                     default: throw new InvalidOperationException("Unexpected SocketAsyncOperation.");
                 }
             }
             catch (Exception exception)
             {
-                this.OnError(exception);
+                OnError(exception);
             }
         }
 
         /// <inheritdoc />
         protected override void Dispose(bool disposing)
         {
-            this.sender.Dispose();
-            this.connector.Dispose();
+            sender.Dispose();
+            connector.Dispose();
             base.Dispose(disposing);
-            this.connectSocketArgs.Dispose();
-            this.sendSocketArgs.Dispose();
-            this.receiveSocketArgs.Dispose();
+            connectSocketArgs.Dispose();
+            sendSocketArgs.Dispose();
+            receiveSocketArgs.Dispose();
         }
     }
 }

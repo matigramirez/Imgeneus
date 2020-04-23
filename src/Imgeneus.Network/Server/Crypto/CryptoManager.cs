@@ -5,6 +5,7 @@ using Org.BouncyCastle.Crypto.Prng;
 using Org.BouncyCastle.Security;
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Numerics;
@@ -14,22 +15,9 @@ namespace Imgeneus.Network.Server.Crypto
 {
     public class CryptoManager
     {
-        /// <summary>
-        /// Dictionary of rsa keys, where key is user id, value is private key.
-        /// </summary>
-        private static ConcurrentDictionary<string, RsaPrivateCrtKeyParameters> GeneratedRSAKeys = new ConcurrentDictionary<string, RsaPrivateCrtKeyParameters>();
-
         public CryptoManager(ServerClient serverClient)
         {
-            RsaPrivateCrtKeyParameters key;
-            if (GeneratedRSAKeys.TryGetValue((serverClient.RemoteEndPoint as IPEndPoint).Address.ToString(), out key))
-            {
-                PrivateKey = key;
-            }
-            else
-            {
-                GeneratePrivateKey(serverClient);
-            }
+            GeneratePrivateKey(serverClient);
         }
 
         #region RSA
@@ -108,8 +96,6 @@ namespace Imgeneus.Network.Server.Crypto
             var keyPair = keyPairGenerator.GenerateKeyPair();
 
             PrivateKey = (RsaPrivateCrtKeyParameters)keyPair.Private;
-            GeneratedRSAKeys.TryAdd((serverClient.RemoteEndPoint as IPEndPoint).Address.ToString(), PrivateKey);
-            return;
         }
 
         /// <summary>
@@ -212,10 +198,47 @@ namespace Imgeneus.Network.Server.Crypto
             lock (sendMutext)
             {
                 byte[] encryptedBytes = new byte[bytesToEnrypt.Length];
-                CryptoSend.TransformBlock(bytesToEnrypt, 0, bytesToEnrypt.Length, encryptedBytes, 0);
+                if (UseExpandedKey)
+                {
+                    for (var i = 0; i < bytesToEnrypt.Length; i++)
+                    {
+                        encryptedBytes[i] = (byte)(bytesToEnrypt[i] ^ XorBuff[i + bytesToEnrypt.Length]);
+                    }
+                }
+                else
+                {
+                    CryptoSend.TransformBlock(bytesToEnrypt, 0, bytesToEnrypt.Length, encryptedBytes, 0);
+                }
+
                 return encryptedBytes;
             }
         }
+
+        #endregion
+
+        #region XOR look-up table
+
+        private static List<byte> XorBuff = new List<byte>();
+
+        public static byte[] XorKey = new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 };
+
+        static CryptoManager()
+        {
+            ExpandKey();
+        }
+
+        public static void ExpandKey()
+        {
+            XorBuff.AddRange(SHA256.Create().ComputeHash(XorKey));
+            for (int i = 0; i < 127; i++)
+            {
+                byte[] xorkey = new byte[16];
+                Array.Copy(XorBuff.ToArray(), XorBuff.Count - 16, xorkey, 0, 16);
+                XorBuff.AddRange(SHA256.Create().ComputeHash(xorkey));
+            }
+        }
+
+        public bool UseExpandedKey;
 
         #endregion
     }

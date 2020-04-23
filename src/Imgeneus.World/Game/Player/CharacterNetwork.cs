@@ -58,6 +58,9 @@ namespace Imgeneus.World.Game.Player
         {
             switch (packet)
             {
+                case ChangeEncryptionPacket changeEcryptionPacket:
+                    SendSkillBar();
+                    break;
                 case LearnNewSkillPacket learnNewSkillPacket:
                     await HandleLearnNewSkill(learnNewSkillPacket);
                     break;
@@ -185,6 +188,8 @@ namespace Imgeneus.World.Game.Player
         private void SendActiveBuffs() => _packetsHelper.SendActiveBuffs(Client, ActiveBuffs);
 
         private void SendGetBuff(ActiveBuff buff) => _packetsHelper.SendNewActiveBuff(Client, buff);
+
+        private void SendSkillBar() => _packetsHelper.SendSkillBar(Client);
 
         private void TargetChanged(ITargetable target)
         {

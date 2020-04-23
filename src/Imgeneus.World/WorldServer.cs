@@ -4,6 +4,7 @@ using Imgeneus.Network.Packets;
 using Imgeneus.Network.Packets.Game;
 using Imgeneus.Network.Packets.InternalServer;
 using Imgeneus.Network.Server;
+using Imgeneus.Network.Server.Crypto;
 using Imgeneus.World.Game;
 using Imgeneus.World.InternalServer;
 using Imgeneus.World.SelectionScreen;
@@ -116,7 +117,7 @@ namespace Imgeneus.World
                 using var sendPacket = new Packet(PacketType.GAME_HANDSHAKE);
                 sendPacket.WriteByte(0); // 0 means there was no error.
                 sendPacket.WriteByte(2); // no idea what is it, it just works.
-                sendPacket.Write(worldClient.CryptoManager.IV);
+                sendPacket.Write(CryptoManager.XorKey);
                 worldClient.SendPacket(sendPacket);
 
                 SelectionScreenManagers[worldClient.Id].AfterGameshake(worldClient.UserID);

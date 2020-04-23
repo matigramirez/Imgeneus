@@ -54,6 +54,11 @@ namespace Imgeneus.Database
         public DbSet<DbMobItems> MobItems { get; set; }
 
         /// <summary>
+        /// Quick items. E.g. skills on skill bar or motion on skill bar or iventory item on skill bar.
+        /// </summary>
+        public DbSet<DbQuickSkillBarItem> QuickItems { get; set; }
+
+        /// <summary>
         /// Saves changes to database.
         /// </summary>
         public int SaveChanges();

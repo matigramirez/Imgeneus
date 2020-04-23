@@ -1,5 +1,4 @@
-﻿using Imgeneus.Database.Constants;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -240,6 +239,11 @@ namespace Imgeneus.Database.Entities
         /// Active buffs.
         /// </summary>
         public ICollection<DbCharacterActiveBuff> ActiveBuffs { get; set; }
+
+        /// <summary>
+        /// Quick items. E.g. skills on skill bar or motion on skill bar or iventory item on skill bar.
+        /// </summary>
+        public ICollection<DbQuickSkillBarItem> QuickItems { get; set; }
 
         public DbCharacter()
         {

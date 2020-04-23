@@ -42,6 +42,12 @@
     <Compile Remove="Migrations\20200404085529_AddMobItems.Designer.cs" />
     <Compile Remove="Migrations\20200408181336_AddCharacterActiveBuffs1.cs" />
     <Compile Remove="Migrations\20200408181336_AddCharacterActiveBuffs1.Designer.cs" />
+    <Compile Remove="Migrations\20200423124511_AddQuickSkillBarItem.cs" />
+    <Compile Remove="Migrations\20200423124511_AddQuickSkillBarItem.Designer.cs" />
+    <Compile Remove="Migrations\20200423131043_AddQuickSkillBarItemRequired.cs" />
+    <Compile Remove="Migrations\20200423131043_AddQuickSkillBarItemRequired.Designer.cs" />
+    <Compile Remove="Migrations\20200423132404_AddQuickSkillBarItem2.cs" />
+    <Compile Remove="Migrations\20200423132404_AddQuickSkillBarItem2.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

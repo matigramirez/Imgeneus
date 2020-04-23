@@ -52,6 +52,11 @@ namespace Imgeneus.Database.Context
         /// </summary>
         public DbSet<DbMobItems> MobItems { get; set; }
 
+        /// <summary>
+        /// Quick items. E.g. skills on skill bar or motion on skill bar or iventory item on skill bar.
+        /// </summary>
+        public DbSet<DbQuickSkillBarItem> QuickItems { get; set; }
+
         public DatabaseContext(DbContextOptions options) : base(options)
         {
         }
@@ -65,6 +70,8 @@ namespace Imgeneus.Database.Context
             modelBuilder.Entity<DbItem>().HasKey(x => new { x.Type, x.TypeId });
 
             modelBuilder.Entity<DbMobItems>().HasKey(x => new { x.MobId, x.ItemOrder });
+
+            modelBuilder.Entity<DbCharacter>().HasMany(x => x.QuickItems).WithOne(x => x.Character).IsRequired();
 
             #region Many to many relations
             // Skills.

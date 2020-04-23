@@ -1,4 +1,6 @@
-﻿using Imgeneus.Database.Constants;
+﻿using Imgeneus.Core.DependencyInjection;
+using Imgeneus.Database;
+using Imgeneus.Database.Constants;
 using Imgeneus.Database.Entities;
 using Imgeneus.Network.Data;
 using Imgeneus.Network.Packets;
@@ -7,6 +9,7 @@ using Imgeneus.Network.Server;
 using Imgeneus.World.Game.Monster;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Imgeneus.World.Game.Player
@@ -92,6 +95,10 @@ namespace Imgeneus.World.Game.Player
                 case GMGetItemPacket gMGetItemPacket:
                     await HandleGMGetItemPacket(gMGetItemPacket);
                     break;
+
+                case SkillBarPacket skillBarPacket:
+                    await HandleSkillBarPacket(skillBarPacket);
+                    break;
             }
         }
 
@@ -173,6 +180,32 @@ namespace Imgeneus.World.Game.Player
             }
         }
 
+        private async Task HandleSkillBarPacket(SkillBarPacket skillBarPacket)
+        {
+            using var database = DependencyContainer.Instance.Resolve<IDatabase>();
+
+            // Remove old items.
+            var items = database.QuickItems.Where(item => item.Character.Id == this.Id);
+            database.QuickItems.RemoveRange(items);
+
+            DbQuickSkillBarItem[] newItems = new DbQuickSkillBarItem[skillBarPacket.QuickItems.Length];
+            // Add new items.
+            for (var i = 0; i < skillBarPacket.QuickItems.Length; i++)
+            {
+                var quickItem = skillBarPacket.QuickItems[i];
+                newItems[i] = new DbQuickSkillBarItem()
+                {
+                    Bar = quickItem.Bar,
+                    Slot = quickItem.Slot,
+                    Bag = quickItem.Bag,
+                    Number = quickItem.Number
+                };
+                newItems[i].CharacterId = Id;
+            }
+            await database.QuickItems.AddRangeAsync(newItems);
+            await database.SaveChangesAsync();
+        }
+
         #endregion
 
         #region Senders
@@ -189,7 +222,7 @@ namespace Imgeneus.World.Game.Player
 
         private void SendGetBuff(ActiveBuff buff) => _packetsHelper.SendNewActiveBuff(Client, buff);
 
-        private void SendSkillBar() => _packetsHelper.SendSkillBar(Client);
+        private void SendSkillBar() => _packetsHelper.SendSkillBar(Client, QuickItems);
 
         private void TargetChanged(ITargetable target)
         {

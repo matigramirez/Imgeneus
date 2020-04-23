@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
+using Imgeneus.Database.Entities;
 using Imgeneus.Network.Data;
 using Imgeneus.Network.Packets;
 using Imgeneus.Network.Serialization;
@@ -97,38 +99,20 @@ namespace Imgeneus.World.Packets
             client.SendPacket(packet);
         }
 
-        internal void SendSkillBar(WorldClient client)
+        internal void SendSkillBar(WorldClient client, IEnumerable<DbQuickSkillBarItem> quickItems)
         {
             using var packet = new Packet(PacketType.CHARACTER_SKILL_BAR);
+            packet.Write((byte)quickItems.Count());
+            packet.Write(0); // Unknown int.
 
-            // TODO: I'm still ivestigating how skill bar works.
-            var example = new byte[] {
-                 0x03, // count
-                 0x00, 0x00, 0x00, 0x00, // ?
-
-                // if it's skill!
-                0x01, // bar, start with 0
-                0x01, // slot start with 0
-                0x64, // ?
-                0x69, 0x02, // skill id
-                0x01, 0x01, 0x01, 0x01, // ?
-
-                // if it's some item from inventory
-                0x01, // bar
-                0x09, // slot
-                0x01, // bag in inventory
-                0x03, // slot in inventory
-                0x00, 0x00, 0x00, 0x00, 0x00, // ?
-
-                // again skill
-                0x00, // bar, start with 0
-                0x01, // slot start with 0
-                0x64, // ?
-                0x70, 0x02, // skill id
-                0x00, 0x00, 0x00, 0x00,
-
-            };
-            packet.Write(example);
+            foreach (var item in quickItems)
+            {
+                packet.Write(item.Bar);
+                packet.Write(item.Slot);
+                packet.Write(item.Bag);
+                packet.Write(item.Number);
+                packet.Write(0); // Unknown int.
+            }
 
             client.SendPacket(packet);
             client.CryptoManager.UseExpandedKey = true;

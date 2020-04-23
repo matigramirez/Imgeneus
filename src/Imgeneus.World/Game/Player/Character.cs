@@ -511,6 +511,15 @@ namespace Imgeneus.World.Game.Player
 
         #endregion
 
+        #region Quick skill bar
+
+        /// <summary>
+        /// Quick items, i.e. skill bars. Not sure if I need to store it as DbQuickSkillBarItem or need another connector helper class here?
+        /// </summary>
+        public IEnumerable<DbQuickSkillBarItem> QuickItems;
+
+        #endregion
+
         /// <summary>
         /// Creates character from database information.
         /// </summary>
@@ -559,6 +568,7 @@ namespace Imgeneus.World.Game.Player
             character.Skills.AddRange(dbCharacter.Skills.Select(s => Skill.FromDbSkill(s)));
             character.ActiveBuffs.AddRange(dbCharacter.ActiveBuffs.Select(b => ActiveBuff.FromDbCharacterActiveBuff(b)));
             character.InventoryItems.AddRange(dbCharacter.Items.Select(i => Item.FromDbItem(i)));
+            character.QuickItems = dbCharacter.QuickItems;
 
             return character;
         }

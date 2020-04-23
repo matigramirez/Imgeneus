@@ -56,6 +56,7 @@ namespace Imgeneus.World.Game
             var dbCharacter = database.Characters.Include(c => c.Skills).ThenInclude(cs => cs.Skill)
                                                .Include(c => c.Items).ThenInclude(ci => ci.Item)
                                                .Include(c => c.ActiveBuffs).ThenInclude(cb => cb.Skill)
+                                               .Include(c => c.QuickItems)
                                                .Include(c => c.User)
                                                .FirstOrDefault(c => c.Id == characterId);
             var newPlayer = Character.FromDbCharacter(dbCharacter, DependencyContainer.Instance.Resolve<ILogger<Character>>());

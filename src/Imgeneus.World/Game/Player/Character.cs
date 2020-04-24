@@ -95,11 +95,6 @@ namespace Imgeneus.World.Game.Player
         public List<Skill> Skills { get; private set; } = new List<Skill>();
 
         /// <summary>
-        /// Event, that is fired, when player uses skill.
-        /// </summary>
-        public event Action<Character, Skill> OnUsedSkill;
-
-        /// <summary>
         /// Player learns new skill.
         /// </summary>
         /// <param name="skillId">skill id</param>
@@ -190,18 +185,23 @@ namespace Imgeneus.World.Game.Player
         /// Make character use skill.
         /// </summary>
         /// <param name="skillNumber">unique number of skill; unique is per character(maybe?)</param>
-        public async Task UseSkill(byte skillNumber)
+        public (Skill Skill, bool IsSuccessful, Damage Damage) UseSkill(byte skillNumber)
         {
             var skill = Skills.First(s => s.Number == skillNumber);
 
+            Damage damage = new Damage(0, 0, 0);
             // TODO: implement use of all skills.
             // For now, just for testing I'm implementing buff to character.
             if (skill.Type == TypeDetail.Buff && (skill.TargetType == TargetType.Caster || skill.TargetType == TargetType.PartyMembers))
             {
-                var buff = await AddActiveBuff(skill);
+                var buff = AddActiveBuff(skill);
+            }
+            else
+            {
+                damage = new Damage(100, 50, 20);
             }
 
-            OnUsedSkill?.Invoke(this, skill);
+            return (skill, true, damage);
         }
 
         #endregion

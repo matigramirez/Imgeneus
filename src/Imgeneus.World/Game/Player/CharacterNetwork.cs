@@ -80,10 +80,6 @@ namespace Imgeneus.World.Game.Player
                     HandleMotion(motionPacket);
                     break;
 
-                case UsedSkillPacket usedSkillPacket:
-                    await HandleUsedSkill(usedSkillPacket);
-                    break;
-
                 case MobInTargetPacket mobInTargetPacket:
                     HandleMobInTarget(mobInTargetPacket);
                     break;
@@ -140,11 +136,6 @@ namespace Imgeneus.World.Game.Player
         private void HandleMobInTarget(MobInTargetPacket packet)
         {
             OnSeekForTarget?.Invoke(this, packet.TargetId, TargetEntity.Mob);
-        }
-
-        private async Task HandleUsedSkill(UsedSkillPacket packet)
-        {
-            await UseSkill(packet.SkillNumber);
         }
 
         private void HandleMotion(MotionPacket packet)

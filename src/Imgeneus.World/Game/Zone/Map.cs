@@ -1,12 +1,15 @@
 ﻿using Imgeneus.Core.DependencyInjection;
 using Imgeneus.Database;
 using Imgeneus.Database.Constants;
+using Imgeneus.Network.Data;
+using Imgeneus.Network.Packets;
 using Imgeneus.Network.Packets.Game;
 using Imgeneus.Network.Server;
 using Imgeneus.World.Game.Monster;
 using Imgeneus.World.Game.Player;
 using Imgeneus.World.Packets;
 using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Concurrent;
 using System.Linq;
 
@@ -68,7 +71,6 @@ namespace Imgeneus.World.Game.Zone
                     }
                 }
 
-                character.OnUsedSkill += Character_OnUsedSkill;
                 character.OnPositionChanged += Character_OnPositionChanged;
                 character.OnMotion += Character_OnMotion;
                 character.OnSeekForTarget += Character_OnTargetChanged;
@@ -102,7 +104,6 @@ namespace Imgeneus.World.Game.Zone
                     _packetHelper.SendCharacterLeftMap(player.Value.Client, removedCharacter);
                 }
 
-                character.OnUsedSkill -= Character_OnUsedSkill;
                 character.OnPositionChanged -= Character_OnPositionChanged;
                 character.OnMotion -= Character_OnMotion;
                 character.OnSeekForTarget -= Character_OnTargetChanged;
@@ -141,21 +142,6 @@ namespace Imgeneus.World.Game.Zone
             foreach (var player in Players)
             {
                 _packetHelper.SendCharacterMotion(player.Value.Client, playerWithMotion.Id, motion);
-            }
-        }
-
-        /// <summary>
-        /// Notifies other players, that this player used some skill.
-        /// </summary>
-        /// <param name="sender">player, that used skill</param>
-        /// <param name="skill">skill, that was used</param>
-        private void Character_OnUsedSkill(Character sender, Skill skill)
-        {
-            // Notify all players about used skill.
-            foreach (var player in Players)
-            {
-                // Just plays skill animation.
-                _packetHelper.SendCharacterUsedSkilll(player.Value.Client, sender, sender, skill);
             }
         }
 
@@ -215,7 +201,44 @@ namespace Imgeneus.World.Game.Zone
                         AddMob(mob);
                     }
                     break;
+
+                case CharacterAttackPacket attackPacket:
+                    HandleAttackPacket(attackPacket);
+                    break;
+
+                case AttackStart attackStartPacket:
+                    // Not sure, but maybe I should not permit any attack start?
+                    sender.SendPacket(new Packet(PacketType.ATTACK_START));
+                    break;
+
+                case UsedSkillAttackPacket usedSkillAttackPacket:
+                    HandleUseSkill(PacketType.USE_ATTACK_SKILL, (WorldClient)sender, usedSkillAttackPacket.Number, usedSkillAttackPacket.TargetId);
+                    break;
+                case UsedNonTargetSkillPacket usedNonTargetSkillPacket:
+                    HandleUseSkill(PacketType.USE_NON_TARGET_SKILL, (WorldClient)sender, usedNonTargetSkillPacket.Number, usedNonTargetSkillPacket.TargetId);
+                    break;
             }
+        }
+
+        /// <summary>
+        /// Handles use skill packets.
+        /// </summary>
+        /// <param name="sender">world client, client, that used skill</param>
+        /// <param name="number">skill number</param>
+        /// <param name="targetId">target id</param>
+        private void HandleUseSkill(PacketType packetType, WorldClient sender, byte number, int targetId)
+        {
+            var skillUseResult = Players[sender.CharID].UseSkill(number);
+            // Notify all players about used skill.
+            foreach (var player in Players)
+            {
+                _packetHelper.SendCharacterUsedSkill(player.Value.Client, packetType, sender.CharID, targetId, skillUseResult.Skill, skillUseResult.Damage);
+            }
+        }
+
+        private void HandleAttackPacket(CharacterAttackPacket attackPacket)
+        {
+            // TODO: handle it somehow?
         }
 
         #endregion

@@ -107,12 +107,15 @@ namespace Imgeneus.World
             { PacketType.CHARACTER_MOVE, (s) => new MoveCharacterPacket(s) },
             { PacketType.CHARACTER_ENTERED_MAP, (s) => new CharacterEnteredMapPacket(s) },
             { PacketType.CHARACTER_MOTION, (s) => new MotionPacket(s) },
-            { PacketType.USE_SKILL, (s) => new UsedSkillPacket(s) },
+            { PacketType.USE_NON_TARGET_SKILL, (s) => new UsedNonTargetSkillPacket(s) },
             { PacketType.TARGET_SELECT_MOB, (s) => new MobInTargetPacket(s) },
             { PacketType.TARGET_SELECT_CHARACTER, (s) => new PlayerInTargetPacket(s) },
             { PacketType.GM_CREATE_MOB, (s) => new GMCreateMobPacket(s) },
             { PacketType.GM_COMMAND_GET_ITEM, (s) => new GMGetItemPacket(s) },
-            { PacketType.CHARACTER_SKILL_BAR, (s) => new SkillBarPacket(s) }
+            { PacketType.CHARACTER_SKILL_BAR, (s) => new SkillBarPacket(s) },
+            { PacketType.CHARACTER_ATTACK, (s) => new CharacterAttackPacket(s) },
+            { PacketType.ATTACK_START, (s) => new AttackStart(s) },
+            { PacketType.USE_ATTACK_SKILL, (s) => new UsedSkillAttackPacket(s) }
 
         };
 

@@ -58,7 +58,7 @@ namespace Imgeneus.World.SelectionScreen
         /// <summary>
         /// Call this right after gameshake to get user characters.
         /// </summary>
-        public void AfterGameshake(int userId)
+        public void SendSelectionScrenInformation(int userId)
         {
             using var database = DependencyContainer.Instance.Resolve<IDatabase>();
             DbUser user = database.Users.Include(u => u.Characters)

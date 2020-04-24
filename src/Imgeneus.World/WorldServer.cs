@@ -10,8 +10,8 @@ using Imgeneus.World.InternalServer;
 using Imgeneus.World.SelectionScreen;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Imgeneus.World
 {
@@ -72,7 +72,7 @@ namespace Imgeneus.World
             client.OnPacketArrived += Client_OnPacketArrived;
         }
 
-        private void Client_OnPacketArrived(ServerClient sender, IDeserializedPacket packet)
+        private async void Client_OnPacketArrived(ServerClient sender, IDeserializedPacket packet)
         {
             if (packet is HandshakePacket)
             {
@@ -103,9 +103,14 @@ namespace Imgeneus.World
 
             if (packet is LogOutPacket)
             {
+                // TODO: For sure, here should be timer!
+                await Task.Delay(1000 * 10); // 10 seconds * 1000 milliseconds
+                using var logoutPacket = new Packet(PacketType.LOGOUT);
+                sender.SendPacket(logoutPacket);
+
                 sender.CryptoManager.UseExpandedKey = false;
 
-                // TODO: here should be answer, that shows selection screen again.
+                SelectionScreenManagers[sender.Id].SendSelectionScrenInformation(((WorldClient)sender).UserID);
             }
         }
 
@@ -127,7 +132,7 @@ namespace Imgeneus.World
                 sendPacket.Write(CryptoManager.XorKey);
                 worldClient.SendPacket(sendPacket);
 
-                SelectionScreenManagers[worldClient.Id].AfterGameshake(worldClient.UserID);
+                SelectionScreenManagers[worldClient.Id].SendSelectionScrenInformation(worldClient.UserID);
             }
         }
 

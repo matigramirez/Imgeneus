@@ -172,12 +172,8 @@ namespace Imgeneus.World.Game.Player
         private async Task HandleLearnNewSkill(LearnNewSkillPacket learnNewSkillsPacket)
         {
             var success = await LearnNewSkill(learnNewSkillsPacket.SkillId, learnNewSkillsPacket.SkillLevel);
-            _packetsHelper.SendLearnedNewSkill(Client, success);
-
             if (success)
-            {
-                SendLearnedSkills();
-            }
+                _packetsHelper.SendLearnedNewSkill(Client, Skills.Last());
         }
 
         private async Task HandleSkillBarPacket(SkillBarPacket skillBarPacket)

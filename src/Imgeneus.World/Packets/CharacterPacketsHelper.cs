@@ -33,20 +33,10 @@ namespace Imgeneus.World.Packets
             client.SendPacket(packet);
         }
 
-        internal void SendLearnedNewSkill(WorldClient client, bool success)
+        internal void SendLearnedNewSkill(WorldClient client, Skill skill)
         {
             using var answerPacket = new Packet(PacketType.LEARN_NEW_SKILL);
-
-            // TODO: refactor it later.
-            if (success)
-            {
-                answerPacket.Write(0);
-            }
-            else
-            {
-                answerPacket.Write(1);
-            }
-
+            answerPacket.Write(new LearnedSkill(skill).Serialize());
             client.SendPacket(answerPacket);
         }
 

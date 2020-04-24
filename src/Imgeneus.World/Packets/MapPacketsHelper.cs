@@ -1,8 +1,6 @@
-﻿using System;
-using Imgeneus.Database.Constants;
+﻿using Imgeneus.Database.Constants;
 using Imgeneus.Network.Data;
 using Imgeneus.Network.Packets;
-using Imgeneus.World.Game;
 using Imgeneus.World.Game.Monster;
 using Imgeneus.World.Game.Player;
 using Imgeneus.World.Serialization;
@@ -36,10 +34,10 @@ namespace Imgeneus.World.Packets
             client.SendPacket(packet);
         }
 
-        internal void SendCharacterUsedSkill(WorldClient client, PacketType skillType, int senderId, int targetId, Skill skill, Damage damage)
+        internal void SendCharacterUsedSkill(WorldClient client, PacketType skillType, int senderId, int targetId, Skill skill, AttackResult attackResult)
         {
             Packet packet = new Packet(skillType);
-            packet.Write(new SkillRange(true, senderId, targetId, skill, new ushort[3] { damage.HP, damage.SP, damage.MP }).Serialize());
+            packet.Write(new SkillRange(senderId, targetId, skill, attackResult).Serialize());
             client.SendPacket(packet);
             packet.Dispose();
         }
@@ -98,6 +96,13 @@ namespace Imgeneus.World.Packets
                 }
             }
 
+            client.SendPacket(packet);
+        }
+
+        internal void SendCharacterUsualAttack(WorldClient client, int charId, int targetId, AttackResult attackResult)
+        {
+            using var packet = new Packet(PacketType.CHARACTER_ATTACK);
+            packet.Write(new UsualAttack(charId, targetId, attackResult).Serialize());
             client.SendPacket(packet);
         }
     }

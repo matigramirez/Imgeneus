@@ -48,12 +48,15 @@
         CHARACTER_ABSORPTION_DAMAGE = 0x0525, // 1317
         TARGET_SELECT_MOB = 0x0305, // 773
         TARGET_SELECT_CHARACTER = 0x302, // 770
-        CHARACTER_ATTACK = 0x0503,// 1283
-        ATTACK_START = 0x0212, // 530
         BUFF_SELF = 0x050D, // 1293
         BUFF_PARTY = 0x0C04, // 3076
         BUFF_RAID = 0x0C0E, // 3086
         BLESS_AMOUNT = 0x0211,
+
+        // Attack
+        ATTACK_START = 0x0212, // 530
+        CHARACTER_ATTACK = 0x0503, // 1283
+        SAVEPOS_RESULT = 0x0222, // 546
 
         // Mobs
         MOB_ENTER = 0x0601, // 1537

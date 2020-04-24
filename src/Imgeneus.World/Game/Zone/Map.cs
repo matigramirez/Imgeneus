@@ -203,7 +203,7 @@ namespace Imgeneus.World.Game.Zone
                     break;
 
                 case CharacterAttackPacket attackPacket:
-                    HandleAttackPacket(attackPacket);
+                    HandleAttackPacket((WorldClient)sender, attackPacket.TargetId);
                     break;
 
                 case AttackStart attackStartPacket:
@@ -232,13 +232,25 @@ namespace Imgeneus.World.Game.Zone
             // Notify all players about used skill.
             foreach (var player in Players)
             {
-                _packetHelper.SendCharacterUsedSkill(player.Value.Client, packetType, sender.CharID, targetId, skillUseResult.Skill, skillUseResult.Damage);
+                _packetHelper.SendCharacterUsedSkill(player.Value.Client, packetType, sender.CharID, targetId, skillUseResult.Skill, skillUseResult.AttackResult);
             }
         }
 
-        private void HandleAttackPacket(CharacterAttackPacket attackPacket)
+        /// <summary>
+        /// Handles usual(auto) attack.
+        /// </summary>
+        /// <param name="sender">world client, client, that attacks</param>
+        /// <param name="targetId">target id</param>
+        private void HandleAttackPacket(WorldClient sender, int targetId)
         {
-            // TODO: handle it somehow?
+            sender.SendPacket(new Packet(PacketType.ATTACK_START));
+
+            var attackResult = Players[sender.CharID].UsualAttack();
+
+            foreach (var player in Players)
+            {
+                _packetHelper.SendCharacterUsualAttack(player.Value.Client, sender.CharID, targetId, attackResult);
+            }
         }
 
         #endregion

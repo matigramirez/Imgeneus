@@ -97,6 +97,7 @@ namespace Imgeneus.World
             { PacketType.GAME_HANDSHAKE, (s) => new HandshakePacket(s) },
             { PacketType.PING, (s) => new PingPacket(s) },
             { PacketType.CHANGE_ENCRYPTION, (s) => new ChangeEncryptionPacket(s) },
+            { PacketType.LOGOUT, (s) => new LogOutPacket(s) },
             { PacketType.ACCOUNT_FACTION, (s) => new AccountFractionPacket(s) },
             { PacketType.CHECK_CHARACTER_AVAILABLE_NAME, (s) => new CheckCharacterAvailableNamePacket(s) },
             { PacketType.CREATE_CHARACTER, (s) => new CreateCharacterPacket(s) },

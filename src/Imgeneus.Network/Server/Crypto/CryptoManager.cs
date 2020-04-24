@@ -178,7 +178,7 @@ namespace Imgeneus.Network.Server.Crypto
         /// </summary>
         /// <param name="encryptedBytes">encrypted bytes</param>
         /// <returns>decrypted bytes</returns>
-        public byte[] DecryptAES(byte[] encryptedBytes)
+        public byte[] Decrypt(byte[] encryptedBytes)
         {
             lock (receiveMutext)
             {
@@ -189,11 +189,11 @@ namespace Imgeneus.Network.Server.Crypto
         }
 
         /// <summary>
-        /// AES ctr encryption.
+        /// AES ctr encryption or xor encruption if character is in game.
         /// </summary>
         /// <param name="bytesToEnrypt">bytes we want to encrypt.</param>
         /// <returns>encrypted bytes</returns>
-        public byte[] EncryptAES(byte[] bytesToEnrypt)
+        public byte[] Encrypt(byte[] bytesToEnrypt)
         {
             lock (sendMutext)
             {

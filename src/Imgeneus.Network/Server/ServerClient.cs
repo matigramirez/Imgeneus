@@ -85,7 +85,7 @@ namespace Imgeneus.Network.Server
             Array.Copy(rawBytes, 2, temp, 0, rawBytes.Length - 2);
 
             // Calculated encrypted bytes.
-            var encryptedBytes = CryptoManager.EncryptAES(temp);
+            var encryptedBytes = CryptoManager.Encrypt(temp);
 
             var resultBytes = new byte[rawBytes.Length];
 

@@ -100,6 +100,13 @@ namespace Imgeneus.World
             {
                 // TODO: implemen disconnect, if client is not sending ping packet.
             }
+
+            if (packet is LogOutPacket)
+            {
+                sender.CryptoManager.UseExpandedKey = false;
+
+                // TODO: here should be answer, that shows selection screen again.
+            }
         }
 
         private void InterClient_OnPacketArrived(IDeserializedPacket packet)

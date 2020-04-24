@@ -90,7 +90,7 @@ namespace Imgeneus.Network.Server.Internal
                 packet.PacketType != PacketType.AUTH_SERVER && packet.PacketType != PacketType.AES_KEY_REQUEST)
             {
                 byte[] encryptedBytes = packetData.Skip(2).ToArray();
-                byte[] decrypted = client.CryptoManager.DecryptAES(encryptedBytes);
+                byte[] decrypted = client.CryptoManager.Decrypt(encryptedBytes);
 
                 var finalDecrypted = new byte[packetData.Length];
                 finalDecrypted[0] = packetData[0];

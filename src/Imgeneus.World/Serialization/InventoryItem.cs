@@ -1,6 +1,6 @@
 ﻿using BinarySerialization;
 using Imgeneus.World.Game.Player;
-using System;
+using Imgeneus.World.Serialization;
 
 namespace Imgeneus.Network.Serialization
 {
@@ -28,16 +28,19 @@ namespace Imgeneus.Network.Serialization
         public byte Count { get; }
 
         [FieldOrder(7)]
-        public byte[] UnknownBytes { get; }
+        public CraftName CraftName { get; }
 
         [FieldOrder(8)]
-        public byte[] FromDate { get; }
+        public byte ShowOrangeStats { get; }
 
         [FieldOrder(9)]
-        public byte[] UntilDate { get; }
+        public byte[] UnknownBytes { get; }
 
         [FieldOrder(10)]
-        public byte[] ItemDyed { get; }
+        public bool IsItemDyed { get; }
+
+        [FieldOrder(11)]
+        public byte[] UnknownBytes2 { get; }
 
         public InventoryItem(Item item)
         {
@@ -49,26 +52,39 @@ namespace Imgeneus.Network.Serialization
             Gems = new int[] { item.GemTypeId1, item.GemTypeId2, item.GemTypeId3, item.GemTypeId4, item.GemTypeId5, item.GemTypeId6 };
             Count = item.Count;
 
-            // Unknown bytes. Maybe enchant?
-            UnknownBytes = new byte[27];
-            for (var i = 0; i < 27; i++)
+            CraftName = new CraftName(
+                '0', '1', // str 1
+                '0', '2', // dex 2
+                '0', '3', // rec 3
+                '0', '4', // int 4
+                '0', '5', // wis 5
+                '0', '6', // luc 6
+                '0', '7', // hp 700
+                '0', '8', // mp 800
+                '0', '9', // sp 900
+                '2', '0' // step 20
+                );
+
+            // Not sure what is it, but set it to 0 and you will see orange stats or set it to 1 and you will see "from" and "until" time.
+            // I leave it unimplemented for now.
+            ShowOrangeStats = 0;
+
+            // Unknown bytes. Not sure what is it, but if all set to 1 from and until date is shown.
+            UnknownBytes = new byte[23];
+            for (var i = 0; i < UnknownBytes.Length; i++)
             {
                 UnknownBytes[i] = 1;
             }
 
-            // 8 bytes, 4 per 1 date, but date is calculated wrong.
-            TimeSpan now = DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-            byte[] dateBytes = BitConverter.GetBytes((int)now.Ticks);
-            FromDate = dateBytes;
-            UntilDate = dateBytes;
+            IsItemDyed = true;
 
-            // Something connect with dyed feature. Couldn't figure out this this yet.
-            // If all set to 1, you will see "Item dyed" string.
-            ItemDyed = new byte[36];
-            for (var i = 0; i < 36; i++)
+            // Unknown bytes. Not sure what is it, but if all set to 1 from and until date is shown.
+            UnknownBytes2 = new byte[26];
+            for (var i = 0; i < UnknownBytes2.Length; i++)
             {
-                ItemDyed[i] = 1;
+                UnknownBytes2[i] = 1;
             }
+
         }
     }
 }

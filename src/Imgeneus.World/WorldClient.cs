@@ -115,8 +115,11 @@ namespace Imgeneus.World
             { PacketType.CHARACTER_SKILL_BAR, (s) => new SkillBarPacket(s) },
             { PacketType.CHARACTER_ATTACK, (s) => new CharacterAttackPacket(s) },
             { PacketType.ATTACK_START, (s) => new AttackStart(s) },
-            { PacketType.USE_ATTACK_SKILL, (s) => new UsedSkillAttackPacket(s) }
-
+            { PacketType.USE_ATTACK_SKILL, (s) => new UsedSkillAttackPacket(s) },
+            { PacketType.TRADE_REQUEST, (s) => new TradeRequestPacket(s) },
+            { PacketType.TRADE_RESPONSE, (s) => new TradeResponsePacket(s) },
+            { PacketType.TRADE_CANCEL, (s) => new TradeCancelPacket(s) },
+            { PacketType.TRADE_OWNER_ADD_ITEM, (s) => new TradeAddItemPacket(s) }
         };
 
         /// <inheritdoc />

@@ -4,6 +4,7 @@ using Imgeneus.Network.Packets.Game;
 using Imgeneus.Network.Server;
 using Imgeneus.World.Game.Monster;
 using Imgeneus.World.Game.Player;
+using Imgeneus.World.Game.Trade;
 using Imgeneus.World.Game.Zone;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -49,6 +50,8 @@ namespace Imgeneus.World.Game
         /// <inheritdoc />
         public ConcurrentDictionary<int, Character> Players { get; private set; } = new ConcurrentDictionary<int, Character>();
 
+        public ConcurrentDictionary<int, TradeManager> TradeManagers { get; private set; } = new ConcurrentDictionary<int, TradeManager>();
+
         /// <inheritdoc />
         public Character LoadPlayer(int characterId, WorldClient client)
         {
@@ -63,6 +66,8 @@ namespace Imgeneus.World.Game
             newPlayer.Client = client;
 
             Players.TryAdd(newPlayer.Id, newPlayer);
+            TradeManagers.TryAdd(newPlayer.Id, new TradeManager(this, newPlayer));
+
             _logger.LogDebug($"Player {newPlayer.Id} connected to game world");
             newPlayer.Client.OnPacketArrived += Client_OnPacketArrived;
 
@@ -91,6 +96,9 @@ namespace Imgeneus.World.Game
             if (Players.TryRemove(characterId, out player))
             {
                 _logger.LogDebug($"Player {characterId} left game world");
+
+                TradeManagers.TryRemove(characterId, out var tradeManager);
+                tradeManager.Dispose();
 
                 player.Client.OnPacketArrived -= Client_OnPacketArrived;
 

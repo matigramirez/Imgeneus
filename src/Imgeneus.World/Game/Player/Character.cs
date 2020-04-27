@@ -529,6 +529,15 @@ namespace Imgeneus.World.Game.Player
 
         #endregion
 
+        #region Trade
+
+        /// <summary>
+        /// With whom player is currently trading.
+        /// </summary>
+        public Character TradePartner;
+
+        #endregion
+
         /// <summary>
         /// Creates character from database information.
         /// </summary>

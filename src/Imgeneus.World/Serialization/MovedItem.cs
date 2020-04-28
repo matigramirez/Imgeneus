@@ -1,9 +1,10 @@
 ﻿using BinarySerialization;
 using Imgeneus.World.Game.Player;
+using Imgeneus.World.Serialization;
 
 namespace Imgeneus.Network.Serialization
 {
-    public class SerializedMovedItem : BaseSerializable
+    public class MovedItem : BaseSerializable
     {
         [FieldOrder(0)]
         public byte Bag { get; }
@@ -33,9 +34,12 @@ namespace Imgeneus.Network.Serialization
         public int[] Gems { get; }
 
         [FieldOrder(9)]
-        public byte[] UnknownBytes2 { get; }
+        public CraftName CraftName { get; }
 
-        public SerializedMovedItem(Item item)
+        [FieldOrder(10)]
+        public byte UnknownByte { get; } // maybe part of craft name... not sure
+
+        public MovedItem(Item item)
         {
             Bag = item.Bag;
             Slot = item.Slot;
@@ -59,11 +63,18 @@ namespace Imgeneus.Network.Serialization
                 UnknownBytes[i] = 1;
             }
 
-            UnknownBytes2 = new byte[21];
-            for (var i = 0; i < 21; i++)
-            {
-                UnknownBytes2[i] = 1;
-            }
+            CraftName = new CraftName(
+                '0', '1', // str 1
+                '0', '2', // dex 2
+                '0', '3', // rec 3
+                '0', '4', // int 4
+                '0', '5', // wis 5
+                '0', '6', // luc 6
+                '0', '7', // hp 700
+                '0', '8', // mp 800
+                '0', '9', // sp 900
+                '2', '0' // step 20
+                );
         }
     }
 }

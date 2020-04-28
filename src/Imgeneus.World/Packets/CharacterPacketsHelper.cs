@@ -66,10 +66,10 @@ namespace Imgeneus.World.Packets
             // Send move item.
             using var packet = new Packet(PacketType.INVENTORY_MOVE_ITEM);
 
-            var bytes = new SerializedMovedItem(sourceItem).Serialize();
+            var bytes = new MovedItem(sourceItem).Serialize();
             packet.Write(bytes);
 
-            bytes = new SerializedMovedItem(destinationItem).Serialize();
+            bytes = new MovedItem(destinationItem).Serialize();
             packet.Write(bytes);
 
             client.SendPacket(packet);

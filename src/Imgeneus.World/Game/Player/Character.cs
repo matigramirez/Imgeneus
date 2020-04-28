@@ -305,7 +305,7 @@ namespace Imgeneus.World.Game.Player
         /// <param name="itemType">item type</param>
         /// <param name="itemTypeId">item type id</param>
         /// <param name="count">how many items</param>
-        public async Task AddItemToInventory(byte itemType, byte itemTypeId, byte count)
+        public async Task<Item> AddItemToInventory(byte itemType, byte itemTypeId, byte count)
         {
             // Find free space.
             byte bagSlot = 0;
@@ -364,8 +364,11 @@ namespace Imgeneus.World.Game.Player
                     var item = Item.FromDbItem(dbItem);
                     InventoryItems.Add(item);
                     _logger.LogDebug($"Character {Id} got item {item.Type} {item.TypeId}");
+                    return item;
                 }
             }
+
+            return null;
         }
 
         /// <summary>

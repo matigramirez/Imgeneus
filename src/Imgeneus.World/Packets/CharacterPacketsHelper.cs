@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Imgeneus.Database.Entities;
 using Imgeneus.Network.Data;
@@ -106,6 +107,13 @@ namespace Imgeneus.World.Packets
 
             client.SendPacket(packet);
             client.CryptoManager.UseExpandedKey = true;
+        }
+
+        internal void SendAddItem(WorldClient client, Item item)
+        {
+            using var packet = new Packet(PacketType.ADD_ITEM);
+            packet.Write(new AddedInventoryItem(item).Serialize());
+            client.SendPacket(packet);
         }
     }
 }

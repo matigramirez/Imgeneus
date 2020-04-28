@@ -124,8 +124,9 @@ namespace Imgeneus.World.Game.Player
                 return;
             }
 
-            await AddItemToInventory(gMGetItemPacket.Type, gMGetItemPacket.TypeId, gMGetItemPacket.Count);
-            SendInventoryItems();
+            var item = await AddItemToInventory(gMGetItemPacket.Type, gMGetItemPacket.TypeId, gMGetItemPacket.Count);
+            if (item != null)
+                _packetsHelper.SendAddItem(Client, item);
         }
 
         private void HandlePlayerInTarget(PlayerInTargetPacket packet)

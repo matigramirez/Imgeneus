@@ -76,6 +76,7 @@
 
         // Inventory
         INVENTORY_MOVE_ITEM = 0x204,
+        ADD_ITEM = 0x0205, // 517
         SEND_EQUIPMENT = 0x0507,
 
         // Trade

@@ -87,5 +87,7 @@
         TRADE_CANCEL = 0x0A05, // 2565
         TRADE_OWNER_ADD_ITEM = 0x0A06, // 2566
         TRADE_RECEIVER_ADD_ITEM = 0x0A09, // 2569
+        TRADE_DECIDE = 0xA0A, // 2570
+        TRADE_DECIDE_REPONSE = 0xA0B
     }
 }

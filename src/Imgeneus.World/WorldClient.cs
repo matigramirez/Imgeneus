@@ -119,7 +119,8 @@ namespace Imgeneus.World
             { PacketType.TRADE_REQUEST, (s) => new TradeRequestPacket(s) },
             { PacketType.TRADE_RESPONSE, (s) => new TradeResponsePacket(s) },
             { PacketType.TRADE_CANCEL, (s) => new TradeCancelPacket(s) },
-            { PacketType.TRADE_OWNER_ADD_ITEM, (s) => new TradeAddItemPacket(s) }
+            { PacketType.TRADE_OWNER_ADD_ITEM, (s) => new TradeAddItemPacket(s) },
+            { PacketType.TRADE_DECIDE, (s) => new TradeDecidePacket(s) }
         };
 
         /// <inheritdoc />

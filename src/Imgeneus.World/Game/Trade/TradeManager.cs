@@ -3,6 +3,7 @@ using Imgeneus.Network.Packets;
 using Imgeneus.Network.Packets.Game;
 using Imgeneus.Network.Server;
 using Imgeneus.World.Game.Player;
+using Imgeneus.World.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -54,6 +55,11 @@ namespace Imgeneus.World.Game.Trade
 
                 case TradeAddItemPacket tradeAddItemPacket:
                     AddedItemToTrade((WorldClient)sender, tradeAddItemPacket);
+                    break;
+
+                case TradeDecidePacket tradeDecidePacket:
+                    if (tradeDecidePacket.IsDecided)
+                        TraderDecided((WorldClient)sender);
                     break;
             }
         }
@@ -125,28 +131,18 @@ namespace Imgeneus.World.Game.Trade
         private void SendAddedItemToTrade(WorldClient client, Item tradeItem, byte quantity, byte slotInTradeWindow)
         {
             using var packet = new Packet(PacketType.TRADE_RECEIVER_ADD_ITEM);
-            packet.Write(slotInTradeWindow);
-            packet.Write(tradeItem.Type);
-            packet.Write(tradeItem.TypeId);
-            packet.Write(quantity);
-            packet.Write(tradeItem.Quality);
-
-            for (var i = 0; i < 10; i++)
-            {
-                packet.WriteByte(1);
-            }
-
-            packet.Write(10);//tradeItem.GemTypeId1);
-            //packet.Write(tradeItem.GemTypeId2);
-            //packet.Write(tradeItem.GemTypeId3);
-            //packet.Write(tradeItem.GemTypeId4);
-            //packet.Write(tradeItem.GemTypeId5);
-            //packet.Write(tradeItem.GemTypeId6);
-
-
-            // maybe more info about item?
-
+            packet.Write(new TradeItem(slotInTradeWindow, quantity, tradeItem).Serialize());
             client.SendPacket(packet);
+        }
+
+
+        private void TraderDecided(WorldClient sender)
+        {
+            using var packet = new Packet(PacketType.TRADE_DECIDE);
+
+            // No idea how to handle trade decide.
+
+            sender.SendPacket(packet);
         }
     }
 }

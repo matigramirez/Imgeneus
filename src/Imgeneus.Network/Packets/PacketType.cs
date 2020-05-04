@@ -22,7 +22,7 @@
         // Common
         LOGOUT = 0x0107, // 263
         CHARACTER_SKILLS = 0x0108,
-        ACCOUNT_FACTION = 0x0109,
+        ACCOUNT_FACTION = 0x0109, // 265
         CHARACTER_ACTIVE_BUFFS = 0x010A,
         CHARACTER_SKILL_BAR = 0x010B,
         RENAME_CHARACTER = 0x010E,
@@ -37,6 +37,7 @@
         // Game 
         GAME_HANDSHAKE = 0xA301,
         PING = 0xA303,
+        BILLING_INFO = 0xB103, // -20221
         CHANGE_ENCRYPTION = 0xB106, // I'm not really sure, that exactly this packet starts another encryption, but for now let's assume so.
         CHARACTER_ENTERED_MAP = 0x0201, // 513
         CHARACTER_LEFT_MAP = 0x0202,  // 514

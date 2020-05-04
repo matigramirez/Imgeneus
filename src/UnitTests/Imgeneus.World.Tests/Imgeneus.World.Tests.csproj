@@ -4,6 +4,8 @@
     <TargetFramework>netcoreapp3.0</TargetFramework>
 
     <IsPackable>false</IsPackable>
+
+    <Configurations>Debug;Release;EP_5;EP_8</Configurations>
   </PropertyGroup>
 
   <ItemGroup>

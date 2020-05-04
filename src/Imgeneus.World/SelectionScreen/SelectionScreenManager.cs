@@ -5,9 +5,10 @@ using Imgeneus.Database.Entities;
 using Imgeneus.Network.Data;
 using Imgeneus.Network.Packets;
 using Imgeneus.Network.Packets.Game;
-using Imgeneus.Network.Serialization;
 using Imgeneus.Network.Server;
 using Imgeneus.World.Game;
+using Imgeneus.World.Serialization.EP_8;
+using Imgeneus.World.Serialization.EP_5;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -167,7 +168,11 @@ namespace Imgeneus.World.SelectionScreen
                 }
                 else
                 {
-                    packet.Write(new CharacterSelectionScreen(character).Serialize());
+#if EP_8
+                    packet.Write(new CharacterSelectionScreen_EP8(character).Serialize());
+#elif EP_5
+                    packet.Write(new CharacterSelectionScreen_EP5(character).Serialize());
+#endif
                 }
 
                 _client.SendPacket(packet);

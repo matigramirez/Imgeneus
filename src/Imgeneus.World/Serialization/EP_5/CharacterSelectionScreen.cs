@@ -1,14 +1,14 @@
 ﻿using BinarySerialization;
-using Imgeneus.Database.Constants;
 using Imgeneus.Database.Entities;
+using Imgeneus.Network.Serialization;
 using System.Linq;
 
-namespace Imgeneus.Network.Serialization
+namespace Imgeneus.World.Serialization.EP_5
 {
     /// <summary>
     /// Serializer for character selection screen.
     /// </summary>
-    public class CharacterSelectionScreen : BaseSerializable
+    public class CharacterSelectionScreen_EP5 : BaseSerializable
     {
         [FieldOrder(0)]
         public int CharacterId;
@@ -71,24 +71,18 @@ namespace Imgeneus.Network.Serialization
         public ushort StaminaPoints;
 
         [FieldOrder(20)]
-        public byte[] EquipmentItemsType = new byte[17];
+        public byte[] EquipmentItemsType = new byte[8];
 
         [FieldOrder(21)]
-        public byte[] EquipmentItemsTypeId = new byte[17];
+        public byte[] EquipmentItemsTypeId = new byte[8];
 
         [FieldOrder(22)]
-        public bool[] EquipmentItemHasColor = new bool[17]; // Set it to true if equipment has color.
-
-        [FieldOrder(23)]
-        public byte[] EquipmentItemColor = new byte[523]; // bytes, that describe color. I couldn't find out how they are working.
-
-        [FieldOrder(24)]
         public string Name;
 
-        [FieldOrder(25)]
-        public bool IsDelete;
+        [FieldOrder(23)]
+        public byte[] CapeInfo = new byte[6];
 
-        public CharacterSelectionScreen(DbCharacter character)
+        public CharacterSelectionScreen_EP5(DbCharacter character)
         {
             CharacterId = character.Id;
             Level = character.Level;
@@ -108,25 +102,23 @@ namespace Imgeneus.Network.Serialization
             Luck = character.Luck;
 
             var equipmentItems = character.Items.Where(item => item.Bag == 0);
-            for (var i = 0; i < 17; i++)
+
+            for (var i = 0; i < 8; i++)
             {
                 var item = equipmentItems.FirstOrDefault(itm => itm.Slot == i);
                 if (item is null)
                 {
                     EquipmentItemsType[i] = 0;
                     EquipmentItemsTypeId[i] = 0;
-                    EquipmentItemHasColor[i] = false;
                 }
                 else
                 {
                     EquipmentItemsType[i] = item.Type;
                     EquipmentItemsTypeId[i] = item.TypeId;
-                    EquipmentItemHasColor[i] = false; // TODO: research how colors are working
                 }
             }
 
-            Name = character.Name;
-            IsDelete = character.IsDelete;
+            Name = character.Name.PadRight(21);
         }
     }
 }

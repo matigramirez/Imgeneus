@@ -9,6 +9,7 @@ using Imgeneus.Network.Server;
 using Imgeneus.World.Game.Monster;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -89,7 +90,7 @@ namespace Imgeneus.World.Game.Player
                     break;
 
                 case GMGetItemPacket gMGetItemPacket:
-                    await HandleGMGetItemPacket(gMGetItemPacket);
+                    HandleGMGetItemPacket(gMGetItemPacket);
                     break;
 
                 case SkillBarPacket skillBarPacket:
@@ -117,16 +118,14 @@ namespace Imgeneus.World.Game.Player
 
         #region Handlers
 
-        private async Task HandleGMGetItemPacket(GMGetItemPacket gMGetItemPacket)
+        private void HandleGMGetItemPacket(GMGetItemPacket gMGetItemPacket)
         {
             if (!IsAdmin)
             {
                 return;
             }
 
-            var item = await AddItemToInventory(gMGetItemPacket.Type, gMGetItemPacket.TypeId, gMGetItemPacket.Count);
-            if (item != null)
-                _packetsHelper.SendAddItem(Client, item);
+            AddItemToInventory(new Item() { Type = gMGetItemPacket.Type, TypeId = gMGetItemPacket.TypeId, Count = gMGetItemPacket.Count });
         }
 
         private void HandlePlayerInTarget(PlayerInTargetPacket packet)
@@ -222,6 +221,24 @@ namespace Imgeneus.World.Game.Player
             {
                 _packetsHelper.SetPlayerInTarget(Client, (Character)target);
             }
+        }
+
+        private void InventoryItems_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.Action == NotifyCollectionChangedAction.Add)
+            {
+                // Case, when we are starting up and all invenroty items are added with AddRange call.
+                if (e.NewItems.Count != 1)
+                {
+                    return;
+                }
+                _packetsHelper.SendAddItem(Client, (Item)e.NewItems[0]);
+            }
+            else if (e.Action == NotifyCollectionChangedAction.Remove)
+            {
+                // TODO: send remove item.
+            }
+
         }
 
         #endregion

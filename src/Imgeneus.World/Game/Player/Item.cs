@@ -17,6 +17,12 @@ namespace Imgeneus.World.Game.Player
         public int GemTypeId6;
         public byte Count;
 
+        #region Trade
+
+        public byte TradeQuantity;
+
+        #endregion
+
         /// <summary>
         /// Consumables and lapis are joinable objects. I.e. count can be > 1.
         /// </summary>
@@ -90,6 +96,25 @@ namespace Imgeneus.World.Game.Player
                 GemTypeId6 = GemTypeId6,
                 Count = Count,
                 CharacterId = characterId
+            };
+        }
+
+        public Item Clone()
+        {
+            return new Item()
+            {
+                Bag = Bag,
+                Slot = Slot,
+                Type = Type,
+                TypeId = TypeId,
+                Quality = Quality,
+                GemTypeId1 = GemTypeId1,
+                GemTypeId2 = GemTypeId2,
+                GemTypeId3 = GemTypeId3,
+                GemTypeId4 = GemTypeId4,
+                GemTypeId5 = GemTypeId5,
+                GemTypeId6 = GemTypeId6,
+                Count = Count,
             };
         }
     }

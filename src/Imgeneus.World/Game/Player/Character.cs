@@ -2,11 +2,14 @@
 using Imgeneus.Database;
 using Imgeneus.Database.Constants;
 using Imgeneus.Database.Entities;
+using Imgeneus.World.Game.Trade;
 using Imgeneus.World.Packets;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using MvvmHelpers;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -21,6 +24,7 @@ namespace Imgeneus.World.Game.Player
         {
             _logger = logger;
             _packetsHelper = new CharacterPacketsHelper();
+            InventoryItems.CollectionChanged += InventoryItems_CollectionChanged;
         }
 
         #region Character info
@@ -297,7 +301,10 @@ namespace Imgeneus.World.Game.Player
         /// </summary>
         public event Action<Character, Item> OnEquipmentChanged;
 
-        public List<Item> InventoryItems { get; private set; } = new List<Item>();
+        /// <summary>
+        /// Collection of inventory items.
+        /// </summary>
+        public ObservableRangeCollection<Item> InventoryItems { get; private set; } = new ObservableRangeCollection<Item>();
 
         /// <summary>
         /// Adds item to player's inventory.
@@ -305,9 +312,50 @@ namespace Imgeneus.World.Game.Player
         /// <param name="itemType">item type</param>
         /// <param name="itemTypeId">item type id</param>
         /// <param name="count">how many items</param>
-        public async Task<Item> AddItemToInventory(byte itemType, byte itemTypeId, byte count)
+        public Item AddItemToInventory(Item item)
         {
             // Find free space.
+            var free = FindFreeSlotInInventory();
+
+            // Calculated bag slot can not be 0, because 0 means worn item. Newerly created item can not be worn.
+            if (free.Bag == 0 || free.Slot == -1)
+            {
+                return null;
+            }
+
+            item.Bag = free.Bag;
+            item.Slot = (byte)free.Slot;
+
+            using var database = DependencyContainer.Instance.Resolve<IDatabase>();
+            var dbItem = new DbCharacterItems()
+            {
+                Type = item.Type,
+                TypeId = item.TypeId,
+                Count = item.Count,
+                Bag = item.Bag,
+                Slot = item.Slot,
+                CharacterId = Id
+            };
+
+            database.CharacterItems.Add(dbItem);
+            var savedEntries = database.SaveChanges();
+            if (savedEntries > 0)
+            {
+                InventoryItems.Add(item);
+                _logger.LogDebug($"Character {Id} got item {item.Type} {item.TypeId}");
+                return item;
+            }
+
+
+            return null;
+        }
+
+        /// <summary>
+        /// Tries to find free slot in inventory.
+        /// </summary>
+        /// <returns>tuple of bag and slot; slot is -1 if there is no free slot</returns>
+        private (byte Bag, int Slot) FindFreeSlotInInventory()
+        {
             byte bagSlot = 0;
             int freeSlot = -1;
 
@@ -343,32 +391,34 @@ namespace Imgeneus.World.Game.Player
                 freeSlot = 0;
             }
 
-            // Calculated bag slot can not be 0, because 0 means worn item. Newerly created item can not be worn.
-            if (bagSlot != 0)
-            {
-                using var database = DependencyContainer.Instance.Resolve<IDatabase>();
-                var dbItem = new DbCharacterItems()
-                {
-                    Type = itemType,
-                    TypeId = itemTypeId,
-                    Count = count,
-                    Bag = bagSlot,
-                    Slot = (byte)freeSlot,
-                    CharacterId = Id
-                };
+            return (bagSlot, freeSlot);
+        }
 
-                database.CharacterItems.Add(dbItem);
-                var savedEntries = await database.SaveChangesAsync();
-                if (savedEntries > 0)
-                {
-                    var item = Item.FromDbItem(dbItem);
-                    InventoryItems.Add(item);
-                    _logger.LogDebug($"Character {Id} got item {item.Type} {item.TypeId}");
-                    return item;
-                }
+        /// <summary>
+        /// Removes item from inventory
+        /// </summary>
+        /// <param name="item">item, that we want to remove</param>
+        public Item RemoveItemFromInventory(Item item)
+        {
+            // If we are giving consumable item.
+            if (item.TradeQuantity < item.Count && item.TradeQuantity != 0)
+            {
+                var clonedItem = item.Clone();
+                clonedItem.Count = item.TradeQuantity;
+
+                item.Count -= item.TradeQuantity;
+                item.TradeQuantity = 0;
+
+                // TODO: save to database.
+
+                return clonedItem;
             }
 
-            return null;
+            InventoryItems.Remove(item);
+
+            // TODO: save to database.
+
+            return item;
         }
 
         /// <summary>
@@ -538,6 +588,16 @@ namespace Imgeneus.World.Game.Player
         /// With whom player is currently trading.
         /// </summary>
         public Character TradePartner;
+
+        /// <summary>
+        /// Represents currently open trade window.
+        /// </summary>
+        public TradeRequest TradeRequest;
+
+        /// <summary>
+        /// Otems, that are currently in trade window.
+        /// </summary>
+        public List<Item> TradeItems = new List<Item>();
 
         #endregion
 

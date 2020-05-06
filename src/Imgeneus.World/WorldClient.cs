@@ -118,7 +118,7 @@ namespace Imgeneus.World
             { PacketType.USE_ATTACK_SKILL, (s) => new UsedSkillAttackPacket(s) },
             { PacketType.TRADE_REQUEST, (s) => new TradeRequestPacket(s) },
             { PacketType.TRADE_RESPONSE, (s) => new TradeResponsePacket(s) },
-            { PacketType.TRADE_CANCEL, (s) => new TradeCancelPacket(s) },
+            { PacketType.TRADE_FINISH, (s) => new TradeFinishPacket(s) },
             { PacketType.TRADE_OWNER_ADD_ITEM, (s) => new TradeAddItemPacket(s) },
             { PacketType.TRADE_DECIDE, (s) => new TradeDecidePacket(s) }
         };

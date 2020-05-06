@@ -13,7 +13,7 @@ namespace Imgeneus.World.Packets
 {
     internal class CharacterPacketsHelper
     {
-        internal void SendInventoryItems(WorldClient client, List<Item> inventoryItems)
+        internal void SendInventoryItems(WorldClient client, ICollection<Item> inventoryItems)
         {
             using var packet = new Packet(PacketType.CHARACTER_ITEMS);
             packet.Write(new InventoryItems(inventoryItems).Serialize());

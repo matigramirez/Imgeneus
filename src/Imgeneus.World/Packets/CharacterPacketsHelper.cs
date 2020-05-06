@@ -115,5 +115,12 @@ namespace Imgeneus.World.Packets
             packet.Write(new AddedInventoryItem(item).Serialize());
             client.SendPacket(packet);
         }
+
+        internal void SendRemoveItem(WorldClient client, Item item, bool fullRemove)
+        {
+            using var packet = new Packet(PacketType.REMOVE_ITEM);
+            packet.Write(new RemovedInventoryItem(item, fullRemove).Serialize());
+            client.SendPacket(packet);
+        }
     }
 }

@@ -236,7 +236,7 @@ namespace Imgeneus.World.Game.Player
             }
             else if (e.Action == NotifyCollectionChangedAction.Remove)
             {
-                // TODO: send remove item.
+                _packetsHelper.SendRemoveItem(Client, (Item)e.OldItems[0], true);
             }
 
         }

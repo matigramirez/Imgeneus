@@ -50,7 +50,6 @@ namespace Imgeneus.World.Game.Player
         public ushort Luck;
         public ushort Wisdom;
         public uint Exp;
-        public uint Gold;
         public ushort Kills;
         public ushort Deaths;
         public ushort Victories;
@@ -411,6 +410,8 @@ namespace Imgeneus.World.Game.Player
 
                 // TODO: save to database.
 
+                _packetsHelper.SendRemoveItem(Client, clonedItem, false);
+
                 return clonedItem;
             }
 
@@ -598,6 +599,26 @@ namespace Imgeneus.World.Game.Player
         /// Otems, that are currently in trade window.
         /// </summary>
         public List<Item> TradeItems = new List<Item>();
+
+        /// <summary>
+        /// Money in trade window.
+        /// </summary>
+        public uint TradeMoney;
+
+        /// <summary>
+        /// Money, that belongs to player.
+        /// </summary>
+        public uint Gold { get; private set; }
+
+        /// <summary>
+        /// Changes amount of money.
+        /// </summary>
+        public void ChangeGold(uint newGold)
+        {
+            Gold = newGold;
+
+            // TODO: save to database.
+        }
 
         #endregion
 

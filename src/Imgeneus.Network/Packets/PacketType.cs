@@ -77,6 +77,7 @@
         // Inventory
         INVENTORY_MOVE_ITEM = 0x204,
         ADD_ITEM = 0x0205, // 517
+        REMOVE_ITEM = 0x0206, // 518
         SEND_EQUIPMENT = 0x0507,
 
         // Trade
@@ -86,6 +87,7 @@
         TRADE_STOP = 0x0A04, // 2564
         TRADE_FINISH = 0x0A05, // 2565
         TRADE_OWNER_ADD_ITEM = 0x0A06, // 2566
+        TRADE_ADD_MONEY = 0x0A08, //
         TRADE_RECEIVER_ADD_ITEM = 0x0A09, // 2569
         TRADE_DECIDE = 0xA0A, // 2570
     }

@@ -120,6 +120,7 @@ namespace Imgeneus.World
             { PacketType.TRADE_RESPONSE, (s) => new TradeResponsePacket(s) },
             { PacketType.TRADE_FINISH, (s) => new TradeFinishPacket(s) },
             { PacketType.TRADE_OWNER_ADD_ITEM, (s) => new TradeAddItemPacket(s) },
+            { PacketType.TRADE_ADD_MONEY, (s) => new TradeAddMoneyPacket(s) },
             { PacketType.TRADE_DECIDE, (s) => new TradeDecidePacket(s) }
         };
 

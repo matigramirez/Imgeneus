@@ -56,6 +56,10 @@ namespace Imgeneus.World.Game.Trade
                     AddedItemToTrade((WorldClient)sender, tradeAddItemPacket);
                     break;
 
+                case TradeAddMoneyPacket tradeAddMoneyPacket:
+                    AddMoneyToTrade((WorldClient)sender, tradeAddMoneyPacket);
+                    break;
+
                 case TradeDecidePacket tradeDecidePacket:
                     if (tradeDecidePacket.IsDecided)
                         TraderDecideConfirm((WorldClient)sender);
@@ -126,6 +130,21 @@ namespace Imgeneus.World.Game.Trade
             SendAddedItemToTrade(partner.Client, tradeItem, tradeAddItemPacket.Quantity, tradeAddItemPacket.SlotInTradeWindow);
         }
 
+        /// <summary>
+        /// Adds money to trade.
+        /// </summary>
+        /// <param name="sender">player, that added money</param>
+        private void AddMoneyToTrade(WorldClient sender, TradeAddMoneyPacket tradeAddMoneyPacket)
+        {
+            var trader = _gameWorld.Players[sender.CharID];
+            var partner = trader.TradePartner;
+
+            trader.TradeMoney = tradeAddMoneyPacket.Money < trader.Gold ? tradeAddMoneyPacket.Money : trader.Gold;
+
+            SendAddedMoneyToTrade(trader.Client, 1, trader.TradeMoney);
+            SendAddedMoneyToTrade(partner.Client, 2, trader.TradeMoney);
+        }
+
         private void SendTradeRequest(WorldClient client, int tradeRequesterId)
         {
             using var packet = new Packet(PacketType.TRADE_REQUEST);
@@ -154,6 +173,14 @@ namespace Imgeneus.World.Game.Trade
         {
             using var packet = new Packet(PacketType.TRADE_RECEIVER_ADD_ITEM);
             packet.Write(new TradeItem(slotInTradeWindow, quantity, tradeItem).Serialize());
+            client.SendPacket(packet);
+        }
+
+        private void SendAddedMoneyToTrade(WorldClient client, byte traderId, uint tradeMoney)
+        {
+            using var packet = new Packet(PacketType.TRADE_ADD_MONEY);
+            packet.Write(traderId);
+            packet.Write(tradeMoney);
             client.SendPacket(packet);
         }
 
@@ -278,6 +305,18 @@ namespace Imgeneus.World.Game.Trade
             {
                 partner.RemoveItemFromInventory(item);
                 trader.AddItemToInventory(item);
+            }
+
+            if (trader.TradeMoney > 0)
+            {
+                trader.ChangeGold(trader.Gold - trader.TradeMoney);
+                partner.ChangeGold(partner.Gold + trader.TradeMoney);
+            }
+
+            if (partner.TradeMoney > 0)
+            {
+                partner.ChangeGold(partner.Gold - partner.TradeMoney);
+                trader.ChangeGold(trader.Gold + partner.TradeMoney);
             }
 
             ClearTrade(trader, partner);

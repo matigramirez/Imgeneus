@@ -27,6 +27,7 @@ namespace Imgeneus.World.Game.Player
             _taskQueue = taskQueue;
             _packetsHelper = new CharacterPacketsHelper();
             InventoryItems.CollectionChanged += InventoryItems_CollectionChanged;
+            Skills.CollectionChanged += Skills_CollectionChanged;
         }
 
         #region Character info
@@ -97,7 +98,7 @@ namespace Imgeneus.World.Game.Player
         /// <summary>
         /// Collection of available skills.
         /// </summary>
-        public List<Skill> Skills { get; private set; } = new List<Skill>();
+        public ObservableRangeCollection<Skill> Skills { get; private set; } = new ObservableRangeCollection<Skill>();
 
         /// <summary>
         /// Player learns new skill.
@@ -105,7 +106,7 @@ namespace Imgeneus.World.Game.Player
         /// <param name="skillId">skill id</param>
         /// <param name="skillLevel">skill level</param>
         /// <returns>successful or not</returns>
-        public async Task<bool> LearnNewSkill(ushort skillId, byte skillLevel)
+        public void LearnNewSkill(ushort skillId, byte skillLevel)
         {
             using var database = DependencyContainer.Instance.Resolve<IDatabase>();
 
@@ -113,7 +114,6 @@ namespace Imgeneus.World.Game.Player
             {
                 // Character has already learned this skill.
                 // TODO: log it or throw exception?
-                return false;
             }
 
             // Find learned skill.
@@ -121,7 +121,7 @@ namespace Imgeneus.World.Game.Player
             if (SkillPoint < dbSkill.SkillPoint)
             {
                 // Not enough skill points.
-                return false;
+                // TODO: log it or throw exception?
             }
 
             byte skillNumber = 0;
@@ -135,9 +135,20 @@ namespace Imgeneus.World.Game.Player
             // If there is skil of lower level => delete it.
             if (isSkillLearned != null)
             {
-                var skillToRemove = dbCharacter.Skills.First(s => s.SkillId == isSkillLearned.Id);
-                dbCharacter.Skills.Remove(skillToRemove);
-                skillNumber = skillToRemove.Number;
+                _taskQueue.Enqueue(async (args) =>
+                    {
+                        int charId = (int)args[0];
+                        int skillId = (int)args[1];
+
+                        using var database = DependencyContainer.Instance.Resolve<IDatabase>();
+                        var skillToRemove = database.CharacterSkills.First(s => s.CharacterId == charId && s.SkillId == skillId);
+                        database.CharacterSkills.Remove(skillToRemove);
+                        return await database.SaveChangesAsync();
+                    },
+                    (obj) => { },
+                Id, isSkillLearned.Id);
+
+                skillNumber = isSkillLearned.Number;
             }
             // No such skill. Generate new number.
             else
@@ -155,35 +166,45 @@ namespace Imgeneus.World.Game.Player
             }
 
             // Save char and learned skill.
-            var charSkill = new DbCharacterSkill()
-            {
-                CharacterId = Id,
-                SkillId = dbSkill.Id,
-                Skill = dbSkill,
-                Number = skillNumber
-            };
+            _taskQueue.Enqueue(async (args) =>
+                {
+                    int charId = (int)args[0];
+                    int skillId = (int)args[1];
+                    byte skillNumber = (byte)args[2];
+                    byte skillPoints = (byte)args[3];
 
-            dbCharacter.Skills.Add(charSkill);
-            dbCharacter.SkillPoint -= dbSkill.SkillPoint;
-            var savedEntries = await database.SaveChangesAsync();
-            if (savedEntries > 0)
-            {
-                SkillPoint = dbCharacter.SkillPoint;
-                var skill = Skill.FromDbSkill(charSkill);
+                    using var database = DependencyContainer.Instance.Resolve<IDatabase>();
+                    var dbSkill = database.Skills.Find(skillId);
+                    var skillToAdd = new DbCharacterSkill()
+                    {
+                        CharacterId = charId,
+                        SkillId = skillId,
+                        Skill = dbSkill,
+                        Number = skillNumber
+                    };
 
-                // Remove previously learned skill.
-                if (isSkillLearned != null) Skills.Remove(isSkillLearned);
+                    database.CharacterSkills.Add(skillToAdd);
 
-                // Add new skill.
-                Skills.Add(skill);
-                _logger.LogDebug($"Character {Id} learned skill {skill.SkillId} of level {skill.SkillLevel}");
-                return true;
-            }
-            else
-            {
-                // Could not save to database.
-                return false;
-            }
+                    var character = database.Characters.Find(charId);
+                    character.SkillPoint -= skillPoints;
+
+                    await database.SaveChangesAsync();
+                    return skillToAdd;
+                },
+                (result) =>
+                {
+                    SkillPoint -= dbSkill.SkillPoint;
+
+                    using var database = DependencyContainer.Instance.Resolve<IDatabase>();
+                    var skill = Skill.FromDbSkill((DbCharacterSkill)result);
+                    Skills.Add(skill);
+                    _logger.LogDebug($"Character {Id} learned skill {skill.SkillId} of level {skill.SkillLevel}");
+
+                },
+            Id, dbSkill.Id, skillNumber, dbSkill.SkillPoint);
+
+            // Remove previously learned skill.
+            if (isSkillLearned != null) Skills.Remove(isSkillLearned);
         }
 
         /// <summary>
@@ -343,8 +364,9 @@ namespace Imgeneus.World.Game.Player
                     };
 
                     database.CharacterItems.Add(dbItem);
-                    await database.SaveChangesAsync();
+                    return await database.SaveChangesAsync();
                 },
+                (obj) => { },
             item.Clone());
 
             InventoryItems.Add(item);
@@ -427,8 +449,9 @@ namespace Imgeneus.World.Game.Player
                     using var database = DependencyContainer.Instance.Resolve<IDatabase>();
                     var itemToRemove = database.CharacterItems.First(itm => itm.CharacterId == charId && itm.Bag == bag && itm.Slot == slot);
                     database.CharacterItems.Remove(itemToRemove);
-                    await database.SaveChangesAsync();
+                    return await database.SaveChangesAsync();
                 },
+                (obj) => { },
             Id, item.Bag, item.Slot);
 
             InventoryItems.Remove(item);
@@ -564,8 +587,9 @@ namespace Imgeneus.World.Game.Player
                         dbCharacter.PosX = x;
                         dbCharacter.PosY = y;
                         dbCharacter.PosZ = z;
-                        await database.SaveChangesAsync();
+                        return await database.SaveChangesAsync();
                     },
+                (obj) => { },
                 x, y, z, angle);
             }
 

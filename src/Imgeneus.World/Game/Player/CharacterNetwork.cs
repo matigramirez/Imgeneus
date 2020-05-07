@@ -74,7 +74,7 @@ namespace Imgeneus.World.Game.Player
                     break;
 
                 case MoveCharacterPacket moveCharacterPacket:
-                    await HandleMove(moveCharacterPacket);
+                    HandleMove(moveCharacterPacket);
                     break;
 
                 case MotionPacket motionPacket:
@@ -149,9 +149,9 @@ namespace Imgeneus.World.Game.Player
             OnMotion?.Invoke(this, packet.Motion);
         }
 
-        private async Task HandleMove(MoveCharacterPacket packet)
+        private void HandleMove(MoveCharacterPacket packet)
         {
-            await UpdatePosition(packet.X, packet.Y, packet.Z, packet.Angle, packet.MovementType == MovementType.Stopped);
+            UpdatePosition(packet.X, packet.Y, packet.Z, packet.Angle, packet.MovementType == MovementType.Stopped);
         }
 
         private async Task HandleMoveItem(MoveItemInInventoryPacket moveItemPacket)

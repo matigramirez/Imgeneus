@@ -2,6 +2,7 @@
 using Imgeneus.Database;
 using Imgeneus.Database.Constants;
 using Imgeneus.Database.Entities;
+using Imgeneus.DatabaseBackgroundService;
 using Imgeneus.World.Game.Trade;
 using Imgeneus.World.Packets;
 using Microsoft.EntityFrameworkCore;
@@ -9,7 +10,6 @@ using Microsoft.Extensions.Logging;
 using MvvmHelpers;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -18,11 +18,13 @@ namespace Imgeneus.World.Game.Player
     public partial class Character : ITargetable
     {
         private readonly ILogger<Character> _logger;
+        private readonly IBackgroundTaskQueue _taskQueue;
         private readonly CharacterPacketsHelper _packetsHelper;
 
-        public Character(ILogger<Character> logger)
+        public Character(ILogger<Character> logger, IBackgroundTaskQueue taskQueue)
         {
             _logger = logger;
+            _taskQueue = taskQueue;
             _packetsHelper = new CharacterPacketsHelper();
             InventoryItems.CollectionChanged += InventoryItems_CollectionChanged;
         }
@@ -526,7 +528,7 @@ namespace Imgeneus.World.Game.Player
         /// <param name="y">new y</param>
         /// <param name="z">new z</param>
         /// <param name="saveChangesToDB">set it to true, if this change should be saved to database</param>
-        public async Task UpdatePosition(float x, float y, float z, ushort angle, bool saveChangesToDB)
+        public void UpdatePosition(float x, float y, float z, ushort angle, bool saveChangesToDB)
         {
             PosX = x;
             PosY = y;
@@ -537,13 +539,16 @@ namespace Imgeneus.World.Game.Player
 
             if (saveChangesToDB)
             {
-                using var database = DependencyContainer.Instance.Resolve<IDatabase>();
-                var dbCharacter = database.Characters.Find(Id);
-                dbCharacter.Angle = angle;
-                dbCharacter.PosX = PosX;
-                dbCharacter.PosY = PosY;
-                dbCharacter.PosZ = PosZ;
-                await database.SaveChangesAsync();
+                _taskQueue.Enqueue(async () =>
+                {
+                    using var database = DependencyContainer.Instance.Resolve<IDatabase>();
+                    var dbCharacter = database.Characters.Find(Id);
+                    dbCharacter.Angle = angle;
+                    dbCharacter.PosX = PosX;
+                    dbCharacter.PosY = PosY;
+                    dbCharacter.PosZ = PosZ;
+                    await database.SaveChangesAsync();
+                });
             }
 
             OnPositionChanged?.Invoke(this);
@@ -625,9 +630,9 @@ namespace Imgeneus.World.Game.Player
         /// <summary>
         /// Creates character from database information.
         /// </summary>
-        public static Character FromDbCharacter(DbCharacter dbCharacter, ILogger<Character> logger)
+        public static Character FromDbCharacter(DbCharacter dbCharacter, ILogger<Character> logger, IBackgroundTaskQueue taskQueue)
         {
-            var character = new Character(logger)
+            var character = new Character(logger, taskQueue)
             {
                 Id = dbCharacter.Id,
                 Name = dbCharacter.Name,

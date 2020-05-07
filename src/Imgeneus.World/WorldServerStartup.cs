@@ -3,6 +3,7 @@ using Imgeneus.Core.DependencyInjection;
 using Imgeneus.Core.Helpers;
 using Imgeneus.Core.Structures.Configuration;
 using Imgeneus.Database;
+using Imgeneus.DatabaseBackgroundService;
 using Imgeneus.Network;
 using Imgeneus.World.Game;
 using Imgeneus.World.InternalServer;
@@ -47,6 +48,12 @@ namespace Imgeneus.World
                 var worldConfiguration = ConfigurationHelper.Load<WorldConfiguration>(WorldConfigFile);
                 services.AddSingleton(worldConfiguration);
             });
+            DependencyContainer.Instance.Configure(services =>
+            {
+                services.AddSingleton<DatabaseWorker>();
+                services.AddHostedService(provider => provider.GetService<DatabaseWorker>());
+                services.AddSingleton<IBackgroundTaskQueue, BackgroundTaskQueue>();
+            });
             DependencyContainer.Instance.BuildServiceProvider();
         }
 
@@ -55,6 +62,8 @@ namespace Imgeneus.World
         {
             var logger = DependencyContainer.Instance.Resolve<ILogger<WorldServerStartup>>();
             var server = DependencyContainer.Instance.Resolve<IWorldServer>();
+            var dbWorker = DependencyContainer.Instance.Resolve<DatabaseWorker>();
+            dbWorker.StartAsync(new System.Threading.CancellationToken());
 
             try
             {

@@ -1,5 +1,6 @@
 ﻿using Imgeneus.Core.DependencyInjection;
 using Imgeneus.Database;
+using Imgeneus.DatabaseBackgroundService;
 using Imgeneus.Network.Packets.Game;
 using Imgeneus.Network.Server;
 using Imgeneus.World.Game.Monster;
@@ -19,10 +20,12 @@ namespace Imgeneus.World.Game
     public class GameWorld : IGameWorld
     {
         private readonly ILogger<GameWorld> _logger;
+        private readonly IBackgroundTaskQueue _taskQueue;
 
-        public GameWorld()
+        public GameWorld(ILogger<GameWorld> logger, IBackgroundTaskQueue taskQueue)
         {
-            _logger = DependencyContainer.Instance.Resolve<ILogger<GameWorld>>();
+            _logger = logger;
+            _taskQueue = taskQueue;
 
             InitMaps();
         }
@@ -62,7 +65,7 @@ namespace Imgeneus.World.Game
                                                .Include(c => c.QuickItems)
                                                .Include(c => c.User)
                                                .FirstOrDefault(c => c.Id == characterId);
-            var newPlayer = Character.FromDbCharacter(dbCharacter, DependencyContainer.Instance.Resolve<ILogger<Character>>());
+            var newPlayer = Character.FromDbCharacter(dbCharacter, DependencyContainer.Instance.Resolve<ILogger<Character>>(), _taskQueue);
             newPlayer.Client = client;
 
             Players.TryAdd(newPlayer.Id, newPlayer);

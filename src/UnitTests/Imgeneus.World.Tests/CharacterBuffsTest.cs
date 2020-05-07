@@ -1,6 +1,7 @@
 using Imgeneus.Core.DependencyInjection;
 using Imgeneus.Database;
 using Imgeneus.Database.Entities;
+using Imgeneus.DatabaseBackgroundService;
 using Imgeneus.World.Game.Player;
 using Imgeneus.World.Tests;
 using Microsoft.Extensions.Logging;
@@ -14,6 +15,7 @@ namespace Imgeneus.World.Test
     public class CharacterBuffsTest : BaseTest
     {
         private Mock<ILogger<Character>> loggerMock => new Mock<ILogger<Character>>();
+        private Mock<IBackgroundTaskQueue> taskQueuMock => new Mock<IBackgroundTaskQueue>();
 
         private DbSkill skill1_level1 = new DbSkill()
         {
@@ -42,7 +44,7 @@ namespace Imgeneus.World.Test
         [Description("It should be possible to add a buff.")]
         public async void Character_AddActiveBuff()
         {
-            var character = new Character(loggerMock.Object);
+            var character = new Character(loggerMock.Object, taskQueuMock.Object);
             Assert.Empty(character.ActiveBuffs);
 
             var usedSkill = new Skill()
@@ -60,7 +62,7 @@ namespace Imgeneus.World.Test
         [Description("Buff with lower level should not override buff with the higher level.")]
         public async void Character_BuffOflowerLevelCanNotOverrideHigherLevel()
         {
-            var character = new Character(loggerMock.Object);
+            var character = new Character(loggerMock.Object, taskQueuMock.Object);
             await character.AddActiveBuff(new Skill()
             {
                 Id = skill1_level2.Id,
@@ -88,7 +90,7 @@ namespace Imgeneus.World.Test
         [Description("Buff of the same level is already applied, it should change reset time.")]
         public async void Character_BuffOfSameLevelShouldChangeResetTime()
         {
-            var character = new Character(loggerMock.Object);
+            var character = new Character(loggerMock.Object, taskQueuMock.Object);
             var skill = new Skill()
             {
                 Id = skill1_level2.Id,

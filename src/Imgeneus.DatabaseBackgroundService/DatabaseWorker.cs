@@ -32,7 +32,7 @@ namespace Imgeneus.DatabaseBackgroundService
 
                 try
                 {
-                    await workItem();
+                    await workItem.CallFunc(workItem.Args);
                 }
                 catch (Exception ex)
                 {

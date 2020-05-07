@@ -5,8 +5,8 @@ namespace Imgeneus.DatabaseBackgroundService
 {
     public interface IBackgroundTaskQueue
     {
-        void Enqueue(Func<Task> workItem);
+        void Enqueue(Func<object[], Task> workItem, params object[] args);
 
-        Task<Func<Task>> DequeueAsync();
+        Task<(Func<object[], Task> CallFunc, object[] Args)> DequeueAsync();
     }
 }

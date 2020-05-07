@@ -327,28 +327,29 @@ namespace Imgeneus.World.Game.Player
             item.Bag = free.Bag;
             item.Slot = (byte)free.Slot;
 
-            using var database = DependencyContainer.Instance.Resolve<IDatabase>();
-            var dbItem = new DbCharacterItems()
-            {
-                Type = item.Type,
-                TypeId = item.TypeId,
-                Count = item.Count,
-                Bag = item.Bag,
-                Slot = item.Slot,
-                CharacterId = Id
-            };
+            _taskQueue.Enqueue(async (args) =>
+                {
+                    Item item = (Item)args[0];
 
-            database.CharacterItems.Add(dbItem);
-            var savedEntries = database.SaveChanges();
-            if (savedEntries > 0)
-            {
-                InventoryItems.Add(item);
-                _logger.LogDebug($"Character {Id} got item {item.Type} {item.TypeId}");
-                return item;
-            }
+                    using var database = DependencyContainer.Instance.Resolve<IDatabase>();
+                    var dbItem = new DbCharacterItems()
+                    {
+                        Type = item.Type,
+                        TypeId = item.TypeId,
+                        Count = item.Count,
+                        Bag = item.Bag,
+                        Slot = item.Slot,
+                        CharacterId = Id
+                    };
 
+                    database.CharacterItems.Add(dbItem);
+                    await database.SaveChangesAsync();
+                },
+            item.Clone());
 
-            return null;
+            InventoryItems.Add(item);
+            _logger.LogDebug($"Character {Id} got item {item.Type} {item.TypeId}");
+            return item;
         }
 
         /// <summary>
@@ -417,10 +418,21 @@ namespace Imgeneus.World.Game.Player
                 return clonedItem;
             }
 
+            _taskQueue.Enqueue(async (args) =>
+                {
+                    int charId = (int)args[0];
+                    byte bag = (byte)args[1];
+                    byte slot = (byte)args[2];
+
+                    using var database = DependencyContainer.Instance.Resolve<IDatabase>();
+                    var itemToRemove = database.CharacterItems.First(itm => itm.CharacterId == charId && itm.Bag == bag && itm.Slot == slot);
+                    database.CharacterItems.Remove(itemToRemove);
+                    await database.SaveChangesAsync();
+                },
+            Id, item.Bag, item.Slot);
+
             InventoryItems.Remove(item);
-
-            // TODO: save to database.
-
+            _logger.LogDebug($"Character {Id} lost item {item.Type} {item.TypeId}");
             return item;
         }
 
@@ -539,16 +551,22 @@ namespace Imgeneus.World.Game.Player
 
             if (saveChangesToDB)
             {
-                _taskQueue.Enqueue(async () =>
-                {
-                    using var database = DependencyContainer.Instance.Resolve<IDatabase>();
-                    var dbCharacter = database.Characters.Find(Id);
-                    dbCharacter.Angle = angle;
-                    dbCharacter.PosX = PosX;
-                    dbCharacter.PosY = PosY;
-                    dbCharacter.PosZ = PosZ;
-                    await database.SaveChangesAsync();
-                });
+                _taskQueue.Enqueue(async (args) =>
+                    {
+                        float x = (float)args[0];
+                        float y = (float)args[1];
+                        float z = (float)args[2];
+                        ushort angle = (ushort)args[3];
+
+                        using var database = DependencyContainer.Instance.Resolve<IDatabase>();
+                        var dbCharacter = database.Characters.Find(Id);
+                        dbCharacter.Angle = angle;
+                        dbCharacter.PosX = x;
+                        dbCharacter.PosY = y;
+                        dbCharacter.PosZ = z;
+                        await database.SaveChangesAsync();
+                    },
+                x, y, z, angle);
             }
 
             OnPositionChanged?.Invoke(this);

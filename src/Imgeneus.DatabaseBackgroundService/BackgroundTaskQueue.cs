@@ -7,22 +7,22 @@ namespace Imgeneus.DatabaseBackgroundService
 {
     public class BackgroundTaskQueue : IBackgroundTaskQueue
     {
-        private ConcurrentQueue<Func<Task>> _workItems =
-            new ConcurrentQueue<Func<Task>>();
+        private ConcurrentQueue<(Func<object[], Task> CallFunc, object[] Args)> _workItems =
+            new ConcurrentQueue<(Func<object[], Task>, object[])>();
         private SemaphoreSlim _signal = new SemaphoreSlim(0);
 
-        public void Enqueue(Func<Task> workItem)
+        public void Enqueue(Func<object[], Task> workItem, params object[] args)
         {
             if (workItem == null)
             {
                 throw new ArgumentNullException(nameof(workItem));
             }
 
-            _workItems.Enqueue(workItem);
+            _workItems.Enqueue((workItem, args));
             _signal.Release();
         }
 
-        public async Task<Func<Task>> DequeueAsync()
+        public async Task<(Func<object[], Task> CallFunc, object[] Args)> DequeueAsync()
         {
             await _signal.WaitAsync();
             _workItems.TryDequeue(out var workItem);

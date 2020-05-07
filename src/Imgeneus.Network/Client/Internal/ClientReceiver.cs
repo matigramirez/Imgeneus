@@ -31,11 +31,8 @@ namespace Imgeneus.Network.Client.Internal
                 var receivedBuffer = new byte[e.BytesTransferred];
                 Buffer.BlockCopy(e.Buffer, e.Offset, receivedBuffer, 0, e.BytesTransferred);
 
-                Task.Run(() =>
-                {
-                    using IPacketStream packet = new PacketStream(receivedBuffer);
-                    this.client.HandlePacket(packet);
-                });
+                using IPacketStream packet = new PacketStream(receivedBuffer);
+                this.client.HandlePacket(packet);
 
                 if (!this.client.Socket.ReceiveAsync(e))
                 {

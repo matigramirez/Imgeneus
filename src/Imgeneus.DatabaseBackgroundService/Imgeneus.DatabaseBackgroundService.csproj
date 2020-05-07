@@ -8,4 +8,9 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="3.0.0" />
   </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Imgeneus.Core\Imgeneus.Core.csproj" />
+    <ProjectReference Include="..\Imgeneus.Database\Imgeneus.Database.csproj" />
+  </ItemGroup>
 </Project>

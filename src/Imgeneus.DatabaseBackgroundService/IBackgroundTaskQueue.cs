@@ -6,8 +6,8 @@ namespace Imgeneus.DatabaseBackgroundService
 {
     public interface IBackgroundTaskQueue
     {
-        void Enqueue(ActionType actionType, Action<object> callback = null, params object[] args);
+        void Enqueue(ActionType actionType, params object[] args);
 
-        Task<(ActionType ActionType, Action<object> Callback, object[] Args)> DequeueAsync();
+        Task<(ActionType ActionType, object[] Args)> DequeueAsync();
     }
 }

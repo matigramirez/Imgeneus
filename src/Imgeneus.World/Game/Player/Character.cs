@@ -136,7 +136,6 @@ namespace Imgeneus.World.Game.Player
             if (isSkillLearned != null)
             {
                 _taskQueue.Enqueue(ActionType.REMOVE_SKILL,
-                                   (obj) => { },
                                     Id, isSkillLearned.SkillId, isSkillLearned.SkillLevel);
 
                 skillNumber = isSkillLearned.Number;
@@ -158,9 +157,6 @@ namespace Imgeneus.World.Game.Player
 
             // Save char and learned skill.
             _taskQueue.Enqueue(ActionType.SAVE_SKILL,
-                                (result) =>
-                                {
-                                },
                                 Id, dbSkill.SkillId, dbSkill.SkillLevel, skillNumber, dbSkill.SkillPoint);
 
             // Remove previously learned skill.
@@ -246,8 +242,7 @@ namespace Imgeneus.World.Game.Player
                     if (buff.SkillLevel == skill.SkillLevel)
                     {
                         _taskQueue.Enqueue(ActionType.UPDATE_BUFF_RESET_TIME,
-                            (obj) => { },
-                            Id, skill.SkillId, skill.SkillLevel, resetTime);
+                                           Id, skill.SkillId, skill.SkillLevel, resetTime);
 
                         buff.ResetTime = resetTime;
 
@@ -263,8 +258,7 @@ namespace Imgeneus.World.Game.Player
             {
                 // It's a new buff, add it to database.
                 _taskQueue.Enqueue(ActionType.SAVE_BUFF,
-                                    (obj) => { },
-                                    Id, skill.SkillId, skill.SkillLevel, resetTime);
+                                   Id, skill.SkillId, skill.SkillLevel, resetTime);
                 buff = new ActiveBuff()
                 {
                     SkillId = skill.SkillId,
@@ -313,7 +307,6 @@ namespace Imgeneus.World.Game.Player
             item.Slot = (byte)free.Slot;
 
             _taskQueue.Enqueue(ActionType.SAVE_ITEM_IN_INVENTORY,
-                               (obj) => { },
                                Id, item.Type, item.TypeId, item.Count, item.Bag, item.Slot);
 
             InventoryItems.Add(item);
@@ -388,7 +381,6 @@ namespace Imgeneus.World.Game.Player
             }
 
             _taskQueue.Enqueue(ActionType.REMOVE_ITEM_FROM_INVENTORY,
-                               (obj) => { },
                                Id, item.Bag, item.Slot);
 
             InventoryItems.Remove(item);
@@ -413,7 +405,6 @@ namespace Imgeneus.World.Game.Player
 
             // Source item is always to remove.
             _taskQueue.Enqueue(ActionType.REMOVE_ITEM_FROM_INVENTORY,
-                               (obj) => { },
                                Id, currentBag, currentSlot);
 
             // Check, if any other item is at destination slot.
@@ -452,25 +443,21 @@ namespace Imgeneus.World.Game.Player
                 }
 
                 _taskQueue.Enqueue(ActionType.REMOVE_ITEM_FROM_INVENTORY,
-                               (obj) => { },
-                               Id, destinationBag, destinationSlot);
+                                   Id, destinationBag, destinationSlot);
             }
 
             // Add new items to database.
             if (shouldDeleteSourceItemFromDB)
             {
                 _taskQueue.Enqueue(ActionType.SAVE_ITEM_IN_INVENTORY,
-                               (obj) => { },
-                               Id, destinationItem.Type, destinationItem.TypeId, destinationItem.Count, destinationItem.Bag, destinationItem.Slot);
+                                   Id, destinationItem.Type, destinationItem.TypeId, destinationItem.Count, destinationItem.Bag, destinationItem.Slot);
             }
             else
             {
                 _taskQueue.Enqueue(ActionType.SAVE_ITEM_IN_INVENTORY,
-                               (obj) => { },
-                               Id, sourceItem.Type, sourceItem.TypeId, sourceItem.Count, sourceItem.Bag, sourceItem.Slot);
+                                   Id, sourceItem.Type, sourceItem.TypeId, sourceItem.Count, sourceItem.Bag, sourceItem.Slot);
                 _taskQueue.Enqueue(ActionType.SAVE_ITEM_IN_INVENTORY,
-                               (obj) => { },
-                               Id, destinationItem.Type, destinationItem.TypeId, destinationItem.Count, destinationItem.Bag, destinationItem.Slot);
+                                   Id, destinationItem.Type, destinationItem.TypeId, destinationItem.Count, destinationItem.Bag, destinationItem.Slot);
             }
 
             if (sourceItem.Bag == 0 || destinationItem.Bag == 0)
@@ -517,7 +504,6 @@ namespace Imgeneus.World.Game.Player
             if (saveChangesToDB)
             {
                 _taskQueue.Enqueue(ActionType.SAVE_CHARACTER_MOVE,
-                                   (obj) => { },
                                    Id, x, y, z, angle);
             }
 

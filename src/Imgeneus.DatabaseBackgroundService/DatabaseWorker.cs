@@ -14,7 +14,7 @@ namespace Imgeneus.DatabaseBackgroundService
     {
         private readonly ILogger<DatabaseWorker> _logger;
         private readonly IBackgroundTaskQueue _taskQueue;
-        private static readonly IDictionary<object, Func<object[], Task<object>>> _handlers = new Dictionary<object, Func<object[], Task<object>>>();
+        private static readonly IDictionary<object, Func<object[], Task>> _handlers = new Dictionary<object, Func<object[], Task>>();
 
         public DatabaseWorker(ILogger<DatabaseWorker> logger, IBackgroundTaskQueue taskQueue)
         {
@@ -47,7 +47,7 @@ namespace Imgeneus.DatabaseBackgroundService
             {
                 foreach (ActionMethodHandler methodHandler in readHandler)
                 {
-                    var action = methodHandler.Method.CreateDelegate(typeof(Func<object[], Task<object>>)) as Func<object[], Task<object>>;
+                    var action = methodHandler.Method.CreateDelegate(typeof(Func<object[], Task>)) as Func<object[], Task>;
 
                     _handlers.Add(methodHandler.Attribute.Type, action);
                 }
@@ -71,8 +71,7 @@ namespace Imgeneus.DatabaseBackgroundService
                     }
 
                     var handler = _handlers[action];
-                    var result = await handler(workItem.Args);
-                    workItem.Callback?.Invoke(result);
+                    await handler(workItem.Args);
                 }
                 catch (Exception ex)
                 {

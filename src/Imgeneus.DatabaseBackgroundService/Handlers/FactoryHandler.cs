@@ -10,7 +10,7 @@ namespace Imgeneus.DatabaseBackgroundService.Handlers
     internal static class FactoryHandler
     {
         [ActionHandler(ActionType.SAVE_CHARACTER_MOVE)]
-        internal static async Task<object> SaveCharacterMove(object[] args)
+        internal static async Task SaveCharacterMove(object[] args)
         {
             int charId = (int)args[0];
             float x = (float)args[1];
@@ -24,11 +24,11 @@ namespace Imgeneus.DatabaseBackgroundService.Handlers
             dbCharacter.PosX = x;
             dbCharacter.PosY = y;
             dbCharacter.PosZ = z;
-            return await database.SaveChangesAsync();
+            await database.SaveChangesAsync();
         }
 
         [ActionHandler(ActionType.SAVE_ITEM_IN_INVENTORY)]
-        internal static async Task<object> SaveItemInInventory(object[] args)
+        internal static async Task SaveItemInInventory(object[] args)
         {
             int charId = (int)args[0];
             byte type = (byte)args[1];
@@ -49,11 +49,11 @@ namespace Imgeneus.DatabaseBackgroundService.Handlers
             };
 
             database.CharacterItems.Add(dbItem);
-            return await database.SaveChangesAsync();
+            await database.SaveChangesAsync();
         }
 
         [ActionHandler(ActionType.REMOVE_ITEM_FROM_INVENTORY)]
-        internal static async Task<object> RemoveItemInInventory(object[] args)
+        internal static async Task RemoveItemInInventory(object[] args)
         {
             int charId = (int)args[0];
             byte bag = (byte)args[1];
@@ -62,11 +62,11 @@ namespace Imgeneus.DatabaseBackgroundService.Handlers
             using var database = DependencyContainer.Instance.Resolve<IDatabase>();
             var itemToRemove = database.CharacterItems.First(itm => itm.CharacterId == charId && itm.Bag == bag && itm.Slot == slot);
             database.CharacterItems.Remove(itemToRemove);
-            return await database.SaveChangesAsync();
+            await database.SaveChangesAsync();
         }
 
         [ActionHandler(ActionType.SAVE_SKILL)]
-        internal static async Task<object> SaveSkill(object[] args)
+        internal static async Task SaveSkill(object[] args)
         {
             int charId = (int)args[0];
             ushort skillId = (ushort)args[1];
@@ -88,11 +88,11 @@ namespace Imgeneus.DatabaseBackgroundService.Handlers
             var character = database.Characters.Find(charId);
             character.SkillPoint -= skillPoints;
 
-            return await database.SaveChangesAsync();
+            await database.SaveChangesAsync();
         }
 
         [ActionHandler(ActionType.REMOVE_SKILL)]
-        internal static async Task<object> RemoveSkill(object[] args)
+        internal static async Task RemoveSkill(object[] args)
         {
             int charId = (int)args[0];
             ushort skillId = (ushort)args[1];
@@ -101,11 +101,11 @@ namespace Imgeneus.DatabaseBackgroundService.Handlers
             using var database = DependencyContainer.Instance.Resolve<IDatabase>();
             var skillToRemove = database.CharacterSkills.First(s => s.CharacterId == charId && s.Skill.SkillId == skillId && s.Skill.SkillLevel == skillLevel);
             database.CharacterSkills.Remove(skillToRemove);
-            return await database.SaveChangesAsync();
+            await database.SaveChangesAsync();
         }
 
         [ActionHandler(ActionType.SAVE_BUFF)]
-        internal static async Task<object> SaveBuff(object[] args)
+        internal static async Task SaveBuff(object[] args)
         {
             int charId = (int)args[0];
             ushort skillId = (ushort)args[1];
@@ -121,11 +121,11 @@ namespace Imgeneus.DatabaseBackgroundService.Handlers
                 ResetTime = resetTime,
             };
             database.ActiveBuffs.Add(dbBuff);
-            return await database.SaveChangesAsync();
+            await database.SaveChangesAsync();
         }
 
         [ActionHandler(ActionType.UPDATE_BUFF_RESET_TIME)]
-        internal static async Task<object> UpdateBuffResetTime(object[] args)
+        internal static async Task UpdateBuffResetTime(object[] args)
         {
             int charId = (int)args[0];
             ushort skillId = (ushort)args[1];
@@ -137,7 +137,7 @@ namespace Imgeneus.DatabaseBackgroundService.Handlers
             var dbBuff = database.ActiveBuffs.First(b => b.CharacterId == charId && b.SkillId == dbSkill.Id);
             dbBuff.ResetTime = resetTime;
 
-            return await database.SaveChangesAsync();
+            await database.SaveChangesAsync();
         }
     }
 }

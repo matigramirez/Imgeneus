@@ -122,5 +122,12 @@ namespace Imgeneus.World.Packets
             packet.Write(new RemovedInventoryItem(item, fullRemove).Serialize());
             client.SendPacket(packet);
         }
+
+        internal void SendAdditionalStats(WorldClient client, Character character)
+        {
+            using var packet = new Packet(PacketType.CHARACTER_ADDITIONAL_STATS);
+            packet.Write(new CharacterAdditionalStats(character).Serialize());
+            client.SendPacket(packet);
+        }
     }
 }

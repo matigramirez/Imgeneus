@@ -108,6 +108,7 @@ namespace Imgeneus.World.Game.Player
         {
             SendDetails();
             SendAdditionalStats();
+            SendAttackAndMovementSpeed();
             SendCurrentHitpoints();
             SendInventoryItems();
             SendLearnedSkills();
@@ -211,6 +212,8 @@ namespace Imgeneus.World.Game.Player
         private void SendSkillBar() => _packetsHelper.SendSkillBar(Client, QuickItems);
 
         private void SendAdditionalStats() => _packetsHelper.SendAdditionalStats(Client, this);
+
+        private void SendAttackAndMovementSpeed() => _packetsHelper.SendAttackAndMovementSpeed(Client, this);
 
         private void TargetChanged(ITargetable target)
         {

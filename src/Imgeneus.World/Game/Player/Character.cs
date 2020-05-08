@@ -78,6 +78,9 @@ namespace Imgeneus.World.Game.Player
         public int MaxMP { get => CurrentMP * 2; } // TODO: implement max HP. For now return current * 2.
         public int MaxSP { get => CurrentSP * 2; } // TODO: implement max HP. For now return current * 2.
 
+        public AttackSpeed AttackSpeed { get => AttackSpeed.ExteremelyFast; } // TODO: calculate attack speed.
+        public MoveSpeed MoveSpeed { get => MoveSpeed.VeryFast; } // TODO: calculate move speed.
+
         #endregion
 
         #region Motion

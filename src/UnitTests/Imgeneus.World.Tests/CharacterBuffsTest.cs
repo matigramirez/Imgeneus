@@ -49,7 +49,6 @@ namespace Imgeneus.World.Test
 
             var usedSkill = new Skill()
             {
-                Id = skill1_level1.Id,
                 SkillId = skill1_level1.SkillId,
                 SkillLevel = skill1_level1.SkillLevel,
                 KeepTime = skill1_level1.KeepTime
@@ -65,7 +64,6 @@ namespace Imgeneus.World.Test
             var character = new Character(loggerMock.Object, taskQueuMock.Object);
             character.AddActiveBuff(new Skill()
             {
-                Id = skill1_level2.Id,
                 SkillId = skill1_level2.SkillId,
                 SkillLevel = skill1_level2.SkillLevel,
                 KeepTime = skill1_level2.KeepTime
@@ -76,7 +74,6 @@ namespace Imgeneus.World.Test
 
             character.AddActiveBuff(new Skill()
             {
-                Id = skill1_level1.Id,
                 SkillId = skill1_level1.SkillId,
                 SkillLevel = skill1_level1.SkillLevel,
                 KeepTime = skill1_level1.KeepTime
@@ -93,7 +90,6 @@ namespace Imgeneus.World.Test
             var character = new Character(loggerMock.Object, taskQueuMock.Object);
             var skill = new Skill()
             {
-                Id = skill1_level2.Id,
                 SkillId = skill1_level2.SkillId,
                 SkillLevel = skill1_level2.SkillLevel,
                 KeepTime = skill1_level1.KeepTime

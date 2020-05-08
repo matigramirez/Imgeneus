@@ -6,11 +6,6 @@ namespace Imgeneus.World.Game.Player
     public class Skill
     {
         /// <summary>
-        /// Unique id. Is used in ative buffs and maybe other places.
-        /// </summary>
-        public int Id;
-
-        /// <summary>
         /// Skill id.
         /// </summary>
         public ushort SkillId;
@@ -33,22 +28,22 @@ namespace Imgeneus.World.Game.Player
         /// <summary>
         /// Skill type.
         /// </summary>
-        public TypeDetail Type { get; private set; }
+        public TypeDetail Type;
 
         /// <summary>
         /// To what target this skill can be applied.
         /// </summary>
-        public TargetType TargetType { get; private set; }
+        public TargetType TargetType;
 
         /// <summary>
         /// Time after which skill can be used again.
         /// </summary>
-        public ushort ResetTime { get; private set; }
+        public ushort ResetTime;
 
         /// <summary>
         /// Time for example for buffs. This time shows how long the skill will be applied.
         /// </summary>
-        public int KeepTime { get; set; }
+        public int KeepTime;
 
         /// <summary>
         /// Creates skill from database inrofmation.
@@ -57,7 +52,6 @@ namespace Imgeneus.World.Game.Player
         {
             var skill = new Skill()
             {
-                Id = dbSkill.SkillId,
                 SkillId = dbSkill.Skill.SkillId,
                 SkillLevel = dbSkill.Skill.SkillLevel,
                 Number = dbSkill.Number,

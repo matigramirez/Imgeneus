@@ -119,6 +119,7 @@ namespace Imgeneus.World.Game.Player
             }
 
             // Find learned skill.
+            // TODO: preload somehow skills and do not call database each time.
             var dbSkill = database.Skills.First(s => s.SkillId == skillId && s.SkillLevel == skillLevel);
             if (SkillPoint < dbSkill.SkillPoint)
             {
@@ -136,7 +137,7 @@ namespace Imgeneus.World.Game.Player
             {
                 _taskQueue.Enqueue(ActionType.REMOVE_SKILL,
                                    (obj) => { },
-                                    Id, isSkillLearned.Id);
+                                    Id, isSkillLearned.SkillId, isSkillLearned.SkillLevel);
 
                 skillNumber = isSkillLearned.Number;
             }
@@ -159,18 +160,26 @@ namespace Imgeneus.World.Game.Player
             _taskQueue.Enqueue(ActionType.SAVE_SKILL,
                                 (result) =>
                                 {
-                                    SkillPoint -= dbSkill.SkillPoint;
-
-                                    using var database = DependencyContainer.Instance.Resolve<IDatabase>();
-                                    var skill = Skill.FromDbSkill((DbCharacterSkill)result);
-                                    Skills.Add(skill);
-                                    _logger.LogDebug($"Character {Id} learned skill {skill.SkillId} of level {skill.SkillLevel}");
-
                                 },
-                                Id, dbSkill.Id, skillNumber, dbSkill.SkillPoint);
+                                Id, dbSkill.SkillId, dbSkill.SkillLevel, skillNumber, dbSkill.SkillPoint);
 
             // Remove previously learned skill.
             if (isSkillLearned != null) Skills.Remove(isSkillLearned);
+
+            SkillPoint -= dbSkill.SkillPoint;
+            var skill = new Skill()
+            {
+                SkillId = dbSkill.SkillId,
+                SkillLevel = dbSkill.SkillLevel,
+                Number = skillNumber,
+                CooldownInSeconds = 0,
+                Type = dbSkill.TypeDetail,
+                TargetType = dbSkill.TargetType,
+                ResetTime = dbSkill.ResetTime,
+                KeepTime = dbSkill.KeepTime
+            };
+            Skills.Add(skill);
+            _logger.LogDebug($"Character {Id} learned skill {skill.SkillId} of level {skill.SkillLevel}");
         }
 
         /// <summary>
@@ -238,7 +247,7 @@ namespace Imgeneus.World.Game.Player
                     {
                         _taskQueue.Enqueue(ActionType.UPDATE_BUFF_RESET_TIME,
                             (obj) => { },
-                            Id, skill.Id, resetTime);
+                            Id, skill.SkillId, skill.SkillLevel, resetTime);
 
                         buff.ResetTime = resetTime;
 
@@ -255,7 +264,7 @@ namespace Imgeneus.World.Game.Player
                 // It's a new buff, add it to database.
                 _taskQueue.Enqueue(ActionType.SAVE_BUFF,
                                     (obj) => { },
-                                    Id, skill.Id, resetTime);
+                                    Id, skill.SkillId, skill.SkillLevel, resetTime);
                 buff = new ActiveBuff()
                 {
                     SkillId = skill.SkillId,

@@ -69,17 +69,17 @@ namespace Imgeneus.DatabaseBackgroundService.Handlers
         internal static async Task<object> SaveSkill(object[] args)
         {
             int charId = (int)args[0];
-            int skillId = (int)args[1];
-            byte skillNumber = (byte)args[2];
-            byte skillPoints = (byte)args[3];
+            ushort skillId = (ushort)args[1];
+            byte skillLevel = (byte)args[2];
+            byte skillNumber = (byte)args[3];
+            byte skillPoints = (byte)args[4];
 
             using var database = DependencyContainer.Instance.Resolve<IDatabase>();
-            var dbSkill = database.Skills.Find(skillId);
+            var dbSkill = database.Skills.First(s => s.SkillId == skillId && s.SkillLevel == skillLevel);
             var skillToAdd = new DbCharacterSkill()
             {
                 CharacterId = charId,
-                SkillId = skillId,
-                Skill = dbSkill,
+                SkillId = dbSkill.Id,
                 Number = skillNumber
             };
 
@@ -88,18 +88,18 @@ namespace Imgeneus.DatabaseBackgroundService.Handlers
             var character = database.Characters.Find(charId);
             character.SkillPoint -= skillPoints;
 
-            await database.SaveChangesAsync();
-            return skillToAdd;
+            return await database.SaveChangesAsync();
         }
 
         [ActionHandler(ActionType.REMOVE_SKILL)]
         internal static async Task<object> RemoveSkill(object[] args)
         {
             int charId = (int)args[0];
-            int skillId = (int)args[1];
+            ushort skillId = (ushort)args[1];
+            byte skillLevel = (byte)args[2];
 
             using var database = DependencyContainer.Instance.Resolve<IDatabase>();
-            var skillToRemove = database.CharacterSkills.First(s => s.CharacterId == charId && s.SkillId == skillId);
+            var skillToRemove = database.CharacterSkills.First(s => s.CharacterId == charId && s.Skill.SkillId == skillId && s.Skill.SkillLevel == skillLevel);
             database.CharacterSkills.Remove(skillToRemove);
             return await database.SaveChangesAsync();
         }
@@ -108,32 +108,33 @@ namespace Imgeneus.DatabaseBackgroundService.Handlers
         internal static async Task<object> SaveBuff(object[] args)
         {
             int charId = (int)args[0];
-            int skillId = (int)args[1];
-            DateTime resetTime = (DateTime)args[2];
+            ushort skillId = (ushort)args[1];
+            byte skillLevel = (byte)args[2];
+            DateTime resetTime = (DateTime)args[3];
 
             using var database = DependencyContainer.Instance.Resolve<IDatabase>();
-
+            var dbSkill = database.Skills.First(s => s.SkillId == skillId && s.SkillLevel == skillLevel);
             var dbBuff = new DbCharacterActiveBuff()
             {
                 CharacterId = charId,
-                SkillId = skillId,
+                SkillId = dbSkill.Id,
                 ResetTime = resetTime,
             };
             database.ActiveBuffs.Add(dbBuff);
-            await database.SaveChangesAsync();
-            return dbBuff;
+            return await database.SaveChangesAsync();
         }
 
         [ActionHandler(ActionType.UPDATE_BUFF_RESET_TIME)]
         internal static async Task<object> UpdateBuffResetTime(object[] args)
         {
             int charId = (int)args[0];
-            int skillId = (int)args[1];
-            DateTime resetTime = (DateTime)args[2];
+            ushort skillId = (ushort)args[1];
+            byte skillLevel = (byte)args[2];
+            DateTime resetTime = (DateTime)args[3];
 
             using var database = DependencyContainer.Instance.Resolve<IDatabase>();
-
-            var dbBuff = database.ActiveBuffs.First(b => b.CharacterId == charId && b.SkillId == skillId);
+            var dbSkill = database.Skills.First(s => s.SkillId == skillId && s.SkillLevel == skillLevel);
+            var dbBuff = database.ActiveBuffs.First(b => b.CharacterId == charId && b.SkillId == dbSkill.Id);
             dbBuff.ResetTime = resetTime;
 
             return await database.SaveChangesAsync();

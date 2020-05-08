@@ -10,6 +10,11 @@ using System.Threading.Tasks;
 
 namespace Imgeneus.DatabaseBackgroundService
 {
+    /// <summary>
+    /// Database worker (based on background service) is async writer to database.
+    /// This is basically one-way communication to database. As it's running in another process it can not influence game server performance.
+    /// Database changes are handled by action type and process one by one in the queue.
+    /// </summary>
     public class DatabaseWorker : BackgroundService
     {
         private readonly ILogger<DatabaseWorker> _logger;
@@ -22,6 +27,9 @@ namespace Imgeneus.DatabaseBackgroundService
             _taskQueue = taskQueue;
         }
 
+        /// <summary>
+        /// Executed only once, when service starts.
+        /// </summary>
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             Initialize();
@@ -54,6 +62,9 @@ namespace Imgeneus.DatabaseBackgroundService
             }
         }
 
+        /// <summary>
+        /// Handles tasks queue.
+        /// </summary>
         private async Task BackgroundProcessing(CancellationToken stoppingToken)
         {
             while (!stoppingToken.IsCancellationRequested)

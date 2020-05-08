@@ -230,11 +230,14 @@ namespace Imgeneus.World.Game.Player
                 {
                     return;
                 }
-                _packetsHelper.SendAddItem(Client, (Item)e.NewItems[0]);
+
+                if (Client != null)
+                    _packetsHelper.SendAddItem(Client, (Item)e.NewItems[0]);
             }
             else if (e.Action == NotifyCollectionChangedAction.Remove)
             {
-                _packetsHelper.SendRemoveItem(Client, (Item)e.OldItems[0], true);
+                if (Client != null)
+                    _packetsHelper.SendRemoveItem(Client, (Item)e.OldItems[0], true);
             }
         }
 
@@ -248,7 +251,9 @@ namespace Imgeneus.World.Game.Player
                 {
                     return;
                 }
-                _packetsHelper.SendLearnedNewSkill(Client, (Skill)e.NewItems[0]);
+
+                if (Client != null)
+                    _packetsHelper.SendLearnedNewSkill(Client, (Skill)e.NewItems[0]);
             }
         }
 

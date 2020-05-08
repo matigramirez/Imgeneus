@@ -14,6 +14,10 @@
 
         // Skills
         SAVE_SKILL,
-        REMOVE_SKILL
+        REMOVE_SKILL,
+
+        // Buffs
+        SAVE_BUFF,
+        UPDATE_BUFF_RESET_TIME
     }
 }

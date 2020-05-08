@@ -48,7 +48,7 @@ namespace Imgeneus.World.Packets
             client.SendPacket(packet);
         }
 
-        internal void SendActiveBuffs(WorldClient client, List<ActiveBuff> activeBuffs)
+        internal void SendActiveBuffs(WorldClient client, ICollection<ActiveBuff> activeBuffs)
         {
             using var packet = new Packet(PacketType.CHARACTER_ACTIVE_BUFFS);
             packet.Write(new CharacterActiveBuffs(activeBuffs).Serialize());

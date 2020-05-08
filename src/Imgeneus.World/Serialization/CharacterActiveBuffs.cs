@@ -15,7 +15,7 @@ namespace Imgeneus.World.Serialization
         [FieldCount(nameof(Length))]
         public List<SerializedActiveBuff> Buffs { get; }
 
-        public CharacterActiveBuffs(IList<ActiveBuff> buffs)
+        public CharacterActiveBuffs(ICollection<ActiveBuff> buffs)
         {
             Buffs = buffs.Select(b => new SerializedActiveBuff(b)).ToList();
         }

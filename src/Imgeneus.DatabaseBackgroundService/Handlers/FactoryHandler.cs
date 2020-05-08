@@ -1,6 +1,7 @@
 ﻿using Imgeneus.Core.DependencyInjection;
 using Imgeneus.Database;
 using Imgeneus.Database.Entities;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -100,6 +101,41 @@ namespace Imgeneus.DatabaseBackgroundService.Handlers
             using var database = DependencyContainer.Instance.Resolve<IDatabase>();
             var skillToRemove = database.CharacterSkills.First(s => s.CharacterId == charId && s.SkillId == skillId);
             database.CharacterSkills.Remove(skillToRemove);
+            return await database.SaveChangesAsync();
+        }
+
+        [ActionHandler(ActionType.SAVE_BUFF)]
+        internal static async Task<object> SaveBuff(object[] args)
+        {
+            int charId = (int)args[0];
+            int skillId = (int)args[1];
+            DateTime resetTime = (DateTime)args[2];
+
+            using var database = DependencyContainer.Instance.Resolve<IDatabase>();
+
+            var dbBuff = new DbCharacterActiveBuff()
+            {
+                CharacterId = charId,
+                SkillId = skillId,
+                ResetTime = resetTime,
+            };
+            database.ActiveBuffs.Add(dbBuff);
+            await database.SaveChangesAsync();
+            return dbBuff;
+        }
+
+        [ActionHandler(ActionType.UPDATE_BUFF_RESET_TIME)]
+        internal static async Task<object> UpdateBuffResetTime(object[] args)
+        {
+            int charId = (int)args[0];
+            int skillId = (int)args[1];
+            DateTime resetTime = (DateTime)args[2];
+
+            using var database = DependencyContainer.Instance.Resolve<IDatabase>();
+
+            var dbBuff = database.ActiveBuffs.First(b => b.CharacterId == charId && b.SkillId == skillId);
+            dbBuff.ResetTime = resetTime;
+
             return await database.SaveChangesAsync();
         }
     }

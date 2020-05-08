@@ -5,7 +5,11 @@ namespace Imgeneus.World.Game.Player
 {
     public class ActiveBuff
     {
-        public int Id { get; private set; }
+        private static uint Counter = 1;
+
+        public uint Id { get; private set; }
+
+        private object SyncObj = new object();
 
         public DateTime ResetTime { get; set; }
 
@@ -15,11 +19,18 @@ namespace Imgeneus.World.Game.Player
 
         public byte SkillLevel { get; set; }
 
+        public ActiveBuff()
+        {
+            lock (SyncObj)
+            {
+                Id = Counter++;
+            }
+        }
+
         public static ActiveBuff FromDbCharacterActiveBuff(DbCharacterActiveBuff buff)
         {
             return new ActiveBuff()
             {
-                Id = buff.Id,
                 ResetTime = buff.ResetTime,
                 SkillId = buff.Skill.SkillId,
                 SkillLevel = buff.Skill.SkillLevel

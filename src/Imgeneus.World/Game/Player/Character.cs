@@ -6,7 +6,6 @@ using Imgeneus.DatabaseBackgroundService;
 using Imgeneus.DatabaseBackgroundService.Handlers;
 using Imgeneus.World.Game.Trade;
 using Imgeneus.World.Packets;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using MvvmHelpers;
 using System;
@@ -30,6 +29,7 @@ namespace Imgeneus.World.Game.Player
 
             InventoryItems.CollectionChanged += InventoryItems_CollectionChanged;
             Skills.CollectionChanged += Skills_CollectionChanged;
+            ActiveBuffs.CollectionChanged += ActiveBuffs_CollectionChanged;
         }
 
         #region Character info
@@ -211,25 +211,18 @@ namespace Imgeneus.World.Game.Player
         #region Buffs
 
         /// <summary>
-        /// Event, that is fired, when player gets new active buff. Maybe we should notify party mmbers?
-        /// </summary>
-        public event Action<Character, ActiveBuff> OnGotBuff;
-
-        /// <summary>
         /// Active buffs, that increase character characteristic, attack, defense etc.
         /// Don't update it directly, use instead "AddActiveBuff".
         /// </summary>
-        public List<ActiveBuff> ActiveBuffs { get; private set; } = new List<ActiveBuff>();
+        public ObservableRangeCollection<ActiveBuff> ActiveBuffs { get; private set; } = new ObservableRangeCollection<ActiveBuff>();
 
         /// <summary>
         /// Updates collection of active buffs. Also writes changes to database.
         /// </summary>
         /// <param name="skill">skill, that client sends</param>
         /// <returns>Newly added or updated active buff</returns>
-        public async Task<ActiveBuff> AddActiveBuff(Skill skill)
+        public ActiveBuff AddActiveBuff(Skill skill)
         {
-            using var database = DependencyContainer.Instance.Resolve<IDatabase>();
-
             var resetTime = DateTime.UtcNow.AddSeconds(skill.KeepTime);
             var buff = ActiveBuffs.FirstOrDefault(b => b.SkillId == skill.SkillId);
             if (buff != null) // We already have such buff. Try to update reset time.
@@ -244,39 +237,35 @@ namespace Imgeneus.World.Game.Player
                     // If bufs are the same level, we should only update reset time.
                     if (buff.SkillLevel == skill.SkillLevel)
                     {
-                        var dbBuff = database.ActiveBuffs.First(b => b.CharacterId == Id && b.SkillId == skill.Id);
-                        dbBuff.ResetTime = resetTime;
+                        _taskQueue.Enqueue(ActionType.UPDATE_BUFF_RESET_TIME,
+                            (obj) => { },
+                            Id, skill.Id, resetTime);
+
                         buff.ResetTime = resetTime;
-                        await database.SaveChangesAsync();
+
+                        // Send update of buff.
+                        if (Client != null)
+                            SendGetBuff(buff);
+
                         _logger.LogDebug($"Character {Id} got buff {buff.SkillId} of level {buff.SkillLevel}. Buff will be active next {buff.CountDownInSeconds} seconds");
                     }
                 }
             }
             else
             {
-                // TODO: find a way to preload skills without calling database each time!
-                var dbSkill = database.Skills.FirstOrDefault(s => s.Id == skill.Id);
-
                 // It's a new buff, add it to database.
-                var dbBuff = database.ActiveBuffs.Add(new DbCharacterActiveBuff()
+                _taskQueue.Enqueue(ActionType.SAVE_BUFF,
+                                    (obj) => { },
+                                    Id, skill.Id, resetTime);
+                buff = new ActiveBuff()
                 {
-                    CharacterId = Id,
-                    SkillId = skill.Id,
-                    ResetTime = resetTime,
-                    Skill = dbSkill
-                });
-                await database.SaveChangesAsync();
-
-                buff = ActiveBuff.FromDbCharacterActiveBuff(dbBuff.Entity);
+                    SkillId = skill.SkillId,
+                    SkillLevel = skill.SkillLevel,
+                    ResetTime = resetTime
+                };
                 ActiveBuffs.Add(buff);
                 _logger.LogDebug($"Character {Id} got buff {buff.SkillId} of level {buff.SkillLevel}. Buff will be active next {buff.CountDownInSeconds} seconds");
             }
-
-            OnGotBuff?.Invoke(this, buff);
-
-            // Notify TCP connection about new buff.
-            if (Client != null)
-                SendGetBuff(buff);
 
             return buff;
         }

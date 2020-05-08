@@ -42,7 +42,7 @@ namespace Imgeneus.World.Test
 
         [Fact]
         [Description("It should be possible to add a buff.")]
-        public async void Character_AddActiveBuff()
+        public void Character_AddActiveBuff()
         {
             var character = new Character(loggerMock.Object, taskQueuMock.Object);
             Assert.Empty(character.ActiveBuffs);
@@ -54,16 +54,16 @@ namespace Imgeneus.World.Test
                 SkillLevel = skill1_level1.SkillLevel,
                 KeepTime = skill1_level1.KeepTime
             };
-            await character.AddActiveBuff(usedSkill);
+            character.AddActiveBuff(usedSkill);
             Assert.NotEmpty(character.ActiveBuffs);
         }
 
         [Fact]
         [Description("Buff with lower level should not override buff with the higher level.")]
-        public async void Character_BuffOflowerLevelCanNotOverrideHigherLevel()
+        public void Character_BuffOflowerLevelCanNotOverrideHigherLevel()
         {
             var character = new Character(loggerMock.Object, taskQueuMock.Object);
-            await character.AddActiveBuff(new Skill()
+            character.AddActiveBuff(new Skill()
             {
                 Id = skill1_level2.Id,
                 SkillId = skill1_level2.SkillId,
@@ -74,7 +74,7 @@ namespace Imgeneus.World.Test
             Assert.Equal(skill1_level2.SkillId, character.ActiveBuffs[0].SkillId);
             Assert.Equal(skill1_level2.SkillLevel, character.ActiveBuffs[0].SkillLevel);
 
-            await character.AddActiveBuff(new Skill()
+            character.AddActiveBuff(new Skill()
             {
                 Id = skill1_level1.Id,
                 SkillId = skill1_level1.SkillId,
@@ -88,7 +88,7 @@ namespace Imgeneus.World.Test
 
         [Fact]
         [Description("Buff of the same level is already applied, it should change reset time.")]
-        public async void Character_BuffOfSameLevelShouldChangeResetTime()
+        public void Character_BuffOfSameLevelShouldChangeResetTime()
         {
             var character = new Character(loggerMock.Object, taskQueuMock.Object);
             var skill = new Skill()
@@ -98,11 +98,11 @@ namespace Imgeneus.World.Test
                 SkillLevel = skill1_level2.SkillLevel,
                 KeepTime = skill1_level1.KeepTime
             };
-            await character.AddActiveBuff(skill);
+            character.AddActiveBuff(skill);
             var oldReselTime = DateTime.UtcNow;
             character.ActiveBuffs[0].ResetTime = oldReselTime;
 
-            await character.AddActiveBuff(skill);
+            character.AddActiveBuff(skill);
             Assert.True(character.ActiveBuffs[0].ResetTime > oldReselTime && character.ActiveBuffs[0].ResetTime != oldReselTime);
         }
     }

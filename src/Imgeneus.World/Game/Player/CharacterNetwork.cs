@@ -252,6 +252,22 @@ namespace Imgeneus.World.Game.Player
             }
         }
 
+
+        private void ActiveBuffs_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.Action == NotifyCollectionChangedAction.Add)
+            {
+                // Case, when we are starting up and all skills are added with AddRange call.
+                if (e.NewItems.Count != 1)
+                {
+                    return;
+                }
+
+                if (Client != null) // check for tests.
+                    SendGetBuff((ActiveBuff)e.NewItems[0]);
+            }
+        }
+
         #endregion
 
         /// <summary>

@@ -65,6 +65,18 @@ namespace Imgeneus.DatabaseBackgroundService.Handlers
             await database.SaveChangesAsync();
         }
 
+        [ActionHandler(ActionType.UPDATE_GOLD)]
+        internal static async Task UpdateCharacterGold(object[] args)
+        {
+            int charId = (int)args[0];
+            uint gold = (uint)args[1];
+
+            using var database = DependencyContainer.Instance.Resolve<IDatabase>();
+            var character = database.Characters.Find(charId);
+            character.Gold = gold;
+            await database.SaveChangesAsync();
+        }
+
         [ActionHandler(ActionType.SAVE_SKILL)]
         internal static async Task SaveSkill(object[] args)
         {

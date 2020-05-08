@@ -578,7 +578,8 @@ namespace Imgeneus.World.Game.Player
         {
             Gold = newGold;
 
-            // TODO: save to database.
+            _taskQueue.Enqueue(ActionType.UPDATE_GOLD,
+                               Id, Gold);
         }
 
         #endregion

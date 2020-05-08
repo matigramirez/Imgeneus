@@ -65,6 +65,20 @@ namespace Imgeneus.DatabaseBackgroundService.Handlers
             await database.SaveChangesAsync();
         }
 
+        [ActionHandler(ActionType.UPDATE_ITEM_COUNT_IN_INVENTORY)]
+        internal static async Task UpdateItemCountInInventory(object[] args)
+        {
+            int charId = (int)args[0];
+            byte bag = (byte)args[1];
+            byte slot = (byte)args[2];
+            byte count = (byte)args[3];
+
+            using var database = DependencyContainer.Instance.Resolve<IDatabase>();
+            var item = database.CharacterItems.First(itm => itm.CharacterId == charId && itm.Bag == bag && itm.Slot == slot);
+            item.Count = count;
+            await database.SaveChangesAsync();
+        }
+
         [ActionHandler(ActionType.UPDATE_GOLD)]
         internal static async Task UpdateCharacterGold(object[] args)
         {

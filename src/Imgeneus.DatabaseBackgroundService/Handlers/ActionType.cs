@@ -11,6 +11,7 @@
         // Inventory
         SAVE_ITEM_IN_INVENTORY,
         REMOVE_ITEM_FROM_INVENTORY,
+        UPDATE_ITEM_COUNT_IN_INVENTORY,
         UPDATE_GOLD,
 
         // Skills

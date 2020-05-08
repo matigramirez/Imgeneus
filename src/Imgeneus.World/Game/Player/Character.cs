@@ -367,17 +367,18 @@ namespace Imgeneus.World.Game.Player
             // If we are giving consumable item.
             if (item.TradeQuantity < item.Count && item.TradeQuantity != 0)
             {
-                var clonedItem = item.Clone();
-                clonedItem.Count = item.TradeQuantity;
+                var givenItem = item.Clone();
+                givenItem.Count = item.TradeQuantity;
 
                 item.Count -= item.TradeQuantity;
                 item.TradeQuantity = 0;
 
-                // TODO: save to database.
+                _taskQueue.Enqueue(ActionType.UPDATE_ITEM_COUNT_IN_INVENTORY,
+                                   Id, item.Bag, item.Slot, item.Count);
 
-                _packetsHelper.SendRemoveItem(Client, clonedItem, false);
+                _packetsHelper.SendRemoveItem(Client, item, false);
 
-                return clonedItem;
+                return givenItem;
             }
 
             _taskQueue.Enqueue(ActionType.REMOVE_ITEM_FROM_INVENTORY,

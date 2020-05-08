@@ -297,14 +297,14 @@ namespace Imgeneus.World.Game.Trade
         {
             foreach (var item in trader.TradeItems)
             {
-                trader.RemoveItemFromInventory(item);
-                partner.AddItemToInventory(item);
+                var resultItm = trader.RemoveItemFromInventory(item);
+                partner.AddItemToInventory(resultItm);
             }
 
             foreach (var item in partner.TradeItems)
             {
-                partner.RemoveItemFromInventory(item);
-                trader.AddItemToInventory(item);
+                var resultItm = partner.RemoveItemFromInventory(item);
+                trader.AddItemToInventory(resultItm);
             }
 
             if (trader.TradeMoney > 0)

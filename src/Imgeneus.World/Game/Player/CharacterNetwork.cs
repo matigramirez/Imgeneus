@@ -70,7 +70,7 @@ namespace Imgeneus.World.Game.Player
                     break;
 
                 case MoveItemInInventoryPacket itemInInventoryPacket:
-                    await HandleMoveItem(itemInInventoryPacket);
+                    HandleMoveItem(itemInInventoryPacket);
                     break;
 
                 case MoveCharacterPacket moveCharacterPacket:
@@ -154,9 +154,9 @@ namespace Imgeneus.World.Game.Player
             UpdatePosition(packet.X, packet.Y, packet.Z, packet.Angle, packet.MovementType == MovementType.Stopped);
         }
 
-        private async Task HandleMoveItem(MoveItemInInventoryPacket moveItemPacket)
+        private void HandleMoveItem(MoveItemInInventoryPacket moveItemPacket)
         {
-            var items = await MoveItem(moveItemPacket.CurrentBag, moveItemPacket.CurrentSlot, moveItemPacket.DestinationBag, moveItemPacket.DestinationSlot);
+            var items = MoveItem(moveItemPacket.CurrentBag, moveItemPacket.CurrentSlot, moveItemPacket.DestinationBag, moveItemPacket.DestinationSlot);
             _packetsHelper.SendMoveItemInInventory(Client, items.sourceItem, items.destinationItem);
         }
 

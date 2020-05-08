@@ -11,7 +11,6 @@ using MvvmHelpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace Imgeneus.World.Game.Player
 {
@@ -396,12 +395,17 @@ namespace Imgeneus.World.Game.Player
         /// <param name="destinationBag">bag id, where item should be moved</param>
         /// <param name="destinationSlot">slot id, where item should be moved</param>
         /// <returns></returns>
-        public async Task<(Item sourceItem, Item destinationItem)> MoveItem(byte currentBag, byte currentSlot, byte destinationBag, byte destinationSlot)
+        public (Item sourceItem, Item destinationItem) MoveItem(byte currentBag, byte currentSlot, byte destinationBag, byte destinationSlot)
         {
             bool shouldDeleteSourceItemFromDB = false;
 
             // Find source item.
-            var sourceItem = InventoryItems.FirstOrDefault(ci => ci.Bag == currentBag && ci.Slot == currentSlot);
+            var sourceItem = InventoryItems.First(ci => ci.Bag == currentBag && ci.Slot == currentSlot);
+
+            // Source item is always to remove.
+            _taskQueue.Enqueue(ActionType.REMOVE_ITEM_FROM_INVENTORY,
+                               (obj) => { },
+                               Id, currentBag, currentSlot);
 
             // Check, if any other item is at destination slot.
             var destinationItem = InventoryItems.FirstOrDefault(ci => ci.Bag == destinationBag && ci.Slot == destinationSlot);
@@ -437,28 +441,28 @@ namespace Imgeneus.World.Game.Player
                     sourceItem.Slot = destinationSlot;
                     shouldDeleteSourceItemFromDB = false;
                 }
+
+                _taskQueue.Enqueue(ActionType.REMOVE_ITEM_FROM_INVENTORY,
+                               (obj) => { },
+                               Id, destinationBag, destinationSlot);
             }
 
-            // Save changes to database.
-            using var database = DependencyContainer.Instance.Resolve<IDatabase>();
-            var dbItems = database.CharacterItems.Where(ci => ci.CharacterId == Id);
-            var dbSourceItem = dbItems.First(itm => itm.Bag == currentBag && itm.Slot == currentSlot);
-            var dbDestinationItem = dbItems.FirstOrDefault(itm => itm.Bag == destinationBag && itm.Slot == destinationSlot);
-
-            database.CharacterItems.Remove(dbSourceItem);
-            if (dbDestinationItem != null) database.CharacterItems.Remove(dbDestinationItem);
-
+            // Add new items to database.
             if (shouldDeleteSourceItemFromDB)
             {
-                database.CharacterItems.Add(destinationItem.ToDbItem(Id));
+                _taskQueue.Enqueue(ActionType.SAVE_ITEM_IN_INVENTORY,
+                               (obj) => { },
+                               Id, destinationItem.Type, destinationItem.TypeId, destinationItem.Count, destinationItem.Bag, destinationItem.Slot);
             }
             else
             {
-                database.CharacterItems.Add(sourceItem.ToDbItem(Id));
-                database.CharacterItems.Add(destinationItem.ToDbItem(Id));
+                _taskQueue.Enqueue(ActionType.SAVE_ITEM_IN_INVENTORY,
+                               (obj) => { },
+                               Id, sourceItem.Type, sourceItem.TypeId, sourceItem.Count, sourceItem.Bag, sourceItem.Slot);
+                _taskQueue.Enqueue(ActionType.SAVE_ITEM_IN_INVENTORY,
+                               (obj) => { },
+                               Id, destinationItem.Type, destinationItem.TypeId, destinationItem.Count, destinationItem.Bag, destinationItem.Slot);
             }
-
-            await database.SaveChangesAsync();
 
             if (sourceItem.Bag == 0 || destinationItem.Bag == 0)
             {

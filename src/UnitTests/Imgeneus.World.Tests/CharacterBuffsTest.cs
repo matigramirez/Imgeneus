@@ -1,6 +1,7 @@
 using Imgeneus.Core.DependencyInjection;
 using Imgeneus.Database;
 using Imgeneus.Database.Entities;
+using Imgeneus.Database.Preload;
 using Imgeneus.DatabaseBackgroundService;
 using Imgeneus.World.Game.Player;
 using Imgeneus.World.Tests;
@@ -16,6 +17,7 @@ namespace Imgeneus.World.Test
     {
         private Mock<ILogger<Character>> loggerMock => new Mock<ILogger<Character>>();
         private Mock<IBackgroundTaskQueue> taskQueuMock => new Mock<IBackgroundTaskQueue>();
+        private Mock<IDatabasePreloader> databasePreloader => new Mock<IDatabasePreloader>();
 
         private DbSkill skill1_level1 = new DbSkill()
         {
@@ -44,7 +46,7 @@ namespace Imgeneus.World.Test
         [Description("It should be possible to add a buff.")]
         public void Character_AddActiveBuff()
         {
-            var character = new Character(loggerMock.Object, taskQueuMock.Object);
+            var character = new Character(loggerMock.Object, taskQueuMock.Object, databasePreloader.Object);
             Assert.Empty(character.ActiveBuffs);
 
             var usedSkill = new Skill()
@@ -61,7 +63,7 @@ namespace Imgeneus.World.Test
         [Description("Buff with lower level should not override buff with the higher level.")]
         public void Character_BuffOflowerLevelCanNotOverrideHigherLevel()
         {
-            var character = new Character(loggerMock.Object, taskQueuMock.Object);
+            var character = new Character(loggerMock.Object, taskQueuMock.Object, databasePreloader.Object);
             character.AddActiveBuff(new Skill()
             {
                 SkillId = skill1_level2.SkillId,
@@ -87,7 +89,7 @@ namespace Imgeneus.World.Test
         [Description("Buff of the same level is already applied, it should change reset time.")]
         public void Character_BuffOfSameLevelShouldChangeResetTime()
         {
-            var character = new Character(loggerMock.Object, taskQueuMock.Object);
+            var character = new Character(loggerMock.Object, taskQueuMock.Object, databasePreloader.Object);
             var skill = new Skill()
             {
                 SkillId = skill1_level2.SkillId,

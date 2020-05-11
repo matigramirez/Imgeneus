@@ -13,7 +13,6 @@ namespace Imgeneus.World.Game.Player
     {
         #region Equipment
 
-
         /// <summary>
         /// Event, that is fired, when some equipment of character changes.
         /// </summary>

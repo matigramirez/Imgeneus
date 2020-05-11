@@ -39,7 +39,14 @@ namespace Imgeneus.World.Serialization
             Type = item.Type;
             TypeId = item.TypeId;
             Quantity = quantity;
-            Gems = new int[] { item.GemTypeId1, item.GemTypeId2, item.GemTypeId3, item.GemTypeId4, item.GemTypeId5, item.GemTypeId6 };
+            Gems = new int[] {
+                item.Gem1 is null ? 0 : item.Gem1.TypeId,
+                item.Gem2 is null ? 0 : item.Gem2.TypeId,
+                item.Gem3 is null ? 0 : item.Gem3.TypeId,
+                item.Gem4 is null ? 0 : item.Gem4.TypeId,
+                item.Gem5 is null ? 0 : item.Gem5.TypeId,
+                item.Gem6 is null ? 0 : item.Gem6.TypeId,
+            };
             UnknownBytes = new byte[0];
 
             CraftName = new CraftName(

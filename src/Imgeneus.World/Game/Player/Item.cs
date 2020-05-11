@@ -12,12 +12,14 @@ namespace Imgeneus.World.Game.Player
         public byte Type;
         public byte TypeId;
         public ushort Quality;
-        public int GemTypeId1;
-        public int GemTypeId2;
-        public int GemTypeId3;
-        public int GemTypeId4;
-        public int GemTypeId5;
-        public int GemTypeId6;
+
+        public Gem Gem1;
+        public Gem Gem2;
+        public Gem Gem3;
+        public Gem Gem4;
+        public Gem Gem5;
+        public Gem Gem6;
+
         public byte Count;
 
         public Item(IDatabasePreloader databasePreloader, DbCharacterItems dbItem) : this(databasePreloader)
@@ -27,12 +29,19 @@ namespace Imgeneus.World.Game.Player
             Type = dbItem.Type;
             TypeId = dbItem.TypeId;
             Quality = dbItem.Quality;
-            GemTypeId1 = dbItem.GemTypeId1;
-            GemTypeId2 = dbItem.GemTypeId2;
-            GemTypeId3 = dbItem.GemTypeId3;
-            GemTypeId4 = dbItem.GemTypeId4;
-            GemTypeId5 = dbItem.GemTypeId5;
-            GemTypeId6 = dbItem.GemTypeId6;
+
+            if (dbItem.GemTypeId1 != 0)
+                Gem1 = new Gem(databasePreloader, dbItem.GemTypeId1);
+            if (dbItem.GemTypeId2 != 0)
+                Gem2 = new Gem(databasePreloader, dbItem.GemTypeId2);
+            if (dbItem.GemTypeId3 != 0)
+                Gem3 = new Gem(databasePreloader, dbItem.GemTypeId3);
+            if (dbItem.GemTypeId4 != 0)
+                Gem4 = new Gem(databasePreloader, dbItem.GemTypeId4);
+            if (dbItem.GemTypeId5 != 0)
+                Gem5 = new Gem(databasePreloader, dbItem.GemTypeId5);
+            if (dbItem.GemTypeId6 != 0)
+                Gem6 = new Gem(databasePreloader, dbItem.GemTypeId6);
             Count = dbItem.Count;
         }
 
@@ -52,33 +61,81 @@ namespace Imgeneus.World.Game.Player
         /// <summary>
         /// Str contains yellow(default) stat + orange stat (take it from craft name later).
         /// </summary>
-        public ushort Str
+        public int Str
         {
             get
             {
-                return _databasePreloader.Items[(Type, TypeId)].ConstStr; // + TODO: orange stats from craft name.
+                var constStr = _databasePreloader.Items[(Type, TypeId)].ConstStr;
+                ushort gemsStr = 0;
+
+                if (Gem1 != null)
+                    gemsStr += Gem1.Str;
+                if (Gem2 != null)
+                    gemsStr += Gem2.Str;
+                if (Gem3 != null)
+                    gemsStr += Gem3.Str;
+                if (Gem4 != null)
+                    gemsStr += Gem4.Str;
+                if (Gem5 != null)
+                    gemsStr += Gem5.Str;
+                if (Gem6 != null)
+                    gemsStr += Gem6.Str;
+
+                return constStr + gemsStr; // + TODO: orange stats from craft name.
             }
         }
 
         /// <summary>
         /// Dex contains yellow(default) stat + orange stat (take it from craft name later).
         /// </summary>
-        public ushort Dex
+        public int Dex
         {
             get
             {
-                return _databasePreloader.Items[(Type, TypeId)].ConstDex; // + TODO: orange stats from craft name.
+                var constDex = _databasePreloader.Items[(Type, TypeId)].ConstDex;
+                ushort gemsDex = 0;
+
+                if (Gem1 != null)
+                    gemsDex += Gem1.Dex;
+                if (Gem2 != null)
+                    gemsDex += Gem2.Dex;
+                if (Gem3 != null)
+                    gemsDex += Gem3.Dex;
+                if (Gem4 != null)
+                    gemsDex += Gem4.Dex;
+                if (Gem5 != null)
+                    gemsDex += Gem5.Dex;
+                if (Gem6 != null)
+                    gemsDex += Gem6.Dex;
+
+                return constDex + gemsDex; // + TODO: orange stats from craft name.
             }
         }
 
         /// <summary>
         /// Rec contains yellow(default) stat + orange stat (take it from craft name later).
         /// </summary>
-        public ushort Rec
+        public int Rec
         {
             get
             {
-                return _databasePreloader.Items[(Type, TypeId)].ConstRec; // + TODO: orange stats from craft name.
+                var constRec = _databasePreloader.Items[(Type, TypeId)].ConstRec;
+                ushort gemsRec = 0;
+
+                if (Gem1 != null)
+                    gemsRec += Gem1.Rec;
+                if (Gem2 != null)
+                    gemsRec += Gem2.Rec;
+                if (Gem3 != null)
+                    gemsRec += Gem3.Rec;
+                if (Gem4 != null)
+                    gemsRec += Gem4.Rec;
+                if (Gem5 != null)
+                    gemsRec += Gem5.Rec;
+                if (Gem6 != null)
+                    gemsRec += Gem6.Rec;
+
+                return constRec + gemsRec; // + TODO: orange stats from craft name.
             }
         }
 
@@ -86,11 +143,27 @@ namespace Imgeneus.World.Game.Player
         /// <summary>
         /// Int contains yellow(default) stat + orange stat (take it from craft name later).
         /// </summary>
-        public ushort Int
+        public int Int
         {
             get
             {
-                return _databasePreloader.Items[(Type, TypeId)].ConstInt; // + TODO: orange stats from craft name.
+                var constInt = _databasePreloader.Items[(Type, TypeId)].ConstInt;
+                ushort gemsInt = 0;
+
+                if (Gem1 != null)
+                    gemsInt += Gem1.Int;
+                if (Gem2 != null)
+                    gemsInt += Gem2.Int;
+                if (Gem3 != null)
+                    gemsInt += Gem3.Int;
+                if (Gem4 != null)
+                    gemsInt += Gem4.Int;
+                if (Gem5 != null)
+                    gemsInt += Gem5.Int;
+                if (Gem6 != null)
+                    gemsInt += Gem6.Int;
+
+                return constInt + gemsInt; // + TODO: orange stats from craft name.
             }
         }
 
@@ -98,55 +171,135 @@ namespace Imgeneus.World.Game.Player
         /// <summary>
         /// Luc contains yellow(default) stat + orange stat (take it from craft name later).
         /// </summary>
-        public ushort Luc
+        public int Luc
         {
             get
             {
-                return _databasePreloader.Items[(Type, TypeId)].ConstLuc; // + TODO: orange stats from craft name.
+                var constLuc = _databasePreloader.Items[(Type, TypeId)].ConstLuc;
+                ushort gemsLuc = 0;
+
+                if (Gem1 != null)
+                    gemsLuc += Gem1.Luc;
+                if (Gem2 != null)
+                    gemsLuc += Gem2.Luc;
+                if (Gem3 != null)
+                    gemsLuc += Gem3.Luc;
+                if (Gem4 != null)
+                    gemsLuc += Gem4.Luc;
+                if (Gem5 != null)
+                    gemsLuc += Gem5.Luc;
+                if (Gem6 != null)
+                    gemsLuc += Gem6.Luc;
+
+                return constLuc + gemsLuc; // + TODO: orange stats from craft name.
             }
         }
 
         /// <summary>
         /// Wis contains yellow(default) stat + orange stat (take it from craft name later).
         /// </summary>
-        public ushort Wis
+        public int Wis
         {
             get
             {
-                return _databasePreloader.Items[(Type, TypeId)].ConstWis; // + TODO: orange stats from craft name.
+                var constWis = _databasePreloader.Items[(Type, TypeId)].ConstWis;
+                ushort gemsWis = 0;
+
+                if (Gem1 != null)
+                    gemsWis += Gem1.Wis;
+                if (Gem2 != null)
+                    gemsWis += Gem2.Wis;
+                if (Gem3 != null)
+                    gemsWis += Gem3.Wis;
+                if (Gem4 != null)
+                    gemsWis += Gem4.Wis;
+                if (Gem5 != null)
+                    gemsWis += Gem5.Wis;
+                if (Gem6 != null)
+                    gemsWis += Gem6.Wis;
+
+                return constWis + gemsWis; // + TODO: orange stats from craft name.
             }
         }
 
         /// <summary>
         /// HP stats.
         /// </summary>
-        public ushort HP
+        public int HP
         {
             get
             {
-                return _databasePreloader.Items[(Type, TypeId)].ConstHP; // + TODO: orange stats from craft name.
+                var constHP = _databasePreloader.Items[(Type, TypeId)].ConstHP;
+                ushort gemsHP = 0;
+
+                if (Gem1 != null)
+                    gemsHP += Gem1.HP;
+                if (Gem2 != null)
+                    gemsHP += Gem2.HP;
+                if (Gem3 != null)
+                    gemsHP += Gem3.HP;
+                if (Gem4 != null)
+                    gemsHP += Gem4.HP;
+                if (Gem5 != null)
+                    gemsHP += Gem5.HP;
+                if (Gem6 != null)
+                    gemsHP += Gem6.HP;
+
+                return constHP + gemsHP; // + TODO: orange stats from craft name.
             }
         }
 
         /// <summary>
         /// MP stats.
         /// </summary>
-        public ushort MP
+        public int MP
         {
             get
             {
-                return _databasePreloader.Items[(Type, TypeId)].ConstMP; // + TODO: orange stats from craft name.
+                var constMP = _databasePreloader.Items[(Type, TypeId)].ConstMP;
+                ushort gemsMP = 0;
+
+                if (Gem1 != null)
+                    gemsMP += Gem1.MP;
+                if (Gem2 != null)
+                    gemsMP += Gem2.MP;
+                if (Gem3 != null)
+                    gemsMP += Gem3.MP;
+                if (Gem4 != null)
+                    gemsMP += Gem4.MP;
+                if (Gem5 != null)
+                    gemsMP += Gem5.MP;
+                if (Gem6 != null)
+                    gemsMP += Gem6.MP;
+
+                return constMP + gemsMP; // + TODO: orange stats from craft name.
             }
         }
 
         /// <summary>
         /// SP stats.
         /// </summary>
-        public ushort SP
+        public int SP
         {
             get
             {
-                return _databasePreloader.Items[(Type, TypeId)].ConstSP; // + TODO: orange stats from craft name.
+                var constSP = _databasePreloader.Items[(Type, TypeId)].ConstSP;
+                ushort gemsSP = 0;
+
+                if (Gem1 != null)
+                    gemsSP += Gem1.SP;
+                if (Gem2 != null)
+                    gemsSP += Gem2.SP;
+                if (Gem3 != null)
+                    gemsSP += Gem3.SP;
+                if (Gem4 != null)
+                    gemsSP += Gem4.SP;
+                if (Gem5 != null)
+                    gemsSP += Gem5.SP;
+                if (Gem6 != null)
+                    gemsSP += Gem6.SP;
+
+                return constSP + gemsSP; // + TODO: orange stats from craft name.
             }
         }
 
@@ -189,26 +342,6 @@ namespace Imgeneus.World.Game.Player
             get => Slot == 7;
         }
 
-        public DbCharacterItems ToDbItem(int characterId)
-        {
-            return new DbCharacterItems()
-            {
-                Bag = Bag,
-                Slot = Slot,
-                Type = Type,
-                TypeId = TypeId,
-                Quality = Quality,
-                GemTypeId1 = GemTypeId1,
-                GemTypeId2 = GemTypeId2,
-                GemTypeId3 = GemTypeId3,
-                GemTypeId4 = GemTypeId4,
-                GemTypeId5 = GemTypeId5,
-                GemTypeId6 = GemTypeId6,
-                Count = Count,
-                CharacterId = characterId
-            };
-        }
-
         public Item Clone()
         {
             return new Item(_databasePreloader)
@@ -218,12 +351,6 @@ namespace Imgeneus.World.Game.Player
                 Type = Type,
                 TypeId = TypeId,
                 Quality = Quality,
-                GemTypeId1 = GemTypeId1,
-                GemTypeId2 = GemTypeId2,
-                GemTypeId3 = GemTypeId3,
-                GemTypeId4 = GemTypeId4,
-                GemTypeId5 = GemTypeId5,
-                GemTypeId6 = GemTypeId6,
                 Count = Count,
             };
         }

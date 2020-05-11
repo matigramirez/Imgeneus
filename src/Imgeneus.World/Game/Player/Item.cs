@@ -60,7 +60,7 @@ namespace Imgeneus.World.Game.Player
             }
         }
 
-        // <summary>
+        /// <summary>
         /// Dex contains yellow(default) stat + orange stat (take it from craft name later).
         /// </summary>
         public ushort Dex
@@ -71,7 +71,7 @@ namespace Imgeneus.World.Game.Player
             }
         }
 
-        // <summary>
+        /// <summary>
         /// Rec contains yellow(default) stat + orange stat (take it from craft name later).
         /// </summary>
         public ushort Rec
@@ -83,7 +83,7 @@ namespace Imgeneus.World.Game.Player
         }
 
 
-        // <summary>
+        /// <summary>
         /// Int contains yellow(default) stat + orange stat (take it from craft name later).
         /// </summary>
         public ushort Int
@@ -95,7 +95,7 @@ namespace Imgeneus.World.Game.Player
         }
 
 
-        // <summary>
+        /// <summary>
         /// Luc contains yellow(default) stat + orange stat (take it from craft name later).
         /// </summary>
         public ushort Luc
@@ -106,7 +106,7 @@ namespace Imgeneus.World.Game.Player
             }
         }
 
-        // <summary>
+        /// <summary>
         /// Wis contains yellow(default) stat + orange stat (take it from craft name later).
         /// </summary>
         public ushort Wis
@@ -114,6 +114,39 @@ namespace Imgeneus.World.Game.Player
             get
             {
                 return _databasePreloader.Items[(Type, TypeId)].ConstWis; // + TODO: orange stats from craft name.
+            }
+        }
+
+        /// <summary>
+        /// HP stats.
+        /// </summary>
+        public ushort HP
+        {
+            get
+            {
+                return _databasePreloader.Items[(Type, TypeId)].ConstHP; // + TODO: orange stats from craft name.
+            }
+        }
+
+        /// <summary>
+        /// MP stats.
+        /// </summary>
+        public ushort MP
+        {
+            get
+            {
+                return _databasePreloader.Items[(Type, TypeId)].ConstMP; // + TODO: orange stats from craft name.
+            }
+        }
+
+        /// <summary>
+        /// SP stats.
+        /// </summary>
+        public ushort SP
+        {
+            get
+            {
+                return _databasePreloader.Items[(Type, TypeId)].ConstSP; // + TODO: orange stats from craft name.
             }
         }
 

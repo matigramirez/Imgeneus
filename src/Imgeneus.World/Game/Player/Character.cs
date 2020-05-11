@@ -82,9 +82,9 @@ namespace Imgeneus.World.Game.Player
         public int CurrentMP { get; set; }
         public int CurrentSP { get; set; }
 
-        public int MaxHP { get => CurrentHP * 2; } // TODO: implement max HP. For now return current * 2.
-        public int MaxMP { get => CurrentMP * 2; } // TODO: implement max HP. For now return current * 2.
-        public int MaxSP { get => CurrentSP * 2; } // TODO: implement max HP. For now return current * 2.
+        public int MaxHP { get => 100 + ExtraHP; } // TODO: implement max HP. For now let's assume, that 100 for any character + hp from equipment.
+        public int MaxMP { get => 50 + ExtraMP; } // TODO: implement max MP.
+        public int MaxSP { get => 20 + ExtraSP; } // TODO: implement max SP.
 
         public AttackSpeed AttackSpeed { get => AttackSpeed.ExteremelyFast; } // TODO: calculate attack speed.
         public MoveSpeed MoveSpeed { get => MoveSpeed.VeryFast; } // TODO: calculate move speed.
@@ -96,32 +96,80 @@ namespace Imgeneus.World.Game.Player
         /// <summary>
         /// Yellow strength stat, that is calculated based on worn items, orange stats and active buffs.
         /// </summary>
-        public ushort ExtraStr { get; private set; }
+        public int ExtraStr { get; private set; }
 
         /// <summary>
         /// Yellow dexterity stat, that is calculated based on worn items, orange stats and active buffs.
         /// </summary>
-        public ushort ExtraDex { get; private set; }
+        public int ExtraDex { get; private set; }
 
         /// <summary>
         /// Yellow rec stat, that is calculated based on worn items, orange stats and active buffs.
         /// </summary>
-        public ushort ExtraRec { get; private set; }
+        public int ExtraRec { get; private set; }
 
         /// <summary>
         /// Yellow intelligence stat, that is calculated based on worn items, orange stats and active buffs.
         /// </summary>
-        public ushort ExtralInt { get; private set; }
+        public int ExtralInt { get; private set; }
 
         /// <summary>
         /// Yellow luck stat, that is calculated based on worn items, orange stats and active buffs.
         /// </summary>
-        public ushort ExtraLuc { get; private set; }
+        public int ExtraLuc { get; private set; }
 
         /// <summary>
         /// Yellow wisdom stat, that is calculated based on worn items, orange stats and active buffs.
         /// </summary>
-        public ushort ExtraWis { get; private set; }
+        public int ExtraWis { get; private set; }
+
+        private int _extraHP;
+        /// <summary>
+        /// Health points, that are provided by equipment and buffs.
+        /// </summary>
+        public int ExtraHP
+        {
+            get => _extraHP;
+            private set
+            {
+                _extraHP = value;
+
+                if (Client != null)
+                    SendMaxHP();
+            }
+        }
+
+        private int _extraSP;
+        /// <summary>
+        /// Stamina points, that are provided by equipment and buffs.
+        /// </summary>
+        public int ExtraSP
+        {
+            get => _extraSP;
+            private set
+            {
+                _extraSP = value;
+
+                if (Client != null)
+                    SendMaxSP();
+            }
+        }
+
+        private int _extraMP;
+        /// <summary>
+        /// Mana points, that are provided by equipment and buffs.
+        /// </summary>
+        public int ExtraMP
+        {
+            get => _extraMP;
+            private set
+            {
+                _extraMP = value;
+
+                if (Client != null)
+                    SendMaxMP();
+            }
+        }
 
         #endregion
 

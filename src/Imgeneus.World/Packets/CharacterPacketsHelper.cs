@@ -136,5 +136,12 @@ namespace Imgeneus.World.Packets
             packet.Write(new CharacterAttackAndMovement(character).Serialize());
             client.SendPacket(packet);
         }
+
+        internal void SendMaxHitpoints(WorldClient client, Character character, HitpointType type)
+        {
+            using var packet = new Packet(PacketType.CHARACTER_MAX_HITPOINTS);
+            packet.Write(new MaxHitpoint(character, type).Serialize());
+            client.SendPacket(packet);
+        }
     }
 }

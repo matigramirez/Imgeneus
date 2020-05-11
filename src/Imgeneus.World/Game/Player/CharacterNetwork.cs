@@ -215,6 +215,12 @@ namespace Imgeneus.World.Game.Player
 
         private void SendAttackAndMovementSpeed() => _packetsHelper.SendAttackAndMovementSpeed(Client, this);
 
+        private void SendMaxHP() => _packetsHelper.SendMaxHitpoints(Client, this, HitpointType.HP);
+
+        private void SendMaxSP() => _packetsHelper.SendMaxHitpoints(Client, this, HitpointType.SP);
+
+        private void SendMaxMP() => _packetsHelper.SendMaxHitpoints(Client, this, HitpointType.MP);
+
         private void TargetChanged(ITargetable target)
         {
             if (target is Mob)

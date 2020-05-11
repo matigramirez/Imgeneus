@@ -414,6 +414,9 @@ namespace Imgeneus.World.Game.Player
             ExtralInt -= item.Int;
             ExtraLuc -= item.Luc;
             ExtraWis -= item.Wis;
+            ExtraHP -= item.HP;
+            ExtraSP -= item.SP;
+            ExtraMP -= item.MP;
         }
 
         /// <summary>
@@ -430,6 +433,9 @@ namespace Imgeneus.World.Game.Player
             ExtralInt += item.Int;
             ExtraLuc += item.Luc;
             ExtraWis += item.Wis;
+            ExtraHP += item.HP;
+            ExtraSP += item.SP;
+            ExtraMP += item.MP;
         }
 
         #endregion

@@ -1,9 +1,9 @@
 ﻿using Imgeneus.Core.DependencyInjection;
 using Imgeneus.Database;
+using Imgeneus.Database.Preload;
 using Imgeneus.DatabaseBackgroundService;
 using Imgeneus.Network.Packets.Game;
 using Imgeneus.Network.Server;
-using Imgeneus.World.Game.Monster;
 using Imgeneus.World.Game.Player;
 using Imgeneus.World.Game.Trade;
 using Imgeneus.World.Game.Zone;
@@ -21,11 +21,13 @@ namespace Imgeneus.World.Game
     {
         private readonly ILogger<GameWorld> _logger;
         private readonly IBackgroundTaskQueue _taskQueue;
+        private readonly IDatabasePreloader _databasePreloader;
 
-        public GameWorld(ILogger<GameWorld> logger, IBackgroundTaskQueue taskQueue)
+        public GameWorld(ILogger<GameWorld> logger, IBackgroundTaskQueue taskQueue, IDatabasePreloader databasePreloader)
         {
             _logger = logger;
             _taskQueue = taskQueue;
+            _databasePreloader = databasePreloader;
 
             InitMaps();
         }
@@ -65,7 +67,7 @@ namespace Imgeneus.World.Game
                                                .Include(c => c.QuickItems)
                                                .Include(c => c.User)
                                                .FirstOrDefault(c => c.Id == characterId);
-            var newPlayer = Character.FromDbCharacter(dbCharacter, DependencyContainer.Instance.Resolve<ILogger<Character>>(), _taskQueue);
+            var newPlayer = Character.FromDbCharacter(dbCharacter, DependencyContainer.Instance.Resolve<ILogger<Character>>(), _taskQueue, _databasePreloader);
             newPlayer.Client = client;
 
             Players.TryAdd(newPlayer.Id, newPlayer);

@@ -3,6 +3,7 @@ using Imgeneus.Core.DependencyInjection;
 using Imgeneus.Core.Helpers;
 using Imgeneus.Core.Structures.Configuration;
 using Imgeneus.Database;
+using Imgeneus.Database.Preload;
 using Imgeneus.DatabaseBackgroundService;
 using Imgeneus.Network;
 using Imgeneus.World.Game;
@@ -29,6 +30,7 @@ namespace Imgeneus.World
 
             DependencyContainer.Instance.Register<IWorldServer, WorldServer>(ServiceLifetime.Singleton);
             DependencyContainer.Instance.Register<IGameWorld, GameWorld>(ServiceLifetime.Singleton);
+            DependencyContainer.Instance.Register<IDatabasePreloader, DatabasePreloader>(ServiceLifetime.Singleton);
             DependencyContainer.Instance.Configure(services => services.AddLogging(builder =>
             {
                 builder.AddFilter("Microsoft", LogLevel.Warning);
@@ -64,6 +66,8 @@ namespace Imgeneus.World
             var server = DependencyContainer.Instance.Resolve<IWorldServer>();
             var dbWorker = DependencyContainer.Instance.Resolve<DatabaseWorker>();
             dbWorker.StartAsync(new System.Threading.CancellationToken());
+            var dbPreloader = DependencyContainer.Instance.Resolve<IDatabasePreloader>();
+            dbPreloader.Preload();
 
             try
             {

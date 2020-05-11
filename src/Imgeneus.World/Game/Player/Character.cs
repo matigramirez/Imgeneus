@@ -2,6 +2,7 @@
 using Imgeneus.Database;
 using Imgeneus.Database.Constants;
 using Imgeneus.Database.Entities;
+using Imgeneus.Database.Preload;
 using Imgeneus.DatabaseBackgroundService;
 using Imgeneus.DatabaseBackgroundService.Handlers;
 using Imgeneus.World.Game.Trade;
@@ -10,7 +11,6 @@ using Microsoft.Extensions.Logging;
 using MvvmHelpers;
 using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Linq;
 
 namespace Imgeneus.World.Game.Player
@@ -20,11 +20,13 @@ namespace Imgeneus.World.Game.Player
         private readonly ILogger<Character> _logger;
         private readonly IBackgroundTaskQueue _taskQueue;
         private readonly CharacterPacketsHelper _packetsHelper;
+        private readonly IDatabasePreloader _databasePreloader;
 
-        public Character(ILogger<Character> logger, IBackgroundTaskQueue taskQueue)
+        public Character(ILogger<Character> logger, IBackgroundTaskQueue taskQueue, IDatabasePreloader databasePreloader)
         {
             _logger = logger;
             _taskQueue = taskQueue;
+            _databasePreloader = databasePreloader;
             _packetsHelper = new CharacterPacketsHelper();
 
             InventoryItems.CollectionChanged += InventoryItems_CollectionChanged;
@@ -35,7 +37,6 @@ namespace Imgeneus.World.Game.Player
         private void Init()
         {
             InitEquipment();
-            InitExtraStats();
         }
 
         #region Character info
@@ -121,53 +122,6 @@ namespace Imgeneus.World.Game.Player
         /// Yellow wisdom stat, that is calculated based on worn items, orange stats and active buffs.
         /// </summary>
         public ushort ExtraWis { get; private set; }
-
-        /// <summary>
-        /// Initializes extra stats.
-        /// </summary>
-        private void InitExtraStats()
-        {
-            // Extra stats are made of equipment items and buffs/debuffs.
-
-            // First calcaulate extra stats based on worn items.
-            AddExtraStats(Helmet);
-            AddExtraStats(Armor);
-            AddExtraStats(Pants);
-            AddExtraStats(Gauntlet);
-            AddExtraStats(Boots);
-            AddExtraStats(Weapon);
-            AddExtraStats(Shield);
-            AddExtraStats(Cape);
-            AddExtraStats(Amulet);
-            AddExtraStats(Ring1);
-            AddExtraStats(Ring2);
-            AddExtraStats(Bracelet1);
-            AddExtraStats(Bracelet2);
-            AddExtraStats(Mount);
-            AddExtraStats(Pet);
-            AddExtraStats(Costume);
-            AddExtraStats(Wings);
-
-            // Calculate extra stats based on buffs/debuffs.
-
-            // TODO: calculate extra stats based on buffs!
-        }
-
-        /// <summary>
-        /// Adds extra stats from item to character.
-        /// </summary>
-        private void AddExtraStats(Item item)
-        {
-            if (item is null)
-                return;
-
-            ExtraStr += item.Str;
-            ExtraDex += item.Dex;
-            ExtraRec += item.Rec;
-            ExtralInt += item.Int;
-            ExtraLuc += item.Luc;
-            ExtraWis += item.Wis;
-        }
 
         #endregion
 
@@ -479,9 +433,9 @@ namespace Imgeneus.World.Game.Player
         /// <summary>
         /// Creates character from database information.
         /// </summary>
-        public static Character FromDbCharacter(DbCharacter dbCharacter, ILogger<Character> logger, IBackgroundTaskQueue taskQueue)
+        public static Character FromDbCharacter(DbCharacter dbCharacter, ILogger<Character> logger, IBackgroundTaskQueue taskQueue, IDatabasePreloader databasePreloader)
         {
-            var character = new Character(logger, taskQueue)
+            var character = new Character(logger, taskQueue, databasePreloader)
             {
                 Id = dbCharacter.Id,
                 Name = dbCharacter.Name,
@@ -523,7 +477,7 @@ namespace Imgeneus.World.Game.Player
 
             character.Skills.AddRange(dbCharacter.Skills.Select(s => Skill.FromDbSkill(s)));
             character.ActiveBuffs.AddRange(dbCharacter.ActiveBuffs.Select(b => ActiveBuff.FromDbCharacterActiveBuff(b)));
-            character.InventoryItems.AddRange(dbCharacter.Items.Select(i => Item.FromDbItem(i)));
+            character.InventoryItems.AddRange(dbCharacter.Items.Select(i => new Item(databasePreloader, i)));
             character.QuickItems = dbCharacter.QuickItems;
 
             character.Init();

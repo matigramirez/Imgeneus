@@ -78,17 +78,17 @@ namespace Imgeneus.World.Packets
             client.SendPacket(packet);
         }
 
-        internal void SendCharacterChangedEquipment(WorldClient client, int characterId, Item equipmentItem)
+        internal void SendCharacterChangedEquipment(WorldClient client, int characterId, Item equipmentItem, byte slot)
         {
             using var packet = new Packet(PacketType.SEND_EQUIPMENT);
             packet.Write(characterId);
 
-            packet.WriteByte(equipmentItem.Slot);
-            packet.WriteByte(equipmentItem.Type);
-            packet.WriteByte(equipmentItem.TypeId);
-            packet.WriteByte(20); // TODO: implement enchant here.
+            packet.WriteByte(slot);
+            packet.WriteByte(equipmentItem is null ? (byte)0 : equipmentItem.Type);
+            packet.WriteByte(equipmentItem is null ? (byte)0 : equipmentItem.TypeId);
+            packet.WriteByte(equipmentItem is null ? (byte)0 : (byte)20); // TODO: implement enchant here.
 
-            if (equipmentItem.IsCloakSlot)
+            if (equipmentItem != null && equipmentItem.IsCloakSlot)
             {
                 for (var i = 0; i < 6; i++) // Something about cloak.
                 {

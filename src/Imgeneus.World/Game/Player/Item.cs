@@ -1,9 +1,12 @@
 ﻿using Imgeneus.Database.Entities;
+using Imgeneus.Database.Preload;
 
 namespace Imgeneus.World.Game.Player
 {
     public class Item
     {
+        private readonly IDatabasePreloader _databasePreloader;
+
         public byte Bag;
         public byte Slot;
         public byte Type;
@@ -17,6 +20,27 @@ namespace Imgeneus.World.Game.Player
         public int GemTypeId6;
         public byte Count;
 
+        public Item(IDatabasePreloader databasePreloader, DbCharacterItems dbItem) : this(databasePreloader)
+        {
+            Bag = dbItem.Bag;
+            Slot = dbItem.Slot;
+            Type = dbItem.Type;
+            TypeId = dbItem.TypeId;
+            Quality = dbItem.Quality;
+            GemTypeId1 = dbItem.GemTypeId1;
+            GemTypeId2 = dbItem.GemTypeId2;
+            GemTypeId3 = dbItem.GemTypeId3;
+            GemTypeId4 = dbItem.GemTypeId4;
+            GemTypeId5 = dbItem.GemTypeId5;
+            GemTypeId6 = dbItem.GemTypeId6;
+            Count = dbItem.Count;
+        }
+
+        public Item(IDatabasePreloader databasePreloader)
+        {
+            _databasePreloader = databasePreloader;
+        }
+
         #region Trade
 
         public byte TradeQuantity;
@@ -28,34 +52,70 @@ namespace Imgeneus.World.Game.Player
         /// <summary>
         /// Str contains yellow(default) stat + orange stat (take it from craft name later).
         /// </summary>
-        public ushort Str { get; private set; }
+        public ushort Str
+        {
+            get
+            {
+                return _databasePreloader.Items[(Type, TypeId)].ConstStr; // + TODO: orange stats from craft name.
+            }
+        }
 
         // <summary>
         /// Dex contains yellow(default) stat + orange stat (take it from craft name later).
         /// </summary>
-        public ushort Dex { get; private set; }
+        public ushort Dex
+        {
+            get
+            {
+                return _databasePreloader.Items[(Type, TypeId)].ConstDex; // + TODO: orange stats from craft name.
+            }
+        }
 
         // <summary>
         /// Rec contains yellow(default) stat + orange stat (take it from craft name later).
         /// </summary>
-        public ushort Rec { get; private set; }
+        public ushort Rec
+        {
+            get
+            {
+                return _databasePreloader.Items[(Type, TypeId)].ConstRec; // + TODO: orange stats from craft name.
+            }
+        }
 
 
         // <summary>
         /// Int contains yellow(default) stat + orange stat (take it from craft name later).
         /// </summary>
-        public ushort Int { get; private set; }
+        public ushort Int
+        {
+            get
+            {
+                return _databasePreloader.Items[(Type, TypeId)].ConstInt; // + TODO: orange stats from craft name.
+            }
+        }
 
 
         // <summary>
         /// Luc contains yellow(default) stat + orange stat (take it from craft name later).
         /// </summary>
-        public ushort Luc { get; private set; }
+        public ushort Luc
+        {
+            get
+            {
+                return _databasePreloader.Items[(Type, TypeId)].ConstLuc; // + TODO: orange stats from craft name.
+            }
+        }
 
         // <summary>
         /// Wis contains yellow(default) stat + orange stat (take it from craft name later).
         /// </summary>
-        public ushort Wis { get; private set; }
+        public ushort Wis
+        {
+            get
+            {
+                return _databasePreloader.Items[(Type, TypeId)].ConstWis; // + TODO: orange stats from craft name.
+            }
+        }
 
         #endregion
 
@@ -96,25 +156,6 @@ namespace Imgeneus.World.Game.Player
             get => Slot == 7;
         }
 
-        public static Item FromDbItem(DbCharacterItems dbItem)
-        {
-            return new Item()
-            {
-                Bag = dbItem.Bag,
-                Slot = dbItem.Slot,
-                Type = dbItem.Type,
-                TypeId = dbItem.TypeId,
-                Quality = dbItem.Quality,
-                GemTypeId1 = dbItem.GemTypeId1,
-                GemTypeId2 = dbItem.GemTypeId2,
-                GemTypeId3 = dbItem.GemTypeId3,
-                GemTypeId4 = dbItem.GemTypeId4,
-                GemTypeId5 = dbItem.GemTypeId5,
-                GemTypeId6 = dbItem.GemTypeId6,
-                Count = dbItem.Count
-            };
-        }
-
         public DbCharacterItems ToDbItem(int characterId)
         {
             return new DbCharacterItems()
@@ -137,7 +178,7 @@ namespace Imgeneus.World.Game.Player
 
         public Item Clone()
         {
-            return new Item()
+            return new Item(_databasePreloader)
             {
                 Bag = Bag,
                 Slot = Slot,

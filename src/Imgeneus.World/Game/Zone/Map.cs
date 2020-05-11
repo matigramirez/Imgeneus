@@ -168,12 +168,13 @@ namespace Imgeneus.World.Game.Zone
         /// </summary>
         /// <param name="sender">player, that changed equipment</param>
         /// <param name="equipmentItem">item, that was worn</param>
-        private void Character_OnEquipmentChanged(Character sender, Item equipmentItem)
+        /// <param name="slot">item slot</param>
+        private void Character_OnEquipmentChanged(Character sender, Item equipmentItem, byte slot)
         {
             // Notify all players about new item.
             foreach (var player in Players)
             {
-                _packetHelper.SendCharacterChangedEquipment(player.Value.Client, sender.Id, equipmentItem);
+                _packetHelper.SendCharacterChangedEquipment(player.Value.Client, sender.Id, equipmentItem, slot);
             }
         }
 

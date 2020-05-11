@@ -2,7 +2,6 @@
 using Microsoft.Extensions.Logging;
 using MvvmHelpers;
 using System;
-using System.Collections.Specialized;
 using System.Linq;
 
 namespace Imgeneus.World.Game.Player
@@ -14,23 +13,369 @@ namespace Imgeneus.World.Game.Player
     {
         #region Equipment
 
-        private Item Helmet;
-        private Item Armor;
-        private Item Pants;
-        private Item Gauntlet;
-        private Item Boots;
-        private Item Weapon;
-        private Item Shield;
-        private Item Cape;
-        private Item Amulet;
-        private Item Ring1;
-        private Item Ring2;
-        private Item Bracelet1;
-        private Item Bracelet2;
-        private Item Mount;
-        private Item Pet;
-        private Item Costume;
-        private Item Wings;
+
+        /// <summary>
+        /// Event, that is fired, when some equipment of character changes.
+        /// </summary>
+        public event Action<Character, Item, byte> OnEquipmentChanged;
+
+        /// <summary>
+        /// Worm helmet. Set it through <see cref="Helmet"/>.
+        /// </summary>
+        private Item _helmet;
+        private Item Helmet
+        {
+            get => _helmet;
+            set
+            {
+
+                TakeOffItem(_helmet);
+                _helmet = value;
+                TakeOnItem(_helmet);
+
+                if (Client != null)
+                    SendAdditionalStats();
+
+                OnEquipmentChanged?.Invoke(this, _helmet, 0);
+                _logger.LogDebug($"Character {Id} changed equipment on slot 0");
+            }
+        }
+
+        /// <summary>
+        /// Worm armor. Set it through <see cref="Armor"/>.
+        /// </summary>
+        private Item _armor;
+        private Item Armor
+        {
+            get => _armor;
+            set
+            {
+                TakeOffItem(_armor);
+                _armor = value;
+                TakeOnItem(_armor);
+
+                if (Client != null)
+                    SendAdditionalStats();
+
+                OnEquipmentChanged?.Invoke(this, _armor, 1);
+                _logger.LogDebug($"Character {Id} changed equipment on slot 1");
+            }
+        }
+
+        /// <summary>
+        /// Worm pants. Set it through <see cref="Pants"/>.
+        /// </summary>
+        private Item _pants;
+        private Item Pants
+        {
+            get => _pants;
+            set
+            {
+                TakeOffItem(_pants);
+                _pants = value;
+                TakeOnItem(_pants);
+
+                if (Client != null)
+                    SendAdditionalStats();
+
+                OnEquipmentChanged?.Invoke(this, _pants, 2);
+                _logger.LogDebug($"Character {Id} changed equipment on slot 2");
+            }
+        }
+
+        /// <summary>
+        /// Worm gauntlet. Set it through <see cref="Gauntlet"/>.
+        /// </summary>
+        private Item _gauntlet;
+        private Item Gauntlet
+        {
+            get => _gauntlet;
+            set
+            {
+                TakeOffItem(_gauntlet);
+                _gauntlet = value;
+                TakeOnItem(_gauntlet);
+
+                if (Client != null)
+                    SendAdditionalStats();
+
+                OnEquipmentChanged?.Invoke(this, _gauntlet, 3);
+                _logger.LogDebug($"Character {Id} changed equipment on slot 3");
+            }
+        }
+
+        /// <summary>
+        /// Worm boots. Set it through <see cref="Boots"/>.
+        /// </summary>
+        private Item _boots;
+        private Item Boots
+        {
+            get => _boots;
+            set
+            {
+                TakeOffItem(_boots);
+                _boots = value;
+                TakeOnItem(_boots);
+
+                if (Client != null)
+                    SendAdditionalStats();
+
+                OnEquipmentChanged?.Invoke(this, _boots, 4);
+                _logger.LogDebug($"Character {Id} changed equipment on slot 4");
+            }
+        }
+
+        /// <summary>
+        /// Worm weapon. Set it through <see cref="Weapon"/>.
+        /// </summary>
+        private Item _weapon;
+        private Item Weapon
+        {
+            get => _weapon;
+            set
+            {
+                TakeOffItem(_weapon);
+                _weapon = value;
+                TakeOnItem(_weapon);
+
+                if (Client != null)
+                    SendAdditionalStats();
+
+                OnEquipmentChanged?.Invoke(this, _weapon, 5);
+                _logger.LogDebug($"Character {Id} changed equipment on slot 5");
+            }
+        }
+
+        /// <summary>
+        /// Worm shield. Set it through <see cref="Shield"/>.
+        /// </summary>
+        private Item _shield;
+        private Item Shield
+        {
+            get => _shield;
+            set
+            {
+                TakeOffItem(_shield);
+                _shield = value;
+                TakeOnItem(_shield);
+
+                if (Client != null)
+                    SendAdditionalStats();
+
+                OnEquipmentChanged?.Invoke(this, _shield, 6);
+                _logger.LogDebug($"Character {Id} changed equipment on slot 6");
+            }
+        }
+
+        /// <summary>
+        /// Worm cape. Set it through <see cref="Cape"/>.
+        /// </summary>
+        private Item _cape;
+        private Item Cape
+        {
+            get => _cape;
+            set
+            {
+                TakeOffItem(_cape);
+                _cape = value;
+                TakeOnItem(_cape);
+
+                if (Client != null)
+                    SendAdditionalStats();
+
+                OnEquipmentChanged?.Invoke(this, _cape, 7);
+                _logger.LogDebug($"Character {Id} changed equipment on slot 7");
+            }
+        }
+
+        /// <summary>
+        /// Worm amulet. Set it through <see cref="Amulet"/>.
+        /// </summary>
+        private Item _amulet;
+        private Item Amulet
+        {
+            get => _amulet;
+            set
+            {
+                TakeOffItem(_amulet);
+                _amulet = value;
+                TakeOnItem(_amulet);
+
+                if (Client != null)
+                    SendAdditionalStats();
+
+                OnEquipmentChanged?.Invoke(this, _amulet, 8);
+                _logger.LogDebug($"Character {Id} changed equipment on slot 8");
+            }
+        }
+
+        /// <summary>
+        /// Worm ring1. Set it through <see cref="Ring1"/>.
+        /// </summary>
+        private Item _ring1;
+        private Item Ring1
+        {
+            get => _ring1;
+            set
+            {
+                TakeOffItem(_ring1);
+                _ring1 = value;
+                TakeOnItem(_ring1);
+
+                if (Client != null)
+                    SendAdditionalStats();
+
+                OnEquipmentChanged?.Invoke(this, _ring1, 9);
+                _logger.LogDebug($"Character {Id} changed equipment on slot 9");
+            }
+        }
+
+        /// <summary>
+        /// Worm ring2. Set it through <see cref="Ring2"/>.
+        /// </summary>
+        private Item _ring2;
+        private Item Ring2
+        {
+            get => _ring2;
+            set
+            {
+                TakeOffItem(_ring2);
+                _ring2 = value;
+                TakeOnItem(_ring2);
+
+                if (Client != null)
+                    SendAdditionalStats();
+
+                OnEquipmentChanged?.Invoke(this, _ring2, 10);
+                _logger.LogDebug($"Character {Id} changed equipment on slot 10");
+            }
+        }
+
+        /// <summary>
+        /// Worm bracelet1. Set it through <see cref="Bracelet1"/>.
+        /// </summary>
+        private Item _bracelet1;
+        private Item Bracelet1
+        {
+            get => _bracelet1;
+            set
+            {
+                TakeOffItem(_bracelet1);
+                _bracelet1 = value;
+                TakeOnItem(_bracelet1);
+
+                if (Client != null)
+                    SendAdditionalStats();
+
+                OnEquipmentChanged?.Invoke(this, _bracelet1, 11);
+                _logger.LogDebug($"Character {Id} changed equipment on slot 11");
+            }
+        }
+
+        /// <summary>
+        /// Worm bracelet2. Set it through <see cref="Bracelet2"/>.
+        /// </summary>
+        private Item _bracelet2;
+        private Item Bracelet2
+        {
+            get => _bracelet2;
+            set
+            {
+                TakeOffItem(_bracelet2);
+                _bracelet2 = value;
+                TakeOnItem(_bracelet2);
+
+                if (Client != null)
+                    SendAdditionalStats();
+
+                OnEquipmentChanged?.Invoke(this, _bracelet2, 12);
+                _logger.LogDebug($"Character {Id} changed equipment on slot 12");
+            }
+        }
+
+        /// <summary>
+        /// Worm mount. Set it through <see cref="Mount"/>.
+        /// </summary>
+        private Item _mount;
+        private Item Mount
+        {
+            get => _mount;
+            set
+            {
+                TakeOffItem(_mount);
+                _mount = value;
+                TakeOnItem(_mount);
+
+                if (Client != null)
+                    SendAdditionalStats();
+
+                OnEquipmentChanged?.Invoke(this, _mount, 13);
+                _logger.LogDebug($"Character {Id} changed equipment on slot 13");
+            }
+        }
+
+        /// <summary>
+        /// Worm pet. Set it through <see cref="Pet"/>.
+        /// </summary>
+        private Item _pet;
+        private Item Pet
+        {
+            get => _pet;
+            set
+            {
+                TakeOffItem(_pet);
+                _pet = value;
+                TakeOnItem(_pet);
+
+                if (Client != null)
+                    SendAdditionalStats();
+
+                OnEquipmentChanged?.Invoke(this, _pet, 14);
+                _logger.LogDebug($"Character {Id} changed equipment on slot 14");
+            }
+        }
+
+        /// <summary>
+        /// Worm costume. Set it through <see cref="Costume"/>.
+        /// </summary>
+        private Item _costume;
+        private Item Costume
+        {
+            get => _costume;
+            set
+            {
+                TakeOffItem(_costume);
+                _costume = value;
+                TakeOnItem(_costume);
+
+                if (Client != null)
+                    SendAdditionalStats();
+
+                OnEquipmentChanged?.Invoke(this, _costume, 15);
+                _logger.LogDebug($"Character {Id} changed equipment on slot 15");
+            }
+        }
+
+        /// <summary>
+        /// Worm wings. Set it through <see cref="Wings"/>.
+        /// </summary>
+        private Item _wings;
+        private Item Wings
+        {
+            get => _wings;
+            set
+            {
+                TakeOffItem(_wings);
+                _wings = value;
+                TakeOnItem(_wings);
+
+                if (Client != null)
+                    SendAdditionalStats();
+
+                OnEquipmentChanged?.Invoke(this, _wings, 16);
+                _logger.LogDebug($"Character {Id} changed equipment on slot 16");
+            }
+        }
 
         /// <summary>
         /// Initializes equipped items.
@@ -56,14 +401,41 @@ namespace Imgeneus.World.Game.Player
             Wings = InventoryItems.FirstOrDefault(itm => itm.Bag == 0 && itm.Slot == 16);
         }
 
+        /// <summary>
+        /// Method, that is called, when character takes off some equipped item.
+        /// </summary>
+        private void TakeOffItem(Item item)
+        {
+            if (item is null)
+                return;
+
+            ExtraStr -= item.Str;
+            ExtraDex -= item.Dex;
+            ExtraRec -= item.Rec;
+            ExtralInt -= item.Int;
+            ExtraLuc -= item.Luc;
+            ExtraWis -= item.Wis;
+        }
+
+        /// <summary>
+        /// Method, that is called, when character takes on some item.
+        /// </summary>
+        private void TakeOnItem(Item item)
+        {
+            if (item is null)
+                return;
+
+            ExtraStr += item.Str;
+            ExtraDex += item.Dex;
+            ExtraRec += item.Rec;
+            ExtralInt += item.Int;
+            ExtraLuc += item.Luc;
+            ExtraWis += item.Wis;
+        }
+
         #endregion
 
         #region Inventory
-
-        /// <summary>
-        /// Event, that is fired, when some equipment of character changes.
-        /// </summary>
-        public event Action<Character, Item> OnEquipmentChanged;
 
         /// <summary>
         /// Collection of inventory items.
@@ -159,7 +531,8 @@ namespace Imgeneus.World.Game.Player
                 destinationItem.Bag = destinationBag;
                 destinationItem.Slot = destinationSlot;
                 shouldDeleteSourceItemFromDB = true;
-                sourceItem = new Item() { Bag = currentBag, Slot = currentSlot }; // empty item.
+
+                sourceItem = new Item(_databasePreloader) { Bag = currentBag, Slot = currentSlot }; // empty item.
             }
             else
             {
@@ -170,7 +543,8 @@ namespace Imgeneus.World.Game.Player
                     destinationItem.Count += sourceItem.Count;
                     shouldDeleteSourceItemFromDB = true;
                     InventoryItems.Remove(sourceItem);
-                    sourceItem = new Item() { Bag = currentBag, Slot = currentSlot }; // empty item.
+
+                    sourceItem = new Item(_databasePreloader) { Bag = currentBag, Slot = currentSlot }; // empty item.
                 }
                 else
                 {
@@ -181,6 +555,7 @@ namespace Imgeneus.World.Game.Player
                     sourceItem.Bag = destinationBag;
                     sourceItem.Slot = destinationSlot;
                     shouldDeleteSourceItemFromDB = false;
+
                 }
 
                 _taskQueue.Enqueue(ActionType.REMOVE_ITEM_FROM_INVENTORY,
@@ -201,12 +576,122 @@ namespace Imgeneus.World.Game.Player
                                    Id, destinationItem.Type, destinationItem.TypeId, destinationItem.Count, destinationItem.Bag, destinationItem.Slot);
             }
 
-            if (sourceItem.Bag == 0 || destinationItem.Bag == 0)
+            // Update equipment if needed.
+            if (currentBag == 0 && destinationBag != 0)
             {
-                var equipmentItem = sourceItem.Bag == 0 ? sourceItem : destinationItem;
-                OnEquipmentChanged?.Invoke(this, equipmentItem);
+                switch (currentSlot)
+                {
+                    case 0:
+                        Helmet = null;
+                        break;
+                    case 1:
+                        Armor = null;
+                        break;
+                    case 2:
+                        Pants = null;
+                        break;
+                    case 3:
+                        Gauntlet = null;
+                        break;
+                    case 4:
+                        Boots = null;
+                        break;
+                    case 5:
+                        Weapon = null;
+                        break;
+                    case 6:
+                        Shield = null;
+                        break;
+                    case 7:
+                        Cape = null;
+                        break;
+                    case 8:
+                        Amulet = null;
+                        break;
+                    case 9:
+                        Ring1 = null;
+                        break;
+                    case 10:
+                        Ring2 = null;
+                        break;
+                    case 11:
+                        Bracelet1 = null;
+                        break;
+                    case 12:
+                        Bracelet2 = null;
+                        break;
+                    case 13:
+                        Mount = null;
+                        break;
+                    case 14:
+                        Pet = null;
+                        break;
+                    case 15:
+                        Costume = null;
+                        break;
+                    case 16:
+                        Wings = null;
+                        break;
+                }
+            }
 
-                _logger.LogDebug($"Character {Id} changed equipment on slot {equipmentItem.Slot}");
+            if (destinationBag == 0)
+            {
+                var item = sourceItem.Slot == destinationSlot ? sourceItem : destinationItem;
+                switch (item.Slot)
+                {
+                    case 0:
+                        Helmet = item;
+                        break;
+                    case 1:
+                        Armor = item;
+                        break;
+                    case 2:
+                        Pants = item;
+                        break;
+                    case 3:
+                        Gauntlet = item;
+                        break;
+                    case 4:
+                        Boots = item;
+                        break;
+                    case 5:
+                        Weapon = item;
+                        break;
+                    case 6:
+                        Shield = item;
+                        break;
+                    case 7:
+                        Cape = item;
+                        break;
+                    case 8:
+                        Amulet = item;
+                        break;
+                    case 9:
+                        Ring1 = item;
+                        break;
+                    case 10:
+                        Ring2 = item;
+                        break;
+                    case 11:
+                        Bracelet1 = item;
+                        break;
+                    case 12:
+                        Bracelet2 = item;
+                        break;
+                    case 13:
+                        Mount = item;
+                        break;
+                    case 14:
+                        Pet = item;
+                        break;
+                    case 15:
+                        Costume = item;
+                        break;
+                    case 16:
+                        Wings = item;
+                        break;
+                }
             }
 
             return (sourceItem, destinationItem);

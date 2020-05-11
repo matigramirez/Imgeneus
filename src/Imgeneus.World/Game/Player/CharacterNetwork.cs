@@ -127,7 +127,7 @@ namespace Imgeneus.World.Game.Player
                 return;
             }
 
-            AddItemToInventory(new Item() { Type = gMGetItemPacket.Type, TypeId = gMGetItemPacket.TypeId, Count = gMGetItemPacket.Count });
+            AddItemToInventory(new Item(_databasePreloader) { Type = gMGetItemPacket.Type, TypeId = gMGetItemPacket.TypeId, Count = gMGetItemPacket.Count });
         }
 
         private void HandlePlayerInTarget(PlayerInTargetPacket packet)

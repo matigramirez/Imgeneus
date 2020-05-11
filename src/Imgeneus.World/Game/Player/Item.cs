@@ -23,6 +23,42 @@ namespace Imgeneus.World.Game.Player
 
         #endregion
 
+        #region Extra stats
+
+        /// <summary>
+        /// Str contains yellow(default) stat + orange stat (take it from craft name later).
+        /// </summary>
+        public ushort Str { get; private set; }
+
+        // <summary>
+        /// Dex contains yellow(default) stat + orange stat (take it from craft name later).
+        /// </summary>
+        public ushort Dex { get; private set; }
+
+        // <summary>
+        /// Rec contains yellow(default) stat + orange stat (take it from craft name later).
+        /// </summary>
+        public ushort Rec { get; private set; }
+
+
+        // <summary>
+        /// Int contains yellow(default) stat + orange stat (take it from craft name later).
+        /// </summary>
+        public ushort Int { get; private set; }
+
+
+        // <summary>
+        /// Luc contains yellow(default) stat + orange stat (take it from craft name later).
+        /// </summary>
+        public ushort Luc { get; private set; }
+
+        // <summary>
+        /// Wis contains yellow(default) stat + orange stat (take it from craft name later).
+        /// </summary>
+        public ushort Wis { get; private set; }
+
+        #endregion
+
         /// <summary>
         /// Consumables and lapis are joinable objects. I.e. count can be > 1.
         /// </summary>

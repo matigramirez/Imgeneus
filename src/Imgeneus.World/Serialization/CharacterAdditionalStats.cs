@@ -7,22 +7,22 @@ namespace Imgeneus.World.Serialization
     public class CharacterAdditionalStats : BaseSerializable
     {
         [FieldOrder(0)]
-        public uint Strength { get => 1; }
+        public uint Strength { get; }
 
         [FieldOrder(1)]
-        public uint Rec { get => 2; }
+        public uint Rec { get; }
 
         [FieldOrder(2)]
-        public uint Intelligence { get => 3; }
+        public uint Intelligence { get; }
 
         [FieldOrder(3)]
-        public uint Wisdom { get => 4; }
+        public uint Wisdom { get; }
 
         [FieldOrder(4)]
-        public uint Dexterity { get => 5; }
+        public uint Dexterity { get; }
 
         [FieldOrder(5)]
-        public uint Luck { get => 6; }
+        public uint Luck { get; }
 
         [FieldOrder(6)]
         public uint MinAttack { get => 7; }
@@ -44,7 +44,12 @@ namespace Imgeneus.World.Serialization
 
         public CharacterAdditionalStats(Character character)
         {
-
+            Strength = character.ExtraStr;
+            Rec = character.ExtraRec;
+            Intelligence = character.ExtralInt;
+            Wisdom = character.ExtraWis;
+            Dexterity = character.ExtraDex;
+            Luck = character.ExtraLuc;
         }
     }
 }

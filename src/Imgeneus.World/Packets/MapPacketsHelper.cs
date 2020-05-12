@@ -1,7 +1,9 @@
-﻿using Imgeneus.Database.Constants;
+﻿using System;
+using Imgeneus.Database.Constants;
 using Imgeneus.Network.Data;
 using Imgeneus.Network.Packets;
 using Imgeneus.World.Game.Monster;
+using Imgeneus.World.Game.PartyAndRaid;
 using Imgeneus.World.Game.Player;
 using Imgeneus.World.Serialization;
 
@@ -103,6 +105,14 @@ namespace Imgeneus.World.Packets
         {
             using var packet = new Packet(PacketType.CHARACTER_ATTACK);
             packet.Write(new UsualAttack(charId, targetId, attackResult).Serialize());
+            client.SendPacket(packet);
+        }
+
+        internal void SendCharacterPartyChanged(WorldClient client, int characterId, PartyMemberType type)
+        {
+            using var packet = new Packet(PacketType.MAP_PARTY_SET);
+            packet.Write(characterId);
+            packet.Write((byte)type);
             client.SendPacket(packet);
         }
     }

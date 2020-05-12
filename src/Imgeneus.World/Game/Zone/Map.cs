@@ -6,6 +6,7 @@ using Imgeneus.Network.Packets;
 using Imgeneus.Network.Packets.Game;
 using Imgeneus.Network.Server;
 using Imgeneus.World.Game.Monster;
+using Imgeneus.World.Game.PartyAndRaid;
 using Imgeneus.World.Game.Player;
 using Imgeneus.World.Packets;
 using Microsoft.Extensions.Logging;
@@ -75,6 +76,7 @@ namespace Imgeneus.World.Game.Zone
                 character.OnMotion += Character_OnMotion;
                 character.OnSeekForTarget += Character_OnTargetChanged;
                 character.OnEquipmentChanged += Character_OnEquipmentChanged;
+                character.OnPartyChanged += Character_OnPartyChanged;
 
                 if (character.IsAdmin)
                 {
@@ -108,6 +110,7 @@ namespace Imgeneus.World.Game.Zone
                 character.OnMotion -= Character_OnMotion;
                 character.OnSeekForTarget -= Character_OnTargetChanged;
                 character.OnEquipmentChanged -= Character_OnEquipmentChanged;
+                character.OnPartyChanged -= Character_OnPartyChanged;
 
                 if (character.IsAdmin)
                 {
@@ -175,6 +178,21 @@ namespace Imgeneus.World.Game.Zone
             foreach (var player in Players)
             {
                 _packetHelper.SendCharacterChangedEquipment(player.Value.Client, sender.Id, equipmentItem, slot);
+            }
+        }
+
+        private void Character_OnPartyChanged(Character sender)
+        {
+            foreach (var player in Players)
+            {
+                PartyMemberType type = PartyMemberType.NoParty;
+
+                if (sender.IsPartyLead)
+                    type = PartyMemberType.Leader;
+                else if (sender.HasParty)
+                    type = PartyMemberType.Member;
+
+                _packetHelper.SendCharacterPartyChanged(player.Value.Client, sender.Id, type);
             }
         }
 

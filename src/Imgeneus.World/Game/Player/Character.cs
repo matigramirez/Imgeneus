@@ -5,6 +5,7 @@ using Imgeneus.Database.Entities;
 using Imgeneus.Database.Preload;
 using Imgeneus.DatabaseBackgroundService;
 using Imgeneus.DatabaseBackgroundService.Handlers;
+using Imgeneus.World.Game.PartyAndRaid;
 using Imgeneus.World.Game.Trade;
 using Imgeneus.World.Packets;
 using Microsoft.Extensions.Logging;
@@ -75,8 +76,6 @@ namespace Imgeneus.World.Game.Player
         public byte MoveMotion = 1;
 
         public bool IsDead;
-        public bool HasParty;
-        public bool IsPartyLead;
 
         public int CurrentHP { get; set; }
         public int CurrentMP { get; set; }
@@ -475,6 +474,58 @@ namespace Imgeneus.World.Game.Player
             _taskQueue.Enqueue(ActionType.UPDATE_GOLD,
                                Id, Gold);
         }
+
+        #endregion
+
+        #region Party & Raid
+
+        /// <summary>
+        /// Event, that is fired, when player enters, leaves party or gets party leader.
+        /// </summary>
+        public event Action<Character> OnPartyChanged;
+
+        private Party _party;
+
+        /// <summary>
+        /// Party, in which player is currently.
+        /// </summary>
+        public Party Party
+        {
+            get => _party;
+            set
+            {
+                // Leave party.
+                if (_party != null && value is null)
+                {
+                    _party.Members.Remove(this);
+                    _party = value;
+                    _packetsHelper.SendLeaveParty(Client, Id);
+                }
+                else // Enter party
+                {
+                    _party = value;
+                    _party.Members.Add(this);
+                    _packetsHelper.SendPartyInfo(Client, Party.Members.Where(m => m != this));
+                }
+
+                OnPartyChanged?.Invoke(this);
+            }
+        }
+
+        /// <summary>
+        /// Id of character, that invites to the party.
+        /// </summary>
+        public int PartyInviterId;
+
+        /// <summary>
+        /// Bool indicator, shows if player is in party/raid.
+        /// </summary>
+        public bool HasParty { get => Party != null; }
+
+        /// <summary>
+        /// Bool indicator, shows if player is the party/raid leader.
+        /// </summary>
+        public bool IsPartyLead { get => Party != null && Party.Leader == this; }
 
         #endregion
 

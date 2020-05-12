@@ -93,5 +93,13 @@
         TRADE_ADD_MONEY = 0x0A08, //
         TRADE_RECEIVER_ADD_ITEM = 0x0A09, // 2569
         TRADE_DECIDE = 0xA0A, // 2570
+
+        // Party
+        PARTY_LIST = 0x0B01, // 2817
+        PARTY_REQUEST = 0x0B02, // 2818
+        PARTY_RESPONSE = 0x0B03, // 2819
+        PARTY_ENTER = 0x0B04, // 2820
+        PARTY_LEAVE = 0x0B05,
+        MAP_PARTY_SET = 0x0520, // 1312
     }
 }

@@ -6,6 +6,7 @@ using Imgeneus.Network.Data;
 using Imgeneus.Network.Packets;
 using Imgeneus.Network.Serialization;
 using Imgeneus.World.Game.Monster;
+using Imgeneus.World.Game.PartyAndRaid;
 using Imgeneus.World.Game.Player;
 using Imgeneus.World.Serialization;
 
@@ -141,6 +142,20 @@ namespace Imgeneus.World.Packets
         {
             using var packet = new Packet(PacketType.CHARACTER_MAX_HITPOINTS);
             packet.Write(new MaxHitpoint(character, type).Serialize());
+            client.SendPacket(packet);
+        }
+
+        internal void SendPartyInfo(WorldClient client, IEnumerable<Character> partyMembers)
+        {
+            using var packet = new Packet(PacketType.PARTY_LIST);
+            packet.Write(new UsualParty(partyMembers).Serialize());
+            client.SendPacket(packet);
+        }
+
+        internal void SendLeaveParty(WorldClient client, int id)
+        {
+            using var packet = new Packet(PacketType.PARTY_LEAVE);
+            packet.Write(id);
             client.SendPacket(packet);
         }
     }

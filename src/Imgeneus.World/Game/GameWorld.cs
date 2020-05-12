@@ -4,6 +4,7 @@ using Imgeneus.Database.Preload;
 using Imgeneus.DatabaseBackgroundService;
 using Imgeneus.Network.Packets.Game;
 using Imgeneus.Network.Server;
+using Imgeneus.World.Game.PartyAndRaid;
 using Imgeneus.World.Game.Player;
 using Imgeneus.World.Game.Trade;
 using Imgeneus.World.Game.Zone;
@@ -57,6 +58,8 @@ namespace Imgeneus.World.Game
 
         public ConcurrentDictionary<int, TradeManager> TradeManagers { get; private set; } = new ConcurrentDictionary<int, TradeManager>();
 
+        public ConcurrentDictionary<int, PartyManager> PartyManagers { get; private set; } = new ConcurrentDictionary<int, PartyManager>();
+
         /// <inheritdoc />
         public Character LoadPlayer(int characterId, WorldClient client)
         {
@@ -72,6 +75,7 @@ namespace Imgeneus.World.Game
 
             Players.TryAdd(newPlayer.Id, newPlayer);
             TradeManagers.TryAdd(newPlayer.Id, new TradeManager(this, newPlayer));
+            PartyManagers.TryAdd(newPlayer.Id, new PartyManager(this, newPlayer));
 
             _logger.LogDebug($"Player {newPlayer.Id} connected to game world");
             newPlayer.Client.OnPacketArrived += Client_OnPacketArrived;
@@ -81,10 +85,13 @@ namespace Imgeneus.World.Game
 
         private void Client_OnPacketArrived(ServerClient sender, IDeserializedPacket packet)
         {
-            if (packet is CharacterEnteredMapPacket)
+            switch (packet)
             {
-                LoadPlayerInMap(((WorldClient)sender).CharID);
+                case CharacterEnteredMapPacket enteredMapPacket:
+                    LoadPlayerInMap(((WorldClient)sender).CharID);
+                    break;
             }
+
         }
 
         /// <inheritdoc />
@@ -104,6 +111,9 @@ namespace Imgeneus.World.Game
 
                 TradeManagers.TryRemove(characterId, out var tradeManager);
                 tradeManager.Dispose();
+
+                PartyManagers.TryRemove(characterId, out var partyManager);
+                partyManager.Dispose();
 
                 player.Client.OnPacketArrived -= Client_OnPacketArrived;
 

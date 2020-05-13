@@ -1,6 +1,4 @@
-﻿using Imgeneus.Core.DependencyInjection;
-using Imgeneus.Database;
-using Imgeneus.Database.Constants;
+﻿using Imgeneus.Database.Constants;
 using Imgeneus.DatabaseBackgroundService.Handlers;
 using Microsoft.Extensions.Logging;
 using MvvmHelpers;
@@ -23,8 +21,6 @@ namespace Imgeneus.World.Game.Player
         /// <returns>successful or not</returns>
         public void LearnNewSkill(ushort skillId, byte skillLevel)
         {
-            using var database = DependencyContainer.Instance.Resolve<IDatabase>();
-
             if (Skills.Any(s => s.SkillId == skillId && s.SkillLevel == skillLevel))
             {
                 // Character has already learned this skill.
@@ -33,8 +29,7 @@ namespace Imgeneus.World.Game.Player
             }
 
             // Find learned skill.
-            // TODO: preload somehow skills and do not call database each time.
-            var dbSkill = database.Skills.First(s => s.SkillId == skillId && s.SkillLevel == skillLevel);
+            var dbSkill = _databasePreloader.Skills[(skillId, skillLevel)];
             if (SkillPoint < dbSkill.SkillPoint)
             {
                 // Not enough skill points.

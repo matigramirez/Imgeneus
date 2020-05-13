@@ -14,6 +14,9 @@ namespace Imgeneus.Database.Preload
         /// <inheritdoc />
         public Dictionary<(byte Type, byte TypeId), DbItem> Items { get; private set; } = new Dictionary<(byte Type, byte TypeId), DbItem>();
 
+        /// <inheritdoc />
+        public Dictionary<(ushort SkillId, byte SkillLevel), DbSkill> Skills { get; private set; } = new Dictionary<(ushort SkillId, byte SkillLevel), DbSkill>();
+
         public DatabasePreloader(ILogger<DatabasePreloader> logger, IDatabase database)
         {
             _logger = logger;
@@ -26,6 +29,7 @@ namespace Imgeneus.Database.Preload
             try
             {
                 PreloadItems(_database);
+                PreloadSkills(_database);
 
                 _logger.LogInformation("Database was successfully preloaded.");
             }
@@ -45,6 +49,18 @@ namespace Imgeneus.Database.Preload
             foreach (var item in items)
             {
                 Items.Add((item.Type, item.TypeId), item);
+            }
+        }
+
+        /// <summary>
+        /// Preloads all available skills from database.
+        /// </summary>
+        private void PreloadSkills(IDatabase database)
+        {
+            var skills = database.Skills;
+            foreach (var skill in skills)
+            {
+                Skills.Add((skill.SkillId, skill.SkillLevel), skill);
             }
         }
     }

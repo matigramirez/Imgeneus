@@ -77,6 +77,7 @@ namespace Imgeneus.World.Game.Zone
                 character.OnSeekForTarget += Character_OnTargetChanged;
                 character.OnEquipmentChanged += Character_OnEquipmentChanged;
                 character.OnPartyChanged += Character_OnPartyChanged;
+                character.OnAttackOrMoveChanged += Character_OnAttackOrMoveChanged;
 
                 if (character.IsAdmin)
                 {
@@ -111,6 +112,7 @@ namespace Imgeneus.World.Game.Zone
                 character.OnSeekForTarget -= Character_OnTargetChanged;
                 character.OnEquipmentChanged -= Character_OnEquipmentChanged;
                 character.OnPartyChanged -= Character_OnPartyChanged;
+                character.OnAttackOrMoveChanged -= Character_OnAttackOrMoveChanged;
 
                 if (character.IsAdmin)
                 {
@@ -181,6 +183,9 @@ namespace Imgeneus.World.Game.Zone
             }
         }
 
+        /// <summary>
+        ///  Notifies other players, that player entered/left party or got/removed leader.
+        /// </summary>
         private void Character_OnPartyChanged(Character sender)
         {
             foreach (var player in Players)
@@ -193,6 +198,17 @@ namespace Imgeneus.World.Game.Zone
                     type = PartyMemberType.Member;
 
                 _packetHelper.SendCharacterPartyChanged(player.Value.Client, sender.Id, type);
+            }
+        }
+
+        /// <summary>
+        /// Notifies other players, that player changed attack/move speed.
+        /// </summary>
+        private void Character_OnAttackOrMoveChanged(Character sender)
+        {
+            foreach (var player in Players)
+            {
+                _packetHelper.SendAttackAndMovementSpeed(player.Value.Client, sender);
             }
         }
 

@@ -303,6 +303,54 @@ namespace Imgeneus.World.Game.Player
             }
         }
 
+        public byte AttackSpeed
+        {
+            get
+            {
+                var constAttackSpeed = _databasePreloader.Items[(Type, TypeId)].AttackTime;
+                byte gemsSpeed = 0;
+
+                if (Gem1 != null)
+                    gemsSpeed += Gem1.AttackSpeed;
+                if (Gem2 != null)
+                    gemsSpeed += Gem2.AttackSpeed;
+                if (Gem3 != null)
+                    gemsSpeed += Gem3.AttackSpeed;
+                if (Gem4 != null)
+                    gemsSpeed += Gem4.AttackSpeed;
+                if (Gem5 != null)
+                    gemsSpeed += Gem5.AttackSpeed;
+                if (Gem6 != null)
+                    gemsSpeed += Gem6.AttackSpeed;
+
+                return (byte)(constAttackSpeed + gemsSpeed);
+            }
+        }
+
+        public byte MoveSpeed
+        {
+            get
+            {
+                var constMoveSpeed = _databasePreloader.Items[(Type, TypeId)].Speed;
+                byte gemsSpeed = 0;
+
+                if (Gem1 != null)
+                    gemsSpeed += Gem1.MoveSpeed;
+                if (Gem2 != null)
+                    gemsSpeed += Gem2.MoveSpeed;
+                if (Gem3 != null)
+                    gemsSpeed += Gem3.MoveSpeed;
+                if (Gem4 != null)
+                    gemsSpeed += Gem4.MoveSpeed;
+                if (Gem5 != null)
+                    gemsSpeed += Gem5.MoveSpeed;
+                if (Gem6 != null)
+                    gemsSpeed += Gem6.MoveSpeed;
+
+                return (byte)(constMoveSpeed + gemsSpeed);
+            }
+        }
+
         #endregion
 
         /// <summary>

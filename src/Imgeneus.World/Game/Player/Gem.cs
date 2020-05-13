@@ -95,5 +95,23 @@ namespace Imgeneus.World.Game.Player
                 return _databasePreloader.Items[(30, (byte)TypeId)].ConstSP;
             }
         }
+
+        public byte AttackSpeed
+        {
+            get
+            {
+                // 30 type is always lapis.
+                return _databasePreloader.Items[(30, (byte)TypeId)].AttackTime;
+            }
+        }
+
+        public byte MoveSpeed
+        {
+            get
+            {
+                // 30 type is always lapis.
+                return _databasePreloader.Items[(30, (byte)TypeId)].Speed;
+            }
+        }
     }
 }

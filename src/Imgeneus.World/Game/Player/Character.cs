@@ -85,9 +85,6 @@ namespace Imgeneus.World.Game.Player
         public int MaxMP { get => 50 + ExtraMP; } // TODO: implement max MP.
         public int MaxSP { get => 20 + ExtraSP; } // TODO: implement max SP.
 
-        public AttackSpeed AttackSpeed { get => AttackSpeed.ExteremelyFast; } // TODO: calculate attack speed.
-        public MoveSpeed MoveSpeed { get => MoveSpeed.VeryFast; } // TODO: calculate move speed.
-
         #endregion
 
         #region Additional stats
@@ -168,6 +165,43 @@ namespace Imgeneus.World.Game.Player
                 if (Client != null)
                     SendMaxMP();
             }
+        }
+
+        #endregion
+
+        #region Attack & Move speed
+
+        /// <summary>
+        /// Event, that is fired, when attack or move speed changes.
+        /// </summary>
+        public event Action<Character> OnAttackOrMoveChanged;
+
+        private AttackSpeed _attackSpeed;
+        /// <summary>
+        /// How fast character can make new hit.
+        /// </summary>
+        public AttackSpeed AttackSpeed
+        {
+            private set
+            {
+                _attackSpeed = value;
+                OnAttackOrMoveChanged?.Invoke(this);
+            }
+            get => _attackSpeed;
+        }
+
+        private MoveSpeed _moveSpeed = MoveSpeed.Normal;
+        /// <summary>
+        /// How fast character moves.
+        /// </summary>
+        public MoveSpeed MoveSpeed
+        {
+            private set
+            {
+                _moveSpeed = value;
+                OnAttackOrMoveChanged?.Invoke(this);
+            }
+            get => _moveSpeed;
         }
 
         #endregion

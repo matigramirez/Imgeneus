@@ -115,5 +115,12 @@ namespace Imgeneus.World.Packets
             packet.Write((byte)type);
             client.SendPacket(packet);
         }
+
+        internal void SendAttackAndMovementSpeed(WorldClient client, Character sender)
+        {
+            using var packet = new Packet(PacketType.CHARACTER_ATTACK_MOVEMENT_SPEED);
+            packet.Write(new CharacterAttackAndMovement(sender).Serialize());
+            client.SendPacket(packet);
+        }
     }
 }

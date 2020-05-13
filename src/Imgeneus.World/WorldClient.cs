@@ -125,6 +125,8 @@ namespace Imgeneus.World
             { PacketType.PARTY_REQUEST, (s) => new PartyRequestPacket(s) },
             { PacketType.PARTY_RESPONSE, (s) => new PartyResponsePacket(s) },
             { PacketType.PARTY_LEAVE, (s) => new PartyLeavePacket(s) },
+            { PacketType.PARTY_KICK, (s) => new PartyKickPacket(s) },
+            { PacketType.PARTY_CHANGE_LEADER, (s) => new PartyChangeLeaderPacket(s) }
         };
 
         /// <inheritdoc />

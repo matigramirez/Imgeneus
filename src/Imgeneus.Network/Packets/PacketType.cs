@@ -99,7 +99,9 @@
         PARTY_REQUEST = 0x0B02, // 2818
         PARTY_RESPONSE = 0x0B03, // 2819
         PARTY_ENTER = 0x0B04, // 2820
-        PARTY_LEAVE = 0x0B05,
+        PARTY_LEAVE = 0x0B05, // 2821
+        PARTY_KICK = 0x0B06, // 2822
+        PARTY_CHANGE_LEADER = 0x0B07,
         MAP_PARTY_SET = 0x0520, // 1312
     }
 }

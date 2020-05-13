@@ -494,22 +494,41 @@ namespace Imgeneus.World.Game.Player
             get => _party;
             set
             {
+                if (_party != null)
+                {
+                    _party.OnLeaderChanged -= Party_OnLeaderChanged;
+                    _party.OnMembersChanged -= Party_OnMembersChanged;
+                }
+
                 // Leave party.
                 if (_party != null && value is null)
                 {
-                    _party.Members.Remove(this);
                     _party = value;
-                    _packetsHelper.SendLeaveParty(Client, Id);
                 }
-                else // Enter party
+                // Enter party
+                else if (value != null)
                 {
-                    _party = value;
-                    _party.Members.Add(this);
-                    _packetsHelper.SendPartyInfo(Client, Party.Members.Where(m => m != this));
+                    if (value.EnterParty(this))
+                    {
+                        _party = value;
+                        _packetsHelper.SendPartyInfo(Client, Party.Members.Where(m => m != this), (byte)Party.Members.IndexOf(Party.Leader));
+                        _party.OnLeaderChanged += Party_OnLeaderChanged;
+                        _party.OnMembersChanged += Party_OnMembersChanged;
+                    }
                 }
 
                 OnPartyChanged?.Invoke(this);
             }
+        }
+
+        private void Party_OnMembersChanged()
+        {
+            OnPartyChanged?.Invoke(this);
+        }
+
+        private void Party_OnLeaderChanged(Character obj)
+        {
+            OnPartyChanged?.Invoke(this);
         }
 
         /// <summary>

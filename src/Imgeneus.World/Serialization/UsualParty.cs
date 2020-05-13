@@ -9,7 +9,7 @@ namespace Imgeneus.World.Serialization
     public class UsualParty : BaseSerializable
     {
         [FieldOrder(0)]
-        public byte Both; // ?
+        public byte LeaderIndex;
 
         [FieldOrder(1)]
         public byte Count;
@@ -18,8 +18,10 @@ namespace Imgeneus.World.Serialization
         [FieldCount(nameof(Count))]
         public List<PartyMember> Members { get; } = new List<PartyMember>();
 
-        public UsualParty(IEnumerable<Character> partyMembers)
+        public UsualParty(IEnumerable<Character> partyMembers, byte leaderIndex)
         {
+            LeaderIndex = leaderIndex;
+
             foreach (var member in partyMembers)
             {
                 Members.Add(new PartyMember(member));

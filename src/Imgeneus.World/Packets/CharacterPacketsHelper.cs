@@ -145,17 +145,10 @@ namespace Imgeneus.World.Packets
             client.SendPacket(packet);
         }
 
-        internal void SendPartyInfo(WorldClient client, IEnumerable<Character> partyMembers)
+        internal void SendPartyInfo(WorldClient client, IEnumerable<Character> partyMembers, byte leaderIndex)
         {
             using var packet = new Packet(PacketType.PARTY_LIST);
-            packet.Write(new UsualParty(partyMembers).Serialize());
-            client.SendPacket(packet);
-        }
-
-        internal void SendLeaveParty(WorldClient client, int id)
-        {
-            using var packet = new Packet(PacketType.PARTY_LEAVE);
-            packet.Write(id);
+            packet.Write(new UsualParty(partyMembers, leaderIndex).Serialize());
             client.SendPacket(packet);
         }
     }

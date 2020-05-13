@@ -4,6 +4,7 @@ using Imgeneus.Network.Packets.Game;
 using Imgeneus.Network.Server;
 using Imgeneus.World.Game.Player;
 using System;
+using System.Linq;
 
 namespace Imgeneus.World.Game.PartyAndRaid
 {
@@ -48,7 +49,6 @@ namespace Imgeneus.World.Game.PartyAndRaid
                         {
                             if (_gameWorld.Players.TryGetValue(partyResponser.PartyInviterId, out var partyRequester))
                             {
-                                partyResponser.PartyInviterId = 0;
                                 SendDeclineParty(partyRequester.Client, worldSender.CharID);
                             }
                         }
@@ -68,13 +68,39 @@ namespace Imgeneus.World.Game.PartyAndRaid
                                 }
                             }
                         }
+
+                        partyResponser.PartyInviterId = 0;
                     }
                     break;
 
                 case PartyLeavePacket partyLeavePacket:
                     if (_gameWorld.Players.TryGetValue(worldSender.CharID, out var partyLeaver))
                     {
-                        partyLeaver.Party = null;
+                        partyLeaver.Party.LeaveParty(partyLeaver);
+                    }
+                    break;
+
+                case PartyKickPacket partyKickPacket:
+                    if (_gameWorld.Players.TryGetValue(worldSender.CharID, out var leader))
+                    {
+                        if (!leader.IsPartyLead)
+                            return;
+
+                        var playerToKick = leader.Party.Members.FirstOrDefault(m => m.Id == partyKickPacket.CharacterId);
+                        if (playerToKick != null)
+                            leader.Party.KickMember(playerToKick);
+                    }
+                    break;
+
+                case PartyChangeLeaderPacket changeLeaderPacket:
+                    if (_gameWorld.Players.TryGetValue(worldSender.CharID, out var partyLeader))
+                    {
+                        if (!partyLeader.IsPartyLead)
+                            return;
+
+                        var newLeader = partyLeader.Party.Members.FirstOrDefault(m => m.Id == changeLeaderPacket.CharacterId);
+                        if (newLeader != null)
+                            partyLeader.Party.SetLeader(newLeader);
                     }
                     break;
             }

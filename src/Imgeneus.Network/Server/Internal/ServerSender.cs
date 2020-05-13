@@ -29,7 +29,10 @@ namespace Imgeneus.Network.Server.Internal
                 writeSocket.SetBuffer(packetData.Data, 0, packetData.Data.Length);
                 writeSocket.UserToken = packetData.Connection;
 
-                if (!packetData.Connection.Socket.SendAsync(writeSocket))
+                // I'm not sure why, but sometimes packets are messed up. Maybe it's because async send?
+                // I comment this code out and use sync version.
+                // if (!packetData.Connection.Socket.SendAsync(writeSocket))
+                if (packetData.Connection.Socket.Send(writeSocket.Buffer) > 0)
                 {
                     this.SendOperationCompleted(writeSocket);
                 }

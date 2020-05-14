@@ -1,5 +1,4 @@
-﻿using Imgeneus.Database.Constants;
-using Imgeneus.DatabaseBackgroundService.Handlers;
+﻿using Imgeneus.DatabaseBackgroundService.Handlers;
 using Microsoft.Extensions.Logging;
 using MvvmHelpers;
 using System.Linq;
@@ -85,38 +84,6 @@ namespace Imgeneus.World.Game.Player
             };
             Skills.Add(skill);
             _logger.LogDebug($"Character {Id} learned skill {skill.SkillId} of level {skill.SkillLevel}");
-        }
-
-        /// <summary>
-        /// Make character use skill.
-        /// </summary>
-        /// <param name="skillNumber">unique number of skill; unique is per character(maybe?)</param>
-        public (Skill Skill, AttackResult AttackResult) UseSkill(byte skillNumber)
-        {
-            var skill = Skills.First(s => s.Number == skillNumber);
-
-            Damage damage = new Damage(0, 0, 0);
-            // TODO: implement use of all skills.
-            // For now, just for testing I'm implementing buff to character.
-            if (skill.Type == TypeDetail.Buff && (skill.TargetType == TargetType.Caster || skill.TargetType == TargetType.PartyMembers))
-            {
-                var buff = AddActiveBuff(skill);
-            }
-            else
-            {
-                damage = new Damage(100, 50, 20);
-            }
-
-            return (skill, new AttackResult(AttackSuccess.Critical, damage));
-        }
-
-        /// <summary>
-        /// Usual physical attack, "auto attack".
-        /// </summary>
-        public AttackResult UsualAttack()
-        {
-            Damage damage = new Damage(33, 0, 0);
-            return new AttackResult(AttackSuccess.Normal, damage);
         }
     }
 }

@@ -417,7 +417,9 @@ namespace Imgeneus.World.Game.Player
             ExtraHP -= item.HP;
             ExtraSP -= item.SP;
             ExtraMP -= item.MP;
-            AttackSpeed -= item.AttackSpeed;
+
+            if (item != Mount)
+                AttackSpeed -= item.AttackSpeed;
             MoveSpeed -= item.MoveSpeed;
         }
 
@@ -438,7 +440,9 @@ namespace Imgeneus.World.Game.Player
             ExtraHP += item.HP;
             ExtraSP += item.SP;
             ExtraMP += item.MP;
-            AttackSpeed += item.AttackSpeed;
+
+            if (item != Mount)
+                AttackSpeed += item.AttackSpeed;
             MoveSpeed += item.MoveSpeed;
         }
 

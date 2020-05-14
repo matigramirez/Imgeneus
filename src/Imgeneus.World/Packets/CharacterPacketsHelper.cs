@@ -144,5 +144,11 @@ namespace Imgeneus.World.Packets
             packet.Write(new UsualParty(partyMembers, leaderIndex).Serialize());
             client.SendPacket(packet);
         }
+
+        internal void SendAttackStart(WorldClient client)
+        {
+            using var packet = new Packet(PacketType.ATTACK_START);
+            client.SendPacket(packet);
+        }
     }
 }

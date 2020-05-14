@@ -33,6 +33,7 @@ namespace Imgeneus.World.Game.Player
             InventoryItems.CollectionChanged += InventoryItems_CollectionChanged;
             Skills.CollectionChanged += Skills_CollectionChanged;
             ActiveBuffs.CollectionChanged += ActiveBuffs_CollectionChanged;
+            _attackTimer.Elapsed += AttackTimer_Elapsed;
         }
 
         private void Init()
@@ -185,6 +186,47 @@ namespace Imgeneus.World.Game.Player
             private set
             {
                 _attackSpeed = value;
+
+                // Set attack timer.
+                switch (AttackSpeed)
+                {
+                    case AttackSpeed.ExteremelySlow:
+                        _attackTimer.Interval = 4000;
+                        break;
+
+                    case AttackSpeed.VerySlow:
+                        _attackTimer.Interval = 3750;
+                        break;
+
+                    case AttackSpeed.Slow:
+                        _attackTimer.Interval = 3500;
+                        break;
+
+                    case AttackSpeed.ABitSlow:
+                        _attackTimer.Interval = 3250;
+                        break;
+
+                    case AttackSpeed.Normal:
+                        _attackTimer.Interval = 3000;
+                        break;
+
+                    case AttackSpeed.ABitFast:
+                        _attackTimer.Interval = 2750;
+                        break;
+
+                    case AttackSpeed.Fast:
+                        _attackTimer.Interval = 2500;
+                        break;
+
+                    case AttackSpeed.VeryFast:
+                        _attackTimer.Interval = 2250;
+                        break;
+
+                    case AttackSpeed.ExteremelyFast:
+                        _attackTimer.Interval = 2000;
+                        break;
+                }
+
                 OnAttackOrMoveChanged?.Invoke(this);
             }
             get => _attackSpeed;
@@ -321,28 +363,6 @@ namespace Imgeneus.World.Game.Player
 
         #endregion
 
-        #region Target
-
-        /// <summary>
-        /// Player fire this event to map in order to get target.
-        /// </summary>
-        public event Action<Character, int, TargetEntity> OnSeekForTarget;
-
-        private ITargetable _target;
-        public ITargetable Target
-        {
-            get => _target; set
-            {
-                _target = value;
-
-                if (_target != null)
-                {
-                    TargetChanged(Target);
-                }
-            }
-        }
-
-        #endregion
 
         #region Quick skill bar
 

@@ -78,6 +78,7 @@ namespace Imgeneus.World.Game.Zone
                 character.OnEquipmentChanged += Character_OnEquipmentChanged;
                 character.OnPartyChanged += Character_OnPartyChanged;
                 character.OnAttackOrMoveChanged += Character_OnAttackOrMoveChanged;
+                character.OnUsedSkill += Character_OnUsedSkill;
 
                 if (character.IsAdmin)
                 {
@@ -113,6 +114,7 @@ namespace Imgeneus.World.Game.Zone
                 character.OnEquipmentChanged -= Character_OnEquipmentChanged;
                 character.OnPartyChanged -= Character_OnPartyChanged;
                 character.OnAttackOrMoveChanged -= Character_OnAttackOrMoveChanged;
+                character.OnUsedSkill -= Character_OnUsedSkill;
 
                 if (character.IsAdmin)
                 {
@@ -213,6 +215,20 @@ namespace Imgeneus.World.Game.Zone
         }
 
         /// <summary>
+        /// ?
+        /// </summary>
+        /// <param name="skill"></param>
+        /// <param name="attackResult"></param>
+        private void Character_OnUsedSkill(Character sender, Skill skill, AttackResult attackResult)
+        {
+            // Notify all players about used skill.
+            foreach (var player in Players)
+            {
+                _packetHelper.SendCharacterUsedSkill(player.Value.Client, sender.SkillPacketType, sender.Id, sender.Target.Id, skill, attackResult);
+            }
+        }
+
+        /// <summary>
         /// Handles special packets, as GM packets mob creation etc.
         /// </summary>
         /// <param name="sender"></param>
@@ -243,6 +259,7 @@ namespace Imgeneus.World.Game.Zone
 
                 case AttackStart attackStartPacket:
                     // Not sure, but maybe I should not permit any attack start?
+                    // Maybe I need to move it to character?
                     sender.SendPacket(new Packet(PacketType.ATTACK_START));
                     break;
 
@@ -263,12 +280,8 @@ namespace Imgeneus.World.Game.Zone
         /// <param name="targetId">target id</param>
         private void HandleUseSkill(PacketType packetType, WorldClient sender, byte number, int targetId)
         {
-            var skillUseResult = Players[sender.CharID].UseSkill(number);
-            // Notify all players about used skill.
-            foreach (var player in Players)
-            {
-                _packetHelper.SendCharacterUsedSkill(player.Value.Client, packetType, sender.CharID, targetId, skillUseResult.Skill, skillUseResult.AttackResult);
-            }
+            Players[sender.CharID].NextSkillNumber = number;
+            Players[sender.CharID].SkillPacketType = packetType;
         }
 
         /// <summary>
@@ -278,14 +291,14 @@ namespace Imgeneus.World.Game.Zone
         /// <param name="targetId">target id</param>
         private void HandleAttackPacket(WorldClient sender, int targetId)
         {
-            sender.SendPacket(new Packet(PacketType.ATTACK_START));
+            // I comment our this code for now, because auto attack is not working properly with timer now.
+            // I will uncomment it as soon as it's working with timer.
+            //var attackResult = Players[sender.CharID].UsualAttack();
 
-            var attackResult = Players[sender.CharID].UsualAttack();
-
-            foreach (var player in Players)
-            {
-                _packetHelper.SendCharacterUsualAttack(player.Value.Client, sender.CharID, targetId, attackResult);
-            }
+            //foreach (var player in Players)
+            //{
+            //    _packetHelper.SendCharacterUsualAttack(player.Value.Client, sender.CharID, targetId, attackResult);
+            //}
         }
 
         #endregion

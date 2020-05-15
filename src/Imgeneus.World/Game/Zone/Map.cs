@@ -290,8 +290,13 @@ namespace Imgeneus.World.Game.Zone
         private void HandleUseSkill(WorldClient sender, byte number, int targetId)
         {
             if (targetId != 0)
-                // TODO: target id can be not only mob id.
-                Players[sender.CharID].Target = Mobs[targetId];
+            {
+                if (targetId < MIN_MOB_ID)
+                    Players[sender.CharID].Target = Players[targetId];
+                else
+                    Players[sender.CharID].Target = Mobs[targetId];
+            }
+
             Players[sender.CharID].NextSkillNumber = number;
         }
 
@@ -302,8 +307,14 @@ namespace Imgeneus.World.Game.Zone
         /// <param name="targetId">target id</param>
         private void HandleAttackPacket(WorldClient sender, int targetId)
         {
-            // TODO: target id can be not only mob id.
-            Players[sender.CharID].Target = Mobs[targetId];
+            if (targetId != 0)
+            {
+                if (targetId < MIN_MOB_ID)
+                    Players[sender.CharID].Target = Players[targetId];
+                else
+                    Players[sender.CharID].Target = Mobs[targetId];
+            }
+
             Players[sender.CharID].NextSkillNumber = 255;
         }
 
@@ -311,7 +322,11 @@ namespace Imgeneus.World.Game.Zone
 
         #region Mobs
 
-        private int _currentGlobalMobId;
+        private const int MIN_MOB_ID = 1073741824;
+
+        // I'm not sure, what is the right approach to handle target id, because target id can be both player id and mob id.
+        // For now, I make mob id quite big to distinguish if it's a mob in target or player in the target.
+        private int _currentGlobalMobId = MIN_MOB_ID; // Half of int max value.
         private readonly object _currentGlobalMobIdMutex = new object();
 
         /// <summary>

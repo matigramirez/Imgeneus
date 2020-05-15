@@ -79,6 +79,7 @@ namespace Imgeneus.World.Game.Zone
                 character.OnPartyChanged += Character_OnPartyChanged;
                 character.OnAttackOrMoveChanged += Character_OnAttackOrMoveChanged;
                 character.OnUsedSkill += Character_OnUsedSkill;
+                character.OnAutoAttack += Character_OnAutoAttack;
 
                 if (character.IsAdmin)
                 {
@@ -215,16 +216,25 @@ namespace Imgeneus.World.Game.Zone
         }
 
         /// <summary>
-        /// ?
+        /// Notifies other players, that player used skill.
         /// </summary>
-        /// <param name="skill"></param>
-        /// <param name="attackResult"></param>
         private void Character_OnUsedSkill(Character sender, Skill skill, AttackResult attackResult)
         {
             // Notify all players about used skill.
             foreach (var player in Players)
             {
                 _packetHelper.SendCharacterUsedSkill(player.Value.Client, sender.SkillPacketType, sender.Id, sender.Target.Id, skill, attackResult);
+            }
+        }
+
+        /// <summary>
+        /// Notifies other players, that player used auto attack.
+        /// </summary>
+        private void Character_OnAutoAttack(Character sender, AttackResult attackResult)
+        {
+            foreach (var player in Players)
+            {
+                _packetHelper.SendCharacterUsualAttack(player.Value.Client, sender.Id, sender.Target.Id, attackResult);
             }
         }
 
@@ -280,6 +290,7 @@ namespace Imgeneus.World.Game.Zone
         /// <param name="targetId">target id</param>
         private void HandleUseSkill(PacketType packetType, WorldClient sender, byte number, int targetId)
         {
+            Players[sender.CharID].Target = Mobs[targetId];
             Players[sender.CharID].NextSkillNumber = number;
             Players[sender.CharID].SkillPacketType = packetType;
         }
@@ -291,14 +302,8 @@ namespace Imgeneus.World.Game.Zone
         /// <param name="targetId">target id</param>
         private void HandleAttackPacket(WorldClient sender, int targetId)
         {
-            // I comment our this code for now, because auto attack is not working properly with timer now.
-            // I will uncomment it as soon as it's working with timer.
-            //var attackResult = Players[sender.CharID].UsualAttack();
-
-            //foreach (var player in Players)
-            //{
-            //    _packetHelper.SendCharacterUsualAttack(player.Value.Client, sender.CharID, targetId, attackResult);
-            //}
+            Players[sender.CharID].Target = Mobs[targetId];
+            Players[sender.CharID].NextSkillNumber = 255;
         }
 
         #endregion

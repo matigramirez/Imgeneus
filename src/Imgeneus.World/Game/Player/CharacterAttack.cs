@@ -60,7 +60,12 @@ namespace Imgeneus.World.Game.Player
                     if (!_attackTimer.Enabled)
                     {
                         _attackTimer.Start();
-                        UseSkill(value);
+                        _nextSkillNumber = value;
+
+                        if (_nextSkillNumber == 255)
+                            AutoAttack();
+                        else
+                            UseSkill(_nextSkillNumber);
                     }
                     else
                     {
@@ -87,7 +92,6 @@ namespace Imgeneus.World.Game.Player
         private void UseSkill(int skillNumber)
         {
             SendAttackStart();
-
             _nextSkillNumber = 0;
 
             // TODO: use dictionary here.
@@ -109,14 +113,20 @@ namespace Imgeneus.World.Game.Player
         }
 
         /// <summary>
+        /// Event, that is fired, when character uses auto attack.
+        /// </summary>
+        public event Action<Character, AttackResult> OnAutoAttack;
+
+        /// <summary>
         /// Usual physical attack, "auto attack".
         /// </summary>
-        public AttackResult UsualAttack()
+        private void AutoAttack()
         {
             SendAttackStart();
+            _nextSkillNumber = 0;
 
             Damage damage = new Damage(33, 0, 0);
-            return new AttackResult(AttackSuccess.Normal, damage);
+            OnAutoAttack?.Invoke(this, new AttackResult(AttackSuccess.Normal, damage));
         }
 
         /// <summary>
@@ -126,7 +136,10 @@ namespace Imgeneus.World.Game.Player
         {
             // If there is any pending skill.
             if (_nextSkillNumber != 0)
-                UseSkill(_nextSkillNumber);
+                if (_nextSkillNumber == 255)
+                    AutoAttack();
+                else
+                    UseSkill(_nextSkillNumber);
             else // No pending skill, stop timer.
                 _attackTimer.Stop();
         }

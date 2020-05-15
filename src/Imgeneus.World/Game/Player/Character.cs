@@ -363,7 +363,6 @@ namespace Imgeneus.World.Game.Player
 
         #endregion
 
-
         #region Quick skill bar
 
         /// <summary>

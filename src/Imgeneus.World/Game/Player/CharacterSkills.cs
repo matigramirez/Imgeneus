@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace Imgeneus.World.Game.Player
 {
-    public partial class Character : ITargetable
+    public partial class Character : IKillable
     {
         /// <summary>
         /// Collection of available skills.

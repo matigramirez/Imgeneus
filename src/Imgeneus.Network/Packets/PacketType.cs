@@ -58,8 +58,6 @@
 
         // Attack
         ATTACK_START = 0x0212, // 530
-        CHARACTER_CHARACTER_AUTO_ATTACK = 0x0502, // 1282
-        CHARACTER_MOB_AUTO_ATTACK = 0x0503, // 1283
         SAVEPOS_RESULT = 0x0222, // 546
 
         // Mobs
@@ -73,6 +71,11 @@
         USE_SKILL_LOG = 0x0309, // 777
         USE_CHARACTER_TARGET_SKILL = 0x0511, // 1297
         USE_MOB_TARGET_SKILL = 0x0517, // 1303
+
+        // PvP
+        CHARACTER_CHARACTER_AUTO_ATTACK = 0x0502, // 1282
+        CHARACTER_MOB_AUTO_ATTACK = 0x0503, // 1283
+        CHARACTER_DEATH = 0x0504, // 1284
 
         // GM commands
         GM_COMMAND_GET_ITEM = 0xF702,

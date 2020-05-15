@@ -79,6 +79,7 @@ namespace Imgeneus.World.Game.Zone
                 character.OnAttackOrMoveChanged += Character_OnAttackOrMoveChanged;
                 character.OnUsedSkill += Character_OnUsedSkill;
                 character.OnAutoAttack += Character_OnAutoAttack;
+                character.OnDead += Character_OnDead;
 
                 if (character.IsAdmin)
                 {
@@ -115,6 +116,8 @@ namespace Imgeneus.World.Game.Zone
                 character.OnPartyChanged -= Character_OnPartyChanged;
                 character.OnAttackOrMoveChanged -= Character_OnAttackOrMoveChanged;
                 character.OnUsedSkill -= Character_OnUsedSkill;
+                character.OnAutoAttack -= Character_OnAutoAttack;
+                character.OnDead -= Character_OnDead;
 
                 if (character.IsAdmin)
                 {
@@ -217,7 +220,7 @@ namespace Imgeneus.World.Game.Zone
         /// <summary>
         /// Notifies other players, that player used skill.
         /// </summary>
-        private void Character_OnUsedSkill(Character sender, ITargetable target, Skill skill, AttackResult attackResult)
+        private void Character_OnUsedSkill(Character sender, IKillable target, Skill skill, AttackResult attackResult)
         {
             // Notify all players about used skill.
             foreach (var player in Players)
@@ -234,6 +237,17 @@ namespace Imgeneus.World.Game.Zone
             foreach (var player in Players)
             {
                 _packetHelper.SendCharacterUsualAttack(player.Value.Client, sender, sender.Target, attackResult);
+            }
+        }
+
+        /// <summary>
+        /// Notifies other players, that player is dead.
+        /// </summary>
+        private void Character_OnDead(IKillable sender, IKiller killer)
+        {
+            foreach (var player in Players)
+            {
+                _packetHelper.SendCharacterKilled(player.Value.Client, (Character)sender, killer);
             }
         }
 

@@ -16,7 +16,7 @@ using System.Linq;
 
 namespace Imgeneus.World.Game.Player
 {
-    public partial class Character : ITargetable
+    public partial class Character : IKillable, IKiller
     {
         private readonly ILogger<Character> _logger;
         private readonly IBackgroundTaskQueue _taskQueue;
@@ -75,12 +75,6 @@ namespace Imgeneus.World.Game.Player
         ///  Used to change with Tab in previous episodes.
         /// </summary>
         public byte MoveMotion = 1;
-
-        public bool IsDead;
-
-        public int CurrentHP { get; set; }
-        public int CurrentMP { get; set; }
-        public int CurrentSP { get; set; }
 
         public int MaxHP { get => 100 + ExtraHP; } // TODO: implement max HP. For now let's assume, that 100 for any character + hp from equipment.
         public int MaxMP { get => 50 + ExtraMP; } // TODO: implement max MP.
@@ -165,6 +159,75 @@ namespace Imgeneus.World.Game.Player
 
                 if (Client != null)
                     SendMaxMP();
+            }
+        }
+
+        #endregion
+
+        #region HP & SP & MP
+
+        private bool _isDead;
+
+        /// <summary>
+        /// Indicator, that shows if player is dead or not.
+        /// </summary>
+        public bool IsDead
+        {
+            get => _isDead;
+            private set
+            {
+                _isDead = value;
+
+                if (_isDead)
+                    OnDead?.Invoke(this, MyKiller);
+            }
+        }
+
+        /// <inheritdoc />
+        public event Action<IKillable, IKiller> OnDead;
+
+        /// <inheritdoc />
+        public IKiller MyKiller { get; private set; }
+
+        /// <inheritdoc />
+        public void DecreaseHP(int hp, IKiller damageMaker)
+        {
+            MyKiller = damageMaker;
+            CurrentHP -= hp;
+        }
+
+        private int _currentHP;
+        public int CurrentHP
+        {
+            get => _currentHP;
+            private set
+            {
+                _currentHP = value;
+                if (_currentHP <= 0)
+                {
+                    _currentHP = 0;
+                    IsDead = true;
+                }
+            }
+        }
+
+        private int _currentMP;
+        public int CurrentMP
+        {
+            get => _currentMP;
+            set
+            {
+                _currentMP = value;
+            }
+        }
+
+        private int _currentSP;
+        public int CurrentSP
+        {
+            get => _currentSP;
+            set
+            {
+                _currentSP = value;
             }
         }
 

@@ -37,7 +37,7 @@ namespace Imgeneus.World.Packets
             client.SendPacket(packet);
         }
 
-        internal void SendCharacterUsedSkill(WorldClient client, Character sender, ITargetable target, Skill skill, AttackResult attackResult)
+        internal void SendCharacterUsedSkill(WorldClient client, Character sender, IKillable target, Skill skill, AttackResult attackResult)
         {
             PacketType skillType;
             if (target is Character)
@@ -116,7 +116,7 @@ namespace Imgeneus.World.Packets
             client.SendPacket(packet);
         }
 
-        internal void SendCharacterUsualAttack(WorldClient client, Character sender, ITargetable target, AttackResult attackResult)
+        internal void SendCharacterUsualAttack(WorldClient client, Character sender, IKillable target, AttackResult attackResult)
         {
             PacketType attackType;
             if (target is Character)
@@ -148,6 +148,15 @@ namespace Imgeneus.World.Packets
         {
             using var packet = new Packet(PacketType.CHARACTER_ATTACK_MOVEMENT_SPEED);
             packet.Write(new CharacterAttackAndMovement(sender).Serialize());
+            client.SendPacket(packet);
+        }
+
+        internal void SendCharacterKilled(WorldClient client, Character character, IKiller killer)
+        {
+            using var packet = new Packet(PacketType.CHARACTER_DEATH);
+            packet.Write(character.Id);
+            packet.WriteByte(1); // killer type. 1 - another player.
+            packet.Write(killer.Id);
             client.SendPacket(packet);
         }
     }

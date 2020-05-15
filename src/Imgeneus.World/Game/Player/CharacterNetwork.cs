@@ -220,7 +220,7 @@ namespace Imgeneus.World.Game.Player
 
         private void SendAttackStart() => _packetsHelper.SendAttackStart(Client);
 
-        private void TargetChanged(ITargetable target)
+        private void TargetChanged(IKillable target)
         {
             if (target is Mob)
             {

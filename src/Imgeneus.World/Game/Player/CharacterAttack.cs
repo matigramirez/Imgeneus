@@ -1,13 +1,11 @@
 ﻿using Imgeneus.Database.Constants;
-using Imgeneus.Network.Packets;
 using System;
-using System.Diagnostics;
 using System.Linq;
 using System.Timers;
 
 namespace Imgeneus.World.Game.Player
 {
-    public partial class Character : ITargetable
+    public partial class Character : IKillable
     {
         #region Target
 
@@ -16,8 +14,8 @@ namespace Imgeneus.World.Game.Player
         /// </summary>
         public event Action<Character, int, TargetEntity> OnSeekForTarget;
 
-        private ITargetable _target;
-        public ITargetable Target
+        private IKillable _target;
+        public IKillable Target
         {
             get => _target; set
             {
@@ -78,7 +76,7 @@ namespace Imgeneus.World.Game.Player
         /// <summary>
         /// Event, that is fired, when character uses any skill.
         /// </summary>
-        public Action<Character, ITargetable, Skill, AttackResult> OnUsedSkill;
+        public Action<Character, IKillable, Skill, AttackResult> OnUsedSkill;
 
         /// <summary>
         /// Make character use skill.
@@ -92,18 +90,22 @@ namespace Imgeneus.World.Game.Player
             // TODO: use dictionary here.
             var skill = Skills.First(s => s.Number == skillNumber);
 
-            Damage damage = new Damage(0, 0, 0);
             // TODO: implement use of all skills.
             // For now, just for testing I'm implementing buff to character.
             if (skill.Type == TypeDetail.Buff && (skill.TargetType == TargetType.Caster || skill.TargetType == TargetType.PartyMembers))
             {
                 var buff = AddActiveBuff(skill);
+                var damage = new Damage(0, 0, 0);
                 OnUsedSkill?.Invoke(this, this, skill, new AttackResult(AttackSuccess.Critical, damage));
             }
             else
             {
-                damage = new Damage(100, 50, 20);
-                OnUsedSkill?.Invoke(this, Target, skill, new AttackResult(AttackSuccess.Critical, damage));
+                var result = CalculateDamage(Target, skill);
+                Target.DecreaseHP(result.Damage.HP, this);
+                Target.CurrentSP -= result.Damage.SP;
+                Target.CurrentMP -= result.Damage.MP;
+
+                OnUsedSkill?.Invoke(this, Target, skill, result);
             }
         }
 
@@ -120,8 +122,12 @@ namespace Imgeneus.World.Game.Player
             SendAttackStart();
             _nextSkillNumber = 0;
 
-            Damage damage = new Damage(33, 0, 0);
-            OnAutoAttack?.Invoke(this, new AttackResult(AttackSuccess.Normal, damage));
+            var result = CalculateDamage(Target);
+            Target.DecreaseHP(result.Damage.HP, this);
+            Target.CurrentSP -= result.Damage.SP;
+            Target.CurrentMP -= result.Damage.MP;
+
+            OnAutoAttack?.Invoke(this, result);
         }
 
         /// <summary>
@@ -137,6 +143,23 @@ namespace Imgeneus.World.Game.Player
                     UseSkill(_nextSkillNumber);
             else // No pending skill, stop timer.
                 _attackTimer.Stop();
+        }
+
+        /// <summary>
+        /// Calculates damage based on player stats and target stats.
+        /// </summary>
+        private AttackResult CalculateDamage(IKillable target, Skill skill = null)
+        {
+            if (skill is null)
+            {
+                Damage damage = new Damage(33, 0, 0);
+                return new AttackResult(AttackSuccess.Normal, damage);
+            }
+            else
+            {
+                Damage damage = new Damage(100, 0, 0);
+                return new AttackResult(AttackSuccess.Critical, damage);
+            }
         }
 
         #endregion

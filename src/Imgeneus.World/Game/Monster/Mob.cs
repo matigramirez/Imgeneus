@@ -5,7 +5,7 @@ using System.Timers;
 
 namespace Imgeneus.World.Game.Monster
 {
-    public class Mob : ITargetable
+    public class Mob : IKillable, IKiller
     {
         private readonly ILogger<Mob> _logger;
 
@@ -34,8 +34,34 @@ namespace Imgeneus.World.Game.Monster
             }
         }
 
+        #region IKillable
+
+        /// <inheritdoc />
+        public IKiller MyKiller { get; private set; }
+
+        /// <inheritdoc />
+        public void DecreaseHP(int hp, IKiller damageMaker)
+        {
+            CurrentHP -= hp;
+            MyKiller = damageMaker;
+
+            if (CurrentHP < 0)
+                OnDead?.Invoke(this, MyKiller);
+        }
+
         /// <inheritdoc />
         public int CurrentHP { get; set; }
+
+        /// <inheritdoc />
+        public event Action<IKillable, IKiller> OnDead;
+
+        /// <inheritdoc />
+        public int CurrentSP { get; set; }
+
+        /// <inheritdoc />
+        public int CurrentMP { get; set; }
+
+        #endregion
 
         /// <summary>
         /// Mob id from database.

@@ -10,7 +10,6 @@ using Imgeneus.World.Game.PartyAndRaid;
 using Imgeneus.World.Game.Player;
 using Imgeneus.World.Packets;
 using Microsoft.Extensions.Logging;
-using System;
 using System.Collections.Concurrent;
 using System.Linq;
 
@@ -218,12 +217,12 @@ namespace Imgeneus.World.Game.Zone
         /// <summary>
         /// Notifies other players, that player used skill.
         /// </summary>
-        private void Character_OnUsedSkill(Character sender, Skill skill, AttackResult attackResult)
+        private void Character_OnUsedSkill(Character sender, ITargetable target, Skill skill, AttackResult attackResult)
         {
             // Notify all players about used skill.
             foreach (var player in Players)
             {
-                _packetHelper.SendCharacterUsedSkill(player.Value.Client, sender.SkillPacketType, sender.Id, sender.Target.Id, skill, attackResult);
+                _packetHelper.SendCharacterUsedSkill(player.Value.Client, sender.Id, target.Id, skill, attackResult);
             }
         }
 
@@ -274,10 +273,10 @@ namespace Imgeneus.World.Game.Zone
                     break;
 
                 case UsedSkillAttackPacket usedSkillAttackPacket:
-                    HandleUseSkill(PacketType.USE_ATTACK_SKILL, (WorldClient)sender, usedSkillAttackPacket.Number, usedSkillAttackPacket.TargetId);
+                    HandleUseSkill((WorldClient)sender, usedSkillAttackPacket.Number, usedSkillAttackPacket.TargetId);
                     break;
                 case UsedNonTargetSkillPacket usedNonTargetSkillPacket:
-                    HandleUseSkill(PacketType.USE_NON_TARGET_SKILL, (WorldClient)sender, usedNonTargetSkillPacket.Number, usedNonTargetSkillPacket.TargetId);
+                    HandleUseSkill((WorldClient)sender, usedNonTargetSkillPacket.Number, usedNonTargetSkillPacket.TargetId);
                     break;
             }
         }
@@ -288,11 +287,12 @@ namespace Imgeneus.World.Game.Zone
         /// <param name="sender">world client, client, that used skill</param>
         /// <param name="number">skill number</param>
         /// <param name="targetId">target id</param>
-        private void HandleUseSkill(PacketType packetType, WorldClient sender, byte number, int targetId)
+        private void HandleUseSkill(WorldClient sender, byte number, int targetId)
         {
-            Players[sender.CharID].Target = Mobs[targetId];
+            if (targetId != 0)
+                // TODO: target id can be not only mob id.
+                Players[sender.CharID].Target = Mobs[targetId];
             Players[sender.CharID].NextSkillNumber = number;
-            Players[sender.CharID].SkillPacketType = packetType;
         }
 
         /// <summary>
@@ -302,6 +302,7 @@ namespace Imgeneus.World.Game.Zone
         /// <param name="targetId">target id</param>
         private void HandleAttackPacket(WorldClient sender, int targetId)
         {
+            // TODO: target id can be not only mob id.
             Players[sender.CharID].Target = Mobs[targetId];
             Players[sender.CharID].NextSkillNumber = 255;
         }

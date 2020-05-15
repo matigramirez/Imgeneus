@@ -36,8 +36,18 @@ namespace Imgeneus.World.Packets
             client.SendPacket(packet);
         }
 
-        internal void SendCharacterUsedSkill(WorldClient client, PacketType skillType, int senderId, int targetId, Skill skill, AttackResult attackResult)
+        internal void SendCharacterUsedSkill(WorldClient client, int senderId, int targetId, Skill skill, AttackResult attackResult)
         {
+            PacketType skillType;
+            switch (skill.Type)
+            {
+                case TypeDetail.Buff:
+                    skillType = PacketType.USE_NON_TARGET_SKILL;
+                    break;
+                default:
+                    skillType = PacketType.USE_ATTACK_SKILL;
+                    break;
+            }
             Packet packet = new Packet(skillType);
             packet.Write(new SkillRange(senderId, targetId, skill, attackResult).Serialize());
             client.SendPacket(packet);

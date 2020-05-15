@@ -76,14 +76,9 @@ namespace Imgeneus.World.Game.Player
         }
 
         /// <summary>
-        /// TODO: remove me!
-        /// </summary>
-        public PacketType SkillPacketType;
-
-        /// <summary>
         /// Event, that is fired, when character uses any skill.
         /// </summary>
-        public Action<Character, Skill, AttackResult> OnUsedSkill;
+        public Action<Character, ITargetable, Skill, AttackResult> OnUsedSkill;
 
         /// <summary>
         /// Make character use skill.
@@ -103,13 +98,13 @@ namespace Imgeneus.World.Game.Player
             if (skill.Type == TypeDetail.Buff && (skill.TargetType == TargetType.Caster || skill.TargetType == TargetType.PartyMembers))
             {
                 var buff = AddActiveBuff(skill);
+                OnUsedSkill?.Invoke(this, this, skill, new AttackResult(AttackSuccess.Critical, damage));
             }
             else
             {
                 damage = new Damage(100, 50, 20);
+                OnUsedSkill?.Invoke(this, Target, skill, new AttackResult(AttackSuccess.Critical, damage));
             }
-
-            OnUsedSkill?.Invoke(this, skill, new AttackResult(AttackSuccess.Critical, damage));
         }
 
         /// <summary>

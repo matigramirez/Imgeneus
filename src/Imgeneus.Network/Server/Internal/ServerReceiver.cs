@@ -2,10 +2,8 @@
 using Imgeneus.Network.Packets;
 using System;
 using System.Collections.Concurrent;
-using System.Diagnostics;
 using System.Linq;
 using System.Net.Sockets;
-using System.Threading;
 
 namespace Imgeneus.Network.Server.Internal
 {
@@ -29,8 +27,6 @@ namespace Imgeneus.Network.Server.Internal
             this.ReadPool = new ConcurrentStack<SocketAsyncEventArgs>();
         }
 
-        private object syncObject = new object();
-
         /// <summary>
         /// Receives incoming data.
         /// </summary>
@@ -49,15 +45,27 @@ namespace Imgeneus.Network.Server.Internal
                     return;
                 }
 
-                // I'm not sure why, but sometimes packets are messed up. Maybe it's because async send?
-                // For now I add lock for testing. If it's because of async send, I'll have to add packet queue.
-                lock (syncObject)
-                {
-                    Debug.WriteLine("Thread id:" + Thread.CurrentThread.ManagedThreadId);
-                    var receivedBuffer = new byte[e.BytesTransferred];
-                    Buffer.BlockCopy(e.Buffer, e.Offset, receivedBuffer, 0, e.BytesTransferred);
 
+                var receivedBuffer = new byte[e.BytesTransferred];
+                Buffer.BlockCopy(e.Buffer, e.Offset, receivedBuffer, 0, e.BytesTransferred);
+
+                if (receivedBuffer.Length == BitConverter.ToUInt16(new byte[] { receivedBuffer[0], receivedBuffer[1] }))
+                {
                     DispatchPacket(client, receivedBuffer);
+                }
+                else
+                {
+                    // Case when packets pasted together.
+                    var index = 0;
+                    while (index != receivedBuffer.Length)
+                    {
+                        var length = BitConverter.ToUInt16(new byte[] { receivedBuffer[index], receivedBuffer[index + 1] });
+                        var tempBuffer = new byte[length];
+                        Array.Copy(receivedBuffer, index, tempBuffer, 0, length);
+                        DispatchPacket(client, tempBuffer);
+
+                        index += length;
+                    }
                 }
 
                 if (!client.Socket.ReceiveAsync(e))

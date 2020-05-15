@@ -2,13 +2,13 @@
 
 namespace Imgeneus.Network.Packets.Game
 {
-    public struct UsedNonTargetSkillPacket : IDeserializedPacket
+    public struct MobSkillAttackPacket : IDeserializedPacket
     {
         public byte Number { get; }
 
         public int TargetId { get; }
 
-        public UsedNonTargetSkillPacket(IPacketStream packet)
+        public MobSkillAttackPacket(IPacketStream packet)
         {
             Number = packet.Read<byte>();
             TargetId = packet.Read<int>();

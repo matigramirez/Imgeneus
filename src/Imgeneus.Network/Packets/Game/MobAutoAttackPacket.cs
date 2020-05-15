@@ -2,11 +2,11 @@
 
 namespace Imgeneus.Network.Packets.Game
 {
-    public struct CharacterAttackPacket : IDeserializedPacket
+    public struct MobAutoAttackPacket : IDeserializedPacket
     {
         public int TargetId { get; }
 
-        public CharacterAttackPacket(IPacketStream packet)
+        public MobAutoAttackPacket(IPacketStream packet)
         {
             TargetId = packet.Read<int>();
         }

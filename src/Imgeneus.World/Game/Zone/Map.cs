@@ -222,7 +222,7 @@ namespace Imgeneus.World.Game.Zone
             // Notify all players about used skill.
             foreach (var player in Players)
             {
-                _packetHelper.SendCharacterUsedSkill(player.Value.Client, sender.Id, target.Id, skill, attackResult);
+                _packetHelper.SendCharacterUsedSkill(player.Value.Client, sender, target, skill, attackResult);
             }
         }
 
@@ -233,7 +233,7 @@ namespace Imgeneus.World.Game.Zone
         {
             foreach (var player in Players)
             {
-                _packetHelper.SendCharacterUsualAttack(player.Value.Client, sender.Id, sender.Target.Id, attackResult);
+                _packetHelper.SendCharacterUsualAttack(player.Value.Client, sender, sender.Target, attackResult);
             }
         }
 
@@ -262,59 +262,75 @@ namespace Imgeneus.World.Game.Zone
                     }
                     break;
 
-                case CharacterAttackPacket attackPacket:
-                    HandleAttackPacket((WorldClient)sender, attackPacket.TargetId);
-                    break;
-
                 case AttackStart attackStartPacket:
                     // Not sure, but maybe I should not permit any attack start?
                     // Maybe I need to move it to character?
                     sender.SendPacket(new Packet(PacketType.ATTACK_START));
                     break;
 
-                case UsedSkillAttackPacket usedSkillAttackPacket:
-                    HandleUseSkill((WorldClient)sender, usedSkillAttackPacket.Number, usedSkillAttackPacket.TargetId);
+                case MobAutoAttackPacket attackPacket:
+                    HandleAutoAttackOnMob((WorldClient)sender, attackPacket.TargetId);
                     break;
-                case UsedNonTargetSkillPacket usedNonTargetSkillPacket:
-                    HandleUseSkill((WorldClient)sender, usedNonTargetSkillPacket.Number, usedNonTargetSkillPacket.TargetId);
+
+                case CharacterAutoAttackPacket attackPacket:
+                    HandleAutoAttackOnPlayer((WorldClient)sender, attackPacket.TargetId);
+                    break;
+
+                case MobSkillAttackPacket usedSkillMobAttackPacket:
+                    HandleUseSkillOnMob((WorldClient)sender, usedSkillMobAttackPacket.Number, usedSkillMobAttackPacket.TargetId);
+                    break;
+                case CharacterSkillAttackPacket usedSkillPlayerAttackPacket:
+                    HandleUseSkillOnPlayer((WorldClient)sender, usedSkillPlayerAttackPacket.Number, usedSkillPlayerAttackPacket.TargetId);
                     break;
             }
         }
 
         /// <summary>
-        /// Handles use skill packets.
+        /// Handles use skill packets on mob.
         /// </summary>
         /// <param name="sender">world client, client, that used skill</param>
         /// <param name="number">skill number</param>
         /// <param name="targetId">target id</param>
-        private void HandleUseSkill(WorldClient sender, byte number, int targetId)
+        private void HandleUseSkillOnMob(WorldClient sender, byte number, int targetId)
+        {
+            Players[sender.CharID].Target = Mobs[targetId];
+            Players[sender.CharID].NextSkillNumber = number;
+        }
+
+        /// <summary>
+        /// Handles use skill packets on another player.
+        /// </summary>
+        /// <param name="sender">world client, client, that used skill</param>
+        /// <param name="number">skill number</param>
+        /// <param name="targetId">target id</param>
+        private void HandleUseSkillOnPlayer(WorldClient sender, byte number, int targetId)
         {
             if (targetId != 0)
-            {
-                if (targetId < MIN_MOB_ID)
-                    Players[sender.CharID].Target = Players[targetId];
-                else
-                    Players[sender.CharID].Target = Mobs[targetId];
-            }
+                Players[sender.CharID].Target = Players[targetId];
 
             Players[sender.CharID].NextSkillNumber = number;
         }
 
         /// <summary>
-        /// Handles usual(auto) attack.
+        /// Handles usual(auto) attack on mob.
         /// </summary>
         /// <param name="sender">world client, client, that attacks</param>
         /// <param name="targetId">target id</param>
-        private void HandleAttackPacket(WorldClient sender, int targetId)
+        private void HandleAutoAttackOnMob(WorldClient sender, int targetId)
+        {
+            Players[sender.CharID].Target = Mobs[targetId];
+            Players[sender.CharID].NextSkillNumber = 255;
+        }
+
+        /// <summary>
+        /// Handles usual(auto) attack on player.
+        /// </summary>
+        /// <param name="sender">world client, client, that attacks</param>
+        /// <param name="targetId">target id</param>
+        private void HandleAutoAttackOnPlayer(WorldClient sender, int targetId)
         {
             if (targetId != 0)
-            {
-                if (targetId < MIN_MOB_ID)
-                    Players[sender.CharID].Target = Players[targetId];
-                else
-                    Players[sender.CharID].Target = Mobs[targetId];
-            }
-
+                Players[sender.CharID].Target = Players[targetId];
             Players[sender.CharID].NextSkillNumber = 255;
         }
 
@@ -322,11 +338,7 @@ namespace Imgeneus.World.Game.Zone
 
         #region Mobs
 
-        private const int MIN_MOB_ID = 1073741824;
-
-        // I'm not sure, what is the right approach to handle target id, because target id can be both player id and mob id.
-        // For now, I make mob id quite big to distinguish if it's a mob in target or player in the target.
-        private int _currentGlobalMobId = MIN_MOB_ID; // Half of int max value.
+        private int _currentGlobalMobId;
         private readonly object _currentGlobalMobIdMutex = new object();
 
         /// <summary>

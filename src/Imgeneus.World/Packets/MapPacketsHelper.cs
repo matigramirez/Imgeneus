@@ -2,6 +2,7 @@
 using Imgeneus.Database.Constants;
 using Imgeneus.Network.Data;
 using Imgeneus.Network.Packets;
+using Imgeneus.World.Game;
 using Imgeneus.World.Game.Monster;
 using Imgeneus.World.Game.PartyAndRaid;
 using Imgeneus.World.Game.Player;
@@ -36,20 +37,24 @@ namespace Imgeneus.World.Packets
             client.SendPacket(packet);
         }
 
-        internal void SendCharacterUsedSkill(WorldClient client, int senderId, int targetId, Skill skill, AttackResult attackResult)
+        internal void SendCharacterUsedSkill(WorldClient client, Character sender, ITargetable target, Skill skill, AttackResult attackResult)
         {
             PacketType skillType;
-            switch (skill.Type)
+            if (target is Character)
             {
-                case TypeDetail.Buff:
-                    skillType = PacketType.USE_NON_TARGET_SKILL;
-                    break;
-                default:
-                    skillType = PacketType.USE_ATTACK_SKILL;
-                    break;
+                skillType = PacketType.USE_CHARACTER_TARGET_SKILL;
             }
+            else if (target is Mob)
+            {
+                skillType = PacketType.USE_MOB_TARGET_SKILL;
+            }
+            else
+            {
+                skillType = PacketType.USE_CHARACTER_TARGET_SKILL;
+            }
+
             Packet packet = new Packet(skillType);
-            packet.Write(new SkillRange(senderId, targetId, skill, attackResult).Serialize());
+            packet.Write(new SkillRange(sender.Id, target.Id, skill, attackResult).Serialize());
             client.SendPacket(packet);
             packet.Dispose();
         }
@@ -111,10 +116,23 @@ namespace Imgeneus.World.Packets
             client.SendPacket(packet);
         }
 
-        internal void SendCharacterUsualAttack(WorldClient client, int charId, int targetId, AttackResult attackResult)
+        internal void SendCharacterUsualAttack(WorldClient client, Character sender, ITargetable target, AttackResult attackResult)
         {
-            using var packet = new Packet(PacketType.CHARACTER_ATTACK);
-            packet.Write(new UsualAttack(charId, targetId, attackResult).Serialize());
+            PacketType attackType;
+            if (target is Character)
+            {
+                attackType = PacketType.CHARACTER_CHARACTER_AUTO_ATTACK;
+            }
+            else if (target is Mob)
+            {
+                attackType = PacketType.CHARACTER_MOB_AUTO_ATTACK;
+            }
+            else
+            {
+                attackType = PacketType.CHARACTER_CHARACTER_AUTO_ATTACK;
+            }
+            using var packet = new Packet(attackType);
+            packet.Write(new UsualAttack(sender.Id, target.Id, attackResult).Serialize());
             client.SendPacket(packet);
         }
 

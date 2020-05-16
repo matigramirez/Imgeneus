@@ -321,6 +321,8 @@ namespace Imgeneus.World.Game.Zone
         {
             if (targetId != 0)
                 Players[sender.CharID].Target = Players[targetId];
+            else
+                Players[sender.CharID].Target = Players[sender.CharID];
 
             Players[sender.CharID].NextSkillNumber = number;
         }
@@ -343,8 +345,7 @@ namespace Imgeneus.World.Game.Zone
         /// <param name="targetId">target id</param>
         private void HandleAutoAttackOnPlayer(WorldClient sender, int targetId)
         {
-            if (targetId != 0)
-                Players[sender.CharID].Target = Players[targetId];
+            Players[sender.CharID].Target = Players[targetId];
             Players[sender.CharID].NextSkillNumber = 255;
         }
 

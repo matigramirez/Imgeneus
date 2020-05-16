@@ -56,10 +56,17 @@ namespace Imgeneus.World.Packets
             client.SendPacket(packet);
         }
 
-        internal void SendNewActiveBuff(WorldClient client, ActiveBuff buff)
+        internal void SendAddBuff(WorldClient client, ActiveBuff buff)
         {
-            using var packet = new Packet(PacketType.BUFF_SELF);
+            using var packet = new Packet(PacketType.BUFF_ADD);
             packet.Write(new SerializedActiveBuff(buff).Serialize());
+            client.SendPacket(packet);
+        }
+
+        internal void SendRemoveBuff(WorldClient client, ActiveBuff buff)
+        {
+            using var packet = new Packet(PacketType.BUFF_REMOVE);
+            packet.Write(buff.Id);
             client.SendPacket(packet);
         }
 

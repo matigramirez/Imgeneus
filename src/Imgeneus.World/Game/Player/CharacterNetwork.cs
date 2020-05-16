@@ -206,7 +206,9 @@ namespace Imgeneus.World.Game.Player
 
         private void SendActiveBuffs() => _packetsHelper.SendActiveBuffs(Client, ActiveBuffs);
 
-        private void SendGetBuff(ActiveBuff buff) => _packetsHelper.SendNewActiveBuff(Client, buff);
+        private void SendAddBuff(ActiveBuff buff) => _packetsHelper.SendAddBuff(Client, buff);
+
+        private void SendRemoveBuff(ActiveBuff buff) => _packetsHelper.SendRemoveBuff(Client, buff);
 
         private void SendSkillBar() => _packetsHelper.SendSkillBar(Client, QuickItems);
 
@@ -269,22 +271,6 @@ namespace Imgeneus.World.Game.Player
 
                 if (Client != null)
                     _packetsHelper.SendLearnedNewSkill(Client, (Skill)e.NewItems[0]);
-            }
-        }
-
-
-        private void ActiveBuffs_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            if (e.Action == NotifyCollectionChangedAction.Add)
-            {
-                // Case, when we are starting up and all skills are added with AddRange call.
-                if (e.NewItems.Count != 1)
-                {
-                    return;
-                }
-
-                if (Client != null) // check for tests.
-                    SendGetBuff((ActiveBuff)e.NewItems[0]);
             }
         }
 

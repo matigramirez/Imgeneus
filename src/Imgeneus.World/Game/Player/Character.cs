@@ -323,68 +323,6 @@ namespace Imgeneus.World.Game.Player
 
         #endregion
 
-        #region Buffs
-
-        /// <summary>
-        /// Active buffs, that increase character characteristic, attack, defense etc.
-        /// Don't update it directly, use instead "AddActiveBuff".
-        /// </summary>
-        public ObservableRangeCollection<ActiveBuff> ActiveBuffs { get; private set; } = new ObservableRangeCollection<ActiveBuff>();
-
-        /// <summary>
-        /// Updates collection of active buffs. Also writes changes to database.
-        /// </summary>
-        /// <param name="skill">skill, that client sends</param>
-        /// <returns>Newly added or updated active buff</returns>
-        public ActiveBuff AddActiveBuff(Skill skill)
-        {
-            var resetTime = DateTime.UtcNow.AddSeconds(skill.KeepTime);
-            var buff = ActiveBuffs.FirstOrDefault(b => b.SkillId == skill.SkillId);
-            if (buff != null) // We already have such buff. Try to update reset time.
-            {
-                if (buff.SkillLevel > skill.SkillLevel)
-                {
-                    // Do nothing, if character already has higher lvl buff.
-                    return buff;
-                }
-                else
-                {
-                    // If bufs are the same level, we should only update reset time.
-                    if (buff.SkillLevel == skill.SkillLevel)
-                    {
-                        _taskQueue.Enqueue(ActionType.UPDATE_BUFF_RESET_TIME,
-                                           Id, skill.SkillId, skill.SkillLevel, resetTime);
-
-                        buff.ResetTime = resetTime;
-
-                        // Send update of buff.
-                        if (Client != null)
-                            SendGetBuff(buff);
-
-                        _logger.LogDebug($"Character {Id} got buff {buff.SkillId} of level {buff.SkillLevel}. Buff will be active next {buff.CountDownInSeconds} seconds");
-                    }
-                }
-            }
-            else
-            {
-                // It's a new buff, add it to database.
-                _taskQueue.Enqueue(ActionType.SAVE_BUFF,
-                                   Id, skill.SkillId, skill.SkillLevel, resetTime);
-                buff = new ActiveBuff()
-                {
-                    SkillId = skill.SkillId,
-                    SkillLevel = skill.SkillLevel,
-                    ResetTime = resetTime
-                };
-                ActiveBuffs.Add(buff);
-                _logger.LogDebug($"Character {Id} got buff {buff.SkillId} of level {buff.SkillLevel}. Buff will be active next {buff.CountDownInSeconds} seconds");
-            }
-
-            return buff;
-        }
-
-        #endregion
-
         #region Move
 
         /// <summary>

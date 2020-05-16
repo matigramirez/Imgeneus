@@ -61,6 +61,9 @@ namespace Imgeneus.World.Game.Monster
         /// <inheritdoc />
         public int CurrentMP { get; set; }
 
+        /// <inheritdoc />
+        public bool IsDead => false;
+
         #endregion
 
         /// <summary>

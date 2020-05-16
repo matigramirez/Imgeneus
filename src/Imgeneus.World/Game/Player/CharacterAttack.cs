@@ -54,7 +54,17 @@ namespace Imgeneus.World.Game.Player
             {
                 lock (syncObject)
                 {
+                    // First, check if target is not yet dead.
+                    if (Target.IsDead)
+                    {
+                        if (value == 255)
+                            SendAutoAttackWrongTarget(Target);
+                        else
+                            SendSkillWrongTarget(Target, Skills.First(s => s.Number == value));
+                        return;
+                    }
 
+                    // If timer is not running, this means player just started attacking.
                     if (!_attackTimer.Enabled)
                     {
                         _attackTimer.Start();
@@ -65,6 +75,7 @@ namespace Imgeneus.World.Game.Player
                         else
                             UseSkill(_nextSkillNumber);
                     }
+                    // Set the next skill number and wait until timer calls it.
                     else
                     {
                         _nextSkillNumber = value;
@@ -100,6 +111,11 @@ namespace Imgeneus.World.Game.Player
             }
             else
             {
+                if (Target.IsDead)
+                {
+                    return;
+                }
+
                 var result = CalculateDamage(Target, skill);
                 Target.DecreaseHP(result.Damage.HP, this);
                 Target.CurrentSP -= result.Damage.SP;
@@ -119,6 +135,11 @@ namespace Imgeneus.World.Game.Player
         /// </summary>
         private void AutoAttack()
         {
+            if (Target.IsDead)
+            {
+                return;
+            }
+
             SendAttackStart();
             _nextSkillNumber = 0;
 

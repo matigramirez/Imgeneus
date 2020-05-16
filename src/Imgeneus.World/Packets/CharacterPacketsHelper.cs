@@ -5,8 +5,8 @@ using Imgeneus.Database.Entities;
 using Imgeneus.Network.Data;
 using Imgeneus.Network.Packets;
 using Imgeneus.Network.Serialization;
+using Imgeneus.World.Game;
 using Imgeneus.World.Game.Monster;
-using Imgeneus.World.Game.PartyAndRaid;
 using Imgeneus.World.Game.Player;
 using Imgeneus.World.Serialization;
 
@@ -148,6 +148,40 @@ namespace Imgeneus.World.Packets
         internal void SendAttackStart(WorldClient client)
         {
             using var packet = new Packet(PacketType.ATTACK_START);
+            client.SendPacket(packet);
+        }
+
+        internal void SendAutoAttackWrongTarget(WorldClient client, Character sender, IKillable target)
+        {
+            PacketType type;
+            if (target is Character)
+            {
+                type = PacketType.CHARACTER_CHARACTER_AUTO_ATTACK;
+            }
+            else
+            {
+                type = PacketType.CHARACTER_MOB_AUTO_ATTACK;
+            }
+
+            using var packet = new Packet(type);
+            packet.Write(new UsualAttack(sender.Id, 0, new AttackResult() { Success = AttackSuccess.Error }).Serialize());
+            client.SendPacket(packet);
+        }
+
+        internal void SendSkillWrongTarget(WorldClient client, Character sender, Skill skill, IKillable target)
+        {
+            PacketType type;
+            if (target is Character)
+            {
+                type = PacketType.USE_CHARACTER_TARGET_SKILL;
+            }
+            else
+            {
+                type = PacketType.USE_MOB_TARGET_SKILL;
+            }
+
+            using var packet = new Packet(type);
+            packet.Write(new SkillRange(sender.Id, 0, skill, new AttackResult() { Success = AttackSuccess.Error }).Serialize());
             client.SendPacket(packet);
         }
     }

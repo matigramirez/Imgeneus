@@ -168,9 +168,7 @@ namespace Imgeneus.World.Game.Player
 
         private bool _isDead;
 
-        /// <summary>
-        /// Indicator, that shows if player is dead or not.
-        /// </summary>
+        /// <inheritdoc />
         public bool IsDead
         {
             get => _isDead;

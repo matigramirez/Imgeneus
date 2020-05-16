@@ -24,8 +24,9 @@
 
     public enum AttackSuccess : byte
     {
-        Normal,
-        Critical,
-        Miss
+        Normal = 0,
+        Critical = 1,
+        Miss = 2,
+        Error = 11
     }
 }

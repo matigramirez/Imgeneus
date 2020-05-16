@@ -220,6 +220,10 @@ namespace Imgeneus.World.Game.Player
 
         private void SendAttackStart() => _packetsHelper.SendAttackStart(Client);
 
+        private void SendAutoAttackWrongTarget(IKillable target) => _packetsHelper.SendAutoAttackWrongTarget(Client, this, target);
+
+        private void SendSkillWrongTarget(IKillable target, Skill skill) => _packetsHelper.SendSkillWrongTarget(Client, this, skill, target);
+
         private void TargetChanged(IKillable target)
         {
             if (target is Mob)

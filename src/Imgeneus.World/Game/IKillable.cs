@@ -42,8 +42,13 @@ namespace Imgeneus.World.Game
         public IKiller MyKiller { get; }
 
         /// <summary>
+        /// Indicator, that shows if entity is dead or not.
+        /// </summary>
+        public bool IsDead { get; }
+
+        /// <summary>
         /// Event, that is fired, when entity is killed.
         /// </summary>
-        event Action<IKillable, IKiller> OnDead;
+        public event Action<IKillable, IKiller> OnDead;
     }
 }

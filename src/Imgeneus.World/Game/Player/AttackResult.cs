@@ -27,6 +27,8 @@
         Normal = 0,
         Critical = 1,
         Miss = 2,
+        Unknown = 3,
+        SuccessBuff = 4,
         Error = 11
     }
 }

@@ -85,11 +85,6 @@ namespace Imgeneus.World.Game.Player
         }
 
         /// <summary>
-        /// Event, that is fired, when character uses any skill.
-        /// </summary>
-        public Action<Character, IKillable, Skill, AttackResult> OnUsedSkill;
-
-        /// <summary>
         /// Make character use skill.
         /// </summary>
         /// <param name="skillNumber">unique number of skill; unique is per character(maybe?)</param>
@@ -101,27 +96,14 @@ namespace Imgeneus.World.Game.Player
             // TODO: use dictionary here.
             var skill = Skills.First(s => s.Number == skillNumber);
 
-            // TODO: implement use of all skills.
-            // For now, just for testing I'm implementing buff to character.
-            if (skill.Type == TypeDetail.Buff && (skill.TargetType == TargetType.Caster || skill.TargetType == TargetType.PartyMembers))
+            switch (skill.Type)
             {
-                var buff = AddActiveBuff(skill);
-                var damage = new Damage(0, 0, 0);
-                OnUsedSkill?.Invoke(this, this, skill, new AttackResult(AttackSuccess.Critical, damage));
-            }
-            else
-            {
-                if (Target.IsDead)
-                {
-                    return;
-                }
-
-                var result = CalculateDamage(Target, skill);
-                Target.DecreaseHP(result.Damage.HP, this);
-                Target.CurrentSP -= result.Damage.SP;
-                Target.CurrentMP -= result.Damage.MP;
-
-                OnUsedSkill?.Invoke(this, Target, skill, result);
+                case TypeDetail.Buff:
+                    UsedBuffSkill(skill);
+                    break;
+                default:
+                    UsedAttackSkill(skill);
+                    break;
             }
         }
 

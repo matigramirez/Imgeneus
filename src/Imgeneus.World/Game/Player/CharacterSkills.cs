@@ -1,6 +1,8 @@
-﻿using Imgeneus.DatabaseBackgroundService.Handlers;
+﻿using Imgeneus.Database.Constants;
+using Imgeneus.DatabaseBackgroundService.Handlers;
 using Microsoft.Extensions.Logging;
 using MvvmHelpers;
+using System;
 using System.Linq;
 
 namespace Imgeneus.World.Game.Player
@@ -11,6 +13,16 @@ namespace Imgeneus.World.Game.Player
         /// Collection of available skills.
         /// </summary>
         public ObservableRangeCollection<Skill> Skills { get; private set; } = new ObservableRangeCollection<Skill>();
+
+        /// <summary>
+        /// Event, that is fired, when character uses any skill.
+        /// </summary>
+        public event Action<Character, IKillable, Skill, AttackResult> OnUsedSkill;
+
+        /// <summary>
+        /// Event, that is fired, when character adds some buff to another character.
+        /// </summary>
+        public event Action<Character, IKillable, ActiveBuff> OnAddedBuffToAnotherCharacter;
 
         /// <summary>
         /// Player learns new skill.
@@ -84,6 +96,61 @@ namespace Imgeneus.World.Game.Player
             };
             Skills.Add(skill);
             _logger.LogDebug($"Character {Id} learned skill {skill.SkillId} of level {skill.SkillLevel}");
+        }
+
+        /// <summary>
+        /// Process use of buff skill.
+        /// </summary>
+        /// <param name="skill">buff skill</param>
+        private void UsedBuffSkill(Skill skill)
+        {
+            ActiveBuff buff;
+
+            switch (skill.TargetType)
+            {
+                case TargetType.Caster:
+                    buff = AddActiveBuff(skill);
+                    OnAddedBuffToAnotherCharacter?.Invoke(this, this, buff);
+                    break;
+
+                case TargetType.PartyMembers:
+                    buff = AddActiveBuff(skill);
+                    OnAddedBuffToAnotherCharacter?.Invoke(this, this, buff);
+
+                    if (Party != null)
+                    {
+                        foreach (var member in Party.Members)
+                        {
+                            buff = member.AddActiveBuff(skill);
+                            OnAddedBuffToAnotherCharacter?.Invoke(this, member, buff);
+                        }
+                    }
+                    break;
+
+                default:
+                    throw new NotImplementedException("Not implemented skill target.");
+            }
+
+            OnUsedSkill?.Invoke(this, this, skill, new AttackResult(AttackSuccess.SuccessBuff, new Damage(0, 0, 0)));
+        }
+
+        /// <summary>
+        ///  Process use of attack skill.
+        /// </summary>
+        /// <param name="skill">attack skill</param>
+        private void UsedAttackSkill(Skill skill)
+        {
+            if (Target.IsDead)
+            {
+                return;
+            }
+
+            var result = CalculateDamage(Target, skill);
+            Target.DecreaseHP(result.Damage.HP, this);
+            Target.CurrentSP -= result.Damage.SP;
+            Target.CurrentMP -= result.Damage.MP;
+
+            OnUsedSkill?.Invoke(this, Target, skill, result);
         }
     }
 }

@@ -75,6 +75,8 @@ namespace Imgeneus.World.Game.PartyAndRaid
             if (Members.Count == 1)
                 Leader = newPartyMember;
 
+            newPartyMember.OnBuffAdded += Member_OnAddedBuff;
+
             // Notify others, that new party member joined.
             foreach (var member in Members.Where(m => m != newPartyMember))
             {
@@ -82,6 +84,19 @@ namespace Imgeneus.World.Game.PartyAndRaid
             }
 
             return true;
+        }
+
+        /// <summary>
+        /// Notifies party member, that member got new buff.
+        /// </summary>
+        /// <param name="sender">buff sender</param>
+        /// <param name="buff">buff, that he got</param>
+        private void Member_OnAddedBuff(Character sender, ActiveBuff buff)
+        {
+            foreach (var member in Members.Where(m => m != sender))
+            {
+                SendAddBuff(member.Client, sender.Id, buff.SkillId, buff.SkillLevel);
+            }
         }
 
         /// <summary>
@@ -94,6 +109,7 @@ namespace Imgeneus.World.Game.PartyAndRaid
                 SendPlayerLeftParty(member.Client, leftPartyMember);
             }
 
+            leftPartyMember.OnBuffAdded -= Member_OnAddedBuff;
             RemoveMember(leftPartyMember);
         }
 
@@ -173,6 +189,15 @@ namespace Imgeneus.World.Game.PartyAndRaid
         {
             using var packet = new Packet(PacketType.PARTY_CHANGE_LEADER);
             packet.Write(character.Id);
+            client.SendPacket(packet);
+        }
+
+        private void SendAddBuff(WorldClient client, int senderId, ushort skillId, byte skillLevel)
+        {
+            using var packet = new Packet(PacketType.PARTY_ADDED_BUFF);
+            packet.Write(senderId);
+            packet.Write(skillId);
+            packet.Write(skillLevel);
             client.SendPacket(packet);
         }
 

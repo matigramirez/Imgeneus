@@ -159,5 +159,16 @@ namespace Imgeneus.World.Packets
             packet.Write(killer.Id);
             client.SendPacket(packet);
         }
+
+        internal void SendCharacterAddedBuff(WorldClient client, Character sender, IKillable receiver, ActiveBuff buff)
+        {
+            using var packet = new Packet(PacketType.CHARACTER_ADDED_BUFF);
+            packet.Write(false); // IsFailed?
+            packet.Write(sender.Id);
+            packet.Write(receiver.Id);
+            packet.Write(buff.SkillId);
+            packet.Write(buff.SkillLevel);
+            client.SendPacket(packet);
+        }
     }
 }

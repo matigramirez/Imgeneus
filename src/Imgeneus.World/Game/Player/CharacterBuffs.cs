@@ -17,6 +17,16 @@ namespace Imgeneus.World.Game.Player
         public ObservableRangeCollection<ActiveBuff> ActiveBuffs { get; private set; } = new ObservableRangeCollection<ActiveBuff>();
 
         /// <summary>
+        /// Event, that is fired, when player gets new buff.
+        /// </summary>
+        public event Action<Character, ActiveBuff> OnBuffAdded;
+
+        /// <summary>
+        /// Event, that is fired, when player lose buff.
+        /// </summary>
+        public event Action<Character, ActiveBuff> OnBuffRemoved;
+
+        /// <summary>
         /// Fired, when new buff added or old deleted.
         /// </summary>
         /// <param name="sender"></param>
@@ -38,12 +48,14 @@ namespace Imgeneus.World.Game.Player
 
                 if (Client != null) // check for tests.
                     SendAddBuff((ActiveBuff)e.NewItems[0]);
+                OnBuffAdded?.Invoke(this, (ActiveBuff)e.NewItems[0]);
             }
 
             if (e.Action == NotifyCollectionChangedAction.Remove)
             {
                 if (Client != null)
                     SendRemoveBuff((ActiveBuff)e.OldItems[0]);
+                OnBuffRemoved?.Invoke(this, (ActiveBuff)e.OldItems[0]);
             }
         }
 

@@ -23,14 +23,14 @@ namespace Imgeneus.World.Test
         {
             SkillId = 1,
             SkillLevel = 1,
-            KeepTime = 100
+            KeepTime = 3000 // 3 sec
         };
 
         private DbSkill skill1_level2 = new DbSkill()
         {
             SkillId = 1,
             SkillLevel = 2,
-            KeepTime = 100
+            KeepTime = 5000 // 5 sec
         };
 
         public CharacterBuffsTest()
@@ -96,9 +96,9 @@ namespace Imgeneus.World.Test
                 SkillLevel = skill1_level2.SkillLevel,
                 KeepTime = skill1_level1.KeepTime
             };
+
             character.AddActiveBuff(skill);
-            var oldReselTime = DateTime.UtcNow;
-            character.ActiveBuffs[0].ResetTime = oldReselTime;
+            var oldReselTime = character.ActiveBuffs[0].ResetTime;
 
             character.AddActiveBuff(skill);
             Assert.True(character.ActiveBuffs[0].ResetTime > oldReselTime && character.ActiveBuffs[0].ResetTime != oldReselTime);

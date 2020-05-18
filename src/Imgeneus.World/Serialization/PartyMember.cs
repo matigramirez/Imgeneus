@@ -55,7 +55,7 @@ namespace Imgeneus.World.Serialization
 
         [FieldOrder(15)]
         [FieldCount(nameof(BuffsCount))]
-        public List<SerializedActiveBuff> Buffs { get; }
+        public List<PartyMemberBuff> Buffs { get; } = new List<PartyMemberBuff>();
 
         public PartyMember(Character character)
         {
@@ -79,6 +79,10 @@ namespace Imgeneus.World.Serialization
                 Name[i] = (byte)chars[i];
             }
 
+            foreach (var buff in character.ActiveBuffs)
+            {
+                Buffs.Add(new PartyMemberBuff(buff));
+            }
         }
 
     }

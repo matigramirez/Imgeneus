@@ -323,6 +323,13 @@ namespace Imgeneus.World.Game.Zone
                 case CharacterSkillAttackPacket usedSkillPlayerAttackPacket:
                     HandleUseSkillOnPlayer((WorldClient)sender, usedSkillPlayerAttackPacket.Number, usedSkillPlayerAttackPacket.TargetId);
                     break;
+
+                case TargetCharacterGetBuffs targetCharacterGetBuffsPacket:
+                    HandleGetCharacterBuffs((WorldClient)sender, targetCharacterGetBuffsPacket.TargetId);
+                    break;
+                case TargetMobGetBuffs targetMobGetBuffsPacket:
+                    HandleGetMobBuffs((WorldClient)sender, targetMobGetBuffsPacket.TargetId);
+                    break;
             }
         }
 
@@ -374,6 +381,24 @@ namespace Imgeneus.World.Game.Zone
         {
             Players[sender.CharID].Target = Players[targetId];
             Players[sender.CharID].NextSkillNumber = 255;
+        }
+
+        /// <summary>
+        /// Gets selected character buffs.
+        /// </summary>
+        private void HandleGetCharacterBuffs(WorldClient client, int targetId)
+        {
+            var target = Players[targetId];
+            _packetHelper.SendCharacterBuffs(client, target);
+        }
+
+        /// <summary>
+        /// Gets selected mob buffs.
+        /// </summary>
+        private void HandleGetMobBuffs(WorldClient client, int targetId)
+        {
+            var target = Mobs[targetId];
+            _packetHelper.SendMobBuffs(client, target);
         }
 
         #endregion

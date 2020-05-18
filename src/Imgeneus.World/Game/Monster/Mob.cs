@@ -1,5 +1,7 @@
 ﻿using Imgeneus.Database.Entities;
+using Imgeneus.World.Game.Player;
 using Microsoft.Extensions.Logging;
+using MvvmHelpers;
 using System;
 using System.Timers;
 
@@ -63,6 +65,9 @@ namespace Imgeneus.World.Game.Monster
 
         /// <inheritdoc />
         public bool IsDead => false;
+
+        /// <inheritdoc />
+        public ObservableRangeCollection<ActiveBuff> ActiveBuffs { get; } = new ObservableRangeCollection<ActiveBuff>();
 
         #endregion
 

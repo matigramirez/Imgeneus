@@ -48,8 +48,8 @@
         CHARACTER_CURRENT_HITPOINTS = 0x0521, // 1313
         CHARACTER_MAX_HITPOINTS = 0x050B, // 1291
         CHARACTER_ABSORPTION_DAMAGE = 0x0525, // 1317
-        TARGET_SELECT_MOB = 0x0305, // 773
-        TARGET_SELECT_CHARACTER = 0x302, // 770
+
+
         BUFF_RAID = 0x0C0E, // 3086
         BLESS_AMOUNT = 0x0211,
 
@@ -59,13 +59,20 @@
 
         // Mobs
         MOB_ENTER = 0x0601, // 1537
-        MOB_GET_STATE = 0x0304, // 772
+
         MOB_MOVE = 0x0603, // 1539
         MOB_ATTACK = 0x605, // 1541
 
         // Char skills
         LEARN_NEW_SKILL = 0x209,
-        USE_SKILL_LOG = 0x0309, // 777
+
+        // Target
+        TARGET_SELECT_CHARACTER = 0x0302, // 770
+        TARGET_MOB_GET_STATE = 0x0304, // 772
+        TARGET_SELECT_MOB = 0x0305, // 773
+        TARGET_GET_CHARACTER_BUFFS = 0x0308, // 776
+        TARGET_GET_MOB_BUFFS = 0x0309, // 777
+        TARGET_CHARACTER_BUFFS = 0x030B, // 779
 
         // PvP
         CHARACTER_MOVE = 0x0501, // 1281

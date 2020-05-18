@@ -1,4 +1,8 @@
-﻿using System;
+﻿using Imgeneus.World.Game.Player;
+using MvvmHelpers;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace Imgeneus.World.Game
 {
@@ -50,5 +54,10 @@ namespace Imgeneus.World.Game
         /// Event, that is fired, when entity is killed.
         /// </summary>
         public event Action<IKillable, IKiller> OnDead;
+
+        /// <summary>
+        /// Collection of current applied buffs.
+        /// </summary>
+        public ObservableRangeCollection<ActiveBuff> ActiveBuffs { get; }
     }
 }

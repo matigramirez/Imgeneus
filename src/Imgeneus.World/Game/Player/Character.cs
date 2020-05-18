@@ -9,7 +9,6 @@ using Imgeneus.World.Game.PartyAndRaid;
 using Imgeneus.World.Game.Trade;
 using Imgeneus.World.Packets;
 using Microsoft.Extensions.Logging;
-using MvvmHelpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;

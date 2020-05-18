@@ -110,6 +110,8 @@ namespace Imgeneus.World
             { PacketType.USE_CHARACTER_TARGET_SKILL, (s) => new CharacterSkillAttackPacket(s) },
             { PacketType.TARGET_SELECT_MOB, (s) => new MobInTargetPacket(s) },
             { PacketType.TARGET_SELECT_CHARACTER, (s) => new PlayerInTargetPacket(s) },
+            { PacketType.TARGET_GET_CHARACTER_BUFFS, (s) => new TargetCharacterGetBuffs(s) },
+            { PacketType.TARGET_GET_MOB_BUFFS, (s) => new TargetMobGetBuffs(s) },
             { PacketType.GM_CREATE_MOB, (s) => new GMCreateMobPacket(s) },
             { PacketType.GM_COMMAND_GET_ITEM, (s) => new GMGetItemPacket(s) },
             { PacketType.CHARACTER_SKILL_BAR, (s) => new SkillBarPacket(s) },

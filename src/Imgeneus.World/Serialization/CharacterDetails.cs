@@ -75,9 +75,6 @@ namespace Imgeneus.Network.Serialization
         public uint Defeats { get; }
 
         [FieldOrder(23)]
-        public bool HasGuild { get => true; }
-
-        [FieldOrder(24)]
         public string GuildName { get => "TestGuildName"; }
 
         public CharacterDetails(Character character)

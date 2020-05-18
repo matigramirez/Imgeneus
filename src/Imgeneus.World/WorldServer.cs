@@ -98,7 +98,15 @@ namespace Imgeneus.World
 
             if (packet is PingPacket)
             {
-                // TODO: implemen disconnect, if client is not sending ping packet.
+                // TODO: implement disconnect, if client is not sending ping packet.
+            }
+
+            if (packet is CashPointPacket)
+            {
+                // TODO: implement cash point packet.
+                using var dummyPacket = new Packet(PacketType.CASH_POINT);
+                dummyPacket.Write(0);
+                sender.SendPacket(dummyPacket);
             }
 
             if (packet is LogOutPacket)

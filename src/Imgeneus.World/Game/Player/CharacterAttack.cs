@@ -30,6 +30,58 @@ namespace Imgeneus.World.Game.Player
 
         #endregion
 
+        #region Casting skill
+
+        /// <summary>
+        /// The timer, that is starting skill after cast time.
+        /// </summary>
+        private Timer _castTimer = new Timer();
+
+        /// <summary>
+        /// Skill, that player tries to cast.
+        /// </summary>
+        private Skill _skillInCast;
+
+        /// <summary>
+        /// Event, that is fired, when user starts casting.
+        /// </summary>
+        public event Action<Character, IKillable, Skill> OnSkillCastStarted;
+
+        /// <summary>
+        /// Starts casting.
+        /// </summary>
+        /// <param name="skill">skill, that we are casting</param>
+        private void StartCasting(Skill skill)
+        {
+            _skillInCast = skill;
+            _castTimer.Interval = skill.CastTime * 250;
+            _castTimer.Start();
+            OnSkillCastStarted?.Invoke(this, Target, skill);
+        }
+
+        /// <summary>
+        /// Stops casting.
+        /// </summary>
+        private void StopCasting()
+        {
+            _castTimer.Stop();
+            _skillInCast = null;
+        }
+
+        /// <summary>
+        /// When time for casting has elapsed.
+        /// </summary>
+        private void CastTimer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            UseSkill(_skillInCast);
+            StopCasting();
+
+            if (_nextSkillNumber != 0 && !_attackTimer.Enabled)
+                UseSkill(_nextSkillNumber);
+        }
+
+        #endregion
+
         #region Damage calculation
 
         /// <summary>
@@ -65,15 +117,11 @@ namespace Imgeneus.World.Game.Player
                     }
 
                     // If timer is not running, this means player just started attacking.
-                    if (!_attackTimer.Enabled)
+                    if (!_attackTimer.Enabled && !_castTimer.Enabled)
                     {
                         _attackTimer.Start();
                         _nextSkillNumber = value;
-
-                        if (_nextSkillNumber == 255)
-                            AutoAttack();
-                        else
-                            UseSkill(_nextSkillNumber);
+                        UseSkill(_nextSkillNumber);
                     }
                     // Set the next skill number and wait until timer calls it.
                     else
@@ -85,16 +133,30 @@ namespace Imgeneus.World.Game.Player
         }
 
         /// <summary>
+        /// Uses skill, based on its' number.
+        /// </summary>
+        private void UseSkill(int skillNumber)
+        {
+            if (skillNumber == 255)
+                AutoAttack();
+            else
+            {
+                var skill = Skills.First(s => s.Number == skillNumber);
+
+                if (skill.CastTime == 0)
+                    UseSkill(skill);
+                else
+                    StartCasting(skill);
+            }
+        }
+
+        /// <summary>
         /// Make character use skill.
         /// </summary>
-        /// <param name="skillNumber">unique number of skill; unique is per character(maybe?)</param>
-        private void UseSkill(int skillNumber)
+        private void UseSkill(Skill skill)
         {
             SendAttackStart();
             _nextSkillNumber = 0;
-
-            // TODO: use dictionary here.
-            var skill = Skills.First(s => s.Number == skillNumber);
 
             switch (skill.Type)
             {
@@ -139,11 +201,8 @@ namespace Imgeneus.World.Game.Player
         private void AttackTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
             // If there is any pending skill.
-            if (_nextSkillNumber != 0)
-                if (_nextSkillNumber == 255)
-                    AutoAttack();
-                else
-                    UseSkill(_nextSkillNumber);
+            if (_nextSkillNumber != 0 && !_castTimer.Enabled)
+                UseSkill(_nextSkillNumber);
             else // No pending skill, stop timer.
                 _attackTimer.Stop();
         }

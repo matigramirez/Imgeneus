@@ -34,6 +34,7 @@ namespace Imgeneus.World.Game.Player
             Skills.CollectionChanged += Skills_CollectionChanged;
             ActiveBuffs.CollectionChanged += ActiveBuffs_CollectionChanged;
             _attackTimer.Elapsed += AttackTimer_Elapsed;
+            _castTimer.Elapsed += CastTimer_Elapsed;
         }
 
         private void Init()

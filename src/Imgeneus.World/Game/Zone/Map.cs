@@ -82,6 +82,7 @@ namespace Imgeneus.World.Game.Zone
                 character.OnAutoAttack += Character_OnAutoAttack;
                 character.OnDead += Character_OnDead;
                 character.OnAddedBuffToAnotherCharacter += Character_OnAddedBuff;
+                character.OnSkillCastStarted += Character_OnSkillCastStarted;
 
                 if (character.IsAdmin)
                 {
@@ -121,6 +122,7 @@ namespace Imgeneus.World.Game.Zone
                 character.OnAutoAttack -= Character_OnAutoAttack;
                 character.OnDead -= Character_OnDead;
                 character.OnAddedBuffToAnotherCharacter -= Character_OnAddedBuff;
+                character.OnSkillCastStarted -= Character_OnSkillCastStarted;
 
                 if (character.IsAdmin)
                 {
@@ -262,6 +264,17 @@ namespace Imgeneus.World.Game.Zone
             foreach (var player in Players)
             {
                 _packetHelper.SendCharacterAddedBuff(player.Value.Client, sender, receiver, buff);
+            }
+        }
+
+        /// <summary>
+        /// Notifies other players, that player starts casting.
+        /// </summary>
+        private void Character_OnSkillCastStarted(Character sender, IKillable target, Skill skill)
+        {
+            foreach (var player in Players)
+            {
+                _packetHelper.SendSkillCastStarted(player.Value.Client, sender, target, skill);
             }
         }
 

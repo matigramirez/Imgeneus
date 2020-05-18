@@ -650,7 +650,7 @@ namespace Imgeneus.World.Game.Player
 
             if (destinationBag == 0)
             {
-                var item = sourceItem.Slot == destinationSlot ? sourceItem : destinationItem;
+                var item = sourceItem.Bag == destinationBag && sourceItem.Slot == destinationSlot ? sourceItem : destinationItem;
                 switch (item.Slot)
                 {
                     case 0:

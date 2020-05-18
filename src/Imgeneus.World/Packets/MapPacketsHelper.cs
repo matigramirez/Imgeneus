@@ -170,5 +170,18 @@ namespace Imgeneus.World.Packets
             packet.Write(buff.SkillLevel);
             client.SendPacket(packet);
         }
+
+        internal void SendSkillCastStarted(WorldClient client, Character sender, IKillable target, Skill skill)
+        {
+            PacketType type;
+            if (target is Character)
+                type = PacketType.CHARACTER_SKILL_CASTING;
+            else
+                type = PacketType.MOB_SKILL_CASTING;
+
+            using var packet = new Packet(type);
+            packet.Write(new SkillCasting(sender.Id, target.Id, skill).Serialize());
+            client.SendPacket(packet);
+        }
     }
 }

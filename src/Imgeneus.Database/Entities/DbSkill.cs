@@ -188,7 +188,7 @@ namespace Imgeneus.Database.Entities
         public ushort MP { get; set; }
 
         /// <summary>
-        /// TODO: ?
+        /// Cast time.
         /// </summary>
         public byte ReadyTime { get; set; }
 

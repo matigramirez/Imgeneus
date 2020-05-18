@@ -46,6 +46,11 @@ namespace Imgeneus.World.Game.Player
         public int KeepTime;
 
         /// <summary>
+        /// How long character should wait until skill is casted.
+        /// </summary>
+        public byte CastTime;
+
+        /// <summary>
         /// Creates skill from database inrofmation.
         /// </summary>
         public static Skill FromDbSkill(DbCharacterSkill dbSkill)
@@ -59,7 +64,8 @@ namespace Imgeneus.World.Game.Player
                 Type = dbSkill.Skill.TypeDetail,
                 TargetType = dbSkill.Skill.TargetType,
                 ResetTime = dbSkill.Skill.ResetTime,
-                KeepTime = dbSkill.Skill.KeepTime
+                KeepTime = dbSkill.Skill.KeepTime,
+                CastTime = dbSkill.Skill.ReadyTime
             };
 
             return skill;

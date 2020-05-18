@@ -66,7 +66,6 @@
         // Char skills
         LEARN_NEW_SKILL = 0x209,
         USE_SKILL_LOG = 0x0309, // 777
-        USE_MOB_TARGET_SKILL = 0x0517, // 1303
 
         // PvP
         CHARACTER_MOVE = 0x0501, // 1281
@@ -76,9 +75,11 @@
         USED_SP_MP = 0x050C, // 1292
         BUFF_ADD = 0x050D, // 1293
         BUFF_REMOVE = 0x050E, // 1294
-        SKILL_CAST_START = 0x0510, // 1298
+        CHARACTER_SKILL_CASTING = 0x0510, // 1296
         USE_CHARACTER_TARGET_SKILL = 0x0511, // 1297
         CHARACTER_ADDED_BUFF = 0x0513, // 1299
+        MOB_SKILL_CASTING = 0x0516, // 1302
+        USE_MOB_TARGET_SKILL = 0x0517, // 1303
 
         // GM commands
         GM_COMMAND_GET_ITEM = 0xF702,

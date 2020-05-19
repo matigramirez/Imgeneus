@@ -113,6 +113,10 @@ namespace Imgeneus.World
             {
                 // TODO: For sure, here should be timer!
                 await Task.Delay(1000 * 10); // 10 seconds * 1000 milliseconds
+
+                if (sender.IsDispose)
+                    return;
+
                 using var logoutPacket = new Packet(PacketType.LOGOUT);
                 sender.SendPacket(logoutPacket);
 

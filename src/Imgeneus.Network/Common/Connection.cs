@@ -7,6 +7,8 @@ namespace Imgeneus.Network.Common
     {
         private bool disposedValue;
 
+        public bool IsDispose => disposedValue;
+
         /// <summary>
         /// Gets the connection unique idenfified.
         /// </summary>

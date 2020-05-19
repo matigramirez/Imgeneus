@@ -59,6 +59,7 @@ namespace Imgeneus.World.Game.Zone
             if (success)
             {
                 _logger.LogDebug($"Player {character.Id} connected to map {Id}");
+                AddListeners(character);
 
                 foreach (var loadedPlayer in Players)
                 {
@@ -70,23 +71,6 @@ namespace Imgeneus.World.Game.Zone
                         // Notify new player, about already loaded player.
                         _packetHelper.SendCharacterConnectedToMap(character.Client, loadedPlayer.Value);
                     }
-                }
-
-                character.OnPositionChanged += Character_OnPositionChanged;
-                character.OnMotion += Character_OnMotion;
-                character.OnSeekForTarget += Character_OnTargetChanged;
-                character.OnEquipmentChanged += Character_OnEquipmentChanged;
-                character.OnPartyChanged += Character_OnPartyChanged;
-                character.OnAttackOrMoveChanged += Character_OnAttackOrMoveChanged;
-                character.OnUsedSkill += Character_OnUsedSkill;
-                character.OnAutoAttack += Character_OnAutoAttack;
-                character.OnDead += Character_OnDead;
-                character.OnAddedBuffToAnotherCharacter += Character_OnAddedBuff;
-                character.OnSkillCastStarted += Character_OnSkillCastStarted;
-
-                if (character.IsAdmin)
-                {
-                    character.Client.OnPacketArrived += Client_OnPacketArrived;
                 }
             }
 
@@ -111,26 +95,48 @@ namespace Imgeneus.World.Game.Zone
                 {
                     _packetHelper.SendCharacterLeftMap(player.Value.Client, removedCharacter);
                 }
-
-                character.OnPositionChanged -= Character_OnPositionChanged;
-                character.OnMotion -= Character_OnMotion;
-                character.OnSeekForTarget -= Character_OnTargetChanged;
-                character.OnEquipmentChanged -= Character_OnEquipmentChanged;
-                character.OnPartyChanged -= Character_OnPartyChanged;
-                character.OnAttackOrMoveChanged -= Character_OnAttackOrMoveChanged;
-                character.OnUsedSkill -= Character_OnUsedSkill;
-                character.OnAutoAttack -= Character_OnAutoAttack;
-                character.OnDead -= Character_OnDead;
-                character.OnAddedBuffToAnotherCharacter -= Character_OnAddedBuff;
-                character.OnSkillCastStarted -= Character_OnSkillCastStarted;
-
-                if (character.IsAdmin)
-                {
-                    character.Client.OnPacketArrived -= Client_OnPacketArrived;
-                }
+                RemoveListeners(character);
             }
 
             return success;
+        }
+
+        /// <summary>
+        /// Subscribes to character events.
+        /// </summary>
+        private void AddListeners(Character character)
+        {
+            character.OnPositionChanged += Character_OnPositionChanged;
+            character.OnMotion += Character_OnMotion;
+            character.OnSeekForTarget += Character_OnTargetChanged;
+            character.OnEquipmentChanged += Character_OnEquipmentChanged;
+            character.OnPartyChanged += Character_OnPartyChanged;
+            character.OnAttackOrMoveChanged += Character_OnAttackOrMoveChanged;
+            character.OnUsedSkill += Character_OnUsedSkill;
+            character.OnAutoAttack += Character_OnAutoAttack;
+            character.OnDead += Character_OnDead;
+            character.OnAddedBuffToAnotherCharacter += Character_OnAddedBuff;
+            character.OnSkillCastStarted += Character_OnSkillCastStarted;
+            character.Client.OnPacketArrived += Client_OnPacketArrived;
+        }
+
+        /// <summary>
+        /// Unsubscribes from character events.
+        /// </summary>
+        private void RemoveListeners(Character character)
+        {
+            character.OnPositionChanged -= Character_OnPositionChanged;
+            character.OnMotion -= Character_OnMotion;
+            character.OnSeekForTarget -= Character_OnTargetChanged;
+            character.OnEquipmentChanged -= Character_OnEquipmentChanged;
+            character.OnPartyChanged -= Character_OnPartyChanged;
+            character.OnAttackOrMoveChanged -= Character_OnAttackOrMoveChanged;
+            character.OnUsedSkill -= Character_OnUsedSkill;
+            character.OnAutoAttack -= Character_OnAutoAttack;
+            character.OnDead -= Character_OnDead;
+            character.OnAddedBuffToAnotherCharacter -= Character_OnAddedBuff;
+            character.OnSkillCastStarted -= Character_OnSkillCastStarted;
+            character.Client.OnPacketArrived -= Client_OnPacketArrived;
         }
 
         /// <summary>
@@ -281,19 +287,21 @@ namespace Imgeneus.World.Game.Zone
         /// <summary>
         /// Handles special packets, as GM packets mob creation etc.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="packet"></param>
         private void Client_OnPacketArrived(ServerClient sender, IDeserializedPacket packet)
         {
+            var worldClient = (WorldClient)sender;
             switch (packet)
             {
                 case GMCreateMobPacket gMCreateMobPacket:
+                    var gmPlayer = Players[worldClient.CharID];
+                    if (!gmPlayer.IsAdmin)
+                        return;
+
                     // TODO: find out way to preload all awailable mobs.
                     using (var database = DependencyContainer.Instance.Resolve<IDatabase>())
                     {
                         var mob = Mob.FromDbMob(database.Mobs.First(m => m.Id == gMCreateMobPacket.MobId), DependencyContainer.Instance.Resolve<ILogger<Mob>>());
 
-                        var gmPlayer = Players[((WorldClient)sender).CharID];
                         // TODO: mobs should be generated near character, not on his position directly.
                         mob.PosX = gmPlayer.PosX;
                         mob.PosY = gmPlayer.PosY;
@@ -310,25 +318,29 @@ namespace Imgeneus.World.Game.Zone
                     break;
 
                 case MobAutoAttackPacket attackPacket:
-                    HandleAutoAttackOnMob((WorldClient)sender, attackPacket.TargetId);
+                    HandleAutoAttackOnMob(worldClient, attackPacket.TargetId);
                     break;
 
                 case CharacterAutoAttackPacket attackPacket:
-                    HandleAutoAttackOnPlayer((WorldClient)sender, attackPacket.TargetId);
+                    HandleAutoAttackOnPlayer(worldClient, attackPacket.TargetId);
                     break;
 
                 case MobSkillAttackPacket usedSkillMobAttackPacket:
-                    HandleUseSkillOnMob((WorldClient)sender, usedSkillMobAttackPacket.Number, usedSkillMobAttackPacket.TargetId);
+                    HandleUseSkillOnMob(worldClient, usedSkillMobAttackPacket.Number, usedSkillMobAttackPacket.TargetId);
                     break;
                 case CharacterSkillAttackPacket usedSkillPlayerAttackPacket:
-                    HandleUseSkillOnPlayer((WorldClient)sender, usedSkillPlayerAttackPacket.Number, usedSkillPlayerAttackPacket.TargetId);
+                    HandleUseSkillOnPlayer(worldClient, usedSkillPlayerAttackPacket.Number, usedSkillPlayerAttackPacket.TargetId);
                     break;
 
                 case TargetCharacterGetBuffs targetCharacterGetBuffsPacket:
-                    HandleGetCharacterBuffs((WorldClient)sender, targetCharacterGetBuffsPacket.TargetId);
+                    HandleGetCharacterBuffs(worldClient, targetCharacterGetBuffsPacket.TargetId);
                     break;
                 case TargetMobGetBuffs targetMobGetBuffsPacket:
-                    HandleGetMobBuffs((WorldClient)sender, targetMobGetBuffsPacket.TargetId);
+                    HandleGetMobBuffs(worldClient, targetMobGetBuffsPacket.TargetId);
+                    break;
+
+                case CharacterShapePacket characterShapePacket:
+                    HandleCharacterShape(worldClient, characterShapePacket.CharacterId);
                     break;
             }
         }
@@ -399,6 +411,15 @@ namespace Imgeneus.World.Game.Zone
         {
             var target = Mobs[targetId];
             _packetHelper.SendMobBuffs(client, target);
+        }
+
+        /// <summary>
+        /// Handles shape request.
+        /// </summary>
+        private void HandleCharacterShape(WorldClient client, int characterId)
+        {
+            var character = Players[characterId];
+            _packetHelper.SendCharacterShape(client, character);
         }
 
         #endregion

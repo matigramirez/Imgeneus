@@ -68,10 +68,6 @@ namespace Imgeneus.World.Packets
             using var packet1 = new Packet(PacketType.CHARACTER_MOVE);
             packet1.Write(new CharacterMove(character).Serialize());
             client.SendPacket(packet1);
-
-            using var packet2 = new Packet(PacketType.CHARACTER_SHAPE);
-            packet2.Write(new CharacterShape(character).Serialize());
-            client.SendPacket(packet2);
         }
 
         internal void SendMobEntered(WorldClient client, Mob mob)
@@ -194,6 +190,13 @@ namespace Imgeneus.World.Packets
         internal void SendMobBuffs(WorldClient client, Mob target)
         {
             // Not implemented.
+        }
+
+        internal void SendCharacterShape(WorldClient client, Character character)
+        {
+            using var packet = new Packet(PacketType.CHARACTER_SHAPE);
+            packet.Write(new CharacterShape(character).Serialize());
+            client.SendPacket(packet);
         }
     }
 }

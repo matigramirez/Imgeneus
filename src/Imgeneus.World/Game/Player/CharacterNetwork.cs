@@ -96,6 +96,11 @@ namespace Imgeneus.World.Game.Player
                 case SkillBarPacket skillBarPacket:
                     await HandleSkillBarPacket(skillBarPacket);
                     break;
+
+                case AttackStart attackStartPacket:
+                    // Not sure, but maybe I should not permit any attack start?
+                    sender.SendPacket(new Packet(PacketType.ATTACK_START));
+                    break;
             }
         }
 

@@ -311,12 +311,6 @@ namespace Imgeneus.World.Game.Zone
                     }
                     break;
 
-                case AttackStart attackStartPacket:
-                    // Not sure, but maybe I should not permit any attack start?
-                    // Maybe I need to move it to character?
-                    sender.SendPacket(new Packet(PacketType.ATTACK_START));
-                    break;
-
                 case MobAutoAttackPacket attackPacket:
                     HandleAutoAttackOnMob(worldClient, attackPacket.TargetId);
                     break;

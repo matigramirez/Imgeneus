@@ -77,8 +77,8 @@ namespace Imgeneus.World.Game.Player
         public byte MoveMotion = 1;
 
         public int MaxHP { get => 100 + ExtraHP; } // TODO: implement max HP. For now let's assume, that 100 for any character + hp from equipment.
-        public int MaxMP { get => 50 + ExtraMP; } // TODO: implement max MP.
-        public int MaxSP { get => 20 + ExtraSP; } // TODO: implement max SP.
+        public int MaxMP { get => 500 + ExtraMP; } // TODO: implement max MP.
+        public int MaxSP { get => 200 + ExtraSP; } // TODO: implement max SP.
 
         #endregion
 

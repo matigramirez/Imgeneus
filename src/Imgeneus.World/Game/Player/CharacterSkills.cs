@@ -93,7 +93,9 @@ namespace Imgeneus.World.Game.Player
                 TargetType = dbSkill.TargetType,
                 ResetTime = dbSkill.ResetTime,
                 KeepTime = dbSkill.KeepTime,
-                CastTime = dbSkill.ReadyTime
+                CastTime = dbSkill.ReadyTime,
+                NeedSP = dbSkill.SP,
+                NeedMP = dbSkill.MP
             };
             Skills.Add(skill);
             _logger.LogDebug($"Character {Id} learned skill {skill.SkillId} of level {skill.SkillLevel}");

@@ -51,6 +51,16 @@ namespace Imgeneus.World.Game.Player
         public byte CastTime;
 
         /// <summary>
+        /// How much stamina is needed in order to use this skill.
+        /// </summary>
+        public ushort NeedSP;
+
+        /// <summary>
+        /// How much mana is needed in order to use this skill.
+        /// </summary>
+        public ushort NeedMP;
+
+        /// <summary>
         /// Creates skill from database inrofmation.
         /// </summary>
         public static Skill FromDbSkill(DbCharacterSkill dbSkill)
@@ -65,7 +75,9 @@ namespace Imgeneus.World.Game.Player
                 TargetType = dbSkill.Skill.TargetType,
                 ResetTime = dbSkill.Skill.ResetTime,
                 KeepTime = dbSkill.Skill.KeepTime,
-                CastTime = dbSkill.Skill.ReadyTime
+                CastTime = dbSkill.Skill.ReadyTime,
+                NeedSP = dbSkill.Skill.SP,
+                NeedMP = dbSkill.Skill.MP
             };
 
             return skill;

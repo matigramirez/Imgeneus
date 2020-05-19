@@ -191,5 +191,12 @@ namespace Imgeneus.World.Packets
             packet.Write(new SkillRange(sender.Id, 0, skill, new AttackResult() { Success = AttackSuccess.Error }).Serialize());
             client.SendPacket(packet);
         }
+
+        internal void SendUseSMMP(WorldClient client, ushort MP, ushort SP)
+        {
+            using var packet = new Packet(PacketType.USED_SP_MP);
+            packet.Write(new UseSPMP(SP, MP).Serialize());
+            client.SendPacket(packet);
+        }
     }
 }

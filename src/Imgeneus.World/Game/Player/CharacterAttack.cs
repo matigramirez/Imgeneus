@@ -155,9 +155,25 @@ namespace Imgeneus.World.Game.Player
         /// </summary>
         private void UseSkill(Skill skill)
         {
-            SendAttackStart();
             _nextSkillNumber = 0;
 
+            if (CurrentMP < skill.NeedMP)
+            {
+                // TODO: send not enough MP.
+                return;
+            }
+
+            if (CurrentSP < skill.NeedSP)
+            {
+                // TODO: send not enough SP.
+                return;
+            }
+
+            CurrentMP -= skill.NeedMP;
+            CurrentSP -= skill.NeedSP;
+            SendUseSMMP(skill.NeedMP, skill.NeedSP);
+
+            SendAttackStart();
             switch (skill.Type)
             {
                 case TypeDetail.Buff:

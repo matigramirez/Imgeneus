@@ -231,6 +231,11 @@ namespace Imgeneus.World.Game.Player
 
         private void SendSkillWrongTarget(IKillable target, Skill skill) => _packetsHelper.SendSkillWrongTarget(Client, this, skill, target);
 
+        private void SendUseSMMP(ushort MP, ushort SP)
+        {
+            _packetsHelper.SendUseSMMP(Client, MP, SP);
+        }
+
         private void TargetChanged(IKillable target)
         {
             if (target is Mob)

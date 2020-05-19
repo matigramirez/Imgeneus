@@ -53,6 +53,9 @@ namespace Imgeneus.World.Game.Player
         /// <param name="skill">skill, that we are casting</param>
         private void StartCasting(Skill skill)
         {
+            if (!CanUseSkill(skill))
+                return;
+
             _skillInCast = skill;
             _castTimer.Interval = skill.CastTime * 250;
             _castTimer.Start();
@@ -157,17 +160,8 @@ namespace Imgeneus.World.Game.Player
         {
             _nextSkillNumber = 0;
 
-            if (CurrentMP < skill.NeedMP)
-            {
-                // TODO: send not enough MP.
+            if (!CanUseSkill(skill))
                 return;
-            }
-
-            if (CurrentSP < skill.NeedSP)
-            {
-                // TODO: send not enough SP.
-                return;
-            }
 
             CurrentMP -= skill.NeedMP;
             CurrentSP -= skill.NeedSP;
@@ -238,6 +232,27 @@ namespace Imgeneus.World.Game.Player
                 Damage damage = new Damage(100, 0, 0);
                 return new AttackResult(AttackSuccess.Critical, damage);
             }
+        }
+
+        /// <summary>
+        /// Checks if it's enough sp and mp in order to use a skill.
+        /// </summary>
+        /// <param name="skill">skill, that character wants to use</param>
+        private bool CanUseSkill(Skill skill)
+        {
+            if (CurrentMP < skill.NeedMP)
+            {
+                // TODO: send not enough MP.
+                return false;
+            }
+
+            if (CurrentSP < skill.NeedSP)
+            {
+                // TODO: send not enough SP.
+                return false;
+            }
+
+            return true;
         }
 
         #endregion

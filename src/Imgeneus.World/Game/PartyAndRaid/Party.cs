@@ -76,6 +76,9 @@ namespace Imgeneus.World.Game.PartyAndRaid
                 Leader = newPartyMember;
 
             newPartyMember.OnBuffAdded += Member_OnAddedBuff;
+            newPartyMember.HP_Changed += Member_HP_Changed;
+            newPartyMember.MP_Changed += Member_MP_Changed;
+            newPartyMember.SP_Changed += Member_SP_Changed;
 
             // Notify others, that new party member joined.
             foreach (var member in Members.Where(m => m != newPartyMember))
@@ -94,9 +97,34 @@ namespace Imgeneus.World.Game.PartyAndRaid
         private void Member_OnAddedBuff(Character sender, ActiveBuff buff)
         {
             foreach (var member in Members.Where(m => m != sender))
-            {
                 SendAddBuff(member.Client, sender.Id, buff.SkillId, buff.SkillLevel);
-            }
+        }
+
+        /// <summary>
+        /// Notifies party member, that member has new hp value.
+        /// </summary>
+        private void Member_HP_Changed(Character sender, int hp)
+        {
+            foreach (var member in Members.Where(m => m != sender))
+                Send_HP_SP_MP(member.Client, sender.Id, hp, 0);
+        }
+
+        /// <summary>
+        /// Notifies party member, that member has new sp value.
+        /// </summary>
+        private void Member_SP_Changed(Character sender, int sp)
+        {
+            foreach (var member in Members.Where(m => m != sender))
+                Send_HP_SP_MP(member.Client, sender.Id, sp, 1);
+        }
+
+        /// <summary>
+        /// Notifies party member, that member has new mp value.
+        /// </summary>
+        private void Member_MP_Changed(Character sender, int mp)
+        {
+            foreach (var member in Members.Where(m => m != sender))
+                Send_HP_SP_MP(member.Client, sender.Id, mp, 2);
         }
 
         /// <summary>
@@ -105,11 +133,12 @@ namespace Imgeneus.World.Game.PartyAndRaid
         public void LeaveParty(Character leftPartyMember)
         {
             foreach (var member in Members)
-            {
                 SendPlayerLeftParty(member.Client, leftPartyMember);
-            }
 
             leftPartyMember.OnBuffAdded -= Member_OnAddedBuff;
+            leftPartyMember.HP_Changed -= Member_HP_Changed;
+            leftPartyMember.MP_Changed -= Member_MP_Changed;
+            leftPartyMember.SP_Changed -= Member_SP_Changed;
             RemoveMember(leftPartyMember);
         }
 
@@ -198,6 +227,15 @@ namespace Imgeneus.World.Game.PartyAndRaid
             packet.Write(senderId);
             packet.Write(skillId);
             packet.Write(skillLevel);
+            client.SendPacket(packet);
+        }
+
+        private void Send_HP_SP_MP(WorldClient client, int id, int value, byte type)
+        {
+            using var packet = new Packet(PacketType.PARTY_CHARACTER_SP_MP);
+            packet.Write(id);
+            packet.Write(type);
+            packet.Write(value);
             client.SendPacket(packet);
         }
 

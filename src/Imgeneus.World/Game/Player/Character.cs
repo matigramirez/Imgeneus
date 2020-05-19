@@ -194,20 +194,35 @@ namespace Imgeneus.World.Game.Player
             CurrentHP -= hp;
         }
 
+        /// <summary>
+        /// Event, that is fired, when hp changes.
+        /// </summary>
+        public event Action<Character, int> HP_Changed;
+
         private int _currentHP;
         public int CurrentHP
         {
             get => _currentHP;
             private set
             {
+                if (_currentHP == value)
+                    return;
+
                 _currentHP = value;
                 if (_currentHP <= 0)
                 {
                     _currentHP = 0;
                     IsDead = true;
                 }
+
+                HP_Changed?.Invoke(this, _currentHP);
             }
         }
+
+        /// <summary>
+        /// Event, that is fired, when mp changes.
+        /// </summary>
+        public event Action<Character, int> MP_Changed;
 
         private int _currentMP;
         public int CurrentMP
@@ -215,9 +230,18 @@ namespace Imgeneus.World.Game.Player
             get => _currentMP;
             set
             {
+                if (_currentMP == value)
+                    return;
+
                 _currentMP = value;
+                MP_Changed?.Invoke(this, _currentMP);
             }
         }
+
+        /// <summary>
+        /// Event, that is fired, when sp changes.
+        /// </summary>
+        public event Action<Character, int> SP_Changed;
 
         private int _currentSP;
         public int CurrentSP
@@ -225,7 +249,11 @@ namespace Imgeneus.World.Game.Player
             get => _currentSP;
             set
             {
+                if (_currentSP == value)
+                    return;
+
                 _currentSP = value;
+                SP_Changed?.Invoke(this, _currentSP);
             }
         }
 

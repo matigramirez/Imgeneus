@@ -266,59 +266,99 @@ namespace Imgeneus.World.Game.Player
         /// </summary>
         public event Action<Character> OnAttackOrMoveChanged;
 
-        private AttackSpeed _attackSpeed;
+        /// <summary>
+        /// Pure weapon speed without any gems or buffs.
+        /// </summary>
+        private byte _weaponSpeed;
+
+        /// <summary>
+        /// Sets weapon speed.
+        /// </summary>
+        private void SetWeaponSpeed(byte speed)
+        {
+            _weaponSpeed = speed;
+            CalculateAttackSpeedTimer();
+            OnAttackOrMoveChanged?.Invoke(this);
+        }
+
+        /// <summary>
+        /// Attack speed modifier is made of equipment and buffs.
+        /// </summary>
+        private int _attackSpeedModifier;
+
+        /// <summary>
+        /// Sets attack modifier.
+        /// </summary>
+        private void SetAttackSpeedModifier(int speed)
+        {
+            if (speed == 0)
+                return;
+
+            _attackSpeedModifier += speed;
+            CalculateAttackSpeedTimer();
+            OnAttackOrMoveChanged?.Invoke(this);
+        }
+
+        private void CalculateAttackSpeedTimer()
+        {
+            switch (AttackSpeed)
+            {
+                case AttackSpeed.ExteremelySlow:
+                    _attackTimer.Interval = 4000;
+                    break;
+
+                case AttackSpeed.VerySlow:
+                    _attackTimer.Interval = 3750;
+                    break;
+
+                case AttackSpeed.Slow:
+                    _attackTimer.Interval = 3500;
+                    break;
+
+                case AttackSpeed.ABitSlow:
+                    _attackTimer.Interval = 3250;
+                    break;
+
+                case AttackSpeed.Normal:
+                    _attackTimer.Interval = 3000;
+                    break;
+
+                case AttackSpeed.ABitFast:
+                    _attackTimer.Interval = 2750;
+                    break;
+
+                case AttackSpeed.Fast:
+                    _attackTimer.Interval = 2500;
+                    break;
+
+                case AttackSpeed.VeryFast:
+                    _attackTimer.Interval = 2250;
+                    break;
+
+                case AttackSpeed.ExteremelyFast:
+                    _attackTimer.Interval = 2000;
+                    break;
+            }
+        }
+
         /// <summary>
         /// How fast character can make new hit.
         /// </summary>
         public AttackSpeed AttackSpeed
         {
-            private set
+            get
             {
-                _attackSpeed = value;
+                if (_weaponSpeed == 0)
+                    return AttackSpeed.None;
 
-                // Set attack timer.
-                switch (AttackSpeed)
-                {
-                    case AttackSpeed.ExteremelySlow:
-                        _attackTimer.Interval = 4000;
-                        break;
+                if (_weaponSpeed + _attackSpeedModifier < 0)
+                    return AttackSpeed.ExteremelySlow;
 
-                    case AttackSpeed.VerySlow:
-                        _attackTimer.Interval = 3750;
-                        break;
+                if (_weaponSpeed + _attackSpeedModifier > 9)
+                    return AttackSpeed.ExteremelyFast;
 
-                    case AttackSpeed.Slow:
-                        _attackTimer.Interval = 3500;
-                        break;
-
-                    case AttackSpeed.ABitSlow:
-                        _attackTimer.Interval = 3250;
-                        break;
-
-                    case AttackSpeed.Normal:
-                        _attackTimer.Interval = 3000;
-                        break;
-
-                    case AttackSpeed.ABitFast:
-                        _attackTimer.Interval = 2750;
-                        break;
-
-                    case AttackSpeed.Fast:
-                        _attackTimer.Interval = 2500;
-                        break;
-
-                    case AttackSpeed.VeryFast:
-                        _attackTimer.Interval = 2250;
-                        break;
-
-                    case AttackSpeed.ExteremelyFast:
-                        _attackTimer.Interval = 2000;
-                        break;
-                }
-
-                OnAttackOrMoveChanged?.Invoke(this);
+                return (AttackSpeed)(_weaponSpeed + _attackSpeedModifier);
             }
-            get => _attackSpeed;
         }
 
         private MoveSpeed _moveSpeed = MoveSpeed.Normal;
@@ -329,6 +369,9 @@ namespace Imgeneus.World.Game.Player
         {
             private set
             {
+                if (_moveSpeed == value)
+                    return;
+
                 _moveSpeed = value;
                 OnAttackOrMoveChanged?.Invoke(this);
             }

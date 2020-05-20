@@ -117,6 +117,7 @@ namespace Imgeneus.World.Game.Player
             SendInventoryItems();
             SendLearnedSkills();
             SendActiveBuffs();
+            SendMoveAndAttackSpeed();
             SendBlessAmount();
         }
 
@@ -231,10 +232,9 @@ namespace Imgeneus.World.Game.Player
 
         private void SendSkillWrongTarget(IKillable target, Skill skill) => _packetsHelper.SendSkillWrongTarget(Client, this, skill, target);
 
-        private void SendUseSMMP(ushort needMP, ushort needSP)
-        {
-            _packetsHelper.SendUseSMMP(Client, needMP, needSP);
-        }
+        private void SendUseSMMP(ushort needMP, ushort needSP) => _packetsHelper.SendUseSMMP(Client, needMP, needSP);
+
+        private void SendMoveAndAttackSpeed() => _packetsHelper.SendMoveAndAttackSpeed(Client, this);
 
         private void TargetChanged(IKillable target)
         {

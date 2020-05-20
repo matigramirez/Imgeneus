@@ -198,5 +198,12 @@ namespace Imgeneus.World.Packets
             packet.Write(new UseSPMP(SP, MP).Serialize());
             client.SendPacket(packet);
         }
+
+        internal void SendMoveAndAttackSpeed(WorldClient client, Character character)
+        {
+            using var packet = new Packet(PacketType.CHARACTER_ATTACK_MOVEMENT_SPEED);
+            packet.Write(new CharacterAttackAndMovement(character).Serialize());
+            client.SendPacket(packet);
+        }
     }
 }

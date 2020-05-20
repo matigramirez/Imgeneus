@@ -135,6 +135,12 @@ namespace Imgeneus.World.Game.Player
             {
                 TakeOffItem(_weapon);
                 _weapon = value;
+
+                if (_weapon != null)
+                    SetWeaponSpeed(_weapon.AttackSpeed);
+                else
+                    SetWeaponSpeed(0);
+
                 TakeOnItem(_weapon);
 
                 if (Client != null)
@@ -418,8 +424,8 @@ namespace Imgeneus.World.Game.Player
             ExtraSP -= item.SP;
             ExtraMP -= item.MP;
 
-            if (item != Mount)
-                AttackSpeed -= item.AttackSpeed;
+            if (item != Weapon && item != Mount)
+                SetAttackSpeedModifier(-1 * item.AttackSpeed);
             MoveSpeed -= item.MoveSpeed;
         }
 
@@ -441,8 +447,8 @@ namespace Imgeneus.World.Game.Player
             ExtraSP += item.SP;
             ExtraMP += item.MP;
 
-            if (item != Mount)
-                AttackSpeed += item.AttackSpeed;
+            if (item != Weapon && item != Mount)
+                SetAttackSpeedModifier(item.AttackSpeed);
             MoveSpeed += item.MoveSpeed;
         }
 

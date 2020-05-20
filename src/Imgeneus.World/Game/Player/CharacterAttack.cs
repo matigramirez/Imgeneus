@@ -231,6 +231,18 @@ namespace Imgeneus.World.Game.Player
                 return false;
             }
 
+            if (!skill.RequiredWeapons.Contains(Weapon.Type))
+            {
+                SendSkillWrongEquipment(target, skill);
+                return false;
+            }
+
+            if (skill.NeedShield && Shield is null)
+            {
+                SendSkillWrongEquipment(target, skill);
+                return false;
+            }
+
             if (CurrentMP < skill.NeedMP || CurrentSP < skill.NeedSP)
             {
                 SendNotEnoughMPSP(Target, skill);

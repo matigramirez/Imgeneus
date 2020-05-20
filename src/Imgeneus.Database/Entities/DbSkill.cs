@@ -98,82 +98,82 @@ namespace Imgeneus.Database.Entities
         public TypeDetail TypeDetail { get; set; }
 
         /// <summary>
-        /// Skill requires TODO: ?. Maybe this can migrate to bool value...
+        /// Skill requires 1 Handed Sword.
         /// </summary>
         public byte NeedWeapon1 { get; set; }
 
         /// <summary>
-        /// Skill requires TODO: ?. Maybe this can migrate to bool value...
+        /// Skill requires 2 Handed Sword.
         /// </summary>
         public byte NeedWeapon2 { get; set; }
 
         /// <summary>
-        /// Skill requires TODO: ?. Maybe this can migrate to bool value...
+        /// Skill requires 1 Handed Axe.
         /// </summary>
         public byte NeedWeapon3 { get; set; }
 
         /// <summary>
-        /// Skill requires TODO: ?. Maybe this can migrate to bool value...
+        /// Skill requires 2 Handed Axe.
         /// </summary>
         public byte NeedWeapon4 { get; set; }
 
         /// <summary>
-        /// Skill requires TODO: ?. Maybe this can migrate to bool value...
+        /// Skill requires Double Sword.
         /// </summary>
         public byte NeedWeapon5 { get; set; }
 
         /// <summary>
-        /// Skill requires TODO: ?. Maybe this can migrate to bool value...
+        /// Skill requires Spear.
         /// </summary>
         public byte NeedWeapon6 { get; set; }
 
         /// <summary>
-        /// Skill requires TODO: ?. Maybe this can migrate to bool value...
+        /// Skill requires 1 Handed Blunt.
         /// </summary>
         public byte NeedWeapon7 { get; set; }
 
         /// <summary>
-        /// Skill requires TODO: ?. Maybe this can migrate to bool value...
+        /// Skill requires 2 Handed Blunt.
         /// </summary>
         public byte NeedWeapon8 { get; set; }
 
         /// <summary>
-        /// Skill requires TODO: ?. Maybe this can migrate to bool value...
+        /// Skill requires Reverse sword.
         /// </summary>
         public byte NeedWeapon9 { get; set; }
 
         /// <summary>
-        /// Skill requires TODO: ?. Maybe this can migrate to bool value...
+        /// Skill requires Dagger.
         /// </summary>
         public byte NeedWeapon10 { get; set; }
 
         /// <summary>
-        /// Skill requires TODO: ?. Maybe this can migrate to bool value...
+        /// Skill requires Javelin.
         /// </summary>
         public byte NeedWeapon11 { get; set; }
 
         /// <summary>
-        /// Skill requires TODO: ?. Maybe this can migrate to bool value...
+        /// Skill requires Staff.
         /// </summary>
         public byte NeedWeapon12 { get; set; }
 
         /// <summary>
-        /// Skill requires TODO: ?. Maybe this can migrate to bool value...
+        /// Skill requires Bow.
         /// </summary>
         public byte NeedWeapon13 { get; set; }
 
         /// <summary>
-        /// Skill requires TODO: ?. Maybe this can migrate to bool value...
+        /// Skill requires Crossbow.
         /// </summary>
         public byte NeedWeapon14 { get; set; }
 
         /// <summary>
-        /// Skill requires TODO: ?. Maybe this can migrate to bool value...
+        /// Skill requires Knuckle.
         /// </summary>
         public byte NeedWeapon15 { get; set; }
 
         /// <summary>
-        /// Skill requires shield. Maybe this can migrate to bool value...
+        /// Skill requires shield.
         /// </summary>
         public byte NeedShield { get; set; }
 

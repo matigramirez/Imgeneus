@@ -174,6 +174,14 @@ namespace Imgeneus.World.Packets
             client.SendPacket(packet);
         }
 
+        internal void SendSkillWrongEquipment(WorldClient client, Character sender, IKillable target, Skill skill)
+        {
+            PacketType type = target is Character ? PacketType.USE_CHARACTER_TARGET_SKILL : PacketType.USE_MOB_TARGET_SKILL;
+            using var packet = new Packet(type);
+            packet.Write(new SkillRange(sender.Id, 0, skill, new AttackResult() { Success = AttackSuccess.WrongEquipment }).Serialize());
+            client.SendPacket(packet);
+        }
+
         internal void SendNotEnoughMPSP(WorldClient client, Character sender, IKillable target, Skill skill)
         {
             PacketType type = target is Character ? PacketType.USE_CHARACTER_TARGET_SKILL : PacketType.USE_MOB_TARGET_SKILL;

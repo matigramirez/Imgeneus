@@ -105,7 +105,7 @@ namespace Imgeneus.World.Game.Player
         /// Process use of buff skill.
         /// </summary>
         /// <param name="skill">buff skill</param>
-        private void UsedBuffSkill(Skill skill)
+        private void UsedBuffSkill(Skill skill, IKillable target)
         {
             ActiveBuff buff;
 
@@ -141,19 +141,19 @@ namespace Imgeneus.World.Game.Player
         ///  Process use of attack skill.
         /// </summary>
         /// <param name="skill">attack skill</param>
-        private void UsedAttackSkill(Skill skill)
+        private void UsedAttackSkill(Skill skill, IKillable target)
         {
             if (Target.IsDead)
             {
                 return;
             }
 
-            var result = CalculateDamage(Target, skill);
-            Target.DecreaseHP(result.Damage.HP, this);
-            Target.CurrentSP -= result.Damage.SP;
-            Target.CurrentMP -= result.Damage.MP;
+            var result = CalculateDamage(target, skill);
+            target.DecreaseHP(result.Damage.HP, this);
+            target.CurrentSP -= result.Damage.SP;
+            target.CurrentMP -= result.Damage.MP;
 
-            OnUsedSkill?.Invoke(this, Target, skill, result);
+            OnUsedSkill?.Invoke(this, target, skill, result);
         }
     }
 }

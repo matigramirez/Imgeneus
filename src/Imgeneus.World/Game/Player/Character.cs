@@ -33,7 +33,6 @@ namespace Imgeneus.World.Game.Player
             InventoryItems.CollectionChanged += InventoryItems_CollectionChanged;
             Skills.CollectionChanged += Skills_CollectionChanged;
             ActiveBuffs.CollectionChanged += ActiveBuffs_CollectionChanged;
-            _attackTimer.Elapsed += AttackTimer_Elapsed;
             _castTimer.Elapsed += CastTimer_Elapsed;
         }
 
@@ -278,7 +277,6 @@ namespace Imgeneus.World.Game.Player
         private void SetWeaponSpeed(byte speed)
         {
             _weaponSpeed = speed;
-            CalculateAttackSpeedTimer();
             OnAttackOrMoveChanged?.Invoke(this);
         }
 
@@ -296,49 +294,45 @@ namespace Imgeneus.World.Game.Player
                 return;
 
             _attackSpeedModifier += speed;
-            CalculateAttackSpeedTimer();
             OnAttackOrMoveChanged?.Invoke(this);
         }
 
-        private void CalculateAttackSpeedTimer()
+        private int NextAttackTime
         {
-            switch (AttackSpeed)
+            get
             {
-                case AttackSpeed.ExteremelySlow:
-                    _attackTimer.Interval = 4000;
-                    break;
+                switch (AttackSpeed)
+                {
+                    case AttackSpeed.ExteremelySlow:
+                        return 4000;
 
-                case AttackSpeed.VerySlow:
-                    _attackTimer.Interval = 3750;
-                    break;
+                    case AttackSpeed.VerySlow:
+                        return 3750;
 
-                case AttackSpeed.Slow:
-                    _attackTimer.Interval = 3500;
-                    break;
+                    case AttackSpeed.Slow:
+                        return 3500;
 
-                case AttackSpeed.ABitSlow:
-                    _attackTimer.Interval = 3250;
-                    break;
+                    case AttackSpeed.ABitSlow:
+                        return 3250;
 
-                case AttackSpeed.Normal:
-                    _attackTimer.Interval = 3000;
-                    break;
+                    case AttackSpeed.Normal:
+                        return 3000;
 
-                case AttackSpeed.ABitFast:
-                    _attackTimer.Interval = 2750;
-                    break;
+                    case AttackSpeed.ABitFast:
+                        return 2750;
 
-                case AttackSpeed.Fast:
-                    _attackTimer.Interval = 2500;
-                    break;
+                    case AttackSpeed.Fast:
+                        return 2500;
 
-                case AttackSpeed.VeryFast:
-                    _attackTimer.Interval = 2250;
-                    break;
+                    case AttackSpeed.VeryFast:
+                        return 2250;
 
-                case AttackSpeed.ExteremelyFast:
-                    _attackTimer.Interval = 2000;
-                    break;
+                    case AttackSpeed.ExteremelyFast:
+                        return 2000;
+
+                    default:
+                        return 2000;
+                }
             }
         }
 

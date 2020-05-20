@@ -160,16 +160,7 @@ namespace Imgeneus.World.Packets
 
         internal void SendAutoAttackWrongTarget(WorldClient client, Character sender, IKillable target)
         {
-            PacketType type;
-            if (target is Character)
-            {
-                type = PacketType.CHARACTER_CHARACTER_AUTO_ATTACK;
-            }
-            else
-            {
-                type = PacketType.CHARACTER_MOB_AUTO_ATTACK;
-            }
-
+            PacketType type = target is Character ? PacketType.CHARACTER_CHARACTER_AUTO_ATTACK : PacketType.CHARACTER_MOB_AUTO_ATTACK;
             using var packet = new Packet(type);
             packet.Write(new UsualAttack(sender.Id, 0, new AttackResult() { Success = AttackSuccess.WrongTarget }).Serialize());
             client.SendPacket(packet);
@@ -184,6 +175,14 @@ namespace Imgeneus.World.Packets
         }
 
         internal void SendNotEnoughMPSP(WorldClient client, Character sender, IKillable target, Skill skill)
+        {
+            PacketType type = target is Character ? PacketType.USE_CHARACTER_TARGET_SKILL : PacketType.USE_MOB_TARGET_SKILL;
+            using var packet = new Packet(type);
+            packet.Write(new SkillRange(sender.Id, 0, skill, new AttackResult() { Success = AttackSuccess.NotEnoughMPSP }).Serialize());
+            client.SendPacket(packet);
+        }
+
+        internal void SendCooldownNotOver(WorldClient client, Character sender, IKillable target, Skill skill)
         {
             PacketType type = target is Character ? PacketType.USE_CHARACTER_TARGET_SKILL : PacketType.USE_MOB_TARGET_SKILL;
             using var packet = new Packet(type);

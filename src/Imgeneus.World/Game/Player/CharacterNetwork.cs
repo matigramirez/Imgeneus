@@ -182,12 +182,12 @@ namespace Imgeneus.World.Game.Player
 
         private void HandlePlayerInTarget(PlayerInTargetPacket packet)
         {
-            OnSeekForTarget?.Invoke(this, packet.TargetId, TargetEntity.Player);
+            Target = Map.GetPlayer(packet.TargetId);
         }
 
         private void HandleMobInTarget(MobInTargetPacket packet)
         {
-            OnSeekForTarget?.Invoke(this, packet.TargetId, TargetEntity.Mob);
+            Target = Map.GetMob(packet.TargetId);
         }
 
         private void HandleMotion(MotionPacket packet)
@@ -245,30 +245,31 @@ namespace Imgeneus.World.Game.Player
 
         private void HandleAutoAttackOnMob(int targetId)
         {
-            Target = Map.GetMob(targetId);
-            NextSkillNumber = 255;
+            var target = Map.GetMob(targetId);
+            Attack(255, target);
         }
 
         private void HandleAutoAttackOnPlayer(int targetId)
         {
-            Target = Map.GetPlayer(targetId);
-            NextSkillNumber = 255;
+            var target = Map.GetPlayer(targetId);
+            Attack(255, target);
         }
 
         private void HandleUseSkillOnMob(byte number, int targetId)
         {
-            Target = Map.GetMob(targetId);
-            NextSkillNumber = number;
+            var target = Map.GetMob(targetId);
+            Attack(number, target);
         }
 
         private void HandleUseSkillOnPlayer(byte number, int targetId)
         {
+            IKillable target;
             if (targetId == 0)
-                Target = this;
+                target = this;
             else
-                Target = Map.GetPlayer(targetId);
+                target = Map.GetPlayer(targetId);
 
-            NextSkillNumber = number;
+            Attack(number, target);
         }
 
         private void HandleGetCharacterBuffs(int targetId)
@@ -320,6 +321,8 @@ namespace Imgeneus.World.Game.Player
         private void SendNotEnoughMPSP(IKillable target, Skill skill) => _packetsHelper.SendNotEnoughMPSP(Client, this, target, skill);
 
         private void SendUseSMMP(ushort needMP, ushort needSP) => _packetsHelper.SendUseSMMP(Client, needMP, needSP);
+
+        private void SendCooldownNotOver(IKillable target, Skill skill) => _packetsHelper.SendCooldownNotOver(Client, this, target, skill);
 
         private void SendMoveAndAttackSpeed() => _packetsHelper.SendMoveAndAttackSpeed(Client, this);
 

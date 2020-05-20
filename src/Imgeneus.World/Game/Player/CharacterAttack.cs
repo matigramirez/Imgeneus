@@ -1,4 +1,5 @@
 ﻿using Imgeneus.Database.Constants;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
 using System.Timers;
@@ -8,11 +9,6 @@ namespace Imgeneus.World.Game.Player
     public partial class Character : IKillable
     {
         #region Target
-
-        /// <summary>
-        /// Player fire this event to map in order to get target.
-        /// </summary>
-        public event Action<Character, int, TargetEntity> OnSeekForTarget;
 
         private IKillable _target;
         public IKillable Target
@@ -43,6 +39,11 @@ namespace Imgeneus.World.Game.Player
         private Skill _skillInCast;
 
         /// <summary>
+        /// Target for which we are casting spell.
+        /// </summary>
+        private IKillable _targetInCast;
+
+        /// <summary>
         /// Event, that is fired, when user starts casting.
         /// </summary>
         public event Action<Character, IKillable, Skill> OnSkillCastStarted;
@@ -51,13 +52,15 @@ namespace Imgeneus.World.Game.Player
         /// Starts casting.
         /// </summary>
         /// <param name="skill">skill, that we are casting</param>
-        private void StartCasting(Skill skill)
+        /// <param name="target">target for which, that we are casting</param>
+        private void StartCasting(Skill skill, IKillable target)
         {
-            if (!CanUseSkill(skill))
+            if (!CanUseSkill(skill, target))
                 return;
 
             _skillInCast = skill;
-            _castTimer.Interval = skill.CastTime * 250;
+            _targetInCast = target;
+            _castTimer.Interval = skill.CastTime;
             _castTimer.Start();
             OnSkillCastStarted?.Invoke(this, Target, skill);
         }
@@ -69,6 +72,7 @@ namespace Imgeneus.World.Game.Player
         {
             _castTimer.Stop();
             _skillInCast = null;
+            _targetInCast = null;
         }
 
         /// <summary>
@@ -76,11 +80,8 @@ namespace Imgeneus.World.Game.Player
         /// </summary>
         private void CastTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
-            UseSkill(_skillInCast);
+            UseSkill(_skillInCast, _targetInCast);
             StopCasting();
-
-            if (_nextSkillNumber != 0 && !_attackTimer.Enabled)
-                UseSkill(_nextSkillNumber);
         }
 
         #endregion
@@ -88,81 +89,46 @@ namespace Imgeneus.World.Game.Player
         #region Damage calculation
 
         /// <summary>
-        /// The time since the last attack. Needed for attack calculations.
+        /// I'm not sure how exactly in original server next attack time was implemented.
+        /// For now, I'm implementing it as usual date time and increase it based on attack speed and casting time.
         /// </summary>
-        private Timer _attackTimer = new Timer();
+        private DateTime _nextAttackTime;
 
         /// <summary>
-        /// This sync object is used for attack timer calculations.
+        /// Uses skill or auto attack.
         /// </summary>
-        private object syncObject = new object();
-
-        private int _nextSkillNumber;
-        /// <summary>
-        /// Client sends next skill number, that he/she wants to use.
-        /// We should save this number and use skill based on elapsed time.
-        /// </summary>
-        public int NextSkillNumber
-        {
-            get => _nextSkillNumber;
-            set
-            {
-                lock (syncObject)
-                {
-                    // First, check if target is not yet dead.
-                    if (Target.IsDead)
-                    {
-                        if (value == 255)
-                            SendAutoAttackWrongTarget(Target);
-                        else
-                            SendSkillWrongTarget(Target, Skills.First(s => s.Number == value));
-                        return;
-                    }
-
-                    // If timer is not running, this means player just started attacking.
-                    if (!_attackTimer.Enabled && !_castTimer.Enabled)
-                    {
-                        _attackTimer.Start();
-                        _nextSkillNumber = value;
-                        UseSkill(_nextSkillNumber);
-                    }
-                    // Set the next skill number and wait until timer calls it.
-                    else
-                    {
-                        _nextSkillNumber = value;
-                    }
-                }
-            }
-        }
-
-        /// <summary>
-        /// Uses skill, based on its' number.
-        /// </summary>
-        private void UseSkill(int skillNumber)
+        private void Attack(int skillNumber, IKillable target)
         {
             if (skillNumber == 255)
+            {
                 AutoAttack();
+            }
             else
             {
                 var skill = Skills.First(s => s.Number == skillNumber);
 
                 if (skill.CastTime == 0)
-                    UseSkill(skill);
+                {
+                    UseSkill(skill, target);
+                }
                 else
-                    StartCasting(skill);
+                {
+                    StartCasting(skill, target);
+                }
             }
         }
 
         /// <summary>
         /// Make character use skill.
         /// </summary>
-        private void UseSkill(Skill skill)
+        private void UseSkill(Skill skill, IKillable target)
         {
-            _nextSkillNumber = 0;
             SendAttackStart();
 
-            if (!CanUseSkill(skill))
+            if (!CanAttack(skill.Number, target))
                 return;
+
+            _nextAttackTime = DateTime.UtcNow.AddMilliseconds(NextAttackTime);
 
             CurrentMP -= skill.NeedMP;
             CurrentSP -= skill.NeedSP;
@@ -171,10 +137,10 @@ namespace Imgeneus.World.Game.Player
             switch (skill.Type)
             {
                 case TypeDetail.Buff:
-                    UsedBuffSkill(skill);
+                    UsedBuffSkill(skill, target);
                     break;
                 default:
-                    UsedAttackSkill(skill);
+                    UsedAttackSkill(skill, target);
                     break;
             }
         }
@@ -189,13 +155,12 @@ namespace Imgeneus.World.Game.Player
         /// </summary>
         private void AutoAttack()
         {
-            if (Target.IsDead)
-            {
-                return;
-            }
-
             SendAttackStart();
-            _nextSkillNumber = 0;
+
+            if (!CanAttack(255, Target))
+                return;
+
+            _nextAttackTime = DateTime.UtcNow.AddMilliseconds(NextAttackTime);
 
             var result = CalculateDamage(Target);
             Target.DecreaseHP(result.Damage.HP, this);
@@ -203,18 +168,6 @@ namespace Imgeneus.World.Game.Player
             Target.CurrentMP -= result.Damage.MP;
 
             OnAutoAttack?.Invoke(this, result);
-        }
-
-        /// <summary>
-        /// When time has elapsed, we can use another skill.
-        /// </summary>
-        private void AttackTimer_Elapsed(object sender, ElapsedEventArgs e)
-        {
-            // If there is any pending skill.
-            if (_nextSkillNumber != 0 && !_castTimer.Enabled)
-                UseSkill(_nextSkillNumber);
-            else // No pending skill, stop timer.
-                _attackTimer.Stop();
         }
 
         /// <summary>
@@ -235,11 +188,49 @@ namespace Imgeneus.World.Game.Player
         }
 
         /// <summary>
+        /// Checks if it's possible to attack target. (or use skill)
+        /// </summary>
+        private bool CanAttack(byte skillNumber, IKillable target)
+        {
+            if (skillNumber == 255 && DateTime.UtcNow < _nextAttackTime)
+            {
+                // TODO: send not enough elapsed time?
+                _logger.Log(LogLevel.Debug, "Too fast attack.");
+                return false;
+            }
+
+            if (skillNumber == 255 && target.IsDead)
+            {
+                SendAutoAttackWrongTarget(target);
+                return false;
+            }
+
+            if (skillNumber != 255)
+            {
+                return CanUseSkill(Skills.First(s => s.Number == skillNumber), target);
+            }
+
+            return true;
+        }
+
+        /// <summary>
         /// Checks if it's enough sp and mp in order to use a skill.
         /// </summary>
         /// <param name="skill">skill, that character wants to use</param>
-        private bool CanUseSkill(Skill skill)
+        private bool CanUseSkill(Skill skill, IKillable target)
         {
+            if (DateTime.UtcNow < _nextAttackTime)
+            {
+                SendCooldownNotOver(target, skill);
+                return false;
+            }
+
+            if (target.IsDead)
+            {
+                SendSkillWrongTarget(target, skill);
+                return false;
+            }
+
             if (CurrentMP < skill.NeedMP || CurrentSP < skill.NeedSP)
             {
                 SendNotEnoughMPSP(Target, skill);

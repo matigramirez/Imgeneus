@@ -46,9 +46,9 @@ namespace Imgeneus.World.Game.Player
         public int KeepTime;
 
         /// <summary>
-        /// How long character should wait until skill is casted.
+        /// How long character should wait until skill is casted. In milliseconds.
         /// </summary>
-        public byte CastTime;
+        public int CastTime;
 
         /// <summary>
         /// How much stamina is needed in order to use this skill.
@@ -75,7 +75,7 @@ namespace Imgeneus.World.Game.Player
                 TargetType = dbSkill.Skill.TargetType,
                 ResetTime = dbSkill.Skill.ResetTime,
                 KeepTime = dbSkill.Skill.KeepTime,
-                CastTime = dbSkill.Skill.ReadyTime,
+                CastTime = dbSkill.Skill.ReadyTime * 250,
                 NeedSP = dbSkill.Skill.SP,
                 NeedMP = dbSkill.Skill.MP
             };

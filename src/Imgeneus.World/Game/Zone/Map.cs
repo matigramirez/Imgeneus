@@ -117,7 +117,6 @@ namespace Imgeneus.World.Game.Zone
         {
             character.OnPositionChanged += Character_OnPositionChanged;
             character.OnMotion += Character_OnMotion;
-            character.OnSeekForTarget += Character_OnTargetChanged;
             character.OnEquipmentChanged += Character_OnEquipmentChanged;
             character.OnPartyChanged += Character_OnPartyChanged;
             character.OnAttackOrMoveChanged += Character_OnAttackOrMoveChanged;
@@ -135,7 +134,6 @@ namespace Imgeneus.World.Game.Zone
         {
             character.OnPositionChanged -= Character_OnPositionChanged;
             character.OnMotion -= Character_OnMotion;
-            character.OnSeekForTarget -= Character_OnTargetChanged;
             character.OnEquipmentChanged -= Character_OnEquipmentChanged;
             character.OnPartyChanged -= Character_OnPartyChanged;
             character.OnAttackOrMoveChanged -= Character_OnAttackOrMoveChanged;
@@ -170,24 +168,6 @@ namespace Imgeneus.World.Game.Zone
             foreach (var player in Players)
             {
                 _packetHelper.SendCharacterMotion(player.Value.Client, playerWithMotion.Id, motion);
-            }
-        }
-
-        /// <summary>
-        /// Sets target based on what target character wants to get.
-        /// </summary>
-        /// <param name="sender">character, that seeks for target</param>
-        /// <param name="targetId">target Id</param>
-        /// <param name="targetType">mob or another player</param>
-        private void Character_OnTargetChanged(Character sender, int targetId, TargetEntity targetType)
-        {
-            if (targetType == TargetEntity.Mob)
-            {
-                sender.Target = Mobs[targetId];
-            }
-            else
-            {
-                sender.Target = Players[targetId];
             }
         }
 

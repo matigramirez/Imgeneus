@@ -7,6 +7,7 @@ using Imgeneus.DatabaseBackgroundService;
 using Imgeneus.DatabaseBackgroundService.Handlers;
 using Imgeneus.World.Game.PartyAndRaid;
 using Imgeneus.World.Game.Trade;
+using Imgeneus.World.Game.Zone;
 using Imgeneus.World.Packets;
 using Microsoft.Extensions.Logging;
 using System;
@@ -47,7 +48,7 @@ namespace Imgeneus.World.Game.Player
         public string Name;
         public Fraction Country;
         public ushort Level;
-        public ushort Map;
+        public ushort MapId;
         public Race Race;
         public CharacterProfession Class;
         public Mode Mode;
@@ -380,6 +381,15 @@ namespace Imgeneus.World.Game.Player
 
         #endregion
 
+        #region Map
+
+        /// <summary>
+        /// Map, where the player is currently.
+        /// </summary>
+        public Map Map { get; set; }
+
+        #endregion
+
         #region Motion
 
         /// <summary>
@@ -563,7 +573,7 @@ namespace Imgeneus.World.Game.Player
                 Id = dbCharacter.Id,
                 Name = dbCharacter.Name,
                 Level = dbCharacter.Level,
-                Map = dbCharacter.Map,
+                MapId = dbCharacter.Map,
                 Race = dbCharacter.Race,
                 Class = dbCharacter.Class,
                 Mode = dbCharacter.Mode,

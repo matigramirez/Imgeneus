@@ -101,6 +101,51 @@ namespace Imgeneus.World.Game.Player
                     // Not sure, but maybe I should not permit any attack start?
                     sender.SendPacket(new Packet(PacketType.ATTACK_START));
                     break;
+
+                case MobAutoAttackPacket attackPacket:
+                    HandleAutoAttackOnMob(attackPacket.TargetId);
+                    break;
+
+                case CharacterAutoAttackPacket attackPacket:
+                    HandleAutoAttackOnPlayer(attackPacket.TargetId);
+                    break;
+
+                case MobSkillAttackPacket usedSkillMobAttackPacket:
+                    HandleUseSkillOnMob(usedSkillMobAttackPacket.Number, usedSkillMobAttackPacket.TargetId);
+                    break;
+
+                case CharacterSkillAttackPacket usedSkillPlayerAttackPacket:
+                    HandleUseSkillOnPlayer(usedSkillPlayerAttackPacket.Number, usedSkillPlayerAttackPacket.TargetId);
+                    break;
+
+                case TargetCharacterGetBuffs targetCharacterGetBuffsPacket:
+                    HandleGetCharacterBuffs(targetCharacterGetBuffsPacket.TargetId);
+                    break;
+
+                case TargetMobGetBuffs targetMobGetBuffsPacket:
+                    // Not implmented.
+                    break;
+
+                case CharacterShapePacket characterShapePacket:
+                    HandleCharacterShape(characterShapePacket.CharacterId);
+                    break;
+
+                case GMCreateMobPacket gMCreateMobPacket:
+                    if (!IsAdmin)
+                        return;
+                    // TODO: find out way to preload all awailable mobs.
+                    using (var database = DependencyContainer.Instance.Resolve<IDatabase>())
+                    {
+                        var mob = Mob.FromDbMob(database.Mobs.First(m => m.Id == gMCreateMobPacket.MobId), DependencyContainer.Instance.Resolve<ILogger<Mob>>());
+
+                        // TODO: mobs should be generated near character, not on his position directly.
+                        mob.PosX = PosX;
+                        mob.PosY = PosY;
+                        mob.PosZ = PosZ;
+
+                        Map.AddMob(mob);
+                    }
+                    break;
             }
         }
 
@@ -196,6 +241,46 @@ namespace Imgeneus.World.Game.Player
             }
             await database.QuickItems.AddRangeAsync(newItems);
             await database.SaveChangesAsync();
+        }
+
+        private void HandleAutoAttackOnMob(int targetId)
+        {
+            Target = Map.GetMob(targetId);
+            NextSkillNumber = 255;
+        }
+
+        private void HandleAutoAttackOnPlayer(int targetId)
+        {
+            Target = Map.GetPlayer(targetId);
+            NextSkillNumber = 255;
+        }
+
+        private void HandleUseSkillOnMob(byte number, int targetId)
+        {
+            Target = Map.GetMob(targetId);
+            NextSkillNumber = number;
+        }
+
+        private void HandleUseSkillOnPlayer(byte number, int targetId)
+        {
+            if (targetId == 0)
+                Target = this;
+            else
+                Target = Map.GetPlayer(targetId);
+
+            NextSkillNumber = number;
+        }
+
+        private void HandleGetCharacterBuffs(int targetId)
+        {
+            var target = Map.GetPlayer(targetId);
+            _packetsHelper.SendCharacterBuffs(Client, target);
+        }
+
+        private void HandleCharacterShape(int characterId)
+        {
+            var character = Map.GetPlayer(characterId);
+            _packetsHelper.SendCharacterShape(Client, character);
         }
 
         #endregion

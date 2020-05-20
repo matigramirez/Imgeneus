@@ -68,7 +68,7 @@ namespace Imgeneus.World.Serialization
             SP = character.CurrentSP;
             MaxMP = character.MaxMP;
             MP = character.CurrentMP;
-            Map = character.Map;
+            Map = character.MapId;
             X = character.PosX;
             Y = character.PosY;
             Z = character.PosZ;

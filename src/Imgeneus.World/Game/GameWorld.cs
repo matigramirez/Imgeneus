@@ -98,7 +98,7 @@ namespace Imgeneus.World.Game
         public void LoadPlayerInMap(int characterId)
         {
             var player = Players[characterId];
-            Maps[player.Map].LoadPlayer(player);
+            Maps[player.MapId].LoadPlayer(player);
         }
 
         /// <inheritdoc />
@@ -117,7 +117,7 @@ namespace Imgeneus.World.Game
 
                 player.Client.OnPacketArrived -= Client_OnPacketArrived;
 
-                var map = Maps[player.Map];
+                var map = Maps[player.MapId];
                 map.UnloadPlayer(player);
                 player.ClearConnection();
             }

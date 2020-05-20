@@ -179,24 +179,5 @@ namespace Imgeneus.World.Packets
             packet.Write(new SkillCasting(sender.Id, target.Id, skill).Serialize());
             client.SendPacket(packet);
         }
-
-        internal void SendCharacterBuffs(WorldClient client, Character target)
-        {
-            using var packet = new Packet(PacketType.TARGET_CHARACTER_BUFFS);
-            packet.Write(new TargetBuffs(target).Serialize());
-            client.SendPacket(packet);
-        }
-
-        internal void SendMobBuffs(WorldClient client, Mob target)
-        {
-            // Not implemented.
-        }
-
-        internal void SendCharacterShape(WorldClient client, Character character)
-        {
-            using var packet = new Packet(PacketType.CHARACTER_SHAPE);
-            packet.Write(new CharacterShape(character).Serialize());
-            client.SendPacket(packet);
-        }
     }
 }

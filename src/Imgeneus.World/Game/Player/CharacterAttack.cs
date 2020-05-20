@@ -159,6 +159,7 @@ namespace Imgeneus.World.Game.Player
         private void UseSkill(Skill skill)
         {
             _nextSkillNumber = 0;
+            SendAttackStart();
 
             if (!CanUseSkill(skill))
                 return;
@@ -167,7 +168,6 @@ namespace Imgeneus.World.Game.Player
             CurrentSP -= skill.NeedSP;
             SendUseSMMP(skill.NeedMP, skill.NeedSP);
 
-            SendAttackStart();
             switch (skill.Type)
             {
                 case TypeDetail.Buff:

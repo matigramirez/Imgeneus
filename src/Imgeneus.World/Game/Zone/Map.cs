@@ -1,8 +1,6 @@
 ﻿using Imgeneus.Core.DependencyInjection;
 using Imgeneus.Database;
 using Imgeneus.Database.Constants;
-using Imgeneus.Network.Data;
-using Imgeneus.Network.Packets;
 using Imgeneus.Network.Packets.Game;
 using Imgeneus.Network.Server;
 using Imgeneus.World.Game.Monster;
@@ -10,7 +8,6 @@ using Imgeneus.World.Game.PartyAndRaid;
 using Imgeneus.World.Game.Player;
 using Imgeneus.World.Packets;
 using Microsoft.Extensions.Logging;
-using System;
 using System.Collections.Concurrent;
 using System.Linq;
 
@@ -48,6 +45,17 @@ namespace Imgeneus.World.Game.Zone
         private readonly ConcurrentDictionary<int, Character> Players = new ConcurrentDictionary<int, Character>();
 
         /// <summary>
+        /// Tries to get player from map.
+        /// </summary>
+        /// <param name="mobId">id of player, that you are trying to get.</param>
+        /// <returns>either player or null if player is not presented</returns>
+        public Character GetPlayer(int playerId)
+        {
+            Players.TryGetValue(playerId, out var player);
+            return player;
+        }
+
+        /// <summary>
         /// Loads player into map.
         /// </summary>
         /// <param name="character">player, that we need to load</param>
@@ -59,6 +67,7 @@ namespace Imgeneus.World.Game.Zone
             if (success)
             {
                 _logger.LogDebug($"Player {character.Id} connected to map {Id}");
+                character.Map = this;
                 AddListeners(character);
 
                 foreach (var loadedPlayer in Players)
@@ -89,7 +98,7 @@ namespace Imgeneus.World.Game.Zone
             if (success)
             {
                 _logger.LogDebug($"Player {character.Id} left map {Id}");
-
+                character.Map = null;
                 // Send other clients notification, that user has left the map.
                 foreach (var player in Players)
                 {
@@ -117,7 +126,6 @@ namespace Imgeneus.World.Game.Zone
             character.OnDead += Character_OnDead;
             character.OnAddedBuffToAnotherCharacter += Character_OnAddedBuff;
             character.OnSkillCastStarted += Character_OnSkillCastStarted;
-            character.Client.OnPacketArrived += Client_OnPacketArrived;
         }
 
         /// <summary>
@@ -136,7 +144,6 @@ namespace Imgeneus.World.Game.Zone
             character.OnDead -= Character_OnDead;
             character.OnAddedBuffToAnotherCharacter -= Character_OnAddedBuff;
             character.OnSkillCastStarted -= Character_OnSkillCastStarted;
-            character.Client.OnPacketArrived -= Client_OnPacketArrived;
         }
 
         /// <summary>
@@ -282,138 +289,6 @@ namespace Imgeneus.World.Game.Zone
             {
                 _packetHelper.SendSkillCastStarted(player.Value.Client, sender, target, skill);
             }
-        }
-
-        /// <summary>
-        /// Handles special packets, as GM packets mob creation etc.
-        /// </summary>
-        private void Client_OnPacketArrived(ServerClient sender, IDeserializedPacket packet)
-        {
-            var worldClient = (WorldClient)sender;
-            switch (packet)
-            {
-                case GMCreateMobPacket gMCreateMobPacket:
-                    var gmPlayer = Players[worldClient.CharID];
-                    if (!gmPlayer.IsAdmin)
-                        return;
-
-                    // TODO: find out way to preload all awailable mobs.
-                    using (var database = DependencyContainer.Instance.Resolve<IDatabase>())
-                    {
-                        var mob = Mob.FromDbMob(database.Mobs.First(m => m.Id == gMCreateMobPacket.MobId), DependencyContainer.Instance.Resolve<ILogger<Mob>>());
-
-                        // TODO: mobs should be generated near character, not on his position directly.
-                        mob.PosX = gmPlayer.PosX;
-                        mob.PosY = gmPlayer.PosY;
-                        mob.PosZ = gmPlayer.PosZ;
-
-                        AddMob(mob);
-                    }
-                    break;
-
-                case MobAutoAttackPacket attackPacket:
-                    HandleAutoAttackOnMob(worldClient, attackPacket.TargetId);
-                    break;
-
-                case CharacterAutoAttackPacket attackPacket:
-                    HandleAutoAttackOnPlayer(worldClient, attackPacket.TargetId);
-                    break;
-
-                case MobSkillAttackPacket usedSkillMobAttackPacket:
-                    HandleUseSkillOnMob(worldClient, usedSkillMobAttackPacket.Number, usedSkillMobAttackPacket.TargetId);
-                    break;
-                case CharacterSkillAttackPacket usedSkillPlayerAttackPacket:
-                    HandleUseSkillOnPlayer(worldClient, usedSkillPlayerAttackPacket.Number, usedSkillPlayerAttackPacket.TargetId);
-                    break;
-
-                case TargetCharacterGetBuffs targetCharacterGetBuffsPacket:
-                    HandleGetCharacterBuffs(worldClient, targetCharacterGetBuffsPacket.TargetId);
-                    break;
-                case TargetMobGetBuffs targetMobGetBuffsPacket:
-                    HandleGetMobBuffs(worldClient, targetMobGetBuffsPacket.TargetId);
-                    break;
-
-                case CharacterShapePacket characterShapePacket:
-                    HandleCharacterShape(worldClient, characterShapePacket.CharacterId);
-                    break;
-            }
-        }
-
-        /// <summary>
-        /// Handles use skill packets on mob.
-        /// </summary>
-        /// <param name="sender">world client, client, that used skill</param>
-        /// <param name="number">skill number</param>
-        /// <param name="targetId">target id</param>
-        private void HandleUseSkillOnMob(WorldClient sender, byte number, int targetId)
-        {
-            Players[sender.CharID].Target = Mobs[targetId];
-            Players[sender.CharID].NextSkillNumber = number;
-        }
-
-        /// <summary>
-        /// Handles use skill packets on another player.
-        /// </summary>
-        /// <param name="sender">world client, client, that used skill</param>
-        /// <param name="number">skill number</param>
-        /// <param name="targetId">target id</param>
-        private void HandleUseSkillOnPlayer(WorldClient sender, byte number, int targetId)
-        {
-            if (targetId != 0)
-                Players[sender.CharID].Target = Players[targetId];
-            else
-                Players[sender.CharID].Target = Players[sender.CharID];
-
-            Players[sender.CharID].NextSkillNumber = number;
-        }
-
-        /// <summary>
-        /// Handles usual(auto) attack on mob.
-        /// </summary>
-        /// <param name="sender">world client, client, that attacks</param>
-        /// <param name="targetId">target id</param>
-        private void HandleAutoAttackOnMob(WorldClient sender, int targetId)
-        {
-            Players[sender.CharID].Target = Mobs[targetId];
-            Players[sender.CharID].NextSkillNumber = 255;
-        }
-
-        /// <summary>
-        /// Handles usual(auto) attack on player.
-        /// </summary>
-        /// <param name="sender">world client, client, that attacks</param>
-        /// <param name="targetId">target id</param>
-        private void HandleAutoAttackOnPlayer(WorldClient sender, int targetId)
-        {
-            Players[sender.CharID].Target = Players[targetId];
-            Players[sender.CharID].NextSkillNumber = 255;
-        }
-
-        /// <summary>
-        /// Gets selected character buffs.
-        /// </summary>
-        private void HandleGetCharacterBuffs(WorldClient client, int targetId)
-        {
-            var target = Players[targetId];
-            _packetHelper.SendCharacterBuffs(client, target);
-        }
-
-        /// <summary>
-        /// Gets selected mob buffs.
-        /// </summary>
-        private void HandleGetMobBuffs(WorldClient client, int targetId)
-        {
-            var target = Mobs[targetId];
-            _packetHelper.SendMobBuffs(client, target);
-        }
-
-        /// <summary>
-        /// Handles shape request.
-        /// </summary>
-        private void HandleCharacterShape(WorldClient client, int characterId)
-        {
-            var character = Players[characterId];
-            _packetHelper.SendCharacterShape(client, character);
         }
 
         #endregion

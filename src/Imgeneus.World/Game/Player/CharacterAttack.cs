@@ -240,15 +240,9 @@ namespace Imgeneus.World.Game.Player
         /// <param name="skill">skill, that character wants to use</param>
         private bool CanUseSkill(Skill skill)
         {
-            if (CurrentMP < skill.NeedMP)
+            if (CurrentMP < skill.NeedMP || CurrentSP < skill.NeedSP)
             {
-                // TODO: send not enough MP.
-                return false;
-            }
-
-            if (CurrentSP < skill.NeedSP)
-            {
-                // TODO: send not enough SP.
+                SendNotEnoughMPSP(Target, skill);
                 return false;
             }
 

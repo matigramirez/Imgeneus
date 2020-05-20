@@ -27,8 +27,14 @@
         Normal = 0,
         Critical = 1,
         Miss = 2,
-        Unknown = 3,
+        Failed = 3,
         SuccessBuff = 4,
-        Error = 11
+        InsufficientRange = 5,
+        NotEnoughMPSP = 6,
+        WrongEquipment = 7,
+        PreviousSkillRequired = 8,
+        CooldownNotOver = 9,
+        CanNotAttack = 10,
+        WrongTarget = 11
     }
 }

@@ -83,37 +83,7 @@ namespace Imgeneus.World.Game.Player
             if (isSkillLearned != null) Skills.Remove(isSkillLearned);
 
             SkillPoint -= dbSkill.SkillPoint;
-            // TODO: refactor it!
-            var skill = new Skill()
-            {
-                SkillId = dbSkill.SkillId,
-                SkillLevel = dbSkill.SkillLevel,
-                Number = skillNumber,
-                CooldownInSeconds = 0,
-                Type = dbSkill.TypeDetail,
-                TargetType = dbSkill.TargetType,
-                ResetTime = dbSkill.ResetTime,
-                KeepTime = dbSkill.KeepTime,
-                CastTime = dbSkill.ReadyTime,
-                NeedSP = dbSkill.SP,
-                NeedMP = dbSkill.MP,
-                NeedWeapon1 = dbSkill.NeedWeapon1 == 1,
-                NeedWeapon2 = dbSkill.NeedWeapon2 == 1,
-                NeedWeapon3 = dbSkill.NeedWeapon3 == 1,
-                NeedWeapon4 = dbSkill.NeedWeapon4 == 1,
-                NeedWeapon5 = dbSkill.NeedWeapon5 == 1,
-                NeedWeapon6 = dbSkill.NeedWeapon6 == 1,
-                NeedWeapon7 = dbSkill.NeedWeapon7 == 1,
-                NeedWeapon8 = dbSkill.NeedWeapon8 == 1,
-                NeedWeapon9 = dbSkill.NeedWeapon9 == 1,
-                NeedWeapon10 = dbSkill.NeedWeapon10 == 1,
-                NeedWeapon11 = dbSkill.NeedWeapon11 == 1,
-                NeedWeapon12 = dbSkill.NeedWeapon12 == 1,
-                NeedWeapon13 = dbSkill.NeedWeapon13 == 1,
-                NeedWeapon14 = dbSkill.NeedWeapon14 == 1,
-                NeedWeapon15 = dbSkill.NeedWeapon15 == 1,
-                NeedShield = dbSkill.NeedShield == 1,
-            };
+            var skill = new Skill(dbSkill, skillNumber, 0);
             Skills.Add(skill);
             _logger.LogDebug($"Character {Id} learned skill {skill.SkillId} of level {skill.SkillLevel}");
         }

@@ -6,6 +6,39 @@ namespace Imgeneus.World.Game.Player
 {
     public class Skill
     {
+        public Skill(DbSkill dbSkill, byte skillNumber, int cooldown)
+        {
+            Number = skillNumber;
+            CooldownInSeconds = cooldown;
+
+            // DB values willl be stored.
+            SkillId = dbSkill.SkillId;
+            SkillLevel = dbSkill.SkillLevel;
+            Type = dbSkill.TypeDetail;
+            TargetType = dbSkill.TargetType;
+            ResetTime = dbSkill.ResetTime;
+            KeepTime = dbSkill.KeepTime;
+            CastTime = dbSkill.ReadyTime;
+            NeedSP = dbSkill.SP;
+            NeedMP = dbSkill.MP;
+            NeedWeapon1 = dbSkill.NeedWeapon1 == 1;
+            NeedWeapon2 = dbSkill.NeedWeapon2 == 1;
+            NeedWeapon3 = dbSkill.NeedWeapon3 == 1;
+            NeedWeapon4 = dbSkill.NeedWeapon4 == 1;
+            NeedWeapon5 = dbSkill.NeedWeapon5 == 1;
+            NeedWeapon6 = dbSkill.NeedWeapon6 == 1;
+            NeedWeapon7 = dbSkill.NeedWeapon7 == 1;
+            NeedWeapon8 = dbSkill.NeedWeapon8 == 1;
+            NeedWeapon9 = dbSkill.NeedWeapon9 == 1;
+            NeedWeapon10 = dbSkill.NeedWeapon10 == 1;
+            NeedWeapon11 = dbSkill.NeedWeapon11 == 1;
+            NeedWeapon12 = dbSkill.NeedWeapon12 == 1;
+            NeedWeapon13 = dbSkill.NeedWeapon13 == 1;
+            NeedWeapon14 = dbSkill.NeedWeapon14 == 1;
+            NeedWeapon15 = dbSkill.NeedWeapon15 == 1;
+            NeedShield = dbSkill.NeedShield == 1;
+        }
+
         /// <summary>
         /// Skill id.
         /// </summary>
@@ -239,44 +272,5 @@ namespace Imgeneus.World.Game.Player
         /// Needs Shield.
         /// </summary>
         public bool NeedShield;
-
-        /// <summary>
-        /// Creates skill from database inrofmation.
-        /// </summary>
-        public static Skill FromDbSkill(DbCharacterSkill dbSkill)
-        {
-            var skill = new Skill()
-            {
-                SkillId = dbSkill.Skill.SkillId,
-                SkillLevel = dbSkill.Skill.SkillLevel,
-                Number = dbSkill.Number,
-                CooldownInSeconds = 0,
-                Type = dbSkill.Skill.TypeDetail,
-                TargetType = dbSkill.Skill.TargetType,
-                ResetTime = dbSkill.Skill.ResetTime,
-                KeepTime = dbSkill.Skill.KeepTime,
-                CastTime = dbSkill.Skill.ReadyTime * 250,
-                NeedSP = dbSkill.Skill.SP,
-                NeedMP = dbSkill.Skill.MP,
-                NeedWeapon1 = dbSkill.Skill.NeedWeapon1 == 1,
-                NeedWeapon2 = dbSkill.Skill.NeedWeapon2 == 1,
-                NeedWeapon3 = dbSkill.Skill.NeedWeapon3 == 1,
-                NeedWeapon4 = dbSkill.Skill.NeedWeapon4 == 1,
-                NeedWeapon5 = dbSkill.Skill.NeedWeapon5 == 1,
-                NeedWeapon6 = dbSkill.Skill.NeedWeapon6 == 1,
-                NeedWeapon7 = dbSkill.Skill.NeedWeapon7 == 1,
-                NeedWeapon8 = dbSkill.Skill.NeedWeapon8 == 1,
-                NeedWeapon9 = dbSkill.Skill.NeedWeapon9 == 1,
-                NeedWeapon10 = dbSkill.Skill.NeedWeapon10 == 1,
-                NeedWeapon11 = dbSkill.Skill.NeedWeapon11 == 1,
-                NeedWeapon12 = dbSkill.Skill.NeedWeapon12 == 1,
-                NeedWeapon13 = dbSkill.Skill.NeedWeapon13 == 1,
-                NeedWeapon14 = dbSkill.Skill.NeedWeapon14 == 1,
-                NeedWeapon15 = dbSkill.Skill.NeedWeapon15 == 1,
-                NeedShield = dbSkill.Skill.NeedShield == 1,
-            };
-
-            return skill;
-        }
     }
 }

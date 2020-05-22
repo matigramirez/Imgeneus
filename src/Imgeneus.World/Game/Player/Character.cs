@@ -602,7 +602,7 @@ namespace Imgeneus.World.Game.Player
 
             ClearOutdatedValues(dbCharacter);
 
-            character.Skills.AddRange(dbCharacter.Skills.Select(s => Skill.FromDbSkill(s)));
+            character.Skills.AddRange(dbCharacter.Skills.Select(s => new Skill(s.Skill, s.Number, 0)));
             character.ActiveBuffs.AddRange(dbCharacter.ActiveBuffs.Select(b => ActiveBuff.FromDbCharacterActiveBuff(b)));
             character.InventoryItems.AddRange(dbCharacter.Items.Select(i => new Item(databasePreloader, i)));
             character.QuickItems = dbCharacter.QuickItems;

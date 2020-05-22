@@ -103,28 +103,28 @@ namespace Imgeneus.World.Game.PartyAndRaid
         /// <summary>
         /// Notifies party member, that member has new hp value.
         /// </summary>
-        private void Member_HP_Changed(Character sender, int hp)
+        private void Member_HP_Changed(Character sender, HitpointArgs args)
         {
             foreach (var member in Members.Where(m => m != sender))
-                Send_HP_SP_MP(member.Client, sender.Id, hp, 0);
+                Send_HP_SP_MP(member.Client, sender.Id, args.NewValue, 0);
         }
 
         /// <summary>
         /// Notifies party member, that member has new sp value.
         /// </summary>
-        private void Member_SP_Changed(Character sender, int sp)
+        private void Member_SP_Changed(Character sender, HitpointArgs args)
         {
             foreach (var member in Members.Where(m => m != sender))
-                Send_HP_SP_MP(member.Client, sender.Id, sp, 1);
+                Send_HP_SP_MP(member.Client, sender.Id, args.NewValue, 1);
         }
 
         /// <summary>
         /// Notifies party member, that member has new mp value.
         /// </summary>
-        private void Member_MP_Changed(Character sender, int mp)
+        private void Member_MP_Changed(Character sender, HitpointArgs args)
         {
             foreach (var member in Members.Where(m => m != sender))
-                Send_HP_SP_MP(member.Client, sender.Id, mp, 2);
+                Send_HP_SP_MP(member.Client, sender.Id, args.NewValue, 2);
         }
 
         /// <summary>

@@ -131,7 +131,8 @@ namespace Imgeneus.World
             { PacketType.PARTY_LEAVE, (s) => new PartyLeavePacket(s) },
             { PacketType.PARTY_KICK, (s) => new PartyKickPacket(s) },
             { PacketType.PARTY_CHANGE_LEADER, (s) => new PartyChangeLeaderPacket(s) },
-            { PacketType.CHARACTER_SHAPE, (s) => new CharacterShapePacket(s)}
+            { PacketType.CHARACTER_SHAPE, (s) => new CharacterShapePacket(s)},
+            { PacketType.USE_ITEM, (s) => new UseItemPacket(s) }
         };
 
         /// <inheritdoc />

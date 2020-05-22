@@ -1,5 +1,4 @@
-﻿using System;
-using Imgeneus.Database.Constants;
+﻿using Imgeneus.Database.Constants;
 using Imgeneus.Network.Data;
 using Imgeneus.Network.Packets;
 using Imgeneus.World.Game;
@@ -177,6 +176,28 @@ namespace Imgeneus.World.Packets
 
             using var packet = new Packet(type);
             packet.Write(new SkillCasting(sender.Id, target.Id, skill).Serialize());
+            client.SendPacket(packet);
+        }
+
+        internal void SendUsedItem(WorldClient client, Character sender, Item item)
+        {
+            using var packet = new Packet(PacketType.USE_ITEM);
+            packet.Write(sender.Id);
+            packet.Write(item.Bag);
+            packet.Write(item.Slot);
+            packet.Write(item.Type);
+            packet.Write(item.TypeId);
+            packet.Write(item.Count);
+            client.SendPacket(packet);
+        }
+
+        internal void SendRecoverCharacter(WorldClient client, Character sender)
+        {
+            using var packet = new Packet(PacketType.CHARACTER_RECOVER);
+            packet.Write(sender.Id);
+            packet.Write(sender.CurrentHP);
+            packet.Write(sender.CurrentMP);
+            packet.Write(sender.CurrentSP);
             client.SendPacket(packet);
         }
     }

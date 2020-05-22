@@ -125,6 +125,10 @@ namespace Imgeneus.World.Game.Zone
             character.OnDead += Character_OnDead;
             character.OnAddedBuffToAnotherCharacter += Character_OnAddedBuff;
             character.OnSkillCastStarted += Character_OnSkillCastStarted;
+            character.OnUsedItem += Character_OnUsedItem;
+            character.HP_Changed += Character_HP_Changed;
+            character.MP_Changed += Character_MP_Changed;
+            character.SP_Changed += Character_SP_Changed;
         }
 
         /// <summary>
@@ -142,6 +146,10 @@ namespace Imgeneus.World.Game.Zone
             character.OnDead -= Character_OnDead;
             character.OnAddedBuffToAnotherCharacter -= Character_OnAddedBuff;
             character.OnSkillCastStarted -= Character_OnSkillCastStarted;
+            character.OnUsedItem -= Character_OnUsedItem;
+            character.HP_Changed -= Character_HP_Changed;
+            character.MP_Changed -= Character_MP_Changed;
+            character.SP_Changed -= Character_SP_Changed;
         }
 
         /// <summary>
@@ -268,6 +276,50 @@ namespace Imgeneus.World.Game.Zone
             foreach (var player in Players)
             {
                 _packetHelper.SendSkillCastStarted(player.Value.Client, sender, target, skill);
+            }
+        }
+
+        /// <summary>
+        /// Notifies other players, that player used some item.
+        /// </summary>
+        private void Character_OnUsedItem(Character sender, Item item)
+        {
+            foreach (var player in Players)
+            {
+                _packetHelper.SendUsedItem(player.Value.Client, sender, item);
+            }
+        }
+
+        private void Character_HP_Changed(Character sender, HitpointArgs args)
+        {
+            if (args.OldValue > args.NewValue)
+                return;
+
+            foreach (var player in Players)
+            {
+                _packetHelper.SendRecoverCharacter(player.Value.Client, sender);
+            }
+        }
+
+        private void Character_MP_Changed(Character sender, HitpointArgs args)
+        {
+            if (args.OldValue > args.NewValue)
+                return;
+
+            foreach (var player in Players)
+            {
+                _packetHelper.SendRecoverCharacter(player.Value.Client, sender);
+            }
+        }
+
+        private void Character_SP_Changed(Character sender, HitpointArgs args)
+        {
+            if (args.OldValue > args.NewValue)
+                return;
+
+            foreach (var player in Players)
+            {
+                _packetHelper.SendRecoverCharacter(player.Value.Client, sender);
             }
         }
 

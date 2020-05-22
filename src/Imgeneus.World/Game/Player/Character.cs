@@ -197,7 +197,7 @@ namespace Imgeneus.World.Game.Player
         /// <summary>
         /// Event, that is fired, when hp changes.
         /// </summary>
-        public event Action<Character, int> HP_Changed;
+        public event Action<Character, HitpointArgs> HP_Changed;
 
         private int _currentHP;
         public int CurrentHP
@@ -208,6 +208,7 @@ namespace Imgeneus.World.Game.Player
                 if (_currentHP == value)
                     return;
 
+                var args = new HitpointArgs(_currentHP, value);
                 _currentHP = value;
                 if (_currentHP <= 0)
                 {
@@ -215,14 +216,14 @@ namespace Imgeneus.World.Game.Player
                     IsDead = true;
                 }
 
-                HP_Changed?.Invoke(this, _currentHP);
+                HP_Changed?.Invoke(this, args);
             }
         }
 
         /// <summary>
         /// Event, that is fired, when mp changes.
         /// </summary>
-        public event Action<Character, int> MP_Changed;
+        public event Action<Character, HitpointArgs> MP_Changed;
 
         private int _currentMP;
         public int CurrentMP
@@ -233,15 +234,16 @@ namespace Imgeneus.World.Game.Player
                 if (_currentMP == value)
                     return;
 
+                var args = new HitpointArgs(_currentMP, value);
                 _currentMP = value;
-                MP_Changed?.Invoke(this, _currentMP);
+                MP_Changed?.Invoke(this, args);
             }
         }
 
         /// <summary>
         /// Event, that is fired, when sp changes.
         /// </summary>
-        public event Action<Character, int> SP_Changed;
+        public event Action<Character, HitpointArgs> SP_Changed;
 
         private int _currentSP;
         public int CurrentSP
@@ -252,8 +254,9 @@ namespace Imgeneus.World.Game.Player
                 if (_currentSP == value)
                     return;
 
+                var args = new HitpointArgs(_currentSP, value);
                 _currentSP = value;
-                SP_Changed?.Invoke(this, _currentSP);
+                SP_Changed?.Invoke(this, args);
             }
         }
 

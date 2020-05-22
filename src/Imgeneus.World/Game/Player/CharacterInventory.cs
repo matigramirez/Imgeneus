@@ -718,6 +718,62 @@ namespace Imgeneus.World.Game.Player
 
         #endregion
 
+        #region Use Item
+
+        /// <summary>
+        /// Event, that is fired, when player uses any item from inventory.
+        /// </summary>
+        public event Action<Character, Item> OnUsedItem;
+
+        /// <summary>
+        /// Use item from inventory.
+        /// </summary>
+        /// <param name="bag">bag, where item is situated</param>
+        /// <param name="slot">slot, where item is situated</param>
+        private void UseItem(byte bag, byte slot)
+        {
+            var item = InventoryItems.FirstOrDefault(itm => itm.Bag == bag && itm.Slot == slot);
+            if (item is null)
+                return;
+
+            if (!CanUseItem(item))
+                return;
+
+            item.Count--;
+
+            // TODO: implement all useable items.
+
+            CurrentHP += item.HP;
+            CurrentMP += item.MP;
+            CurrentSP += item.SP;
+
+            OnUsedItem?.Invoke(this, item);
+
+            if (item.Count > 0)
+            {
+                _taskQueue.Enqueue(ActionType.UPDATE_ITEM_COUNT_IN_INVENTORY,
+                                   Id, item.Bag, item.Slot, item.Count);
+            }
+            else
+            {
+                InventoryItems.Remove(item);
+                _taskQueue.Enqueue(ActionType.REMOVE_ITEM_FROM_INVENTORY,
+                                   Id, item.Bag, item.Slot);
+            }
+        }
+
+        /// <summary>
+        /// Checks if item can be used. E.g. cooldown is over, required level is right etc.
+        /// </summary>
+        private bool CanUseItem(Item item)
+        {
+            // TODO: implement checks.
+
+            return true;
+        }
+
+        #endregion
+
         #region Helpers
 
         /// <summary>

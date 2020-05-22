@@ -130,6 +130,10 @@ namespace Imgeneus.World.Game.Player
                     HandleCharacterShape(characterShapePacket.CharacterId);
                     break;
 
+                case UseItemPacket useItemPacket:
+                    UseItem(useItemPacket.Bag, useItemPacket.Slot);
+                    break;
+
                 case GMCreateMobPacket gMCreateMobPacket:
                     if (!IsAdmin)
                         return;

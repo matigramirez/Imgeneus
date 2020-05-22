@@ -18,7 +18,7 @@ namespace Imgeneus.World.Game.Player
             TargetType = dbSkill.TargetType;
             ResetTime = dbSkill.ResetTime;
             KeepTime = dbSkill.KeepTime;
-            CastTime = dbSkill.ReadyTime;
+            CastTime = dbSkill.ReadyTime * 250;
             NeedSP = dbSkill.SP;
             NeedMP = dbSkill.MP;
             NeedWeapon1 = dbSkill.NeedWeapon1 == 1;

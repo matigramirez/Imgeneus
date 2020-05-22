@@ -599,9 +599,6 @@ namespace Imgeneus.World.Game.Player
                 Intelligence = dbCharacter.Intelligence,
                 Luck = dbCharacter.Luck,
                 Wisdom = dbCharacter.Wisdom,
-                CurrentHP = dbCharacter.HealthPoints,
-                CurrentMP = dbCharacter.ManaPoints,
-                CurrentSP = dbCharacter.StaminaPoints,
                 Exp = dbCharacter.Exp,
                 Gold = dbCharacter.Gold,
                 Kills = dbCharacter.Kills,
@@ -620,6 +617,10 @@ namespace Imgeneus.World.Game.Player
             character.QuickItems = dbCharacter.QuickItems;
 
             character.Init();
+
+            character.CurrentHP = dbCharacter.HealthPoints;
+            character.CurrentMP = dbCharacter.ManaPoints;
+            character.CurrentSP = dbCharacter.StaminaPoints;
 
             return character;
         }

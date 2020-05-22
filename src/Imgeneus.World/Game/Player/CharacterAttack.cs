@@ -97,7 +97,7 @@ namespace Imgeneus.World.Game.Player
         /// <summary>
         /// Uses skill or auto attack.
         /// </summary>
-        private void Attack(int skillNumber, IKillable target)
+        private void Attack(int skillNumber, IKillable target = null)
         {
             if (skillNumber == 255)
             {
@@ -121,7 +121,7 @@ namespace Imgeneus.World.Game.Player
         /// <summary>
         /// Make character use skill.
         /// </summary>
-        private void UseSkill(Skill skill, IKillable target)
+        private void UseSkill(Skill skill, IKillable target = null)
         {
             SendAttackStart();
 
@@ -199,7 +199,7 @@ namespace Imgeneus.World.Game.Player
                 return false;
             }
 
-            if (skillNumber == 255 && target.IsDead)
+            if (skillNumber == 255 && (target is null || target.IsDead))
             {
                 SendAutoAttackWrongTarget(target);
                 return false;
@@ -225,7 +225,8 @@ namespace Imgeneus.World.Game.Player
                 return false;
             }
 
-            if (target.IsDead)
+            if (skill.TargetType == TargetType.AnyEnemy || skill.TargetType == TargetType.EnemiesNearTarget &&
+                (target is null || target.IsDead))
             {
                 SendSkillWrongTarget(target, skill);
                 return false;

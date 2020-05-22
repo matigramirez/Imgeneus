@@ -263,12 +263,7 @@ namespace Imgeneus.World.Game.Player
 
         private void HandleUseSkillOnPlayer(byte number, int targetId)
         {
-            IKillable target;
-            if (targetId == 0)
-                target = this;
-            else
-                target = Map.GetPlayer(targetId);
-
+            IKillable target = target = Map.GetPlayer(targetId);
             Attack(number, target);
         }
 

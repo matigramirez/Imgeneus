@@ -208,6 +208,9 @@ namespace Imgeneus.World.Game.Player
                 if (_currentHP == value)
                     return;
 
+                if (value > MaxHP)
+                    value = MaxHP;
+
                 var args = new HitpointArgs(_currentHP, value);
                 _currentHP = value;
                 if (_currentHP <= 0)
@@ -234,6 +237,9 @@ namespace Imgeneus.World.Game.Player
                 if (_currentMP == value)
                     return;
 
+                if (value > MaxMP)
+                    value = MaxMP;
+
                 var args = new HitpointArgs(_currentMP, value);
                 _currentMP = value;
                 MP_Changed?.Invoke(this, args);
@@ -253,6 +259,9 @@ namespace Imgeneus.World.Game.Player
             {
                 if (_currentSP == value)
                     return;
+
+                if (value > MaxSP)
+                    value = MaxSP;
 
                 var args = new HitpointArgs(_currentSP, value);
                 _currentSP = value;

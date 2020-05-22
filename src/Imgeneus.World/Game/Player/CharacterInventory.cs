@@ -551,7 +551,7 @@ namespace Imgeneus.World.Game.Player
                 destinationItem.Slot = destinationSlot;
                 shouldDeleteSourceItemFromDB = true;
 
-                sourceItem = new Item(_databasePreloader) { Bag = currentBag, Slot = currentSlot }; // empty item.
+                sourceItem = new Item(_databasePreloader, 0, 0) { Bag = currentBag, Slot = currentSlot }; // empty item.
             }
             else
             {
@@ -563,7 +563,7 @@ namespace Imgeneus.World.Game.Player
                     shouldDeleteSourceItemFromDB = true;
                     InventoryItems.Remove(sourceItem);
 
-                    sourceItem = new Item(_databasePreloader) { Bag = currentBag, Slot = currentSlot }; // empty item.
+                    sourceItem = new Item(_databasePreloader, 0, 0) { Bag = currentBag, Slot = currentSlot }; // empty item.
                 }
                 else
                 {

@@ -22,12 +22,10 @@ namespace Imgeneus.World.Game.Player
 
         public byte Count;
 
-        public Item(IDatabasePreloader databasePreloader, DbCharacterItems dbItem) : this(databasePreloader)
+        public Item(IDatabasePreloader databasePreloader, DbCharacterItems dbItem) : this(databasePreloader, dbItem.Type, dbItem.TypeId)
         {
             Bag = dbItem.Bag;
             Slot = dbItem.Slot;
-            Type = dbItem.Type;
-            TypeId = dbItem.TypeId;
             Quality = dbItem.Quality;
 
             if (dbItem.GemTypeId1 != 0)
@@ -45,22 +43,27 @@ namespace Imgeneus.World.Game.Player
             Count = dbItem.Count;
         }
 
-        public Item(IDatabasePreloader databasePreloader)
+        public Item(IDatabasePreloader databasePreloader, byte type, byte typeId)
         {
             _databasePreloader = databasePreloader;
+            Type = type;
+            TypeId = typeId;
 
-            var item = _databasePreloader.Items[(Type, TypeId)];
-            ConstStr = item.ConstStr;
-            ConstDex = item.ConstDex;
-            ConstRec = item.ConstRec;
-            ConstInt = item.ConstInt;
-            ConstLuc = item.ConstLuc;
-            ConstWis = item.ConstWis;
-            ConstHP = item.ConstHP;
-            ConstMP = item.ConstMP;
-            ConstSP = item.ConstSP;
-            ConstAttackSpeed = item.AttackTime;
-            ConstMoveSpeed = item.Speed;
+            if (Type != 0 && TypeId != 0)
+            {
+                var item = _databasePreloader.Items[(Type, TypeId)];
+                ConstStr = item.ConstStr;
+                ConstDex = item.ConstDex;
+                ConstRec = item.ConstRec;
+                ConstInt = item.ConstInt;
+                ConstLuc = item.ConstLuc;
+                ConstWis = item.ConstWis;
+                ConstHP = item.ConstHP;
+                ConstMP = item.ConstMP;
+                ConstSP = item.ConstSP;
+                ConstAttackSpeed = item.AttackTime;
+                ConstMoveSpeed = item.Speed;
+            }
         }
 
         #region Trade
@@ -404,7 +407,7 @@ namespace Imgeneus.World.Game.Player
 
         public Item Clone()
         {
-            return new Item(_databasePreloader)
+            return new Item(_databasePreloader, Type, TypeId)
             {
                 Bag = Bag,
                 Slot = Slot,

@@ -48,6 +48,19 @@ namespace Imgeneus.World.Game.Player
         public Item(IDatabasePreloader databasePreloader)
         {
             _databasePreloader = databasePreloader;
+
+            var item = _databasePreloader.Items[(Type, TypeId)];
+            ConstStr = item.ConstStr;
+            ConstDex = item.ConstDex;
+            ConstRec = item.ConstRec;
+            ConstInt = item.ConstInt;
+            ConstLuc = item.ConstLuc;
+            ConstWis = item.ConstWis;
+            ConstHP = item.ConstHP;
+            ConstMP = item.ConstMP;
+            ConstSP = item.ConstSP;
+            ConstAttackSpeed = item.AttackTime;
+            ConstMoveSpeed = item.Speed;
         }
 
         #region Trade
@@ -58,6 +71,18 @@ namespace Imgeneus.World.Game.Player
 
         #region Extra stats
 
+        private readonly int ConstStr;
+        private readonly int ConstDex;
+        private readonly int ConstRec;
+        private readonly int ConstInt;
+        private readonly int ConstLuc;
+        private readonly int ConstWis;
+        private readonly int ConstHP;
+        private readonly int ConstMP;
+        private readonly int ConstSP;
+        private readonly byte ConstAttackSpeed;
+        private readonly byte ConstMoveSpeed;
+
         /// <summary>
         /// Str contains yellow(default) stat + orange stat (take it from craft name later).
         /// </summary>
@@ -65,7 +90,6 @@ namespace Imgeneus.World.Game.Player
         {
             get
             {
-                var constStr = _databasePreloader.Items[(Type, TypeId)].ConstStr;
                 ushort gemsStr = 0;
 
                 if (Gem1 != null)
@@ -81,7 +105,7 @@ namespace Imgeneus.World.Game.Player
                 if (Gem6 != null)
                     gemsStr += Gem6.Str;
 
-                return constStr + gemsStr; // + TODO: orange stats from craft name.
+                return ConstStr + gemsStr; // + TODO: orange stats from craft name.
             }
         }
 
@@ -92,7 +116,6 @@ namespace Imgeneus.World.Game.Player
         {
             get
             {
-                var constDex = _databasePreloader.Items[(Type, TypeId)].ConstDex;
                 ushort gemsDex = 0;
 
                 if (Gem1 != null)
@@ -108,7 +131,7 @@ namespace Imgeneus.World.Game.Player
                 if (Gem6 != null)
                     gemsDex += Gem6.Dex;
 
-                return constDex + gemsDex; // + TODO: orange stats from craft name.
+                return ConstDex + gemsDex; // + TODO: orange stats from craft name.
             }
         }
 
@@ -119,7 +142,6 @@ namespace Imgeneus.World.Game.Player
         {
             get
             {
-                var constRec = _databasePreloader.Items[(Type, TypeId)].ConstRec;
                 ushort gemsRec = 0;
 
                 if (Gem1 != null)
@@ -135,10 +157,9 @@ namespace Imgeneus.World.Game.Player
                 if (Gem6 != null)
                     gemsRec += Gem6.Rec;
 
-                return constRec + gemsRec; // + TODO: orange stats from craft name.
+                return ConstRec + gemsRec; // + TODO: orange stats from craft name.
             }
         }
-
 
         /// <summary>
         /// Int contains yellow(default) stat + orange stat (take it from craft name later).
@@ -147,7 +168,6 @@ namespace Imgeneus.World.Game.Player
         {
             get
             {
-                var constInt = _databasePreloader.Items[(Type, TypeId)].ConstInt;
                 ushort gemsInt = 0;
 
                 if (Gem1 != null)
@@ -163,10 +183,9 @@ namespace Imgeneus.World.Game.Player
                 if (Gem6 != null)
                     gemsInt += Gem6.Int;
 
-                return constInt + gemsInt; // + TODO: orange stats from craft name.
+                return ConstInt + gemsInt; // + TODO: orange stats from craft name.
             }
         }
-
 
         /// <summary>
         /// Luc contains yellow(default) stat + orange stat (take it from craft name later).
@@ -175,7 +194,6 @@ namespace Imgeneus.World.Game.Player
         {
             get
             {
-                var constLuc = _databasePreloader.Items[(Type, TypeId)].ConstLuc;
                 ushort gemsLuc = 0;
 
                 if (Gem1 != null)
@@ -191,7 +209,7 @@ namespace Imgeneus.World.Game.Player
                 if (Gem6 != null)
                     gemsLuc += Gem6.Luc;
 
-                return constLuc + gemsLuc; // + TODO: orange stats from craft name.
+                return ConstLuc + gemsLuc; // + TODO: orange stats from craft name.
             }
         }
 
@@ -202,7 +220,6 @@ namespace Imgeneus.World.Game.Player
         {
             get
             {
-                var constWis = _databasePreloader.Items[(Type, TypeId)].ConstWis;
                 ushort gemsWis = 0;
 
                 if (Gem1 != null)
@@ -218,7 +235,7 @@ namespace Imgeneus.World.Game.Player
                 if (Gem6 != null)
                     gemsWis += Gem6.Wis;
 
-                return constWis + gemsWis; // + TODO: orange stats from craft name.
+                return ConstWis + gemsWis; // + TODO: orange stats from craft name.
             }
         }
 
@@ -229,7 +246,6 @@ namespace Imgeneus.World.Game.Player
         {
             get
             {
-                var constHP = _databasePreloader.Items[(Type, TypeId)].ConstHP;
                 ushort gemsHP = 0;
 
                 if (Gem1 != null)
@@ -245,7 +261,7 @@ namespace Imgeneus.World.Game.Player
                 if (Gem6 != null)
                     gemsHP += Gem6.HP;
 
-                return constHP + gemsHP; // + TODO: orange stats from craft name.
+                return ConstHP + gemsHP; // + TODO: orange stats from craft name.
             }
         }
 
@@ -256,7 +272,6 @@ namespace Imgeneus.World.Game.Player
         {
             get
             {
-                var constMP = _databasePreloader.Items[(Type, TypeId)].ConstMP;
                 ushort gemsMP = 0;
 
                 if (Gem1 != null)
@@ -272,7 +287,7 @@ namespace Imgeneus.World.Game.Player
                 if (Gem6 != null)
                     gemsMP += Gem6.MP;
 
-                return constMP + gemsMP; // + TODO: orange stats from craft name.
+                return ConstMP + gemsMP; // + TODO: orange stats from craft name.
             }
         }
 
@@ -283,7 +298,6 @@ namespace Imgeneus.World.Game.Player
         {
             get
             {
-                var constSP = _databasePreloader.Items[(Type, TypeId)].ConstSP;
                 ushort gemsSP = 0;
 
                 if (Gem1 != null)
@@ -299,7 +313,7 @@ namespace Imgeneus.World.Game.Player
                 if (Gem6 != null)
                     gemsSP += Gem6.SP;
 
-                return constSP + gemsSP; // + TODO: orange stats from craft name.
+                return ConstSP + gemsSP; // + TODO: orange stats from craft name.
             }
         }
 
@@ -307,7 +321,6 @@ namespace Imgeneus.World.Game.Player
         {
             get
             {
-                var constAttackSpeed = _databasePreloader.Items[(Type, TypeId)].AttackTime;
                 byte gemsSpeed = 0;
 
                 if (Gem1 != null)
@@ -323,7 +336,7 @@ namespace Imgeneus.World.Game.Player
                 if (Gem6 != null)
                     gemsSpeed += Gem6.AttackSpeed;
 
-                return (byte)(constAttackSpeed + gemsSpeed);
+                return (byte)(ConstAttackSpeed + gemsSpeed);
             }
         }
 
@@ -331,7 +344,6 @@ namespace Imgeneus.World.Game.Player
         {
             get
             {
-                var constMoveSpeed = _databasePreloader.Items[(Type, TypeId)].Speed;
                 byte gemsSpeed = 0;
 
                 if (Gem1 != null)
@@ -347,7 +359,7 @@ namespace Imgeneus.World.Game.Player
                 if (Gem6 != null)
                     gemsSpeed += Gem6.MoveSpeed;
 
-                return (byte)(constMoveSpeed + gemsSpeed);
+                return (byte)(ConstMoveSpeed + gemsSpeed);
             }
         }
 

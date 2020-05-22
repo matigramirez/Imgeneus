@@ -13,105 +13,42 @@ namespace Imgeneus.World.Game.Player
         {
             _databasePreloader = databasePreloader;
             TypeId = typeId;
+
+            // 30 type is always lapis.
+            var item = _databasePreloader.Items[(30, (byte)TypeId)];
+            Str = item.ConstStr;
+            Dex = item.ConstDex;
+            Rec = item.ConstRec;
+            Int = item.ConstInt;
+            Luc = item.ConstLuc;
+            Wis = item.ConstWis;
+            HP = item.ConstHP;
+            MP = item.ConstMP;
+            SP = item.ConstSP;
+            AttackSpeed = item.AttackTime;
+            MoveSpeed = item.Speed;
         }
 
-        public ushort Str
-        {
-            get
-            {
-                // 30 type is always lapis.
-                return _databasePreloader.Items[(30, (byte)TypeId)].ConstStr;
-            }
-        }
+        public ushort Str { get; }
 
-        public ushort Dex
-        {
-            get
-            {
-                // 30 type is always lapis.
-                return _databasePreloader.Items[(30, (byte)TypeId)].ConstDex;
-            }
-        }
+        public ushort Dex { get; }
 
-        public ushort Rec
-        {
-            get
-            {
-                // 30 type is always lapis.
-                return _databasePreloader.Items[(30, (byte)TypeId)].ConstRec;
-            }
-        }
+        public ushort Rec { get; }
 
-        public ushort Int
-        {
-            get
-            {
-                // 30 type is always lapis.
-                return _databasePreloader.Items[(30, (byte)TypeId)].ConstInt;
-            }
-        }
+        public ushort Int { get; }
 
-        public ushort Luc
-        {
-            get
-            {
-                // 30 type is always lapis.
-                return _databasePreloader.Items[(30, (byte)TypeId)].ConstLuc;
-            }
-        }
+        public ushort Luc { get; }
 
-        public ushort Wis
-        {
-            get
-            {
-                // 30 type is always lapis.
-                return _databasePreloader.Items[(30, (byte)TypeId)].ConstWis;
-            }
-        }
+        public ushort Wis { get; }
 
-        public ushort HP
-        {
-            get
-            {
-                // 30 type is always lapis.
-                return _databasePreloader.Items[(30, (byte)TypeId)].ConstHP;
-            }
-        }
+        public ushort HP { get; }
 
-        public ushort MP
-        {
-            get
-            {
-                // 30 type is always lapis.
-                return _databasePreloader.Items[(30, (byte)TypeId)].ConstMP;
-            }
-        }
+        public ushort MP { get; }
 
-        public ushort SP
-        {
-            get
-            {
-                // 30 type is always lapis.
-                return _databasePreloader.Items[(30, (byte)TypeId)].ConstSP;
-            }
-        }
+        public ushort SP { get; }
 
-        public byte AttackSpeed
-        {
-            get
-            {
-                // 30 type is always lapis.
-                return _databasePreloader.Items[(30, (byte)TypeId)].AttackTime;
-            }
-        }
+        public byte AttackSpeed { get; }
 
-        public byte MoveSpeed
-        {
-            get
-            {
-                // 30 type is always lapis.
-                return _databasePreloader.Items[(30, (byte)TypeId)].Speed;
-            }
-        }
+        public byte MoveSpeed { get; }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Imgeneus.Database.Constants;
+﻿using System;
+using Imgeneus.Database.Constants;
 using Imgeneus.Network.Data;
 using Imgeneus.Network.Packets;
 using Imgeneus.World.Game;
@@ -200,6 +201,15 @@ namespace Imgeneus.World.Packets
             packet.Write(sender.CurrentHP);
             packet.Write(sender.CurrentMP);
             packet.Write(sender.CurrentSP);
+            client.SendPacket(packet);
+        }
+
+        internal void Send_Max_HP(WorldClient client, int id, int value)
+        {
+            using var packet = new Packet(PacketType.CHARACTER_MAX_HITPOINTS);
+            packet.Write(id);
+            packet.WriteByte(0); // 0 means max hp type.
+            packet.Write(value);
             client.SendPacket(packet);
         }
     }

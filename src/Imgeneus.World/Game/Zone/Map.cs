@@ -8,6 +8,7 @@ using Imgeneus.World.Game.PartyAndRaid;
 using Imgeneus.World.Game.Player;
 using Imgeneus.World.Packets;
 using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Concurrent;
 using System.Linq;
 
@@ -126,6 +127,7 @@ namespace Imgeneus.World.Game.Zone
             character.OnAddedBuffToAnotherCharacter += Character_OnAddedBuff;
             character.OnSkillCastStarted += Character_OnSkillCastStarted;
             character.OnUsedItem += Character_OnUsedItem;
+            character.OnMaxHPChanged += Character_OnMaxHPChanged;
             character.HP_Changed += Character_HP_Changed;
             character.MP_Changed += Character_MP_Changed;
             character.SP_Changed += Character_SP_Changed;
@@ -147,6 +149,7 @@ namespace Imgeneus.World.Game.Zone
             character.OnAddedBuffToAnotherCharacter -= Character_OnAddedBuff;
             character.OnSkillCastStarted -= Character_OnSkillCastStarted;
             character.OnUsedItem -= Character_OnUsedItem;
+            character.OnMaxHPChanged -= Character_OnMaxHPChanged;
             character.HP_Changed -= Character_HP_Changed;
             character.MP_Changed -= Character_MP_Changed;
             character.SP_Changed -= Character_SP_Changed;
@@ -161,9 +164,7 @@ namespace Imgeneus.World.Game.Zone
             foreach (var player in Players)
             {
                 if (player.Key != movedPlayer.Id)
-                {
                     _packetHelper.SendCharacterMoves(player.Value.Client, movedPlayer);
-                }
             }
         }
 
@@ -172,11 +173,8 @@ namespace Imgeneus.World.Game.Zone
         /// </summary>
         private void Character_OnMotion(Character playerWithMotion, Motion motion)
         {
-            // Notify all players about new motion.
             foreach (var player in Players)
-            {
                 _packetHelper.SendCharacterMotion(player.Value.Client, playerWithMotion.Id, motion);
-            }
         }
 
         /// <summary>
@@ -187,11 +185,8 @@ namespace Imgeneus.World.Game.Zone
         /// <param name="slot">item slot</param>
         private void Character_OnEquipmentChanged(Character sender, Item equipmentItem, byte slot)
         {
-            // Notify all players about new item.
             foreach (var player in Players)
-            {
                 _packetHelper.SendCharacterChangedEquipment(player.Value.Client, sender.Id, equipmentItem, slot);
-            }
         }
 
         /// <summary>
@@ -218,9 +213,7 @@ namespace Imgeneus.World.Game.Zone
         private void Character_OnAttackOrMoveChanged(Character sender)
         {
             foreach (var player in Players)
-            {
                 _packetHelper.SendAttackAndMovementSpeed(player.Value.Client, sender);
-            }
         }
 
         /// <summary>
@@ -228,11 +221,8 @@ namespace Imgeneus.World.Game.Zone
         /// </summary>
         private void Character_OnUsedSkill(Character sender, IKillable target, Skill skill, AttackResult attackResult)
         {
-            // Notify all players about used skill.
             foreach (var player in Players)
-            {
                 _packetHelper.SendCharacterUsedSkill(player.Value.Client, sender, target, skill, attackResult);
-            }
         }
 
         /// <summary>
@@ -241,9 +231,7 @@ namespace Imgeneus.World.Game.Zone
         private void Character_OnAutoAttack(Character sender, AttackResult attackResult)
         {
             foreach (var player in Players)
-            {
                 _packetHelper.SendCharacterUsualAttack(player.Value.Client, sender, sender.Target, attackResult);
-            }
         }
 
         /// <summary>
@@ -252,9 +240,7 @@ namespace Imgeneus.World.Game.Zone
         private void Character_OnDead(IKillable sender, IKiller killer)
         {
             foreach (var player in Players)
-            {
                 _packetHelper.SendCharacterKilled(player.Value.Client, (Character)sender, killer);
-            }
         }
 
         /// <summary>
@@ -263,9 +249,7 @@ namespace Imgeneus.World.Game.Zone
         private void Character_OnAddedBuff(Character sender, IKillable receiver, ActiveBuff buff)
         {
             foreach (var player in Players)
-            {
                 _packetHelper.SendCharacterAddedBuff(player.Value.Client, sender, receiver, buff);
-            }
         }
 
         /// <summary>
@@ -274,9 +258,7 @@ namespace Imgeneus.World.Game.Zone
         private void Character_OnSkillCastStarted(Character sender, IKillable target, Skill skill)
         {
             foreach (var player in Players)
-            {
                 _packetHelper.SendSkillCastStarted(player.Value.Client, sender, target, skill);
-            }
         }
 
         /// <summary>
@@ -285,33 +267,31 @@ namespace Imgeneus.World.Game.Zone
         private void Character_OnUsedItem(Character sender, Item item)
         {
             foreach (var player in Players)
-            {
                 _packetHelper.SendUsedItem(player.Value.Client, sender, item);
-            }
         }
 
         private void Character_HP_Changed(Character sender, HitpointArgs args)
         {
             foreach (var player in Players)
-            {
                 _packetHelper.SendRecoverCharacter(player.Value.Client, sender);
-            }
         }
 
         private void Character_MP_Changed(Character sender, HitpointArgs args)
         {
             foreach (var player in Players)
-            {
                 _packetHelper.SendRecoverCharacter(player.Value.Client, sender);
-            }
         }
 
         private void Character_SP_Changed(Character sender, HitpointArgs args)
         {
             foreach (var player in Players)
-            {
                 _packetHelper.SendRecoverCharacter(player.Value.Client, sender);
-            }
+        }
+
+        private void Character_OnMaxHPChanged(Character sender, int maxHP)
+        {
+            foreach (var player in Players)
+                _packetHelper.Send_Max_HP(player.Value.Client, sender.Id, maxHP);
         }
 
         #endregion

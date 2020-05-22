@@ -556,7 +556,10 @@ namespace Imgeneus.World.Game.Player
             else
             {
                 // There is some item at destination place.
-                if (sourceItem.Type == destinationItem.Type && sourceItem.TypeId == destinationItem.TypeId && destinationItem.IsJoinable)
+                if (sourceItem.Type == destinationItem.Type &&
+                    sourceItem.TypeId == destinationItem.TypeId &&
+                    destinationItem.IsJoinable &&
+                    destinationItem.Count + sourceItem.Count <= destinationItem.MaxCount)
                 {
                     // Increase destination item count, if they are joinable.
                     destinationItem.Count += sourceItem.Count;

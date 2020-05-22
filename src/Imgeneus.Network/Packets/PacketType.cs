@@ -121,6 +121,7 @@
         PARTY_KICK = 0x0B06, // 2822
         PARTY_CHANGE_LEADER = 0x0B07,
         PARTY_CHARACTER_SP_MP = 0x0C01, // 3073
+        PARTY_SET_MAX = 0x0C02, // 3074
         PARTY_ADDED_BUFF = 0x0C04, // 3076
         MAP_PARTY_SET = 0x0520, // 1312
     }

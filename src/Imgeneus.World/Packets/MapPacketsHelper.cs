@@ -171,11 +171,13 @@ namespace Imgeneus.World.Packets
             PacketType type;
             if (target is Character)
                 type = PacketType.CHARACTER_SKILL_CASTING;
-            else
+            else if (target is Mob)
                 type = PacketType.MOB_SKILL_CASTING;
+            else
+                type = PacketType.CHARACTER_SKILL_CASTING;
 
             using var packet = new Packet(type);
-            packet.Write(new SkillCasting(sender.Id, target.Id, skill).Serialize());
+            packet.Write(new SkillCasting(sender.Id, target is null ? 0 : target.Id, skill).Serialize());
             client.SendPacket(packet);
         }
 

@@ -79,6 +79,9 @@ namespace Imgeneus.World.Game.PartyAndRaid
             newPartyMember.HP_Changed += Member_HP_Changed;
             newPartyMember.MP_Changed += Member_MP_Changed;
             newPartyMember.SP_Changed += Member_SP_Changed;
+            newPartyMember.OnMaxHPChanged += Member_MaxHP_Changed;
+            newPartyMember.OnMaxMPChanged += Member_MaxMP_Changed;
+            newPartyMember.OnMaxSPChanged += Member_MaxSP_Changed;
 
             // Notify others, that new party member joined.
             foreach (var member in Members.Where(m => m != newPartyMember))
@@ -128,6 +131,35 @@ namespace Imgeneus.World.Game.PartyAndRaid
         }
 
         /// <summary>
+        /// Notifies party member, that member has new max hp value.
+        /// </summary>
+        private void Member_MaxHP_Changed(Character sender, int newMaxHP)
+        {
+            foreach (var member in Members.Where(m => m != sender))
+                Send_Max_HP_SP_MP(member.Client, sender.Id, newMaxHP, 0);
+        }
+
+        /// <summary>
+        /// Notifies party member, that member has new max sp value.
+        /// </summary>
+        private void Member_MaxSP_Changed(Character sender, int newMaxSP)
+        {
+            foreach (var member in Members.Where(m => m != sender))
+                Send_Max_HP_SP_MP(member.Client, sender.Id, newMaxSP, 1);
+        }
+
+        /// <summary>
+        /// Notifies party member, that member has new max mp value.
+        /// </summary>
+        private void Member_MaxMP_Changed(Character sender, int newMaxMP)
+        {
+            foreach (var member in Members.Where(m => m != sender))
+                Send_Max_HP_SP_MP(member.Client, sender.Id, newMaxMP, 2);
+        }
+
+
+
+        /// <summary>
         /// Leaves party.
         /// </summary>
         public void LeaveParty(Character leftPartyMember)
@@ -139,6 +171,9 @@ namespace Imgeneus.World.Game.PartyAndRaid
             leftPartyMember.HP_Changed -= Member_HP_Changed;
             leftPartyMember.MP_Changed -= Member_MP_Changed;
             leftPartyMember.SP_Changed -= Member_SP_Changed;
+            leftPartyMember.OnMaxHPChanged -= Member_MaxHP_Changed;
+            leftPartyMember.OnMaxMPChanged -= Member_MaxMP_Changed;
+            leftPartyMember.OnMaxSPChanged -= Member_MaxSP_Changed;
             RemoveMember(leftPartyMember);
         }
 
@@ -233,6 +268,15 @@ namespace Imgeneus.World.Game.PartyAndRaid
         private void Send_HP_SP_MP(WorldClient client, int id, int value, byte type)
         {
             using var packet = new Packet(PacketType.PARTY_CHARACTER_SP_MP);
+            packet.Write(id);
+            packet.Write(type);
+            packet.Write(value);
+            client.SendPacket(packet);
+        }
+
+        private void Send_Max_HP_SP_MP(WorldClient client, int id, int value, byte type)
+        {
+            using var packet = new Packet(PacketType.PARTY_SET_MAX);
             packet.Write(id);
             packet.Write(type);
             packet.Write(value);

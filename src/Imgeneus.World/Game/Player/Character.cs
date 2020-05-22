@@ -76,10 +76,6 @@ namespace Imgeneus.World.Game.Player
         /// </summary>
         public byte MoveMotion = 1;
 
-        public int MaxHP { get => 100 + ExtraHP; } // TODO: implement max HP. For now let's assume, that 100 for any character + hp from equipment.
-        public int MaxMP { get => 500 + ExtraMP; } // TODO: implement max MP.
-        public int MaxSP { get => 200 + ExtraSP; } // TODO: implement max SP.
-
         #endregion
 
         #region Additional stats
@@ -127,6 +123,11 @@ namespace Imgeneus.World.Game.Player
 
                 if (Client != null)
                     SendMaxHP();
+
+                if (CurrentHP > MaxHP)
+                    CurrentHP = MaxHP;
+
+                OnMaxHPChanged?.Invoke(this, MaxHP);
             }
         }
 
@@ -143,6 +144,11 @@ namespace Imgeneus.World.Game.Player
 
                 if (Client != null)
                     SendMaxSP();
+
+                if (CurrentSP > MaxSP)
+                    CurrentSP = MaxSP;
+
+                OnMaxSPChanged?.Invoke(this, MaxSP);
             }
         }
 
@@ -159,8 +165,35 @@ namespace Imgeneus.World.Game.Player
 
                 if (Client != null)
                     SendMaxMP();
+
+                if (CurrentMP > MaxMP)
+                    CurrentMP = MaxMP;
+
+                OnMaxMPChanged?.Invoke(this, MaxMP);
             }
         }
+
+        #endregion
+
+        #region Mex HP & SP & MP
+
+        /// <summary>
+        /// Event, that is fired, when max hp changes.
+        /// </summary>
+        public event Action<Character, int> OnMaxHPChanged;
+        public int MaxHP { get => 100 + ExtraHP; } // TODO: implement max HP. For now let's assume, that 100 for any character + hp from equipment.
+
+        /// <summary>
+        /// Event, that is fired, when max mp changes.
+        /// </summary>
+        public event Action<Character, int> OnMaxMPChanged;
+        public int MaxMP { get => 500 + ExtraMP; } // TODO: implement max MP.
+
+        /// <summary>
+        /// Event, that is fired, when max sp changes.
+        /// </summary>
+        public event Action<Character, int> OnMaxSPChanged;
+        public int MaxSP { get => 200 + ExtraSP; } // TODO: implement max SP.
 
         #endregion
 

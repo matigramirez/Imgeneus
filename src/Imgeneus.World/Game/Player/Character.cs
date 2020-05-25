@@ -19,13 +19,15 @@ namespace Imgeneus.World.Game.Player
     public partial class Character : IKillable, IKiller
     {
         private readonly ILogger<Character> _logger;
+        private readonly Character_HP_SP_MP_Configuration _characterConfig;
         private readonly IBackgroundTaskQueue _taskQueue;
         private readonly CharacterPacketsHelper _packetsHelper;
         private readonly IDatabasePreloader _databasePreloader;
 
-        public Character(ILogger<Character> logger, IBackgroundTaskQueue taskQueue, IDatabasePreloader databasePreloader)
+        public Character(ILogger<Character> logger, Character_HP_SP_MP_Configuration characterConfig, IBackgroundTaskQueue taskQueue, IDatabasePreloader databasePreloader)
         {
             _logger = logger;
+            _characterConfig = characterConfig;
             _taskQueue = taskQueue;
             _databasePreloader = databasePreloader;
             _packetsHelper = new CharacterPacketsHelper();
@@ -175,25 +177,55 @@ namespace Imgeneus.World.Game.Player
 
         #endregion
 
-        #region Mex HP & SP & MP
+        #region Max HP & SP & MP
 
         /// <summary>
         /// Event, that is fired, when max hp changes.
         /// </summary>
         public event Action<Character, int> OnMaxHPChanged;
-        public int MaxHP { get => 100 + ExtraHP; } // TODO: implement max HP. For now let's assume, that 100 for any character + hp from equipment.
+        public int MaxHP
+        {
+            get
+            {
+                var level = Level <= 60 ? Level : 60;
+                var index = (level - 1) * 6 + (byte)Class;
+                var constHP = _characterConfig.Configs[index].HP;
+
+                return constHP + ExtraHP;
+            }
+        }
 
         /// <summary>
         /// Event, that is fired, when max mp changes.
         /// </summary>
         public event Action<Character, int> OnMaxMPChanged;
-        public int MaxMP { get => 500 + ExtraMP; } // TODO: implement max MP.
+        public int MaxMP
+        {
+            get
+            {
+                var level = Level <= 60 ? Level : 60;
+                var index = (level - 1) * 6 + (byte)Class;
+                var constMP = _characterConfig.Configs[index].MP;
+
+                return constMP + ExtraMP;
+            }
+        }
 
         /// <summary>
         /// Event, that is fired, when max sp changes.
         /// </summary>
         public event Action<Character, int> OnMaxSPChanged;
-        public int MaxSP { get => 200 + ExtraSP; } // TODO: implement max SP.
+        public int MaxSP
+        {
+            get
+            {
+                var level = Level <= 60 ? Level : 60;
+                var index = (level - 1) * 6 + (byte)Class;
+                var constSP = _characterConfig.Configs[index].SP;
+
+                return constSP + ExtraSP;
+            }
+        }
 
         #endregion
 
@@ -605,9 +637,9 @@ namespace Imgeneus.World.Game.Player
         /// <summary>
         /// Creates character from database information.
         /// </summary>
-        public static Character FromDbCharacter(DbCharacter dbCharacter, ILogger<Character> logger, IBackgroundTaskQueue taskQueue, IDatabasePreloader databasePreloader)
+        public static Character FromDbCharacter(DbCharacter dbCharacter, ILogger<Character> logger, Character_HP_SP_MP_Configuration characterConfig, IBackgroundTaskQueue taskQueue, IDatabasePreloader databasePreloader)
         {
-            var character = new Character(logger, taskQueue, databasePreloader)
+            var character = new Character(logger, characterConfig, taskQueue, databasePreloader)
             {
                 Id = dbCharacter.Id,
                 Name = dbCharacter.Name,

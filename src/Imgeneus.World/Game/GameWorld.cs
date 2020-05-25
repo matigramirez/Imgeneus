@@ -23,12 +23,14 @@ namespace Imgeneus.World.Game
         private readonly ILogger<GameWorld> _logger;
         private readonly IBackgroundTaskQueue _taskQueue;
         private readonly IDatabasePreloader _databasePreloader;
+        private readonly Character_HP_SP_MP_Configuration _characterConfig;
 
-        public GameWorld(ILogger<GameWorld> logger, IBackgroundTaskQueue taskQueue, IDatabasePreloader databasePreloader)
+        public GameWorld(ILogger<GameWorld> logger, IBackgroundTaskQueue taskQueue, IDatabasePreloader databasePreloader, Character_HP_SP_MP_Configuration characterConfig)
         {
             _logger = logger;
             _taskQueue = taskQueue;
             _databasePreloader = databasePreloader;
+            _characterConfig = characterConfig;
 
             InitMaps();
         }
@@ -70,7 +72,7 @@ namespace Imgeneus.World.Game
                                                .Include(c => c.QuickItems)
                                                .Include(c => c.User)
                                                .FirstOrDefault(c => c.Id == characterId);
-            var newPlayer = Character.FromDbCharacter(dbCharacter, DependencyContainer.Instance.Resolve<ILogger<Character>>(), _taskQueue, _databasePreloader);
+            var newPlayer = Character.FromDbCharacter(dbCharacter, DependencyContainer.Instance.Resolve<ILogger<Character>>(), _characterConfig, _taskQueue, _databasePreloader);
             newPlayer.Client = client;
 
             Players.TryAdd(newPlayer.Id, newPlayer);

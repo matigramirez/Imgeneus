@@ -5,9 +5,8 @@ using Imgeneus.Core.Structures.Configuration;
 using Imgeneus.Database;
 using Imgeneus.Database.Preload;
 using Imgeneus.DatabaseBackgroundService;
-using Imgeneus.Network;
 using Imgeneus.World.Game;
-using Imgeneus.World.InternalServer;
+using Imgeneus.World.Game.Player;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NLog;
@@ -20,6 +19,7 @@ namespace Imgeneus.World
     public sealed class WorldServerStartup : IProgramStartup
     {
         private const string WorldConfigFile = "config/world.json";
+        private const string CharacterConfigFile = "config/character_hp_mp_sp.json";
 
         /// <inheritdoc />
         public void Configure()
@@ -48,7 +48,9 @@ namespace Imgeneus.World
             DependencyContainer.Instance.Configure(services =>
             {
                 var worldConfiguration = ConfigurationHelper.Load<WorldConfiguration>(WorldConfigFile);
+                var characterConfiguration = ConfigurationHelper.Load<Character_HP_SP_MP_Configuration>(CharacterConfigFile);
                 services.AddSingleton(worldConfiguration);
+                services.AddSingleton(characterConfiguration);
             });
             DependencyContainer.Instance.Configure(services =>
             {

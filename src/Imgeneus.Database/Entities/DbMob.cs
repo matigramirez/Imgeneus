@@ -101,7 +101,7 @@ namespace Imgeneus.Database.Entities
         public ushort Defense { get; set; }
 
         /// <summary>
-        /// Mob's magic defense?
+        /// Mob's magic defense.
         /// </summary>
         public ushort Magic { get; set; }
 

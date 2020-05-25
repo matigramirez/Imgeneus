@@ -83,9 +83,9 @@ namespace Imgeneus.Database.Entities
         public byte TypeShow { get; set; }
 
         /// <summary>
-        /// TODO: ?
+        /// Passive, physical, magic or shooting attack.
         /// </summary>
-        public byte TypeAttack { get; set; }
+        public TypeAttack TypeAttack { get; set; }
 
         /// <summary>
         /// TODO: ?

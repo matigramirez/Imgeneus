@@ -69,6 +69,15 @@ namespace Imgeneus.World.Game.Monster
         /// <inheritdoc />
         public ObservableRangeCollection<ActiveBuff> ActiveBuffs { get; } = new ObservableRangeCollection<ActiveBuff>();
 
+        /// <inheritdoc />
+        public int TotalLuc { get; private set; }
+
+        /// <inheritdoc />
+        public int Defense { get; private set; }
+
+        /// <inheritdoc />
+        public int Resistance { get; private set; }
+
         #endregion
 
         /// <summary>
@@ -144,7 +153,10 @@ namespace Imgeneus.World.Game.Monster
             return new Mob(logger)
             {
                 MobId = mob.Id,
-                CurrentHP = mob.HP
+                CurrentHP = mob.HP,
+                TotalLuc = mob.Luc,
+                Defense = mob.Defense,
+                Resistance = mob.Magic
             };
         }
     }

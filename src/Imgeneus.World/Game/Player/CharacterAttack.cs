@@ -162,29 +162,12 @@ namespace Imgeneus.World.Game.Player
 
             _nextAttackTime = DateTime.UtcNow.AddMilliseconds(NextAttackTime);
 
-            var result = CalculateDamage(Target);
+            var result = CalculateDamage(Target, TypeAttack.PhysicalAttack);
             Target.DecreaseHP(result.Damage.HP, this);
             Target.CurrentSP -= result.Damage.SP;
             Target.CurrentMP -= result.Damage.MP;
 
             OnAutoAttack?.Invoke(this, result);
-        }
-
-        /// <summary>
-        /// Calculates damage based on player stats and target stats.
-        /// </summary>
-        private AttackResult CalculateDamage(IKillable target, Skill skill = null)
-        {
-            if (skill is null)
-            {
-                Damage damage = new Damage(33, 0, 0);
-                return new AttackResult(AttackSuccess.Normal, damage);
-            }
-            else
-            {
-                Damage damage = new Damage(100, 0, 0);
-                return new AttackResult(AttackSuccess.Critical, damage);
-            }
         }
 
         /// <summary>
@@ -253,6 +236,70 @@ namespace Imgeneus.World.Game.Player
             return true;
         }
 
+
+        /// <summary>
+        /// Calculates damage based on player stats and target stats.
+        /// </summary>
+        private AttackResult CalculateDamage(IKillable target, TypeAttack typeAttack, Skill skill = null)
+        {
+            double damage = 0;
+
+            // First, caculate damage, that is made of stats, weapon and buffs.
+            switch (typeAttack)
+            {
+                case TypeAttack.PhysicalAttack:
+                    damage = new Random().Next(MinAttack, MaxAttack);
+                    damage -= target.Defense;
+                    break;
+
+                case TypeAttack.ShootingAttack:
+                    damage = new Random().Next(MinAttack, MaxAttack);
+                    // TODO: multiply by range to the target.
+                    damage -= target.Defense;
+                    break;
+
+                case TypeAttack.MagicAttack:
+                    damage = new Random().Next(MinMagicAttack, MaxMagicAttack);
+                    damage -= target.Resistance;
+                    break;
+            }
+
+            damage = damage * 1.5;
+
+            // Second, add element calculation.
+            // TODO: add element calculation.
+
+            // Third, caculate if critical damage should be added.
+            var criticalDamage = false;
+            if (new Random().Next(1, 101) < CriticalSuccess(target))
+            {
+                criticalDamage = true;
+                damage += Convert.ToInt32(TotalLuc * new Random().NextDouble() * 1.5);
+            }
+
+            if (criticalDamage)
+                return new AttackResult(AttackSuccess.Critical, new Damage(Convert.ToUInt16(damage), 0, 0));
+            else
+                return new AttackResult(AttackSuccess.Normal, new Damage(Convert.ToUInt16(damage), 0, 0));
+        }
+
+        /// <summary>
+        /// Calculates critical rate or possibility to make critical hit.
+        /// Can be only more then 5 and less than 99.
+        /// </summary>
+        private int CriticalSuccess(IKillable target)
+        {
+            var criticalRate = Math.Floor(0.2 * TotalLuc); // each 5 luck is 1% of critical.
+            var result = Convert.ToInt32(criticalRate - (target.TotalLuc * 0.034000002));
+
+            if (result < 5)
+                result = 5;
+
+            if (result > 99)
+                result = 99;
+
+            return result;
+        }
         #endregion
     }
 }

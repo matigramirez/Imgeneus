@@ -549,7 +549,7 @@ namespace Imgeneus.World.Game.Player
                     characterAttack = GetCharacterAttack();
                 }
 
-                return weaponAttack + characterAttack;
+                return weaponAttack + characterAttack; // TODO: + passive and buffs
             }
         }
 
@@ -571,7 +571,7 @@ namespace Imgeneus.World.Game.Player
                     characterAttack = GetCharacterAttack();
                 }
 
-                return weaponAttack + characterAttack;
+                return weaponAttack + characterAttack; // TODO: + passive and buffs
             }
         }
 
@@ -591,7 +591,7 @@ namespace Imgeneus.World.Game.Player
                     characterAttack = GetCharacterAttack();
                 }
 
-                return weaponAttack + characterAttack;
+                return weaponAttack + characterAttack; // TODO: + passive and buffs
             }
         }
 
@@ -611,7 +611,7 @@ namespace Imgeneus.World.Game.Player
                     characterAttack = GetCharacterAttack();
                 }
 
-                return weaponAttack + characterAttack;
+                return weaponAttack + characterAttack; // TODO: + passive and buffs
             }
         }
 

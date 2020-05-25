@@ -59,5 +59,20 @@ namespace Imgeneus.World.Game
         /// Collection of current applied buffs.
         /// </summary>
         public ObservableRangeCollection<ActiveBuff> ActiveBuffs { get; }
+
+        /// <summary>
+        /// Luck value, needed for critical damage calculation.
+        /// </summary>
+        public int TotalLuc { get; }
+
+        /// <summary>
+        /// Physical defense.
+        /// </summary>
+        public int Defense { get; }
+
+        /// <summary>
+        /// Magic resistance.
+        /// </summary>
+        public int Resistance { get; }
     }
 }

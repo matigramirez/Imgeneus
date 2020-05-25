@@ -135,7 +135,7 @@ namespace Imgeneus.World.Game.Player
                 return;
             }
 
-            var result = CalculateDamage(target, skill);
+            var result = CalculateDamage(target, skill.TypeAttack, skill);
             target.DecreaseHP(result.Damage.HP, this);
             target.CurrentSP -= result.Damage.SP;
             target.CurrentMP -= result.Damage.MP;

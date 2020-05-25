@@ -19,6 +19,7 @@ namespace Imgeneus.World.Game.Player
             ResetTime = dbSkill.ResetTime;
             KeepTime = dbSkill.KeepTime;
             CastTime = dbSkill.ReadyTime * 250;
+            TypeAttack = dbSkill.TypeAttack;
             NeedSP = dbSkill.SP;
             NeedMP = dbSkill.MP;
             NeedWeapon1 = dbSkill.NeedWeapon1 == 1;
@@ -68,6 +69,11 @@ namespace Imgeneus.World.Game.Player
         /// To what target this skill can be applied.
         /// </summary>
         public TargetType TargetType;
+
+        /// <summary>
+        /// Passive, physical, magic or shooting attack.
+        /// </summary>
+        public TypeAttack TypeAttack;
 
         /// <summary>
         /// Time after which skill can be used again.

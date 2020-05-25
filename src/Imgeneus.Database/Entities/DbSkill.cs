@@ -274,9 +274,9 @@ namespace Imgeneus.Database.Entities
         public ushort Arrow { get; set; }
 
         /// <summary>
-        /// TODO: ?
+        /// Damage type.
         /// </summary>
-        public byte DamageType { get; set; }
+        public DamageType DamageType { get; set; }
 
         /// <summary>
         /// TODO: ?

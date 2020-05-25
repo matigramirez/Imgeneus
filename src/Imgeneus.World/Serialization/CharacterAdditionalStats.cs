@@ -37,19 +37,21 @@ namespace Imgeneus.World.Serialization
         public uint MaxMagicAttack { get => 10; }
 
         [FieldOrder(10)]
-        public uint Defense { get => 11; }
+        public int Defense { get; }
 
         [FieldOrder(11)]
-        public uint Resistance { get => 12; }
+        public int Resistance { get; }
 
         public CharacterAdditionalStats(Character character)
         {
             Strength = character.ExtraStr;
             Rec = character.ExtraRec;
-            Intelligence = character.ExtralInt;
+            Intelligence = character.ExtraInt;
             Wisdom = character.ExtraWis;
             Dexterity = character.ExtraDex;
             Luck = character.ExtraLuc;
+            Defense = character.Defense;
+            Resistance = character.Resistance;
         }
     }
 }

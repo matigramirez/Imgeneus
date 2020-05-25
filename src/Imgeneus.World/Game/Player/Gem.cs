@@ -27,6 +27,8 @@ namespace Imgeneus.World.Game.Player
             SP = item.ConstSP;
             AttackSpeed = item.AttackTime;
             MoveSpeed = item.Speed;
+            Defense = item.Defense;
+            Resistance = item.Resistance;
         }
 
         public ushort Str { get; }
@@ -50,5 +52,9 @@ namespace Imgeneus.World.Game.Player
         public byte AttackSpeed { get; }
 
         public byte MoveSpeed { get; }
+
+        public ushort Defense { get; }
+
+        public ushort Resistance { get; }
     }
 }

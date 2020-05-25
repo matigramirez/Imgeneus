@@ -187,16 +187,16 @@ namespace Imgeneus.Database.Entities
         public ushort Effect2 { get; set; }
 
         /// <summary>
-        /// ?
+        /// Physical defense.
         /// </summary>
-        [Required]
-        public ushort Effect3 { get; set; }
+        [Column("Effect3"), Required]
+        public ushort Defense { get; set; }
 
         /// <summary>
-        /// ?
+        /// Magic resistance.
         /// </summary>
-        [Required]
-        public ushort Effect4 { get; set; }
+        [Column("Effect4"), Required]
+        public ushort Resistance { get; set; }
 
         /// <summary>
         /// How much it adds heal points.

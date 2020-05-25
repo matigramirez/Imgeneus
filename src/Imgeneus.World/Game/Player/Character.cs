@@ -100,7 +100,7 @@ namespace Imgeneus.World.Game.Player
         /// <summary>
         /// Yellow intelligence stat, that is calculated based on worn items, orange stats and active buffs.
         /// </summary>
-        public int ExtralInt { get; private set; }
+        public int ExtraInt { get; private set; }
 
         /// <summary>
         /// Yellow luck stat, that is calculated based on worn items, orange stats and active buffs.
@@ -111,6 +111,16 @@ namespace Imgeneus.World.Game.Player
         /// Yellow wisdom stat, that is calculated based on worn items, orange stats and active buffs.
         /// </summary>
         public int ExtraWis { get; private set; }
+
+        /// <summary>
+        /// Physical defense from equipment and buffs.
+        /// </summary>
+        private int ExtraDefense { get; set; }
+
+        /// <summary>
+        /// Magical resistance from equipment and buffs.
+        /// </summary>
+        private int ExtraResistance { get; set; }
 
         private int _extraHP;
         /// <summary>
@@ -174,6 +184,17 @@ namespace Imgeneus.World.Game.Player
                 OnMaxMPChanged?.Invoke(this, MaxMP);
             }
         }
+
+        #endregion
+
+        #region Total stats
+
+        public int TotalStr => Strength + ExtraStr;
+        public int TotalDex => Dexterity + ExtraDex;
+        public int TotalRec => Rec + ExtraRec;
+        public int TotalInt => Intelligence + ExtraInt;
+        public int TotalWis => Wisdom + ExtraWis;
+        public int TotalLuc => Luck + ExtraLuc;
 
         #endregion
 
@@ -331,6 +352,32 @@ namespace Imgeneus.World.Game.Player
                 var args = new HitpointArgs(_currentSP, value);
                 _currentSP = value;
                 SP_Changed?.Invoke(this, args);
+            }
+        }
+
+        #endregion
+
+        #region Defense & Resistance
+
+        /// <summary>
+        /// Physical defense.
+        /// </summary>
+        public int Defense
+        {
+            get
+            {
+                return TotalRec + ExtraDefense;
+            }
+        }
+
+        /// <summary>
+        /// Magic resistance.
+        /// </summary>
+        public int Resistance
+        {
+            get
+            {
+                return TotalWis + ExtraResistance;
             }
         }
 

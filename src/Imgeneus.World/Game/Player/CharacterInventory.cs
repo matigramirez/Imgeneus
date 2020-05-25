@@ -417,12 +417,14 @@ namespace Imgeneus.World.Game.Player
             ExtraStr -= item.Str;
             ExtraDex -= item.Dex;
             ExtraRec -= item.Rec;
-            ExtralInt -= item.Int;
+            ExtraInt -= item.Int;
             ExtraLuc -= item.Luc;
             ExtraWis -= item.Wis;
             ExtraHP -= item.HP;
             ExtraSP -= item.SP;
             ExtraMP -= item.MP;
+            ExtraDefense -= item.Defense;
+            ExtraResistance -= item.Resistance;
 
             if (item != Weapon && item != Mount)
                 SetAttackSpeedModifier(-1 * item.AttackSpeed);
@@ -440,12 +442,14 @@ namespace Imgeneus.World.Game.Player
             ExtraStr += item.Str;
             ExtraDex += item.Dex;
             ExtraRec += item.Rec;
-            ExtralInt += item.Int;
+            ExtraInt += item.Int;
             ExtraLuc += item.Luc;
             ExtraWis += item.Wis;
             ExtraHP += item.HP;
             ExtraSP += item.SP;
             ExtraMP += item.MP;
+            ExtraDefense += item.Defense;
+            ExtraResistance += item.Resistance;
 
             if (item != Weapon && item != Mount)
                 SetAttackSpeedModifier(item.AttackSpeed);

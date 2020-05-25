@@ -63,6 +63,8 @@ namespace Imgeneus.World.Game.Player
                 ConstSP = item.ConstSP;
                 ConstAttackSpeed = item.AttackTime;
                 ConstMoveSpeed = item.Speed;
+                ConstDefense = item.Defense;
+                ConstResistance = item.Resistance;
                 MaxCount = item.Count;
             }
         }
@@ -86,6 +88,8 @@ namespace Imgeneus.World.Game.Player
         private readonly int ConstSP;
         private readonly byte ConstAttackSpeed;
         private readonly byte ConstMoveSpeed;
+        private readonly ushort ConstDefense;
+        private readonly ushort ConstResistance;
 
         /// <summary>
         /// Str contains yellow(default) stat + orange stat (take it from craft name later).
@@ -364,6 +368,50 @@ namespace Imgeneus.World.Game.Player
                     gemsSpeed += Gem6.MoveSpeed;
 
                 return (byte)(ConstMoveSpeed + gemsSpeed);
+            }
+        }
+
+        public int Defense
+        {
+            get
+            {
+                int gemDefense = 0;
+                if (Gem1 != null)
+                    gemDefense += Gem1.Defense;
+                if (Gem2 != null)
+                    gemDefense += Gem2.Defense;
+                if (Gem3 != null)
+                    gemDefense += Gem3.Defense;
+                if (Gem4 != null)
+                    gemDefense += Gem4.Defense;
+                if (Gem5 != null)
+                    gemDefense += Gem5.Defense;
+                if (Gem6 != null)
+                    gemDefense += Gem6.Defense;
+
+                return ConstDefense + gemDefense;
+            }
+        }
+
+        public int Resistance
+        {
+            get
+            {
+                int gemResistance = 0;
+                if (Gem1 != null)
+                    gemResistance += Gem1.Resistance;
+                if (Gem2 != null)
+                    gemResistance += Gem2.Resistance;
+                if (Gem3 != null)
+                    gemResistance += Gem3.Resistance;
+                if (Gem4 != null)
+                    gemResistance += Gem4.Resistance;
+                if (Gem5 != null)
+                    gemResistance += Gem5.Resistance;
+                if (Gem6 != null)
+                    gemResistance += Gem6.Resistance;
+
+                return ConstResistance + gemResistance;
             }
         }
 

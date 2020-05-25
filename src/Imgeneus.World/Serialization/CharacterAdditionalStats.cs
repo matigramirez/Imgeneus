@@ -25,16 +25,16 @@ namespace Imgeneus.World.Serialization
         public int Luck { get; }
 
         [FieldOrder(6)]
-        public uint MinAttack { get => 7; }
+        public int MinAttack { get; }
 
         [FieldOrder(7)]
-        public uint MaxAttack { get => 8; }
+        public int MaxAttack { get; }
 
         [FieldOrder(8)]
-        public uint MinMagicAttack { get => 9; }
+        public int MinMagicAttack { get; }
 
         [FieldOrder(9)]
-        public uint MaxMagicAttack { get => 10; }
+        public int MaxMagicAttack { get; }
 
         [FieldOrder(10)]
         public int Defense { get; }
@@ -52,6 +52,10 @@ namespace Imgeneus.World.Serialization
             Luck = character.ExtraLuc;
             Defense = character.Defense;
             Resistance = character.Resistance;
+            MinAttack = character.MinAttack;
+            MaxAttack = character.MaxAttack;
+            MinMagicAttack = character.MinMagicAttack;
+            MaxMagicAttack = character.MaxMagicAttack;
         }
     }
 }

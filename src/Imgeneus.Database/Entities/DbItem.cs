@@ -175,16 +175,16 @@ namespace Imgeneus.Database.Entities
         public ushort Quality { get; set; }
 
         /// <summary>
-        /// ?
+        /// Min attack.
         /// </summary>
-        [Required]
-        public ushort Effect1 { get; set; }
+        [Column("Effect1"), Required]
+        public ushort MinAttack { get; set; }
 
         /// <summary>
-        /// ?
+        /// Min attack + this = max attack.
         /// </summary>
-        [Required]
-        public ushort Effect2 { get; set; }
+        [Column("Effect2"), Required]
+        public ushort PlusAttack { get; set; }
 
         /// <summary>
         /// Physical defense.

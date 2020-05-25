@@ -499,6 +499,124 @@ namespace Imgeneus.World.Game.Player
 
         #endregion
 
+        #region Min/Max Attack & Magic attack
+
+        /// <summary>
+        /// Calculates character attack, based on character profession.
+        /// </summary>
+        private int GetCharacterAttack()
+        {
+            int characterAttack;
+            switch (Class)
+            {
+                case CharacterProfession.Fighter:
+                case CharacterProfession.Defender:
+                case CharacterProfession.Ranger:
+                    characterAttack = (int)(Math.Floor(1.3 * TotalStr) + Math.Floor(0.25 * TotalDex));
+                    break;
+
+                case CharacterProfession.Mage:
+                case CharacterProfession.Priest:
+                    characterAttack = (int)(Math.Floor(1.3 * TotalInt) + Math.Floor(0.2 * TotalWis));
+                    break;
+
+                case CharacterProfession.Archer:
+                    characterAttack = (int)(TotalStr + Math.Floor(0.3 * TotalLuc) + Math.Floor(0.2 * TotalDex));
+                    break;
+
+                default:
+                    throw new NotImplementedException("Not implemented job.");
+            }
+
+            return characterAttack;
+        }
+
+        /// <summary>
+        /// Min physical attack.
+        /// </summary>
+        public int MinAttack
+        {
+            get
+            {
+                var weaponAttack = Weapon != null ? Weapon.MinAttack : 0;
+                int characterAttack = 0;
+
+                if (Class == CharacterProfession.Fighter ||
+                    Class == CharacterProfession.Defender ||
+                    Class == CharacterProfession.Ranger ||
+                    Class == CharacterProfession.Archer)
+                {
+                    characterAttack = GetCharacterAttack();
+                }
+
+                return weaponAttack + characterAttack;
+            }
+        }
+
+        /// <summary>
+        /// Max physical attack.
+        /// </summary>
+        public int MaxAttack
+        {
+            get
+            {
+                var weaponAttack = Weapon != null ? Weapon.MaxAttack : 0;
+                int characterAttack = 0;
+
+                if (Class == CharacterProfession.Fighter ||
+                    Class == CharacterProfession.Defender ||
+                    Class == CharacterProfession.Ranger ||
+                    Class == CharacterProfession.Archer)
+                {
+                    characterAttack = GetCharacterAttack();
+                }
+
+                return weaponAttack + characterAttack;
+            }
+        }
+
+        /// <summary>
+        /// Min magic attack.
+        /// </summary>
+        public int MinMagicAttack
+        {
+            get
+            {
+                var weaponAttack = Weapon != null ? Weapon.MinAttack : 0;
+                int characterAttack = 0;
+
+                if (Class == CharacterProfession.Mage ||
+                    Class == CharacterProfession.Priest)
+                {
+                    characterAttack = GetCharacterAttack();
+                }
+
+                return weaponAttack + characterAttack;
+            }
+        }
+
+        /// <summary>
+        /// Max magic attack.
+        /// </summary>
+        public int MaxMagicAttack
+        {
+            get
+            {
+                var weaponAttack = Weapon != null ? Weapon.MaxAttack : 0;
+                int characterAttack = 0;
+
+                if (Class == CharacterProfession.Mage ||
+                    Class == CharacterProfession.Priest)
+                {
+                    characterAttack = GetCharacterAttack();
+                }
+
+                return weaponAttack + characterAttack;
+            }
+        }
+
+        #endregion
+
         #region Map
 
         /// <summary>

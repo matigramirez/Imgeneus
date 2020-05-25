@@ -29,6 +29,8 @@ namespace Imgeneus.World.Game.Player
             MoveSpeed = item.Speed;
             Defense = item.Defense;
             Resistance = item.Resistance;
+            MinAttack = item.MinAttack;
+            PlusAttack = item.PlusAttack;
         }
 
         public ushort Str { get; }
@@ -56,5 +58,9 @@ namespace Imgeneus.World.Game.Player
         public ushort Defense { get; }
 
         public ushort Resistance { get; }
+
+        public ushort MinAttack { get; }
+
+        public ushort PlusAttack { get; }
     }
 }

@@ -65,6 +65,8 @@ namespace Imgeneus.World.Game.Player
                 ConstMoveSpeed = item.Speed;
                 ConstDefense = item.Defense;
                 ConstResistance = item.Resistance;
+                ConstMinAttack = item.MinAttack;
+                ConstPlusAttack = item.PlusAttack;
                 MaxCount = item.Count;
             }
         }
@@ -90,6 +92,8 @@ namespace Imgeneus.World.Game.Player
         private readonly byte ConstMoveSpeed;
         private readonly ushort ConstDefense;
         private readonly ushort ConstResistance;
+        private readonly ushort ConstMinAttack;
+        private readonly ushort ConstPlusAttack;
 
         /// <summary>
         /// Str contains yellow(default) stat + orange stat (take it from craft name later).
@@ -412,6 +416,50 @@ namespace Imgeneus.World.Game.Player
                     gemResistance += Gem6.Resistance;
 
                 return ConstResistance + gemResistance;
+            }
+        }
+
+        public int MinAttack
+        {
+            get
+            {
+                int gemMinAttack = 0;
+                if (Gem1 != null)
+                    gemMinAttack += Gem1.MinAttack;
+                if (Gem2 != null)
+                    gemMinAttack += Gem2.MinAttack;
+                if (Gem3 != null)
+                    gemMinAttack += Gem3.MinAttack;
+                if (Gem4 != null)
+                    gemMinAttack += Gem4.MinAttack;
+                if (Gem5 != null)
+                    gemMinAttack += Gem5.MinAttack;
+                if (Gem6 != null)
+                    gemMinAttack += Gem6.MinAttack;
+
+                return ConstMinAttack + gemMinAttack;
+            }
+        }
+
+        public int MaxAttack
+        {
+            get
+            {
+                int gemPlusAttack = 0;
+                if (Gem1 != null)
+                    gemPlusAttack += Gem1.PlusAttack;
+                if (Gem2 != null)
+                    gemPlusAttack += Gem2.PlusAttack;
+                if (Gem3 != null)
+                    gemPlusAttack += Gem3.PlusAttack;
+                if (Gem4 != null)
+                    gemPlusAttack += Gem4.PlusAttack;
+                if (Gem5 != null)
+                    gemPlusAttack += Gem5.PlusAttack;
+                if (Gem6 != null)
+                    gemPlusAttack += Gem6.PlusAttack;
+
+                return ConstMinAttack + gemPlusAttack + ConstPlusAttack;
             }
         }
 

@@ -328,104 +328,44 @@ namespace Imgeneus.Database.Entities
         /// </summary>
         public ushort AddDamageMP { get; set; }
 
-        /// <summary>
-        /// TODO: ?
-        /// </summary>
-        public byte AbilityType1 { get; set; }
+        public AbilityType AbilityType1 { get; set; }
 
-        /// <summary>
-        /// TODO: ?
-        /// </summary>
         public ushort AbilityValue1 { get; set; }
 
-        /// <summary>
-        /// TODO: ?
-        /// </summary>
-        public byte AbilityType2 { get; set; }
+        public AbilityType AbilityType2 { get; set; }
 
-        /// <summary>
-        /// TODO: ?
-        /// </summary>
         public ushort AbilityValue2 { get; set; }
 
-        /// <summary>
-        /// TODO: ?
-        /// </summary>
-        public byte AbilityType3 { get; set; }
+        public AbilityType AbilityType3 { get; set; }
 
-        /// <summary>
-        /// TODO: ?
-        /// </summary>
         public ushort AbilityValue3 { get; set; }
 
-        /// <summary>
-        /// TODO: ?
-        /// </summary>
-        public byte AbilityType4 { get; set; }
+        public AbilityType AbilityType4 { get; set; }
 
-        /// <summary>
-        /// TODO: ?
-        /// </summary>
         public ushort AbilityValue4 { get; set; }
 
-        /// <summary>
-        /// TODO: ?
-        /// </summary>
-        public byte AbilityType5 { get; set; }
+        public AbilityType AbilityType5 { get; set; }
 
-        /// <summary>
-        /// TODO: ?
-        /// </summary>
         public ushort AbilityValue5 { get; set; }
 
-        /// <summary>
-        /// TODO: ?
-        /// </summary>
-        public byte AbilityType6 { get; set; }
+        public AbilityType AbilityType6 { get; set; }
 
-        /// <summary>
-        /// TODO: ?
-        /// </summary>
         public ushort AbilityValue6 { get; set; }
 
-        /// <summary>
-        /// TODO: ?
-        /// </summary>
-        public byte AbilityType7 { get; set; }
+        public AbilityType AbilityType7 { get; set; }
 
-        /// <summary>
-        /// TODO: ?
-        /// </summary>
         public ushort AbilityValue7 { get; set; }
 
-        /// <summary>
-        /// TODO: ?
-        /// </summary>
-        public byte AbilityType8 { get; set; }
+        public AbilityType AbilityType8 { get; set; }
 
-        /// <summary>
-        /// TODO: ?
-        /// </summary>
         public ushort AbilityValue8 { get; set; }
 
-        /// <summary>
-        /// TODO: ?
-        /// </summary>
-        public byte AbilityType9 { get; set; }
+        public AbilityType AbilityType9 { get; set; }
 
-        /// <summary>
-        /// TODO: ?
-        /// </summary>
         public ushort AbilityValue9 { get; set; }
 
-        /// <summary>
-        /// TODO: ?
-        /// </summary>
-        public byte AbilityType10 { get; set; }
+        public AbilityType AbilityType10 { get; set; }
 
-        /// <summary>
-        /// TODO: ?
-        /// </summary>
         public ushort AbilityValue10 { get; set; }
 
         /// <summary>
@@ -469,7 +409,7 @@ namespace Imgeneus.Database.Entities
         public byte DefenceValue { get; set; }
 
         /// <summary>
-        /// TODO: ?
+        /// % of hp, when this skill is activated.
         /// </summary>
         public byte LimitHP { get; set; }
 

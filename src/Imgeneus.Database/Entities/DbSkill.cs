@@ -203,9 +203,9 @@ namespace Imgeneus.Database.Entities
         public byte AttackRange { get; set; }
 
         /// <summary>
-        /// TODO: ?
+        /// State type contains information about what bad influence debuff has on target.
         /// </summary>
-        public byte StateType { get; set; }
+        public StateType StateType { get; set; }
 
         /// <summary>
         /// TODO: ?

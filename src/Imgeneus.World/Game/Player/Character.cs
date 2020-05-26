@@ -48,7 +48,7 @@ namespace Imgeneus.World.Game.Player
         public int Id { get; private set; }
         public string Name;
         public Fraction Country;
-        public ushort Level;
+        public ushort Level { get; private set; }
         public ushort MapId;
         public Race Race;
         public CharacterProfession Class;

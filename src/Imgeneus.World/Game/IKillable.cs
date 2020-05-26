@@ -66,6 +66,16 @@ namespace Imgeneus.World.Game
         public int TotalLuc { get; }
 
         /// <summary>
+        /// Wis value, needed for damage calculation.
+        /// </summary>
+        public int TotalWis { get; }
+
+        /// <summary>
+        /// Dex value, needed for damage calculation.
+        /// </summary>
+        public int TotalDex { get; }
+
+        /// <summary>
         /// Physical defense.
         /// </summary>
         public int Defense { get; }
@@ -74,5 +84,30 @@ namespace Imgeneus.World.Game
         /// Magic resistance.
         /// </summary>
         public int Resistance { get; }
+
+        /// <summary>
+        /// Level.
+        /// </summary>
+        public ushort Level { get; }
+
+        /// <summary>
+        /// Possibility to hit enemy.
+        /// </summary>
+        public double PhysicalHittingChance { get; }
+
+        /// <summary>
+        /// Possibility to escape hit.
+        /// </summary>
+        public double PhysicalEvasionChance { get; }
+
+        /// <summary>
+        /// Possibility to magic hit enemy.
+        /// </summary>
+        public double MagicHittingChance { get; }
+
+        /// <summary>
+        /// Possibility to escape magic hit.
+        /// </summary>
+        public double MagicEvasionChance { get; }
     }
 }

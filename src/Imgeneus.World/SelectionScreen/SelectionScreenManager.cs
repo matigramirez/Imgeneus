@@ -110,7 +110,7 @@ namespace Imgeneus.World.SelectionScreen
             // Get number of user characters.
             var characters = database.Characters.Where(x => x.UserId == _client.UserID).ToList();
 
-            if (characters.Count == Constants.MaxCharacters - 1)
+            if (characters.Count == Constants.MaxCharacters)
             {
                 // Max number is reached.
                 SendCreatedCharacter(false);

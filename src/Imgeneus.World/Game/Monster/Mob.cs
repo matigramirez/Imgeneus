@@ -73,6 +73,12 @@ namespace Imgeneus.World.Game.Monster
         public int TotalLuc { get; private set; }
 
         /// <inheritdoc />
+        public int TotalWis { get; private set; }
+
+        /// <inheritdoc />
+        public int TotalDex { get; private set; }
+
+        /// <inheritdoc />
         public int Defense { get; private set; }
 
         /// <inheritdoc />
@@ -84,6 +90,19 @@ namespace Imgeneus.World.Game.Monster
         /// Mob id from database.
         /// </summary>
         public ushort MobId;
+
+        /// <summary>
+        /// Mob level.
+        /// </summary>
+        public ushort Level { get; private set; }
+
+        public double PhysicalHittingChance => 1.0 * TotalDex / 2;
+
+        public double PhysicalEvasionChance => 1.0 * TotalDex / 2;
+
+        public double MagicHittingChance => 1.0 * TotalWis / 2;
+
+        public double MagicEvasionChance => 1.0 * TotalWis / 2;
 
         /// <summary>
         /// Current x position.
@@ -155,8 +174,11 @@ namespace Imgeneus.World.Game.Monster
                 MobId = mob.Id,
                 CurrentHP = mob.HP,
                 TotalLuc = mob.Luc,
+                TotalWis = mob.Wis,
+                TotalDex = mob.Dex,
                 Defense = mob.Defense,
-                Resistance = mob.Magic
+                Resistance = mob.Magic,
+                Level = mob.Level
             };
         }
     }

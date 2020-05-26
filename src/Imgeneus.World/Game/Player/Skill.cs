@@ -20,6 +20,7 @@ namespace Imgeneus.World.Game.Player
             KeepTime = dbSkill.KeepTime;
             CastTime = dbSkill.ReadyTime * 250;
             TypeAttack = dbSkill.TypeAttack;
+            StateType = dbSkill.StateType;
             NeedSP = dbSkill.SP;
             NeedMP = dbSkill.MP;
             NeedWeapon1 = dbSkill.NeedWeapon1 == 1;
@@ -38,6 +39,8 @@ namespace Imgeneus.World.Game.Player
             NeedWeapon14 = dbSkill.NeedWeapon14 == 1;
             NeedWeapon15 = dbSkill.NeedWeapon15 == 1;
             NeedShield = dbSkill.NeedShield == 1;
+            UseSuccessValue = dbSkill.SuccessType == SuccessType.SuccessBasedOnValue;
+            SuccessValue = dbSkill.SuccessValue;
         }
 
         /// <summary>
@@ -74,6 +77,21 @@ namespace Imgeneus.World.Game.Player
         /// Passive, physical, magic or shooting attack.
         /// </summary>
         public TypeAttack TypeAttack;
+
+        /// <summary>
+        /// Bool indicator, that shows if we need to use success value in calculations.
+        /// </summary>
+        public bool UseSuccessValue;
+
+        /// <summary>
+        /// Success rate in %.
+        /// </summary>
+        public byte SuccessValue;
+
+        /// <summary>
+        /// State type contains information about what bad influence debuff has on target.
+        /// </summary>
+        public StateType StateType;
 
         /// <summary>
         /// Time after which skill can be used again.

@@ -1,4 +1,5 @@
 ﻿using Imgeneus.Database.Constants;
+using Imgeneus.World.Game.Monster;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
@@ -134,6 +135,12 @@ namespace Imgeneus.World.Game.Player
             CurrentSP -= skill.NeedSP;
             SendUseSMMP(skill.NeedMP, skill.NeedSP);
 
+            if (!AttackSuccessRate(target, skill.TypeAttack, skill))
+            {
+                OnUsedSkill?.Invoke(this, target, skill, new AttackResult(AttackSuccess.Miss, new Damage(0, 0, 0)));
+                return;
+            }
+
             switch (skill.Type)
             {
                 case TypeDetail.Buff:
@@ -162,7 +169,15 @@ namespace Imgeneus.World.Game.Player
 
             _nextAttackTime = DateTime.UtcNow.AddMilliseconds(NextAttackTime);
 
-            var result = CalculateDamage(Target, TypeAttack.PhysicalAttack);
+            AttackResult result;
+            if (!AttackSuccessRate(Target, TypeAttack.PhysicalAttack))
+            {
+                result = new AttackResult(AttackSuccess.Miss, new Damage());
+                OnAutoAttack?.Invoke(this, result);
+                return;
+            }
+
+            result = CalculateDamage(Target, TypeAttack.PhysicalAttack);
             Target.DecreaseHP(result.Damage.HP, this);
             Target.CurrentSP -= result.Damage.SP;
             Target.CurrentMP -= result.Damage.MP;
@@ -250,28 +265,29 @@ namespace Imgeneus.World.Game.Player
                 case TypeAttack.PhysicalAttack:
                     damage = new Random().Next(MinAttack, MaxAttack);
                     damage -= target.Defense;
+                    damage = damage * 1.5;
                     break;
 
                 case TypeAttack.ShootingAttack:
                     damage = new Random().Next(MinAttack, MaxAttack);
-                    // TODO: multiply by range to the target.
                     damage -= target.Defense;
+                    // TODO: multiply by range to the target.
+                    damage = damage * 1.5; // * 0.7 if target is too close.
                     break;
 
                 case TypeAttack.MagicAttack:
                     damage = new Random().Next(MinMagicAttack, MaxMagicAttack);
                     damage -= target.Resistance;
+                    damage = damage * 1.5;
                     break;
             }
-
-            damage = damage * 1.5;
 
             // Second, add element calculation.
             // TODO: add element calculation.
 
             // Third, caculate if critical damage should be added.
             var criticalDamage = false;
-            if (new Random().Next(1, 101) < CriticalSuccess(target))
+            if (new Random().Next(1, 101) < CriticalSuccessRate(target))
             {
                 criticalDamage = true;
                 damage += Convert.ToInt32(TotalLuc * new Random().NextDouble() * 1.5);
@@ -283,11 +299,89 @@ namespace Imgeneus.World.Game.Player
                 return new AttackResult(AttackSuccess.Normal, new Damage(Convert.ToUInt16(damage), 0, 0));
         }
 
+        private bool AttackSuccessRate(IKillable target, TypeAttack typeAttack, Skill skill = null)
+        {
+            if (skill != null && (skill.StateType == StateType.FlatDamage || skill.StateType == StateType.DeathTouch))
+                return true;
+
+            if (skill != null && skill.UseSuccessValue)
+                return new Random().Next(1, 101) < skill.SuccessValue;
+
+
+            double levelDifference;
+            double result;
+
+            // Starting from here there might be not clear code.
+            // This code is not my invention, it's raw implementation of ep 4 calculations.
+            // You're free to change it to whatever you think fits better your server.
+            switch (typeAttack)
+            {
+                case TypeAttack.PhysicalAttack:
+                case TypeAttack.ShootingAttack:
+                    levelDifference = Level * 1.0 / (target.Level + Level);
+                    var targetAttackPercent = target.PhysicalHittingChance / (target.PhysicalHittingChance + PhysicalEvasionChance);
+                    var myAttackPercent = PhysicalHittingChance / (PhysicalHittingChance + target.PhysicalEvasionChance);
+                    result = levelDifference * 160 - (targetAttackPercent * 100 - myAttackPercent * 100);
+                    if (result >= 20)
+                    {
+                        if (result > 99)
+                            result = 99;
+                    }
+                    else
+                    {
+                        if (target is Mob)
+                            result = 20;
+                        else
+                            result = 1;
+                    }
+
+                    return new Random().Next(1, 101) < result;
+
+                case TypeAttack.MagicAttack:
+                    levelDifference = ((target.Level - Level - 2) * 100 + target.Level) / (target.Level + Level) * 1.1;
+                    var fxDef = levelDifference + target.MagicEvasionChance;
+                    if (fxDef >= 1)
+                    {
+                        if (fxDef > 70)
+                            fxDef = 70;
+                    }
+                    else
+                    {
+                        fxDef = 1;
+                    }
+
+                    var wisDifference = (11 * target.TotalWis - 10 * TotalWis) / (target.TotalWis + TotalWis) * 3.9000001;
+                    var nAttackTypea = wisDifference + MagicHittingChance;
+                    if (nAttackTypea >= 1)
+                    {
+                        if (nAttackTypea > 70)
+                            nAttackTypea = 70;
+                    }
+                    else
+                    {
+                        nAttackTypea = 1;
+                    }
+
+                    result = nAttackTypea + fxDef;
+                    if (result >= 1)
+                    {
+                        if (result > 90)
+                            result = 90;
+                    }
+                    else
+                    {
+                        result = 1;
+                    }
+                    return new Random().Next(1, 101) < result;
+            }
+            return true;
+        }
+
         /// <summary>
         /// Calculates critical rate or possibility to make critical hit.
         /// Can be only more then 5 and less than 99.
         /// </summary>
-        private int CriticalSuccess(IKillable target)
+        private int CriticalSuccessRate(IKillable target)
         {
             var criticalRate = Math.Floor(0.2 * TotalLuc); // each 5 luck is 1% of critical.
             var result = Convert.ToInt32(criticalRate - (target.TotalLuc * 0.034000002));
@@ -300,6 +394,33 @@ namespace Imgeneus.World.Game.Player
 
             return result;
         }
+
+        /// <summary>
+        /// TODO: add skills to this value.
+        /// Possibility to hit enemy.
+        /// </summary>
+        public double PhysicalHittingChance { get => 1.0 * TotalDex / 2; }
+
+        /// <summary>
+        /// TODO: add skills to this value.
+        /// Possibility to escape hit.
+        /// </summary>
+        public double PhysicalEvasionChance { get => 1.0 * TotalDex / 2; }
+
+
+        /// <summary>
+        /// TODO: add skills to this value.
+        /// Possibility to hit enemy.
+        /// </summary>
+        public double MagicHittingChance { get => 1.0 * TotalWis / 2; }
+
+        /// <summary>
+        /// TODO: add skills to this value.
+        /// Possibility to escape hit.
+        /// </summary>
+        public double MagicEvasionChance { get => 1.0 * TotalWis / 2; }
+
+
         #endregion
     }
 }

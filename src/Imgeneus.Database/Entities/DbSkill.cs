@@ -218,12 +218,12 @@ namespace Imgeneus.Database.Entities
         public ushort DisabledSkill { get; set; }
 
         /// <summary>
-        /// TODO: ?
+        /// SuccessType is always 0 for passive skills and 1 for other.
         /// </summary>
-        public byte SuccessType { get; set; }
+        public SuccessType SuccessType { get; set; }
 
         /// <summary>
-        /// TODO: ?
+        /// Success chance in %.
         /// </summary>
         public byte SuccessValue { get; set; }
 

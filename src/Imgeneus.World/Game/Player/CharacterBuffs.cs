@@ -189,6 +189,27 @@ namespace Imgeneus.World.Game.Player
                     else
                         _skillPhysicalEvasionChance -= abilityValue;
                     return;
+
+                case AbilityType.MagicAttackRate:
+                    if (addAbility)
+                        _skillMagicHittingChance += abilityValue;
+                    else
+                        _skillMagicHittingChance -= abilityValue;
+                    return;
+
+                case AbilityType.MagicEvationRate:
+                    if (addAbility)
+                        _skillMagicEvasionChance += abilityValue;
+                    else
+                        _skillMagicEvasionChance -= abilityValue;
+                    return;
+
+                case AbilityType.CriticalAttackRate:
+                    if (addAbility)
+                        _skillCriticalHittingChance += abilityValue;
+                    else
+                        _skillCriticalHittingChance -= abilityValue;
+                    return;
             }
         }
 

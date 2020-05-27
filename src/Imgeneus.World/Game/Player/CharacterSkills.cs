@@ -156,6 +156,11 @@ namespace Imgeneus.World.Game.Player
         private double _skillPhysicalEvasionChance;
 
         /// <summary>
+        /// Possibility to make critical hit.
+        /// </summary>
+        private double _skillCriticalHittingChance;
+
+        /// <summary>
         /// Possibility to hit enemy gained from skills.
         /// </summary>
         private double _skillMagicHittingChance;

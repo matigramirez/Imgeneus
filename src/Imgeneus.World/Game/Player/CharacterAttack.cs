@@ -382,8 +382,7 @@ namespace Imgeneus.World.Game.Player
         /// </summary>
         private int CriticalSuccessRate(IKillable target)
         {
-            var criticalRate = Math.Floor(0.2 * TotalLuc); // each 5 luck is 1% of critical.
-            var result = Convert.ToInt32(criticalRate - (target.TotalLuc * 0.034000002));
+            var result = Convert.ToInt32(CriticalHittingChance - (target.TotalLuc * 0.034000002));
 
             if (result < 5)
                 result = 5;
@@ -403,6 +402,11 @@ namespace Imgeneus.World.Game.Player
         /// Possibility to escape hit.
         /// </summary>
         public double PhysicalEvasionChance { get => 1.0 * TotalDex / 2 + _skillPhysicalEvasionChance; }
+
+        /// <summary>
+        /// Possibility to make critical hit.
+        /// </summary>
+        public double CriticalHittingChance { get => 0.2 * TotalLuc + _skillCriticalHittingChance; } // each 5 luck is 1% of critical.
 
         /// <summary>
         /// Possibility to hit enemy.

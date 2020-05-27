@@ -142,5 +142,29 @@ namespace Imgeneus.World.Game.Player
 
             OnUsedSkill?.Invoke(this, target, skill, result);
         }
+
+        #region Hit chance modifiers
+
+        /// <summary>
+        /// Possibility to hit enemy gained from skills.
+        /// </summary>
+        private double _skillPhysicalHittingChance;
+
+        /// <summary>
+        /// Possibility to escape hit gained from skills.
+        /// </summary>
+        private double _skillPhysicalEvasionChance;
+
+        /// <summary>
+        /// Possibility to hit enemy gained from skills.
+        /// </summary>
+        private double _skillMagicHittingChance;
+
+        /// <summary>
+        /// Possibility to escape hit gained from skills.
+        /// </summary>
+        private double _skillMagicEvasionChance;
+
+        #endregion
     }
 }

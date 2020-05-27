@@ -1,4 +1,6 @@
-﻿using Imgeneus.DatabaseBackgroundService.Handlers;
+﻿using Imgeneus.Database.Constants;
+using Imgeneus.Database.Entities;
+using Imgeneus.DatabaseBackgroundService.Handlers;
 using Microsoft.Extensions.Logging;
 using MvvmHelpers;
 using System;
@@ -38,6 +40,9 @@ namespace Imgeneus.World.Game.Player
                 foreach (ActiveBuff newBuff in e.NewItems)
                 {
                     newBuff.OnReset += Buff_OnReset;
+
+                    var skill = _databasePreloader.Skills[(newBuff.SkillId, newBuff.SkillLevel)];
+                    ApplyBuffSkill(skill);
                 }
 
                 // Case, when we are starting up and all skills are added with AddRange call.
@@ -53,9 +58,13 @@ namespace Imgeneus.World.Game.Player
 
             if (e.Action == NotifyCollectionChangedAction.Remove)
             {
+                var buff = (ActiveBuff)e.OldItems[0];
+                var skill = _databasePreloader.Skills[(buff.SkillId, buff.SkillLevel)];
+                RelieveBuffSkill(skill);
+
                 if (Client != null)
-                    SendRemoveBuff((ActiveBuff)e.OldItems[0]);
-                OnBuffRemoved?.Invoke(this, (ActiveBuff)e.OldItems[0]);
+                    SendRemoveBuff(buff);
+                OnBuffRemoved?.Invoke(this, buff);
             }
         }
 
@@ -120,5 +129,69 @@ namespace Imgeneus.World.Game.Player
 
             ActiveBuffs.Remove(sender);
         }
+
+        #region Apply buff
+
+        /// <summary>
+        /// Applies buff effect.
+        /// </summary>
+        private void ApplyBuffSkill(DbSkill skill)
+        {
+            ApplyAbility(skill.AbilityType1, skill.AbilityValue1, true);
+            ApplyAbility(skill.AbilityType2, skill.AbilityValue2, true);
+            ApplyAbility(skill.AbilityType3, skill.AbilityValue3, true);
+            ApplyAbility(skill.AbilityType4, skill.AbilityValue4, true);
+            ApplyAbility(skill.AbilityType5, skill.AbilityValue5, true);
+            ApplyAbility(skill.AbilityType6, skill.AbilityValue6, true);
+            ApplyAbility(skill.AbilityType7, skill.AbilityValue7, true);
+            ApplyAbility(skill.AbilityType8, skill.AbilityValue8, true);
+            ApplyAbility(skill.AbilityType9, skill.AbilityValue9, true);
+            ApplyAbility(skill.AbilityType10, skill.AbilityValue10, true);
+        }
+
+
+        /// <summary>
+        /// Removes buff effect.
+        /// </summary>
+        private void RelieveBuffSkill(DbSkill skill)
+        {
+            ApplyAbility(skill.AbilityType1, skill.AbilityValue1, false);
+            ApplyAbility(skill.AbilityType2, skill.AbilityValue2, false);
+            ApplyAbility(skill.AbilityType3, skill.AbilityValue3, false);
+            ApplyAbility(skill.AbilityType4, skill.AbilityValue4, false);
+            ApplyAbility(skill.AbilityType5, skill.AbilityValue5, false);
+            ApplyAbility(skill.AbilityType6, skill.AbilityValue6, false);
+            ApplyAbility(skill.AbilityType7, skill.AbilityValue7, false);
+            ApplyAbility(skill.AbilityType8, skill.AbilityValue8, false);
+            ApplyAbility(skill.AbilityType9, skill.AbilityValue9, false);
+            ApplyAbility(skill.AbilityType10, skill.AbilityValue10, false);
+        }
+
+        private void ApplyAbility(AbilityType abilityType, ushort abilityValue, bool addAbility)
+        {
+            switch (abilityType)
+            {
+                case AbilityType.None:
+                    return;
+
+                case AbilityType.PhysicalAttackRate:
+                case AbilityType.ShootingAttackRate:
+                    if (addAbility)
+                        _skillPhysicalHittingChance += abilityValue;
+                    else
+                        _skillPhysicalHittingChance -= abilityValue;
+                    return;
+
+                case AbilityType.PhysicalEvationRate:
+                case AbilityType.ShootingEvationRate:
+                    if (addAbility)
+                        _skillPhysicalEvasionChance += abilityValue;
+                    else
+                        _skillPhysicalEvasionChance -= abilityValue;
+                    return;
+            }
+        }
+
+        #endregion
     }
 }

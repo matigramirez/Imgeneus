@@ -251,7 +251,6 @@ namespace Imgeneus.World.Game.Player
             return true;
         }
 
-
         /// <summary>
         /// Calculates damage based on player stats and target stats.
         /// </summary>
@@ -396,30 +395,24 @@ namespace Imgeneus.World.Game.Player
         }
 
         /// <summary>
-        /// TODO: add skills to this value.
         /// Possibility to hit enemy.
         /// </summary>
-        public double PhysicalHittingChance { get => 1.0 * TotalDex / 2; }
+        public double PhysicalHittingChance { get => 1.0 * TotalDex / 2 + _skillPhysicalHittingChance; }
 
         /// <summary>
-        /// TODO: add skills to this value.
         /// Possibility to escape hit.
         /// </summary>
-        public double PhysicalEvasionChance { get => 1.0 * TotalDex / 2; }
-
+        public double PhysicalEvasionChance { get => 1.0 * TotalDex / 2 + _skillPhysicalEvasionChance; }
 
         /// <summary>
-        /// TODO: add skills to this value.
         /// Possibility to hit enemy.
         /// </summary>
-        public double MagicHittingChance { get => 1.0 * TotalWis / 2; }
+        public double MagicHittingChance { get => 1.0 * TotalWis / 2 + _skillMagicHittingChance; }
 
         /// <summary>
-        /// TODO: add skills to this value.
         /// Possibility to escape hit.
         /// </summary>
-        public double MagicEvasionChance { get => 1.0 * TotalWis / 2; }
-
+        public double MagicEvasionChance { get => 1.0 * TotalWis / 2 + _skillMagicEvasionChance; }
 
         #endregion
     }

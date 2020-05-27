@@ -144,6 +144,7 @@ namespace Imgeneus.World.Game.Player
             switch (skill.Type)
             {
                 case TypeDetail.Buff:
+                case TypeDetail.SubtractingDebuff:
                     UsedBuffSkill(skill, target);
                     break;
                 default:

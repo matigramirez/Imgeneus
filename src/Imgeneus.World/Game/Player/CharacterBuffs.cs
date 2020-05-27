@@ -137,34 +137,61 @@ namespace Imgeneus.World.Game.Player
         /// </summary>
         private void ApplyBuffSkill(DbSkill skill)
         {
-            ApplyAbility(skill.AbilityType1, skill.AbilityValue1, true);
-            ApplyAbility(skill.AbilityType2, skill.AbilityValue2, true);
-            ApplyAbility(skill.AbilityType3, skill.AbilityValue3, true);
-            ApplyAbility(skill.AbilityType4, skill.AbilityValue4, true);
-            ApplyAbility(skill.AbilityType5, skill.AbilityValue5, true);
-            ApplyAbility(skill.AbilityType6, skill.AbilityValue6, true);
-            ApplyAbility(skill.AbilityType7, skill.AbilityValue7, true);
-            ApplyAbility(skill.AbilityType8, skill.AbilityValue8, true);
-            ApplyAbility(skill.AbilityType9, skill.AbilityValue9, true);
-            ApplyAbility(skill.AbilityType10, skill.AbilityValue10, true);
-        }
+            bool addValue;
+            if (skill.TypeDetail == TypeDetail.Buff)
+            {
+                addValue = true;
+            }
+            else if (skill.TypeDetail == TypeDetail.SubtractingDebuff)
+            {
+                addValue = false;
+            }
+            else
+            {
+                throw new NotImplementedException("Not implemented buff skill type.");
+            }
 
+            ApplyAbility(skill.AbilityType1, skill.AbilityValue1, addValue);
+            ApplyAbility(skill.AbilityType2, skill.AbilityValue2, addValue);
+            ApplyAbility(skill.AbilityType3, skill.AbilityValue3, addValue);
+            ApplyAbility(skill.AbilityType4, skill.AbilityValue4, addValue);
+            ApplyAbility(skill.AbilityType5, skill.AbilityValue5, addValue);
+            ApplyAbility(skill.AbilityType6, skill.AbilityValue6, addValue);
+            ApplyAbility(skill.AbilityType7, skill.AbilityValue7, addValue);
+            ApplyAbility(skill.AbilityType8, skill.AbilityValue8, addValue);
+            ApplyAbility(skill.AbilityType9, skill.AbilityValue9, addValue);
+            ApplyAbility(skill.AbilityType10, skill.AbilityValue10, addValue);
+        }
 
         /// <summary>
         /// Removes buff effect.
         /// </summary>
         private void RelieveBuffSkill(DbSkill skill)
         {
-            ApplyAbility(skill.AbilityType1, skill.AbilityValue1, false);
-            ApplyAbility(skill.AbilityType2, skill.AbilityValue2, false);
-            ApplyAbility(skill.AbilityType3, skill.AbilityValue3, false);
-            ApplyAbility(skill.AbilityType4, skill.AbilityValue4, false);
-            ApplyAbility(skill.AbilityType5, skill.AbilityValue5, false);
-            ApplyAbility(skill.AbilityType6, skill.AbilityValue6, false);
-            ApplyAbility(skill.AbilityType7, skill.AbilityValue7, false);
-            ApplyAbility(skill.AbilityType8, skill.AbilityValue8, false);
-            ApplyAbility(skill.AbilityType9, skill.AbilityValue9, false);
-            ApplyAbility(skill.AbilityType10, skill.AbilityValue10, false);
+            bool addValue;
+            if (skill.TypeDetail == TypeDetail.Buff)
+            {
+                addValue = false;
+            }
+            else if (skill.TypeDetail == TypeDetail.SubtractingDebuff)
+            {
+                addValue = true;
+            }
+            else
+            {
+                throw new NotImplementedException("Not implemented buff skill type.");
+            }
+
+            ApplyAbility(skill.AbilityType1, skill.AbilityValue1, addValue);
+            ApplyAbility(skill.AbilityType2, skill.AbilityValue2, addValue);
+            ApplyAbility(skill.AbilityType3, skill.AbilityValue3, addValue);
+            ApplyAbility(skill.AbilityType4, skill.AbilityValue4, addValue);
+            ApplyAbility(skill.AbilityType5, skill.AbilityValue5, addValue);
+            ApplyAbility(skill.AbilityType6, skill.AbilityValue6, addValue);
+            ApplyAbility(skill.AbilityType7, skill.AbilityValue7, addValue);
+            ApplyAbility(skill.AbilityType8, skill.AbilityValue8, addValue);
+            ApplyAbility(skill.AbilityType9, skill.AbilityValue9, addValue);
+            ApplyAbility(skill.AbilityType10, skill.AbilityValue10, addValue);
         }
 
         private void ApplyAbility(AbilityType abilityType, ushort abilityValue, bool addAbility)

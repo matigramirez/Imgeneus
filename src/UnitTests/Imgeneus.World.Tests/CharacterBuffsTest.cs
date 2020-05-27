@@ -1,5 +1,6 @@
 using Imgeneus.Core.DependencyInjection;
 using Imgeneus.Database;
+using Imgeneus.Database.Constants;
 using Imgeneus.Database.Entities;
 using Imgeneus.Database.Preload;
 using Imgeneus.DatabaseBackgroundService;
@@ -7,6 +8,7 @@ using Imgeneus.World.Game.Player;
 using Imgeneus.World.Tests;
 using Microsoft.Extensions.Logging;
 using Moq;
+using System.Collections.Generic;
 using System.ComponentModel;
 using Xunit;
 
@@ -14,9 +16,9 @@ namespace Imgeneus.World.Test
 {
     public class CharacterBuffsTest : BaseTest
     {
-        private Mock<ILogger<Character>> loggerMock => new Mock<ILogger<Character>>();
-        private Mock<IBackgroundTaskQueue> taskQueuMock => new Mock<IBackgroundTaskQueue>();
-        private Mock<IDatabasePreloader> databasePreloader => new Mock<IDatabasePreloader>();
+        private Mock<ILogger<Character>> loggerMock = new Mock<ILogger<Character>>();
+        private Mock<IBackgroundTaskQueue> taskQueuMock = new Mock<IBackgroundTaskQueue>();
+        private Mock<IDatabasePreloader> databasePreloader = new Mock<IDatabasePreloader>();
 
         private Character_HP_SP_MP_Configuration config = new Character_HP_SP_MP_Configuration();
 
@@ -24,6 +26,7 @@ namespace Imgeneus.World.Test
         {
             SkillId = 1,
             SkillLevel = 1,
+            TypeDetail = TypeDetail.Buff,
             KeepTime = 3000 // 3 sec
         };
 
@@ -31,6 +34,7 @@ namespace Imgeneus.World.Test
         {
             SkillId = 1,
             SkillLevel = 2,
+            TypeDetail = TypeDetail.Buff,
             KeepTime = 5000 // 5 sec
         };
 
@@ -41,6 +45,14 @@ namespace Imgeneus.World.Test
             database.Skills.Add(skill1_level1);
             database.Skills.Add(skill1_level2);
             database.SaveChanges();
+
+            databasePreloader
+                .SetupGet((preloader) => preloader.Skills)
+                .Returns(new Dictionary<(ushort SkillId, byte SkillLevel), DbSkill>()
+                {
+                    { (1, 1) , skill1_level1 },
+                    { (1, 2) , skill1_level2 }
+                });
         }
 
         [Fact]

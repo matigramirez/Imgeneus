@@ -291,6 +291,27 @@ namespace Imgeneus.World.Game.Player
                     else
                         ExtraSP -= abilityValue;
                     break;
+
+                case AbilityType.PhysicalDefense:
+                case AbilityType.ShootingDefense:
+                    if (addAbility)
+                        ExtraDefense += abilityValue;
+                    else
+                        ExtraDefense -= abilityValue;
+
+                    if (Client != null)
+                        SendAdditionalStats();
+                    return;
+
+                case AbilityType.MagicResistance:
+                    if (addAbility)
+                        ExtraResistance += abilityValue;
+                    else
+                        ExtraResistance -= abilityValue;
+
+                    if (Client != null)
+                        SendAdditionalStats();
+                    return;
             }
         }
 

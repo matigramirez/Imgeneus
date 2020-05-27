@@ -230,7 +230,7 @@ namespace Imgeneus.World.Game.Player
                 return false;
             }
 
-            if (!skill.RequiredWeapons.Contains(Weapon.Type))
+            if (Weapon is null || !skill.RequiredWeapons.Contains(Weapon.Type))
             {
                 SendSkillWrongEquipment(target, skill);
                 return false;

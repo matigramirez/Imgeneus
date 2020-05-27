@@ -210,6 +210,66 @@ namespace Imgeneus.World.Game.Player
                     else
                         _skillCriticalHittingChance -= abilityValue;
                     return;
+
+                case AbilityType.Str:
+                    if (addAbility)
+                        ExtraStr += abilityValue;
+                    else
+                        ExtraStr -= abilityValue;
+
+                    if (Client != null)
+                        SendAdditionalStats();
+                    return;
+
+                case AbilityType.Rec:
+                    if (addAbility)
+                        ExtraRec += abilityValue;
+                    else
+                        ExtraRec -= abilityValue;
+
+                    if (Client != null)
+                        SendAdditionalStats();
+                    return;
+
+                case AbilityType.Int:
+                    if (addAbility)
+                        ExtraInt += abilityValue;
+                    else
+                        ExtraInt -= abilityValue;
+
+                    if (Client != null)
+                        SendAdditionalStats();
+                    return;
+
+                case AbilityType.Wis:
+                    if (addAbility)
+                        ExtraWis += abilityValue;
+                    else
+                        ExtraWis -= abilityValue;
+
+                    if (Client != null)
+                        SendAdditionalStats();
+                    return;
+
+                case AbilityType.Dex:
+                    if (addAbility)
+                        ExtraDex += abilityValue;
+                    else
+                        ExtraDex -= abilityValue;
+
+                    if (Client != null)
+                        SendAdditionalStats();
+                    return;
+
+                case AbilityType.Luc:
+                    if (addAbility)
+                        ExtraLuc += abilityValue;
+                    else
+                        ExtraLuc -= abilityValue;
+
+                    if (Client != null)
+                        SendAdditionalStats();
+                    return;
             }
         }
 

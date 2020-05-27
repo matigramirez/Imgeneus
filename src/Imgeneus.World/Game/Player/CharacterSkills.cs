@@ -103,6 +103,11 @@ namespace Imgeneus.World.Game.Player
                     OnAddedBuffToAnotherCharacter?.Invoke(this, this, buff);
                     break;
 
+                case TargetType.SelectedEnemy:
+                    buff = target.AddActiveBuff(skill);
+                    OnAddedBuffToAnotherCharacter?.Invoke(this, target, buff);
+                    break;
+
                 case TargetType.PartyMembers:
                     buff = AddActiveBuff(skill);
                     OnAddedBuffToAnotherCharacter?.Invoke(this, this, buff);

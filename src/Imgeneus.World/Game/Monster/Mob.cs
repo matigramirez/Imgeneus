@@ -181,6 +181,18 @@ namespace Imgeneus.World.Game.Monster
                 Level = mob.Level
             };
         }
+
+        public ActiveBuff AddActiveBuff(Skill skill)
+        {
+            var buff = new ActiveBuff()
+            {
+                SkillId = skill.SkillId,
+                SkillLevel = skill.SkillLevel
+            };
+            ActiveBuffs.Add(buff);
+
+            return buff;
+        }
     }
 
     public enum MobMotion : byte

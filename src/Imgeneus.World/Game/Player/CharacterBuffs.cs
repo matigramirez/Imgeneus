@@ -270,6 +270,27 @@ namespace Imgeneus.World.Game.Player
                     if (Client != null)
                         SendAdditionalStats();
                     return;
+
+                case AbilityType.HP:
+                    if (addAbility)
+                        ExtraHP += abilityValue;
+                    else
+                        ExtraHP -= abilityValue;
+                    break;
+
+                case AbilityType.MP:
+                    if (addAbility)
+                        ExtraMP += abilityValue;
+                    else
+                        ExtraMP -= abilityValue;
+                    break;
+
+                case AbilityType.SP:
+                    if (addAbility)
+                        ExtraSP += abilityValue;
+                    else
+                        ExtraSP -= abilityValue;
+                    break;
             }
         }
 

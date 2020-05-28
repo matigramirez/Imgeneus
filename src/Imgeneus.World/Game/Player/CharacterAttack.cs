@@ -141,16 +141,43 @@ namespace Imgeneus.World.Game.Player
                 return;
             }
 
+            AttackResult result;
+            switch (skill.DamageType)
+            {
+                case DamageType.FixedDamage:
+                    result = new AttackResult(AttackSuccess.Normal, new Damage(skill.DamageHP, skill.DamageMP, skill.DamageSP));
+                    break;
+
+                case DamageType.PlusExtraDamage:
+                    result = CalculateDamage(target, skill.TypeAttack, skill);
+                    break;
+
+                default:
+                    throw new NotImplementedException("Not implemented damage type.");
+            }
+
+            if (target != null && target.IsDead)
+                return;
+
+            if (target != null)
+            {
+                target.DecreaseHP(result.Damage.HP, this);
+                target.CurrentSP -= result.Damage.SP;
+                target.CurrentMP -= result.Damage.MP;
+            }
+
             switch (skill.Type)
             {
                 case TypeDetail.Buff:
                 case TypeDetail.SubtractingDebuff:
                     UsedBuffSkill(skill, target);
                     break;
+
                 default:
-                    UsedAttackSkill(skill, target);
-                    break;
+                    throw new NotImplementedException("Not implemented skill type.");
             }
+
+            OnUsedSkill?.Invoke(this, target, skill, result);
         }
 
         /// <summary>
@@ -264,20 +291,38 @@ namespace Imgeneus.World.Game.Player
             {
                 case TypeAttack.PhysicalAttack:
                     damage = new Random().Next(MinAttack, MaxAttack);
+                    if (skill != null)
+                    {
+                        damage += skill.DamageHP;
+                    }
                     damage -= target.Defense;
+                    if (damage < 0)
+                        damage = 1;
                     damage = damage * 1.5;
                     break;
 
                 case TypeAttack.ShootingAttack:
                     damage = new Random().Next(MinAttack, MaxAttack);
+                    if (skill != null)
+                    {
+                        damage += skill.DamageHP;
+                    }
                     damage -= target.Defense;
+                    if (damage < 0)
+                        damage = 1;
                     // TODO: multiply by range to the target.
                     damage = damage * 1.5; // * 0.7 if target is too close.
                     break;
 
                 case TypeAttack.MagicAttack:
                     damage = new Random().Next(MinMagicAttack, MaxMagicAttack);
+                    if (skill != null)
+                    {
+                        damage += skill.DamageHP;
+                    }
                     damage -= target.Resistance;
+                    if (damage < 0)
+                        damage = 1;
                     damage = damage * 1.5;
                     break;
             }
@@ -292,6 +337,9 @@ namespace Imgeneus.World.Game.Player
                 criticalDamage = true;
                 damage += Convert.ToInt32(TotalLuc * new Random().NextDouble() * 1.5);
             }
+
+            if (damage > 30000)
+                damage = 30000;
 
             if (criticalDamage)
                 return new AttackResult(AttackSuccess.Critical, new Damage(Convert.ToUInt16(damage), 0, 0));

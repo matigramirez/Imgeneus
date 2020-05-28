@@ -276,6 +276,9 @@ namespace Imgeneus.World.Game.Player
         /// <inheritdoc />
         public void DecreaseHP(int hp, IKiller damageMaker)
         {
+            if (hp == 0)
+                return;
+
             MyKiller = damageMaker;
             CurrentHP -= hp;
         }

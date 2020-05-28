@@ -21,6 +21,10 @@ namespace Imgeneus.World.Game.Player
             CastTime = dbSkill.ReadyTime * 250;
             TypeAttack = dbSkill.TypeAttack;
             StateType = dbSkill.StateType;
+            DamageType = dbSkill.DamageType;
+            DamageHP = dbSkill.DamageHP;
+            DamageSP = dbSkill.DamageSP;
+            DamageMP = dbSkill.DamageMP;
             NeedSP = dbSkill.SP;
             NeedMP = dbSkill.MP;
             NeedWeapon1 = dbSkill.NeedWeapon1 == 1;
@@ -107,6 +111,26 @@ namespace Imgeneus.World.Game.Player
         /// How long character should wait until skill is casted. In milliseconds.
         /// </summary>
         public int CastTime;
+
+        /// <summary>
+        /// Damage type;
+        /// </summary>
+        public DamageType DamageType;
+
+        /// <summary>
+        /// Const damage used, when skill makes fixed damage.
+        /// </summary>
+        public ushort DamageHP;
+
+        /// <summary>
+        /// Const damage used, when skill makes fixed damage.
+        /// </summary>
+        public ushort DamageSP;
+
+        /// <summary>
+        /// Const damage used, when skill makes fixed damage.
+        /// </summary>
+        public ushort DamageMP;
 
         /// <summary>
         /// How much stamina is needed in order to use this skill.

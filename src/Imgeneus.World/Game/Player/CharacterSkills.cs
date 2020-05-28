@@ -125,27 +125,6 @@ namespace Imgeneus.World.Game.Player
                 default:
                     throw new NotImplementedException("Not implemented skill target.");
             }
-
-            OnUsedSkill?.Invoke(this, this, skill, new AttackResult(AttackSuccess.SuccessBuff, new Damage(0, 0, 0)));
-        }
-
-        /// <summary>
-        ///  Process use of attack skill.
-        /// </summary>
-        /// <param name="skill">attack skill</param>
-        private void UsedAttackSkill(Skill skill, IKillable target)
-        {
-            if (Target.IsDead)
-            {
-                return;
-            }
-
-            var result = CalculateDamage(target, skill.TypeAttack, skill);
-            target.DecreaseHP(result.Damage.HP, this);
-            target.CurrentSP -= result.Damage.SP;
-            target.CurrentMP -= result.Damage.MP;
-
-            OnUsedSkill?.Invoke(this, target, skill, result);
         }
 
         #region Hit chance modifiers

@@ -54,7 +54,8 @@ namespace Imgeneus.World.Packets
             }
 
             Packet packet = new Packet(skillType);
-            packet.Write(new SkillRange(sender.Id, target.Id, skill, attackResult).Serialize());
+            var targetId = target is null ? 0 : target.Id;
+            packet.Write(new SkillRange(sender.Id, targetId, skill, attackResult).Serialize());
             client.SendPacket(packet);
             packet.Dispose();
         }

@@ -44,6 +44,9 @@ namespace Imgeneus.World.Game.Monster
         /// <inheritdoc />
         public void DecreaseHP(int hp, IKiller damageMaker)
         {
+            if (hp == 0)
+                return;
+
             CurrentHP -= hp;
             MyKiller = damageMaker;
 

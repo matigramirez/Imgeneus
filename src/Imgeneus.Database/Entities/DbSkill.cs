@@ -279,17 +279,17 @@ namespace Imgeneus.Database.Entities
         public DamageType DamageType { get; set; }
 
         /// <summary>
-        /// TODO: ?
+        /// Const damage used, when skill makes fixed damage.
         /// </summary>
         public ushort DamageHP { get; set; }
 
         /// <summary>
-        /// TODO: ?
+        /// Const damage used, when skill makes fixed damage.
         /// </summary>
         public ushort DamageSP { get; set; }
 
         /// <summary>
-        /// TODO: ?
+        /// Const damage used, when skill makes fixed damage.
         /// </summary>
         public ushort DamageMP { get; set; }
 

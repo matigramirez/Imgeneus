@@ -312,6 +312,15 @@ namespace Imgeneus.World.Game.Player
             }
         }
 
+        /// <inheritdoc />
+        public void IncreaseHP(int hp)
+        {
+            if (hp == 0)
+                return;
+
+            CurrentHP += hp;
+        }
+
         /// <summary>
         /// Event, that is fired, when mp changes.
         /// </summary>

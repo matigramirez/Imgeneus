@@ -25,6 +25,9 @@ namespace Imgeneus.World.Game.Player
             DamageHP = dbSkill.DamageHP;
             DamageSP = dbSkill.DamageSP;
             DamageMP = dbSkill.DamageMP;
+            HealHP = dbSkill.HealHP;
+            HealMP = dbSkill.HealMP;
+            HealSP = dbSkill.HealSP;
             NeedSP = dbSkill.SP;
             NeedMP = dbSkill.MP;
             NeedWeapon1 = dbSkill.NeedWeapon1 == 1;
@@ -131,6 +134,21 @@ namespace Imgeneus.World.Game.Player
         /// Const damage used, when skill makes fixed damage.
         /// </summary>
         public ushort DamageMP;
+
+        /// <summary>
+        /// How many health points can be healed.
+        /// </summary>
+        public ushort HealHP { get; set; }
+
+        /// <summary>
+        /// How many mana points can be healed.
+        /// </summary>
+        public ushort HealMP { get; set; }
+
+        /// <summary>
+        /// How many stamina points can be healed.
+        /// </summary>
+        public ushort HealSP { get; set; }
 
         /// <summary>
         /// How much stamina is needed in order to use this skill.

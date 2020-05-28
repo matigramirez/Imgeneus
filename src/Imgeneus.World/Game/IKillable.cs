@@ -29,6 +29,12 @@ namespace Imgeneus.World.Game
         public void DecreaseHP(int hp, IKiller damageMaker);
 
         /// <summary>
+        /// Heals target hp.
+        /// </summary>
+        /// <param name="hp">hp healed</param>
+        public void IncreaseHP(int hp);
+
+        /// <summary>
         /// Current stamina.
         /// </summary>
         public int CurrentSP { get; set; }

@@ -272,8 +272,8 @@ namespace Imgeneus.World.Game.Zone
 
         private void Character_HP_Changed(Character sender, HitpointArgs args)
         {
-            foreach (var player in Players)
-                _packetHelper.SendRecoverCharacter(player.Value.Client, sender);
+            //foreach (var player in Players)
+            //    _packetHelper.SendRecoverCharacter(player.Value.Client, sender);
         }
 
         private void Character_MP_Changed(Character sender, HitpointArgs args)

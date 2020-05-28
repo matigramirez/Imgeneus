@@ -108,7 +108,7 @@ namespace Imgeneus.World.Game.PartyAndRaid
         /// </summary>
         private void Member_HP_Changed(Character sender, HitpointArgs args)
         {
-            foreach (var member in Members.Where(m => m != sender))
+            foreach (var member in Members)
                 Send_HP_SP_MP(member.Client, sender.Id, args.NewValue, 0);
         }
 

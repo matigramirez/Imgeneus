@@ -55,6 +55,15 @@ namespace Imgeneus.World.Game.Monster
         }
 
         /// <inheritdoc />
+        public void IncreaseHP(int hp)
+        {
+            if (hp == 0)
+                return;
+
+            CurrentHP += hp;
+        }
+
+        /// <inheritdoc />
         public int CurrentHP { get; set; }
 
         /// <inheritdoc />

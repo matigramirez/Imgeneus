@@ -67,22 +67,15 @@ namespace Imgeneus.World.Game.Player
         }
 
         /// <summary>
-        /// Stops casting.
-        /// </summary>
-        private void StopCasting()
-        {
-            _castTimer.Stop();
-            _skillInCast = null;
-            _targetInCast = null;
-        }
-
-        /// <summary>
         /// When time for casting has elapsed.
         /// </summary>
         private void CastTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
+            _castTimer.Stop();
             UseSkill(_skillInCast, _targetInCast);
-            StopCasting();
+
+            _skillInCast = null;
+            _targetInCast = null;
         }
 
         #endregion
@@ -171,6 +164,10 @@ namespace Imgeneus.World.Game.Player
                 case TypeDetail.Buff:
                 case TypeDetail.SubtractingDebuff:
                     UsedBuffSkill(skill, target);
+                    break;
+
+                case TypeDetail.Healing:
+                    result = UsedHealingSkill(skill, target);
                     break;
 
                 default:

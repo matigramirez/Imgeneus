@@ -127,6 +127,51 @@ namespace Imgeneus.World.Game.Player
             }
         }
 
+        /// <summary>
+        /// Calculates healing result.
+        /// </summary>
+        private AttackResult UsedHealingSkill(Skill skill, IKillable target)
+        {
+            var healHP = TotalWis * 4 + skill.HealHP;
+            var healSP = skill.HealSP;
+            var healMP = skill.HealMP;
+            AttackResult result = new AttackResult(AttackSuccess.Normal, new Damage((ushort)healHP, healSP, healMP));
+
+            switch (skill.TargetType)
+            {
+                case TargetType.Caster:
+                    CurrentHP += healHP;
+                    CurrentMP += healMP;
+                    CurrentSP += healSP;
+                    break;
+
+                case TargetType.AlliesButCaster:
+                    if (Party != null)
+                    {
+                        foreach (var member in Party.Members.Where(m => m != this))
+                        {
+                            member.CurrentHP += healHP;
+                            member.CurrentMP += healMP;
+                            member.CurrentSP += healSP;
+
+                            OnUsedSkill?.Invoke(this, member, skill, result);
+                        }
+                    }
+                    break;
+
+                case TargetType.SelectedEnemy:
+                    target.IncreaseHP(healHP);
+                    target.CurrentMP += healMP;
+                    target.CurrentSP += healSP;
+                    break;
+
+                default:
+                    throw new NotImplementedException("Not implemented skill target.");
+            }
+
+            return result;
+        }
+
         #region Hit chance modifiers
 
         /// <summary>

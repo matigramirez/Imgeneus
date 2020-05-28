@@ -339,6 +339,20 @@ namespace Imgeneus.World.Game.Player
                     if (Client != null)
                         SendAdditionalStats();
                     return;
+
+                case AbilityType.MoveSpeed:
+                    if (addAbility)
+                        MoveSpeed += abilityValue;
+                    else
+                        MoveSpeed -= abilityValue;
+                    return;
+
+                case AbilityType.AttackSpeed:
+                    if (addAbility)
+                        SetAttackSpeedModifier(abilityValue);
+                    else
+                        SetAttackSpeedModifier(-1 * abilityValue);
+                    return;
             }
         }
 

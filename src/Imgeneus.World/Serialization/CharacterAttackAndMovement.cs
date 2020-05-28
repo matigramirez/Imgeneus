@@ -19,7 +19,7 @@ namespace Imgeneus.World.Serialization
         {
             CharacterId = character.Id;
             AttackSpeed = character.AttackSpeed;
-            MoveSpeed = character.MoveSpeed;
+            MoveSpeed = (MoveSpeed)character.MoveSpeed;
         }
     }
 }

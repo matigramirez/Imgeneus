@@ -480,16 +480,19 @@ namespace Imgeneus.World.Game.Player
             }
         }
 
-        private MoveSpeed _moveSpeed = MoveSpeed.Normal;
+        private int _moveSpeed = 2; // 2 == normal by default.
         /// <summary>
         /// How fast character moves.
         /// </summary>
-        public MoveSpeed MoveSpeed
+        public int MoveSpeed
         {
             private set
             {
                 if (_moveSpeed == value)
                     return;
+
+                if (value < 0)
+                    value = 0;
 
                 _moveSpeed = value;
                 OnAttackOrMoveChanged?.Invoke(this);

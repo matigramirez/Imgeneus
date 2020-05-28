@@ -26,6 +26,7 @@ namespace Imgeneus.World.Game.Player
             }
 
             _resetTimer.Elapsed += ResetTimer_Elapsed;
+            _periodicalHealTimer.Elapsed += PeriodicalHealTimer_Elapsed;
         }
 
         #region Buff reset
@@ -51,11 +52,15 @@ namespace Imgeneus.World.Game.Player
         /// <summary>
         /// Timer, that is called when it's time to remove buff.
         /// </summary>
-        private Timer _resetTimer = new Timer();
+        private readonly Timer _resetTimer = new Timer();
 
         private void ResetTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
             _resetTimer.Elapsed -= ResetTimer_Elapsed;
+            _resetTimer.Stop();
+            _periodicalHealTimer.Elapsed -= PeriodicalHealTimer_Elapsed;
+            _periodicalHealTimer.Stop();
+
             OnReset?.Invoke(this);
         }
 
@@ -63,6 +68,39 @@ namespace Imgeneus.World.Game.Player
         /// Event, that is fired, when it's time to remove buff.
         /// </summary>
         public event Action<ActiveBuff> OnReset;
+
+        #endregion
+
+        #region Periodical Heal
+
+        /// <summary>
+        /// Timer, that is called when it's time to make periodical heal (every 3 seconds).
+        /// </summary>
+        private readonly Timer _periodicalHealTimer = new Timer(3000);
+
+        /// <summary>
+        /// Event, that is fired, when it's time to make periodical heal.
+        /// </summary>
+        public event Action<ActiveBuff, AttackResult> OnPeriodicalHeal;
+
+        public ushort TimeHealHP;
+
+        public ushort TimeHealSP;
+
+        public ushort TimeHealMP;
+
+        private void PeriodicalHealTimer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            OnPeriodicalHeal?.Invoke(this, new AttackResult(AttackSuccess.Normal, new Damage(TimeHealHP, TimeHealSP, TimeHealMP)));
+        }
+
+        /// <summary>
+        /// Starts periodical healing.
+        /// </summary>
+        public void StartPeriodicalHeal()
+        {
+            _periodicalHealTimer.Start();
+        }
 
         #endregion
 

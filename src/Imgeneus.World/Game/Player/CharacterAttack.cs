@@ -163,6 +163,7 @@ namespace Imgeneus.World.Game.Player
             {
                 case TypeDetail.Buff:
                 case TypeDetail.SubtractingDebuff:
+                case TypeDetail.PeriodicalHeal:
                     UsedBuffSkill(skill, target);
                     break;
 

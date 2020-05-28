@@ -131,6 +131,7 @@ namespace Imgeneus.World.Game.Zone
             character.HP_Changed += Character_HP_Changed;
             character.MP_Changed += Character_MP_Changed;
             character.SP_Changed += Character_SP_Changed;
+            character.OnSkillKeep += Character_OnSkillKeep;
         }
 
         /// <summary>
@@ -153,6 +154,7 @@ namespace Imgeneus.World.Game.Zone
             character.HP_Changed -= Character_HP_Changed;
             character.MP_Changed -= Character_MP_Changed;
             character.SP_Changed -= Character_SP_Changed;
+            character.OnSkillKeep -= Character_OnSkillKeep;
         }
 
         /// <summary>
@@ -292,6 +294,12 @@ namespace Imgeneus.World.Game.Zone
         {
             foreach (var player in Players)
                 _packetHelper.Send_Max_HP(player.Value.Client, sender.Id, maxHP);
+        }
+
+        private void Character_OnSkillKeep(Character sender, ActiveBuff buff, AttackResult result)
+        {
+            foreach (var player in Players)
+                _packetHelper.SendSkillKeep(player.Value.Client, sender.Id, buff.SkillId, buff.SkillLevel, result);
         }
 
         #endregion

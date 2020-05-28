@@ -40,9 +40,7 @@ namespace Imgeneus.World.Game.Player
                 foreach (ActiveBuff newBuff in e.NewItems)
                 {
                     newBuff.OnReset += Buff_OnReset;
-
-                    var skill = _databasePreloader.Skills[(newBuff.SkillId, newBuff.SkillLevel)];
-                    ApplyBuffSkill(skill);
+                    ApplyBuffSkill(newBuff);
                 }
 
                 // Case, when we are starting up and all skills are added with AddRange call.
@@ -59,8 +57,7 @@ namespace Imgeneus.World.Game.Player
             if (e.Action == NotifyCollectionChangedAction.Remove)
             {
                 var buff = (ActiveBuff)e.OldItems[0];
-                var skill = _databasePreloader.Skills[(buff.SkillId, buff.SkillLevel)];
-                RelieveBuffSkill(skill);
+                RelieveBuffSkill(buff);
 
                 if (Client != null)
                     SendRemoveBuff(buff);
@@ -135,63 +132,91 @@ namespace Imgeneus.World.Game.Player
         /// <summary>
         /// Applies buff effect.
         /// </summary>
-        private void ApplyBuffSkill(DbSkill skill)
+        private void ApplyBuffSkill(ActiveBuff buff)
         {
-            bool addValue;
-            if (skill.TypeDetail == TypeDetail.Buff)
+            var skill = _databasePreloader.Skills[(buff.SkillId, buff.SkillLevel)];
+            switch (skill.TypeDetail)
             {
-                addValue = true;
-            }
-            else if (skill.TypeDetail == TypeDetail.SubtractingDebuff)
-            {
-                addValue = false;
-            }
-            else
-            {
-                throw new NotImplementedException("Not implemented buff skill type.");
-            }
+                case TypeDetail.Buff:
+                    ApplyAbility(skill.AbilityType1, skill.AbilityValue1, true);
+                    ApplyAbility(skill.AbilityType2, skill.AbilityValue2, true);
+                    ApplyAbility(skill.AbilityType3, skill.AbilityValue3, true);
+                    ApplyAbility(skill.AbilityType4, skill.AbilityValue4, true);
+                    ApplyAbility(skill.AbilityType5, skill.AbilityValue5, true);
+                    ApplyAbility(skill.AbilityType6, skill.AbilityValue6, true);
+                    ApplyAbility(skill.AbilityType7, skill.AbilityValue7, true);
+                    ApplyAbility(skill.AbilityType8, skill.AbilityValue8, true);
+                    ApplyAbility(skill.AbilityType9, skill.AbilityValue9, true);
+                    ApplyAbility(skill.AbilityType10, skill.AbilityValue10, true);
+                    break;
 
-            ApplyAbility(skill.AbilityType1, skill.AbilityValue1, addValue);
-            ApplyAbility(skill.AbilityType2, skill.AbilityValue2, addValue);
-            ApplyAbility(skill.AbilityType3, skill.AbilityValue3, addValue);
-            ApplyAbility(skill.AbilityType4, skill.AbilityValue4, addValue);
-            ApplyAbility(skill.AbilityType5, skill.AbilityValue5, addValue);
-            ApplyAbility(skill.AbilityType6, skill.AbilityValue6, addValue);
-            ApplyAbility(skill.AbilityType7, skill.AbilityValue7, addValue);
-            ApplyAbility(skill.AbilityType8, skill.AbilityValue8, addValue);
-            ApplyAbility(skill.AbilityType9, skill.AbilityValue9, addValue);
-            ApplyAbility(skill.AbilityType10, skill.AbilityValue10, addValue);
+                case TypeDetail.SubtractingDebuff:
+                    ApplyAbility(skill.AbilityType1, skill.AbilityValue1, false);
+                    ApplyAbility(skill.AbilityType2, skill.AbilityValue2, false);
+                    ApplyAbility(skill.AbilityType3, skill.AbilityValue3, false);
+                    ApplyAbility(skill.AbilityType4, skill.AbilityValue4, false);
+                    ApplyAbility(skill.AbilityType5, skill.AbilityValue5, false);
+                    ApplyAbility(skill.AbilityType6, skill.AbilityValue6, false);
+                    ApplyAbility(skill.AbilityType7, skill.AbilityValue7, false);
+                    ApplyAbility(skill.AbilityType8, skill.AbilityValue8, false);
+                    ApplyAbility(skill.AbilityType9, skill.AbilityValue9, false);
+                    ApplyAbility(skill.AbilityType10, skill.AbilityValue10, false);
+                    break;
+
+                case TypeDetail.PeriodicalHeal:
+                    buff.TimeHealHP = skill.TimeHealHP;
+                    buff.TimeHealMP = skill.TimeHealMP;
+                    buff.TimeHealSP = skill.TimeHealSP;
+                    buff.OnPeriodicalHeal += Buff_OnPeriodicalHeal;
+                    buff.StartPeriodicalHeal();
+                    break;
+
+                default:
+                    throw new NotImplementedException("Not implemented buff skill type.");
+            }
         }
 
         /// <summary>
         /// Removes buff effect.
         /// </summary>
-        private void RelieveBuffSkill(DbSkill skill)
+        private void RelieveBuffSkill(ActiveBuff buff)
         {
-            bool addValue;
-            if (skill.TypeDetail == TypeDetail.Buff)
+            var skill = _databasePreloader.Skills[(buff.SkillId, buff.SkillLevel)];
+            switch (skill.TypeDetail)
             {
-                addValue = false;
-            }
-            else if (skill.TypeDetail == TypeDetail.SubtractingDebuff)
-            {
-                addValue = true;
-            }
-            else
-            {
-                throw new NotImplementedException("Not implemented buff skill type.");
-            }
+                case TypeDetail.Buff:
+                    ApplyAbility(skill.AbilityType1, skill.AbilityValue1, false);
+                    ApplyAbility(skill.AbilityType2, skill.AbilityValue2, false);
+                    ApplyAbility(skill.AbilityType3, skill.AbilityValue3, false);
+                    ApplyAbility(skill.AbilityType4, skill.AbilityValue4, false);
+                    ApplyAbility(skill.AbilityType5, skill.AbilityValue5, false);
+                    ApplyAbility(skill.AbilityType6, skill.AbilityValue6, false);
+                    ApplyAbility(skill.AbilityType7, skill.AbilityValue7, false);
+                    ApplyAbility(skill.AbilityType8, skill.AbilityValue8, false);
+                    ApplyAbility(skill.AbilityType9, skill.AbilityValue9, false);
+                    ApplyAbility(skill.AbilityType10, skill.AbilityValue10, false);
+                    break;
 
-            ApplyAbility(skill.AbilityType1, skill.AbilityValue1, addValue);
-            ApplyAbility(skill.AbilityType2, skill.AbilityValue2, addValue);
-            ApplyAbility(skill.AbilityType3, skill.AbilityValue3, addValue);
-            ApplyAbility(skill.AbilityType4, skill.AbilityValue4, addValue);
-            ApplyAbility(skill.AbilityType5, skill.AbilityValue5, addValue);
-            ApplyAbility(skill.AbilityType6, skill.AbilityValue6, addValue);
-            ApplyAbility(skill.AbilityType7, skill.AbilityValue7, addValue);
-            ApplyAbility(skill.AbilityType8, skill.AbilityValue8, addValue);
-            ApplyAbility(skill.AbilityType9, skill.AbilityValue9, addValue);
-            ApplyAbility(skill.AbilityType10, skill.AbilityValue10, addValue);
+                case TypeDetail.SubtractingDebuff:
+                    ApplyAbility(skill.AbilityType1, skill.AbilityValue1, true);
+                    ApplyAbility(skill.AbilityType2, skill.AbilityValue2, true);
+                    ApplyAbility(skill.AbilityType3, skill.AbilityValue3, true);
+                    ApplyAbility(skill.AbilityType4, skill.AbilityValue4, true);
+                    ApplyAbility(skill.AbilityType5, skill.AbilityValue5, true);
+                    ApplyAbility(skill.AbilityType6, skill.AbilityValue6, true);
+                    ApplyAbility(skill.AbilityType7, skill.AbilityValue7, true);
+                    ApplyAbility(skill.AbilityType8, skill.AbilityValue8, true);
+                    ApplyAbility(skill.AbilityType9, skill.AbilityValue9, true);
+                    ApplyAbility(skill.AbilityType10, skill.AbilityValue10, true);
+                    break;
+
+                case TypeDetail.PeriodicalHeal:
+                    buff.OnPeriodicalHeal -= Buff_OnPeriodicalHeal;
+                    break;
+
+                default:
+                    throw new NotImplementedException("Not implemented buff skill type.");
+            }
         }
 
         private void ApplyAbility(AbilityType abilityType, ushort abilityValue, bool addAbility)
@@ -354,6 +379,15 @@ namespace Imgeneus.World.Game.Player
                         SetAttackSpeedModifier(-1 * abilityValue);
                     return;
             }
+        }
+
+        private void Buff_OnPeriodicalHeal(ActiveBuff buff, AttackResult healResult)
+        {
+            IncreaseHP(healResult.Damage.HP);
+            CurrentMP += healResult.Damage.MP;
+            CurrentSP += healResult.Damage.SP;
+
+            OnSkillKeep?.Invoke(this, buff, healResult);
         }
 
         #endregion

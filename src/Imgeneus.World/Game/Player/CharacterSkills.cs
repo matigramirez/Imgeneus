@@ -25,6 +25,11 @@ namespace Imgeneus.World.Game.Player
         public event Action<Character, IKillable, ActiveBuff> OnAddedBuffToAnotherCharacter;
 
         /// <summary>
+        /// ?
+        /// </summary>
+        public event Action<Character, ActiveBuff, AttackResult> OnSkillKeep;
+
+        /// <summary>
         /// Player learns new skill.
         /// </summary>
         /// <param name="skillId">skill id</param>

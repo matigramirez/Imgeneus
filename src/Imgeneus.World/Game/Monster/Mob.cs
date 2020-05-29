@@ -194,9 +194,9 @@ namespace Imgeneus.World.Game.Monster
             };
         }
 
-        public ActiveBuff AddActiveBuff(Skill skill)
+        public ActiveBuff AddActiveBuff(Skill skill, IKiller creator)
         {
-            var buff = new ActiveBuff()
+            var buff = new ActiveBuff(creator)
             {
                 SkillId = skill.SkillId,
                 SkillLevel = skill.SkillLevel

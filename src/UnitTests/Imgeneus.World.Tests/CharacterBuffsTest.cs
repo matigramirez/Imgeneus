@@ -63,7 +63,7 @@ namespace Imgeneus.World.Test
             Assert.Empty(character.ActiveBuffs);
 
             var usedSkill = new Skill(skill1_level1, 1, 0);
-            character.AddActiveBuff(usedSkill);
+            character.AddActiveBuff(usedSkill, character);
             Assert.NotEmpty(character.ActiveBuffs);
         }
 
@@ -72,12 +72,12 @@ namespace Imgeneus.World.Test
         public void Character_BuffOflowerLevelCanNotOverrideHigherLevel()
         {
             var character = new Character(loggerMock.Object, config, taskQueuMock.Object, databasePreloader.Object);
-            character.AddActiveBuff(new Skill(skill1_level2, 1, 0));
+            character.AddActiveBuff(new Skill(skill1_level2, 1, 0), character);
 
             Assert.Equal(skill1_level2.SkillId, character.ActiveBuffs[0].SkillId);
             Assert.Equal(skill1_level2.SkillLevel, character.ActiveBuffs[0].SkillLevel);
 
-            character.AddActiveBuff(new Skill(skill1_level1, 1, 0));
+            character.AddActiveBuff(new Skill(skill1_level1, 1, 0), character);
 
             Assert.Equal(skill1_level2.SkillId, character.ActiveBuffs[0].SkillId);
             Assert.Equal(skill1_level2.SkillLevel, character.ActiveBuffs[0].SkillLevel);
@@ -90,10 +90,10 @@ namespace Imgeneus.World.Test
             var character = new Character(loggerMock.Object, config, taskQueuMock.Object, databasePreloader.Object);
             var skill = new Skill(skill1_level2, 1, 0);
 
-            character.AddActiveBuff(skill);
+            character.AddActiveBuff(skill, character);
             var oldReselTime = character.ActiveBuffs[0].ResetTime;
 
-            character.AddActiveBuff(skill);
+            character.AddActiveBuff(skill, character);
             Assert.True(character.ActiveBuffs[0].ResetTime > oldReselTime && character.ActiveBuffs[0].ResetTime != oldReselTime);
         }
     }

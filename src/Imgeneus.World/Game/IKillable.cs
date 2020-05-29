@@ -67,7 +67,7 @@ namespace Imgeneus.World.Game
         /// <summary>
         /// Updates collection of active buffs.
         /// </summary>
-        public ActiveBuff AddActiveBuff(Skill skill);
+        public ActiveBuff AddActiveBuff(Skill skill, IKiller creator);
 
         /// <summary>
         /// Luck value, needed for critical damage calculation.

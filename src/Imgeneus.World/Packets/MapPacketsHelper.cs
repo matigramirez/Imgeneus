@@ -216,11 +216,13 @@ namespace Imgeneus.World.Packets
 
         internal void SendSkillKeep(WorldClient client, int id, ushort skillId, byte skillLevel, AttackResult result)
         {
-            using var packet = new Packet(PacketType.SKILL_KEEP);
+            using var packet = new Packet(PacketType.CHARACTER_SKILL_KEEP);
             packet.Write(id);
             packet.Write(skillId);
             packet.Write(skillLevel);
-            packet.Write(result);
+            packet.Write(result.Damage.HP);
+            packet.Write(result.Damage.MP);
+            packet.Write(result.Damage.SP);
             client.SendPacket(packet);
         }
     }

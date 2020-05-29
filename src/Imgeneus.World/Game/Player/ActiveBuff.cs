@@ -1,4 +1,5 @@
-﻿using Imgeneus.Database.Entities;
+﻿using Imgeneus.Database.Constants;
+using Imgeneus.Database.Entities;
 using System;
 using System.Timers;
 
@@ -18,15 +19,23 @@ namespace Imgeneus.World.Game.Player
 
         public byte SkillLevel { get; set; }
 
-        public ActiveBuff()
+        /// <summary>
+        /// Who has created this buff.
+        /// </summary>
+        public IKiller BuffCreator { get; }
+
+        public ActiveBuff(IKiller maker)
         {
             lock (SyncObj)
             {
                 Id = Counter++;
             }
 
+            BuffCreator = maker;
+
             _resetTimer.Elapsed += ResetTimer_Elapsed;
             _periodicalHealTimer.Elapsed += PeriodicalHealTimer_Elapsed;
+            _periodicalDebuffTimer.Elapsed += PeriodicalDebuffTimer_Elapsed;
         }
 
         #region Buff reset
@@ -60,6 +69,8 @@ namespace Imgeneus.World.Game.Player
             _resetTimer.Stop();
             _periodicalHealTimer.Elapsed -= PeriodicalHealTimer_Elapsed;
             _periodicalHealTimer.Stop();
+            _periodicalDebuffTimer.Elapsed -= PeriodicalDebuffTimer_Elapsed;
+            _periodicalDebuffTimer.Stop();
 
             OnReset?.Invoke(this);
         }
@@ -104,9 +115,41 @@ namespace Imgeneus.World.Game.Player
 
         #endregion
 
+        #region Periodical debuff
+
+        /// <summary>
+        /// Timer, that is called when it's time to make periodical debuff (every 3 seconds).
+        /// </summary>
+        private readonly Timer _periodicalDebuffTimer = new Timer(3000);
+
+        /// <summary>
+        /// Event, that is fired, when it's time to make periodical debuff.
+        /// </summary>
+        public event Action<ActiveBuff, AttackResult> OnPeriodicalDebuff;
+
+        public ushort TimeHPDamage;
+
+        public ushort TimeSPDamage;
+
+        public ushort TimeMPDamage;
+
+        public TimeDamageType TimeDamageType;
+
+        private void PeriodicalDebuffTimer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            OnPeriodicalDebuff?.Invoke(this, new AttackResult(AttackSuccess.Normal, new Damage(TimeHPDamage, TimeSPDamage, TimeMPDamage)));
+        }
+
+        public void StartPeriodicalDebuff()
+        {
+            _periodicalDebuffTimer.Start();
+        }
+
+        #endregion
+
         public static ActiveBuff FromDbCharacterActiveBuff(DbCharacterActiveBuff buff)
         {
-            return new ActiveBuff()
+            return new ActiveBuff(null)
             {
                 ResetTime = buff.ResetTime,
                 SkillId = buff.Skill.SkillId,

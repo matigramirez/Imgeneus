@@ -104,24 +104,24 @@ namespace Imgeneus.World.Game.Player
             switch (skill.TargetType)
             {
                 case TargetType.Caster:
-                    buff = AddActiveBuff(skill);
+                    buff = AddActiveBuff(skill, this);
                     OnAddedBuffToAnotherCharacter?.Invoke(this, this, buff);
                     break;
 
                 case TargetType.SelectedEnemy:
-                    buff = target.AddActiveBuff(skill);
+                    buff = target.AddActiveBuff(skill, this);
                     OnAddedBuffToAnotherCharacter?.Invoke(this, target, buff);
                     break;
 
                 case TargetType.PartyMembers:
-                    buff = AddActiveBuff(skill);
+                    buff = AddActiveBuff(skill, this);
                     OnAddedBuffToAnotherCharacter?.Invoke(this, this, buff);
 
                     if (Party != null)
                     {
                         foreach (var member in Party.Members)
                         {
-                            buff = member.AddActiveBuff(skill);
+                            buff = member.AddActiveBuff(skill, this);
                             OnAddedBuffToAnotherCharacter?.Invoke(this, member, buff);
                         }
                     }

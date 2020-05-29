@@ -294,22 +294,22 @@ namespace Imgeneus.Database.Entities
         public ushort DamageMP { get; set; }
 
         /// <summary>
-        /// TODO: ?
+        /// Time damage type.
         /// </summary>
-        public byte TimeDamageType { get; set; }
+        public TimeDamageType TimeDamageType { get; set; }
 
         /// <summary>
-        /// TODO: ?
+        /// Either fixed hp or % hp damage made over time.
         /// </summary>
         public ushort TimeDamageHP { get; set; }
 
         /// <summary>
-        /// TODO: ?
+        /// Either fixed sp or % sp damage made over time.
         /// </summary>
         public ushort TimeDamageSP { get; set; }
 
         /// <summary>
-        /// TODO: ?
+        /// Either fixed mp or % mp damage made over time.
         /// </summary>
         public ushort TimeDamageMP { get; set; }
 
@@ -384,17 +384,17 @@ namespace Imgeneus.Database.Entities
         public ushort HealSP { get; set; }
 
         /// <summary>
-        /// TODO: ?
+        /// HP healed over time.
         /// </summary>
         public ushort TimeHealHP { get; set; }
 
         /// <summary>
-        /// TODO: ?
+        /// MP healed over time.
         /// </summary>
         public ushort TimeHealMP { get; set; }
 
         /// <summary>
-        /// TODO: ?
+        /// SP healed over time.
         /// </summary>
         public ushort TimeHealSP { get; set; }
 

@@ -69,8 +69,9 @@ namespace Imgeneus.World.Game.Player
         /// Updates collection of active buffs. Also writes changes to database.
         /// </summary>
         /// <param name="skill">skill, that client sends</param>
+        /// <param name="creator">buff creator</param>
         /// <returns>Newly added or updated active buff</returns>
-        public ActiveBuff AddActiveBuff(Skill skill)
+        public ActiveBuff AddActiveBuff(Skill skill, IKiller creator)
         {
             var resetTime = DateTime.UtcNow.AddSeconds(skill.KeepTime);
             var buff = ActiveBuffs.FirstOrDefault(b => b.SkillId == skill.SkillId);
@@ -104,7 +105,7 @@ namespace Imgeneus.World.Game.Player
                 // It's a new buff, add it to database.
                 _taskQueue.Enqueue(ActionType.SAVE_BUFF,
                                    Id, skill.SkillId, skill.SkillLevel, resetTime);
-                buff = new ActiveBuff()
+                buff = new ActiveBuff(creator)
                 {
                     SkillId = skill.SkillId,
                     SkillLevel = skill.SkillLevel,
@@ -171,6 +172,15 @@ namespace Imgeneus.World.Game.Player
                     buff.StartPeriodicalHeal();
                     break;
 
+                case TypeDetail.PeriodicalDebuff:
+                    buff.TimeHPDamage = skill.TimeDamageHP;
+                    buff.TimeMPDamage = skill.TimeDamageMP;
+                    buff.TimeSPDamage = skill.TimeDamageSP;
+                    buff.TimeDamageType = skill.TimeDamageType;
+                    buff.OnPeriodicalDebuff += Buff_OnPeriodicalDebuff;
+                    buff.StartPeriodicalDebuff();
+                    break;
+
                 default:
                     throw new NotImplementedException("Not implemented buff skill type.");
             }
@@ -212,6 +222,10 @@ namespace Imgeneus.World.Game.Player
 
                 case TypeDetail.PeriodicalHeal:
                     buff.OnPeriodicalHeal -= Buff_OnPeriodicalHeal;
+                    break;
+
+                case TypeDetail.PeriodicalDebuff:
+                    buff.OnPeriodicalDebuff -= Buff_OnPeriodicalDebuff;
                     break;
 
                 default:
@@ -388,6 +402,25 @@ namespace Imgeneus.World.Game.Player
             CurrentSP += healResult.Damage.SP;
 
             OnSkillKeep?.Invoke(this, buff, healResult);
+        }
+
+        private void Buff_OnPeriodicalDebuff(ActiveBuff buff, AttackResult debuffResult)
+        {
+            var damage = debuffResult.Damage;
+
+            if (buff.TimeDamageType == TimeDamageType.Percent)
+            {
+                damage = new Damage(
+                    Convert.ToUInt16(CurrentHP * debuffResult.Damage.HP * 1.0 / 100),
+                    Convert.ToUInt16(CurrentSP * debuffResult.Damage.SP * 1.0 / 100),
+                    Convert.ToUInt16(CurrentMP * debuffResult.Damage.MP * 1.0 / 100));
+            }
+
+            DecreaseHP(damage.HP, buff.BuffCreator);
+            CurrentMP -= damage.MP;
+            CurrentSP -= damage.SP;
+
+            OnSkillKeep?.Invoke(this, buff, new AttackResult(AttackSuccess.Normal, damage));
         }
 
         #endregion

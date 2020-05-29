@@ -15,22 +15,27 @@ namespace Imgeneus.World.Game.Player
 
         public int CountDownInSeconds { get => (int)ResetTime.Subtract(DateTime.UtcNow).TotalSeconds; }
 
-        public ushort SkillId { get; set; }
+        public ushort SkillId { get; }
 
-        public byte SkillLevel { get; set; }
+        public byte SkillLevel { get; }
+
+        public StateType StateType { get; }
 
         /// <summary>
         /// Who has created this buff.
         /// </summary>
         public IKiller BuffCreator { get; }
 
-        public ActiveBuff(IKiller maker)
+        public ActiveBuff(IKiller maker, ushort skillId, byte skillLevel, StateType stateType)
         {
             lock (SyncObj)
             {
                 Id = Counter++;
             }
 
+            SkillId = skillId;
+            SkillLevel = skillLevel;
+            StateType = stateType;
             BuffCreator = maker;
 
             _resetTimer.Elapsed += ResetTimer_Elapsed;
@@ -149,11 +154,9 @@ namespace Imgeneus.World.Game.Player
 
         public static ActiveBuff FromDbCharacterActiveBuff(DbCharacterActiveBuff buff)
         {
-            return new ActiveBuff(null)
+            return new ActiveBuff(null, buff.Skill.SkillId, buff.Skill.SkillLevel, buff.Skill.StateType)
             {
-                ResetTime = buff.ResetTime,
-                SkillId = buff.Skill.SkillId,
-                SkillLevel = buff.Skill.SkillLevel
+                ResetTime = buff.ResetTime
             };
         }
     }

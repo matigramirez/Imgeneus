@@ -165,11 +165,16 @@ namespace Imgeneus.World.Game.Player
                 case TypeDetail.SubtractingDebuff:
                 case TypeDetail.PeriodicalHeal:
                 case TypeDetail.PeriodicalDebuff:
+                case TypeDetail.PreventAttack:
+                case TypeDetail.Immobilize:
                     UsedBuffSkill(skill, target);
                     break;
 
                 case TypeDetail.Healing:
                     result = UsedHealingSkill(skill, target);
+                    break;
+
+                case TypeDetail.UniqueHitAttack:
                     break;
 
                 default:
@@ -230,6 +235,12 @@ namespace Imgeneus.World.Game.Player
                 return false;
             }
 
+            if (skillNumber == 255 && ActiveBuffs.Any(b => b.StateType == StateType.Sleep || b.StateType == StateType.Stun || b.StateType == StateType.Silence))
+            {
+                SendAutoAttackCanNotAttack(target);
+                return false;
+            }
+
             if (skillNumber != 255)
             {
                 return CanUseSkill(Skills.First(s => s.Number == skillNumber), target);
@@ -272,6 +283,20 @@ namespace Imgeneus.World.Game.Player
             if (CurrentMP < skill.NeedMP || CurrentSP < skill.NeedSP)
             {
                 SendNotEnoughMPSP(Target, skill);
+                return false;
+            }
+
+            if ((skill.TypeAttack == TypeAttack.PhysicalAttack || skill.TypeAttack == TypeAttack.ShootingAttack) &&
+                ActiveBuffs.Any(b => b.StateType == StateType.Sleep || b.StateType == StateType.Stun || b.StateType == StateType.Silence))
+            {
+                SendSkillAttackCanNotAttack(target, skill);
+                return false;
+            }
+
+            if (skill.TypeAttack == TypeAttack.MagicAttack &&
+                ActiveBuffs.Any(b => b.StateType == StateType.Sleep || b.StateType == StateType.Stun || b.StateType == StateType.Darkness))
+            {
+                SendSkillAttackCanNotAttack(target, skill);
                 return false;
             }
 

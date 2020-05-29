@@ -166,11 +166,27 @@ namespace Imgeneus.World.Packets
             client.SendPacket(packet);
         }
 
+        internal void SendAutoAttackCanNotAttack(WorldClient client, Character sender, IKillable target)
+        {
+            PacketType type = target is Character ? PacketType.CHARACTER_CHARACTER_AUTO_ATTACK : PacketType.CHARACTER_MOB_AUTO_ATTACK;
+            using var packet = new Packet(type);
+            packet.Write(new UsualAttack(sender.Id, 0, new AttackResult() { Success = AttackSuccess.CanNotAttack }).Serialize());
+            client.SendPacket(packet);
+        }
+
         internal void SendSkillWrongTarget(WorldClient client, Character sender, Skill skill, IKillable target)
         {
             PacketType type = target is Character ? PacketType.USE_CHARACTER_TARGET_SKILL : PacketType.USE_MOB_TARGET_SKILL;
             using var packet = new Packet(type);
             packet.Write(new SkillRange(sender.Id, 0, skill, new AttackResult() { Success = AttackSuccess.WrongTarget }).Serialize());
+            client.SendPacket(packet);
+        }
+
+        internal void SendSkillAttackCanNotAttack(WorldClient client, Character sender, Skill skill, IKillable target)
+        {
+            PacketType type = target is Character ? PacketType.USE_CHARACTER_TARGET_SKILL : PacketType.USE_MOB_TARGET_SKILL;
+            using var packet = new Packet(type);
+            packet.Write(new SkillRange(sender.Id, 0, skill, new AttackResult() { Success = AttackSuccess.CanNotAttack }).Serialize());
             client.SendPacket(packet);
         }
 

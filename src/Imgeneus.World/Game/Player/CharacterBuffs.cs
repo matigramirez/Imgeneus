@@ -105,10 +105,8 @@ namespace Imgeneus.World.Game.Player
                 // It's a new buff, add it to database.
                 _taskQueue.Enqueue(ActionType.SAVE_BUFF,
                                    Id, skill.SkillId, skill.SkillLevel, resetTime);
-                buff = new ActiveBuff(creator)
+                buff = new ActiveBuff(creator, skill.SkillId, skill.SkillLevel, skill.StateType)
                 {
-                    SkillId = skill.SkillId,
-                    SkillLevel = skill.SkillLevel,
                     ResetTime = resetTime
                 };
                 ActiveBuffs.Add(buff);
@@ -181,6 +179,10 @@ namespace Imgeneus.World.Game.Player
                     buff.StartPeriodicalDebuff();
                     break;
 
+                case TypeDetail.PreventAttack:
+                case TypeDetail.Immobilize:
+                    break;
+
                 default:
                     throw new NotImplementedException("Not implemented buff skill type.");
             }
@@ -226,6 +228,10 @@ namespace Imgeneus.World.Game.Player
 
                 case TypeDetail.PeriodicalDebuff:
                     buff.OnPeriodicalDebuff -= Buff_OnPeriodicalDebuff;
+                    break;
+
+                case TypeDetail.PreventAttack:
+                case TypeDetail.Immobilize:
                     break;
 
                 default:

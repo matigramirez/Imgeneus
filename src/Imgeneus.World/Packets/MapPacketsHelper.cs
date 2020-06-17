@@ -225,5 +225,13 @@ namespace Imgeneus.World.Packets
             packet.Write(result.Damage.SP);
             client.SendPacket(packet);
         }
+
+        internal void SendShapeUpdate(WorldClient client, Character sender)
+        {
+            using var packet = new Packet(PacketType.CHARACTER_SHAPE_UPDATE);
+            packet.Write(sender.Id);
+            packet.Write((byte)sender.Shape);
+            client.SendPacket(packet);
+        }
     }
 }

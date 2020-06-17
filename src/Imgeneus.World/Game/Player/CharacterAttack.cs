@@ -93,6 +93,12 @@ namespace Imgeneus.World.Game.Player
         /// </summary>
         private void Attack(int skillNumber, IKillable target = null)
         {
+            if (IsStealth)
+            {
+                var stealthBuff = ActiveBuffs.FirstOrDefault(b => _databasePreloader.Skills[(b.SkillId, b.SkillLevel)].TypeDetail == TypeDetail.Stealth);
+                stealthBuff.CancelBuff();
+            }
+
             if (skillNumber == 255)
             {
                 AutoAttack();
@@ -172,6 +178,12 @@ namespace Imgeneus.World.Game.Player
 
                 case TypeDetail.Healing:
                     result = UsedHealingSkill(skill, target);
+                    break;
+
+                case TypeDetail.Stealth:
+                    if (target is null)
+                        target = this;
+                    result = UsedStealthSkill(skill, target);
                     break;
 
                 case TypeDetail.UniqueHitAttack:

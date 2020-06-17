@@ -70,6 +70,19 @@ namespace Imgeneus.World.Game.Player
 
         private void ResetTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
+            CancelBuff();
+        }
+
+        /// <summary>
+        /// Event, that is fired, when it's time to remove buff.
+        /// </summary>
+        public event Action<ActiveBuff> OnReset;
+
+        /// <summary>
+        /// Removes buff from character.
+        /// </summary>
+        public void CancelBuff()
+        {
             _resetTimer.Elapsed -= ResetTimer_Elapsed;
             _resetTimer.Stop();
             _periodicalHealTimer.Elapsed -= PeriodicalHealTimer_Elapsed;
@@ -79,11 +92,6 @@ namespace Imgeneus.World.Game.Player
 
             OnReset?.Invoke(this);
         }
-
-        /// <summary>
-        /// Event, that is fired, when it's time to remove buff.
-        /// </summary>
-        public event Action<ActiveBuff> OnReset;
 
         #endregion
 

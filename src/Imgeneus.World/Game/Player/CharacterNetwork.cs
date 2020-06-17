@@ -331,6 +331,8 @@ namespace Imgeneus.World.Game.Player
 
         private void SendMoveAndAttackSpeed() => _packetsHelper.SendMoveAndAttackSpeed(Client, this);
 
+        private void SendRunMode() => _packetsHelper.SendRunMode(Client, this);
+
         private void TargetChanged(IKillable target)
         {
             if (target is Mob)

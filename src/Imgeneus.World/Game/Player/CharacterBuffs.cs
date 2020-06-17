@@ -184,6 +184,14 @@ namespace Imgeneus.World.Game.Player
                     SendMoveAndAttackSpeed();
                     break;
 
+                case TypeDetail.Stealth:
+                    IsStealth = true;
+
+                    var sprinterBuff = ActiveBuffs.FirstOrDefault(b => b.SkillId == 681 || b.SkillId == 114); // 114 (old ep) 681 (new ep) are unique numbers for sprinter buff.
+                    if (sprinterBuff != null)
+                        sprinterBuff.CancelBuff();
+                    break;
+
                 default:
                     throw new NotImplementedException("Not implemented buff skill type.");
             }
@@ -234,6 +242,10 @@ namespace Imgeneus.World.Game.Player
                 case TypeDetail.PreventAttack:
                 case TypeDetail.Immobilize:
                     SendMoveAndAttackSpeed();
+                    break;
+
+                case TypeDetail.Stealth:
+                    IsStealth = ActiveBuffs.Any(b => _databasePreloader.Skills[(b.SkillId, b.SkillLevel)].TypeDetail == TypeDetail.Stealth);
                     break;
 
                 default:

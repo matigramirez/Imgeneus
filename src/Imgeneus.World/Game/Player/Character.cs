@@ -72,23 +72,6 @@ namespace Imgeneus.World.Game.Player
         public ushort Defeats;
         public bool IsAdmin;
 
-        /// <summary>
-        ///  Set to 1 if you want character running or to 0 if character is "walking".
-        ///  Used to change with Tab in previous episodes.
-        /// </summary>
-        public byte MoveMotion
-        {
-            get
-            {
-                if (ActiveBuffs.Any(b => b.StateType == StateType.Immobilize || b.StateType == StateType.Sleep || b.StateType == StateType.Stun))
-                {
-                    return 193; // Can not move motion.
-                }
-
-                return 1;
-            }
-        }
-
         #endregion
 
         #region Additional stats
@@ -526,6 +509,12 @@ namespace Imgeneus.World.Game.Player
                 {
                     return 255; // can not move
                 }
+
+                if (IsStealth)
+                {
+                    return 2;// normal
+                }
+
                 return _moveSpeed;
             }
         }
@@ -646,6 +635,75 @@ namespace Imgeneus.World.Game.Player
 
                 return weaponAttack + characterAttack; // TODO: + passive and buffs
             }
+        }
+
+        #endregion
+
+        #region Run mode
+
+        /// <summary>
+        ///  Set to 1 if you want character running or to 0 if character is "walking".
+        ///  Used to change with Tab in previous episodes.
+        /// </summary>
+        public byte MoveMotion
+        {
+            get
+            {
+                if (ActiveBuffs.Any(b => b.StateType == StateType.Immobilize || b.StateType == StateType.Sleep || b.StateType == StateType.Stun))
+                {
+                    return 193; // Can not move motion.
+                }
+
+                if (IsStealth)
+                    return 0;
+
+                return 1;
+            }
+        }
+
+        #endregion
+
+        #region Shape 
+
+        /// <summary>
+        /// Event, that is fired, when character changes shape.
+        /// </summary>
+        public event Action<Character> OnShapeChange;
+
+        public CharacterShapeEnum Shape
+        {
+            get
+            {
+                if (IsStealth)
+                    return CharacterShapeEnum.Stealth;
+
+                return CharacterShapeEnum.None;
+            }
+        }
+
+        #endregion
+
+        #region Stealth
+
+        private bool _isStealth = false;
+
+        /// <summary>
+        /// Is player visible or not.
+        /// </summary>
+        public bool IsStealth
+        {
+            private set
+            {
+                if (_isStealth == value)
+                    return;
+
+                _isStealth = value;
+
+                OnShapeChange?.Invoke(this);
+                SendRunMode(); // Do we need this in new eps?
+                OnAttackOrMoveChanged?.Invoke(this);
+            }
+            get => _isStealth;
         }
 
         #endregion

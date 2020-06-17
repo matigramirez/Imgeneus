@@ -241,5 +241,12 @@ namespace Imgeneus.World.Packets
             packet.Write(new CharacterShape(character).Serialize());
             client.SendPacket(packet);
         }
+
+        internal void SendRunMode(WorldClient client, Character character)
+        {
+            using var packet = new Packet(PacketType.RUN_MODE);
+            packet.Write(character.MoveMotion);
+            client.SendPacket(packet);
+        }
     }
 }

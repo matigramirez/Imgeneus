@@ -177,6 +177,15 @@ namespace Imgeneus.World.Game.Player
             return result;
         }
 
+        /// <summary>
+        /// Makes target invisible.
+        /// </summary>
+        private AttackResult UsedStealthSkill(Skill skill, IKillable target)
+        {
+            target.AddActiveBuff(skill, this);
+            return new AttackResult(AttackSuccess.Normal, new Damage());
+        }
+
         #region Hit chance modifiers
 
         /// <summary>

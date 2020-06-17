@@ -132,6 +132,7 @@ namespace Imgeneus.World.Game.Zone
             character.MP_Changed += Character_MP_Changed;
             character.SP_Changed += Character_SP_Changed;
             character.OnSkillKeep += Character_OnSkillKeep;
+            character.OnShapeChange += Character_OnShapeChange;
         }
 
         /// <summary>
@@ -155,6 +156,7 @@ namespace Imgeneus.World.Game.Zone
             character.MP_Changed -= Character_MP_Changed;
             character.SP_Changed -= Character_SP_Changed;
             character.OnSkillKeep -= Character_OnSkillKeep;
+            character.OnShapeChange -= Character_OnShapeChange;
         }
 
         /// <summary>
@@ -300,6 +302,12 @@ namespace Imgeneus.World.Game.Zone
         {
             foreach (var player in Players)
                 _packetHelper.SendSkillKeep(player.Value.Client, sender.Id, buff.SkillId, buff.SkillLevel, result);
+        }
+
+        private void Character_OnShapeChange(Character sender)
+        {
+            foreach (var player in Players)
+                _packetHelper.SendShapeUpdate(player.Value.Client, sender);
         }
 
         #endregion

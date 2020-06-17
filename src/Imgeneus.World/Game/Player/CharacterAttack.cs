@@ -373,6 +373,8 @@ namespace Imgeneus.World.Game.Player
 
         private bool AttackSuccessRate(IKillable target, TypeAttack typeAttack, Skill skill = null)
         {
+            // Uncomment this code, if you want to always hit target.
+            // return true;
             if (skill != null && (skill.StateType == StateType.FlatDamage || skill.StateType == StateType.DeathTouch))
                 return true;
 

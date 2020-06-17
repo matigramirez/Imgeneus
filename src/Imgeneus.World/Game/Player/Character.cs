@@ -76,7 +76,18 @@ namespace Imgeneus.World.Game.Player
         ///  Set to 1 if you want character running or to 0 if character is "walking".
         ///  Used to change with Tab in previous episodes.
         /// </summary>
-        public byte MoveMotion = 1;
+        public byte MoveMotion
+        {
+            get
+            {
+                if (ActiveBuffs.Any(b => b.StateType == StateType.Immobilize || b.StateType == StateType.Sleep || b.StateType == StateType.Stun))
+                {
+                    return 193; // Can not move motion.
+                }
+
+                return 1;
+            }
+        }
 
         #endregion
 
@@ -509,7 +520,14 @@ namespace Imgeneus.World.Game.Player
                 _moveSpeed = value;
                 OnAttackOrMoveChanged?.Invoke(this);
             }
-            get => _moveSpeed;
+            get
+            {
+                if (ActiveBuffs.Any(b => b.StateType == StateType.Sleep || b.StateType == StateType.Stun || b.StateType == StateType.Immobilize))
+                {
+                    return 255; // can not move
+                }
+                return _moveSpeed;
+            }
         }
 
         #endregion
@@ -676,6 +694,12 @@ namespace Imgeneus.World.Game.Player
         /// <param name="saveChangesToDB">set it to true, if this change should be saved to database</param>
         public void UpdatePosition(float x, float y, float z, ushort angle, bool saveChangesToDB)
         {
+            if (ActiveBuffs.Any(b => b.StateType == StateType.Immobilize || b.StateType == StateType.Sleep || b.StateType == StateType.Stun))
+            {
+                OnPositionChanged?.Invoke(this);
+                return;
+            }
+
             PosX = x;
             PosY = y;
             PosZ = z;

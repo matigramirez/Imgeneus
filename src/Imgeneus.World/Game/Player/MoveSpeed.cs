@@ -7,6 +7,6 @@
         Normal,
         Fast,
         VeryFast,
-        CanNotMove
+        CanNotMove = 255
     }
 }

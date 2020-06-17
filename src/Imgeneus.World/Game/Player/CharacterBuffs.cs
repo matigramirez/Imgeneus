@@ -181,6 +181,7 @@ namespace Imgeneus.World.Game.Player
 
                 case TypeDetail.PreventAttack:
                 case TypeDetail.Immobilize:
+                    SendMoveAndAttackSpeed();
                     break;
 
                 default:
@@ -232,6 +233,7 @@ namespace Imgeneus.World.Game.Player
 
                 case TypeDetail.PreventAttack:
                 case TypeDetail.Immobilize:
+                    SendMoveAndAttackSpeed();
                     break;
 
                 default:

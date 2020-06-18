@@ -33,7 +33,6 @@ namespace Imgeneus.World.Game.Player
             _packetsHelper = new CharacterPacketsHelper();
 
             InventoryItems.CollectionChanged += InventoryItems_CollectionChanged;
-            Skills.CollectionChanged += Skills_CollectionChanged;
             ActiveBuffs.CollectionChanged += ActiveBuffs_CollectionChanged;
             _castTimer.Elapsed += CastTimer_Elapsed;
         }
@@ -938,7 +937,9 @@ namespace Imgeneus.World.Game.Player
 
             ClearOutdatedValues(dbCharacter);
 
-            character.Skills.AddRange(dbCharacter.Skills.Select(s => new Skill(s.Skill, s.Number, 0)));
+            foreach (var skill in dbCharacter.Skills.Select(s => new Skill(s.Skill, s.Number, 0)))
+                character.Skills.Add(skill.Number, skill);
+
             character.ActiveBuffs.AddRange(dbCharacter.ActiveBuffs.Select(b => ActiveBuff.FromDbCharacterActiveBuff(b)));
             character.InventoryItems.AddRange(dbCharacter.Items.Select(i => new Item(databasePreloader, i)));
             character.QuickItems = dbCharacter.QuickItems;

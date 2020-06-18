@@ -1,8 +1,8 @@
 ﻿using Imgeneus.Database.Constants;
 using Imgeneus.DatabaseBackgroundService.Handlers;
 using Microsoft.Extensions.Logging;
-using MvvmHelpers;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Imgeneus.World.Game.Player
@@ -12,7 +12,7 @@ namespace Imgeneus.World.Game.Player
         /// <summary>
         /// Collection of available skills.
         /// </summary>
-        public ObservableRangeCollection<Skill> Skills { get; private set; } = new ObservableRangeCollection<Skill>();
+        public Dictionary<int, Skill> Skills { get; private set; } = new Dictionary<int, Skill>();
 
         /// <summary>
         /// Event, that is fired, when character uses any skill.
@@ -37,7 +37,7 @@ namespace Imgeneus.World.Game.Player
         /// <returns>successful or not</returns>
         public void LearnNewSkill(ushort skillId, byte skillLevel)
         {
-            if (Skills.Any(s => s.SkillId == skillId && s.SkillLevel == skillLevel))
+            if (Skills.Values.Any(s => s.SkillId == skillId && s.SkillLevel == skillLevel))
             {
                 // Character has already learned this skill.
                 // TODO: log it or throw exception?
@@ -56,7 +56,7 @@ namespace Imgeneus.World.Game.Player
             byte skillNumber = 0;
 
             // Find out if the character has already learned the same skill, but lower level.
-            var isSkillLearned = Skills.FirstOrDefault(s => s.SkillId == skillId);
+            var isSkillLearned = Skills.Values.FirstOrDefault(s => s.SkillId == skillId);
             // If there is skil of lower level => delete it.
             if (isSkillLearned != null)
             {
@@ -71,7 +71,7 @@ namespace Imgeneus.World.Game.Player
                 if (Skills.Any())
                 {
                     // Find the next skill number.
-                    skillNumber = Skills.Select(s => s.Number).Max();
+                    skillNumber = Skills.Values.Select(s => s.Number).Max();
                     skillNumber++;
                 }
                 else
@@ -85,11 +85,15 @@ namespace Imgeneus.World.Game.Player
                                 Id, dbSkill.SkillId, dbSkill.SkillLevel, skillNumber, dbSkill.SkillPoint);
 
             // Remove previously learned skill.
-            if (isSkillLearned != null) Skills.Remove(isSkillLearned);
+            if (isSkillLearned != null) Skills.Remove(skillNumber);
 
             SkillPoint -= dbSkill.SkillPoint;
             var skill = new Skill(dbSkill, skillNumber, 0);
-            Skills.Add(skill);
+            Skills.Add(skillNumber, skill);
+
+            if (Client != null)
+                _packetsHelper.SendLearnedNewSkill(Client, skill);
+
             _logger.LogDebug($"Character {Id} learned skill {skill.SkillId} of level {skill.SkillLevel}");
         }
 

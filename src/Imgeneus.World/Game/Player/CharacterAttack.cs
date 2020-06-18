@@ -105,7 +105,11 @@ namespace Imgeneus.World.Game.Player
             }
             else
             {
-                var skill = Skills.First(s => s.Number == skillNumber);
+                if (!Skills.TryGetValue(skillNumber, out var skill))
+                {
+                    _logger.LogWarning($"Character {Id} tries to use nonexistent skill.");
+                    return;
+                }
 
                 if (skill.CastTime == 0)
                 {
@@ -255,7 +259,13 @@ namespace Imgeneus.World.Game.Player
 
             if (skillNumber != 255)
             {
-                return CanUseSkill(Skills.First(s => s.Number == skillNumber), target);
+                if (!Skills.TryGetValue(skillNumber, out var skill))
+                {
+                    _logger.LogWarning($"Character {Id} tries to use nonexistent skill.");
+                    return false;
+                }
+
+                return CanUseSkill(skill, target);
             }
 
             return true;

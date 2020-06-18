@@ -23,7 +23,7 @@ namespace Imgeneus.Network.Serialization
             SkillsCount = (byte)character.Skills.Count;
 
             var serializedSkills = new List<byte>();
-            foreach (var skill in character.Skills)
+            foreach (var skill in character.Skills.Values)
             {
                 var serialized = new SerializedSkill(skill).Serialize();
                 serializedSkills.AddRange(serialized);

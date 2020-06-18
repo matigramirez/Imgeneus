@@ -5,14 +5,13 @@ using Imgeneus.Database.Entities;
 using Imgeneus.Database.Preload;
 using Imgeneus.DatabaseBackgroundService;
 using Imgeneus.World.Game.Player;
-using Imgeneus.World.Tests;
 using Microsoft.Extensions.Logging;
 using Moq;
 using System.Collections.Generic;
 using System.ComponentModel;
 using Xunit;
 
-namespace Imgeneus.World.Test
+namespace Imgeneus.World.Tests
 {
     public class CharacterBuffsTest : BaseTest
     {

@@ -1,4 +1,5 @@
-﻿using Imgeneus.Database.Entities;
+﻿using Imgeneus.Database.Constants;
+using Imgeneus.Database.Entities;
 using Imgeneus.Database.Preload;
 
 namespace Imgeneus.World.Game.Player
@@ -68,6 +69,7 @@ namespace Imgeneus.World.Game.Player
                 ConstMinAttack = item.MinAttack;
                 ConstPlusAttack = item.PlusAttack;
                 MaxCount = item.Count;
+                ConstElement = item.Element;
             }
         }
 
@@ -94,6 +96,7 @@ namespace Imgeneus.World.Game.Player
         private readonly ushort ConstResistance;
         private readonly ushort ConstMinAttack;
         private readonly ushort ConstPlusAttack;
+        private readonly Element ConstElement;
 
         /// <summary>
         /// Str contains yellow(default) stat + orange stat (take it from craft name later).
@@ -460,6 +463,35 @@ namespace Imgeneus.World.Game.Player
                     gemPlusAttack += Gem6.PlusAttack;
 
                 return ConstMinAttack + gemPlusAttack + ConstPlusAttack;
+            }
+        }
+
+        public Element Element
+        {
+            get
+            {
+                if (ConstElement != Element.None)
+                    return ConstElement;
+
+                if (Gem1 != null && Gem1.Element != Element.None)
+                    return Gem1.Element;
+
+                if (Gem2 != null && Gem2.Element != Element.None)
+                    return Gem2.Element;
+
+                if (Gem3 != null && Gem3.Element != Element.None)
+                    return Gem3.Element;
+
+                if (Gem4 != null && Gem4.Element != Element.None)
+                    return Gem4.Element;
+
+                if (Gem5 != null && Gem5.Element != Element.None)
+                    return Gem5.Element;
+
+                if (Gem6 != null && Gem6.Element != Element.None)
+                    return Gem6.Element;
+
+                return Element.None;
             }
         }
 

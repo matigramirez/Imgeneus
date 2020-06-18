@@ -48,6 +48,7 @@ namespace Imgeneus.World.Game.Player
             NeedShield = dbSkill.NeedShield == 1;
             UseSuccessValue = dbSkill.SuccessType == SuccessType.SuccessBasedOnValue;
             SuccessValue = dbSkill.SuccessValue;
+            Element = dbSkill.Element;
         }
 
         /// <summary>
@@ -149,6 +150,11 @@ namespace Imgeneus.World.Game.Player
         /// How many stamina points can be healed.
         /// </summary>
         public ushort HealSP { get; set; }
+
+        /// <summary>
+        /// Skill const element.
+        /// </summary>
+        public Element Element { get; }
 
         /// <summary>
         /// How much stamina is needed in order to use this skill.

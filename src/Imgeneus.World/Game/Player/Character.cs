@@ -638,6 +638,34 @@ namespace Imgeneus.World.Game.Player
 
         #endregion
 
+        #region Elements
+
+        /// <inheritdoc />
+        public Element DefenceElement
+        {
+            get
+            {
+                if (Armor is null)
+                    return Element.None;
+
+                return Armor.Element;
+            }
+        }
+
+        /// <inheritdoc />
+        public Element AttackElement
+        {
+            get
+            {
+                if (Weapon is null)
+                    return Element.None;
+
+                return Weapon.Element;
+            }
+        }
+
+        #endregion
+
         #region Run mode
 
         /// <summary>

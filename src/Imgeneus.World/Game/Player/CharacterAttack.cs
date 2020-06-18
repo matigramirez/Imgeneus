@@ -374,7 +374,9 @@ namespace Imgeneus.World.Game.Player
             }
 
             // Second, add element calculation.
-            // TODO: add element calculation.
+            Element attackElement = skill != null && skill.Element != Element.None ? attackElement = skill.Element : attackElement = AttackElement;
+            var elementFactor = GetElementFactor(attackElement, target.DefenceElement);
+            damage = damage * elementFactor;
 
             // Third, caculate if critical damage should be added.
             var criticalDamage = false;
@@ -514,6 +516,153 @@ namespace Imgeneus.World.Game.Player
         /// Possibility to escape hit.
         /// </summary>
         public double MagicEvasionChance { get => 1.0 * TotalWis / 2 + _skillMagicEvasionChance; }
+
+        /// <summary>
+        /// Calculates element multiplier based on attack and defence elements.
+        /// </summary>
+        public static double GetElementFactor(Element attackElement, Element defenceElement)
+        {
+            if (attackElement == defenceElement)
+                return 1;
+
+            if (attackElement != Element.None && defenceElement == Element.None)
+            {
+                if (attackElement == Element.Fire1 || attackElement == Element.Earth1 || attackElement == Element.Water1 || attackElement == Element.Wind1)
+                    return 1.2;
+                if (attackElement == Element.Fire2 || attackElement == Element.Earth2 || attackElement == Element.Water2 || attackElement == Element.Wind2)
+                    return 1.3;
+            }
+
+            if (attackElement == Element.None && defenceElement != Element.None)
+            {
+                if (defenceElement == Element.Fire1 || defenceElement == Element.Earth1 || defenceElement == Element.Water1 || defenceElement == Element.Wind1)
+                    return 0.8;
+                if (defenceElement == Element.Fire2 || defenceElement == Element.Earth2 || defenceElement == Element.Water2 || defenceElement == Element.Wind2)
+                    return 0.7;
+            }
+
+            if (attackElement == Element.Water1)
+            {
+                if (defenceElement == Element.Fire1)
+                    return 1.4;
+                if (defenceElement == Element.Fire2)
+                    return 1.3;
+
+                if (defenceElement == Element.Earth1)
+                    return 0.5;
+                if (defenceElement == Element.Earth2)
+                    return 0.4;
+
+                return 1; // wind or water
+            }
+
+            if (attackElement == Element.Fire1)
+            {
+                if (defenceElement == Element.Wind1)
+                    return 1.4;
+                if (defenceElement == Element.Wind2)
+                    return 1.3;
+
+                if (defenceElement == Element.Water1)
+                    return 0.5;
+                if (defenceElement == Element.Water2)
+                    return 0.4;
+
+                return 1; // earth or fire
+            }
+
+            if (attackElement == Element.Wind1)
+            {
+                if (defenceElement == Element.Earth1)
+                    return 1.4;
+                if (defenceElement == Element.Earth2)
+                    return 1.3;
+
+                if (defenceElement == Element.Fire1)
+                    return 0.5;
+                if (defenceElement == Element.Fire2)
+                    return 0.4;
+
+                return 1; // wind or water
+            }
+
+            if (attackElement == Element.Earth1)
+            {
+                if (defenceElement == Element.Water1)
+                    return 1.4;
+                if (defenceElement == Element.Water2)
+                    return 1.3;
+
+                if (defenceElement == Element.Wind1)
+                    return 0.5;
+                if (defenceElement == Element.Wind2)
+                    return 0.4;
+
+                return 1; // earth or fire
+            }
+
+            if (attackElement == Element.Water2)
+            {
+                if (defenceElement == Element.Fire1)
+                    return 1.6;
+                if (defenceElement == Element.Fire2)
+                    return 1.4;
+
+                if (defenceElement == Element.Earth1)
+                    return 0.5;
+                if (defenceElement == Element.Earth2)
+                    return 0.5;
+
+                return 1; // wind or water
+            }
+
+            if (attackElement == Element.Fire2)
+            {
+                if (defenceElement == Element.Wind1)
+                    return 1.6;
+                if (defenceElement == Element.Wind2)
+                    return 1.4;
+
+                if (defenceElement == Element.Water1)
+                    return 0.5;
+                if (defenceElement == Element.Water2)
+                    return 0.5;
+
+                return 1; // earth or fire
+            }
+
+            if (attackElement == Element.Wind2)
+            {
+                if (defenceElement == Element.Earth1)
+                    return 1.6;
+                if (defenceElement == Element.Earth2)
+                    return 1.4;
+
+                if (defenceElement == Element.Fire1)
+                    return 0.5;
+                if (defenceElement == Element.Fire2)
+                    return 0.5;
+
+                return 1; // wind or water
+            }
+
+            if (attackElement == Element.Earth2)
+            {
+                if (defenceElement == Element.Water1)
+                    return 1.6;
+                if (defenceElement == Element.Water2)
+                    return 1.4;
+
+                if (defenceElement == Element.Wind1)
+                    return 0.5;
+                if (defenceElement == Element.Wind2)
+                    return 0.5;
+
+                return 1; // earth or fire
+            }
+
+            return 1;
+        }
 
         #endregion
     }

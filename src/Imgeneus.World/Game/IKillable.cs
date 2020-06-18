@@ -1,4 +1,5 @@
-﻿using Imgeneus.World.Game.Player;
+﻿using Imgeneus.Database.Constants;
+using Imgeneus.World.Game.Player;
 using MvvmHelpers;
 using System;
 
@@ -43,6 +44,16 @@ namespace Imgeneus.World.Game
         /// Current mana.
         /// </summary>
         public int CurrentMP { get; set; }
+
+        /// <summary>
+        /// Element used in armor.
+        /// </summary>
+        public Element DefenceElement { get; }
+
+        /// <summary>
+        /// Element used in weapon.
+        /// </summary>
+        public Element AttackElement { get; }
 
         /// <summary>
         /// Character or mob or npc, that killed this entity.

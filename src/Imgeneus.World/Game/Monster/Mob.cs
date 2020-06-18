@@ -1,4 +1,5 @@
-﻿using Imgeneus.Database.Entities;
+﻿using Imgeneus.Database.Constants;
+using Imgeneus.Database.Entities;
 using Imgeneus.World.Game.Player;
 using Microsoft.Extensions.Logging;
 using MvvmHelpers;
@@ -96,6 +97,12 @@ namespace Imgeneus.World.Game.Monster
         /// <inheritdoc />
         public int Resistance { get; private set; }
 
+        /// <inheritdoc />
+        public Element DefenceElement { get; private set; }
+
+        /// <inheritdoc />
+        public Element AttackElement { get; private set; }
+
         #endregion
 
         /// <summary>
@@ -190,7 +197,9 @@ namespace Imgeneus.World.Game.Monster
                 TotalDex = mob.Dex,
                 Defense = mob.Defense,
                 Resistance = mob.Magic,
-                Level = mob.Level
+                Level = mob.Level,
+                DefenceElement = mob.Element,
+                AttackElement = mob.Element
             };
         }
 

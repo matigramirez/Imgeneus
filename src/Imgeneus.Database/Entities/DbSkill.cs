@@ -208,9 +208,10 @@ namespace Imgeneus.Database.Entities
         public StateType StateType { get; set; }
 
         /// <summary>
-        /// TODO: ?
+        /// None or fire/wind/earth/water.
         /// </summary>
-        public byte AttrType { get; set; }
+        [Column("AttrType")]
+        public Element Element { get; set; }
 
         /// <summary>
         /// TODO: ?

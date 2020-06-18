@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Imgeneus.Database.Constants;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Imgeneus.Database.Entities
@@ -151,10 +152,10 @@ namespace Imgeneus.Database.Entities
         public byte AttackTime { get; set; }
 
         /// <summary>
-        /// ?
+        /// Item element.
         /// </summary>
-        [Required]
-        public byte Attrib { get; set; }
+        [Required, Column("Attrib")]
+        public Element Element { get; set; }
 
         /// <summary>
         /// ?

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Imgeneus.Database.Constants;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Imgeneus.Database.Entities
@@ -186,14 +187,5 @@ namespace Imgeneus.Database.Entities
         public byte AttackOk3 { get; set; }
         #endregion
 
-    }
-
-    public enum Element : byte
-    {
-        None,
-        Fire,
-        Water,
-        Earth,
-        Wind
     }
 }

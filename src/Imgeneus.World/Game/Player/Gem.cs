@@ -1,4 +1,5 @@
 ﻿
+using Imgeneus.Database.Constants;
 using Imgeneus.Database.Preload;
 
 namespace Imgeneus.World.Game.Player
@@ -31,6 +32,7 @@ namespace Imgeneus.World.Game.Player
             Resistance = item.Resistance;
             MinAttack = item.MinAttack;
             PlusAttack = item.PlusAttack;
+            Element = item.Element;
         }
 
         public ushort Str { get; }
@@ -62,5 +64,7 @@ namespace Imgeneus.World.Game.Player
         public ushort MinAttack { get; }
 
         public ushort PlusAttack { get; }
+
+        public Element Element { get; }
     }
 }

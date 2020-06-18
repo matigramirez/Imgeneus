@@ -374,7 +374,7 @@ namespace Imgeneus.World.Game.Player
             }
 
             // Second, add element calculation.
-            Element attackElement = skill != null && skill.Element != Element.None ? attackElement = skill.Element : attackElement = AttackElement;
+            Element attackElement = skill != null && skill.Element != Element.None ? skill.Element : AttackElement;
             var elementFactor = GetElementFactor(attackElement, target.DefenceElement);
             damage = damage * elementFactor;
 

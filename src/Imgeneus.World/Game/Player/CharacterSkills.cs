@@ -98,45 +98,6 @@ namespace Imgeneus.World.Game.Player
         }
 
         /// <summary>
-        /// Process use of buff skill.
-        /// </summary>
-        /// <param name="skill">buff skill</param>
-        private void UsedBuffSkill(Skill skill, IKillable target)
-        {
-            ActiveBuff buff;
-
-            switch (skill.TargetType)
-            {
-                case TargetType.Caster:
-                    buff = AddActiveBuff(skill, this);
-                    OnUsedRangeSkill?.Invoke(this, this, skill, new AttackResult());
-                    break;
-
-                case TargetType.SelectedEnemy:
-                    buff = target.AddActiveBuff(skill, this);
-                    OnUsedRangeSkill?.Invoke(this, target, skill, new AttackResult());
-                    break;
-
-                case TargetType.PartyMembers:
-                    buff = AddActiveBuff(skill, this);
-                    OnUsedRangeSkill?.Invoke(this, this, skill, new AttackResult());
-
-                    if (Party != null)
-                    {
-                        foreach (var member in Party.Members)
-                        {
-                            buff = member.AddActiveBuff(skill, this);
-                            OnUsedRangeSkill?.Invoke(this, member, skill, new AttackResult());
-                        }
-                    }
-                    break;
-
-                default:
-                    throw new NotImplementedException("Not implemented skill target.");
-            }
-        }
-
-        /// <summary>
         /// Calculates healing result.
         /// </summary>
         private AttackResult UsedHealingSkill(Skill skill, IKillable target)
@@ -146,37 +107,9 @@ namespace Imgeneus.World.Game.Player
             var healMP = skill.HealMP;
             AttackResult result = new AttackResult(AttackSuccess.Normal, new Damage((ushort)healHP, healSP, healMP));
 
-            switch (skill.TargetType)
-            {
-                case TargetType.Caster:
-                    CurrentHP += healHP;
-                    CurrentMP += healMP;
-                    CurrentSP += healSP;
-                    break;
-
-                case TargetType.AlliesButCaster:
-                    if (Party != null)
-                    {
-                        foreach (var member in Party.Members.Where(m => m != this))
-                        {
-                            member.CurrentHP += healHP;
-                            member.CurrentMP += healMP;
-                            member.CurrentSP += healSP;
-
-                            OnUsedSkill?.Invoke(this, member, skill, result);
-                        }
-                    }
-                    break;
-
-                case TargetType.SelectedEnemy:
-                    target.IncreaseHP(healHP);
-                    target.CurrentMP += healMP;
-                    target.CurrentSP += healSP;
-                    break;
-
-                default:
-                    throw new NotImplementedException("Not implemented skill target.");
-            }
+            target.IncreaseHP(healHP);
+            target.CurrentMP += healMP;
+            target.CurrentSP += healSP;
 
             return result;
         }

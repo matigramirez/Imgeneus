@@ -401,8 +401,8 @@ namespace Imgeneus.World.Game.Zone
         /// </summary>
         public IEnumerable<IKillable> GetEnemies(Character sender, IKillable target, byte applyRange)
         {
-            IEnumerable<IKillable> mobs = Mobs.Values.Where(m => m != target && Distance(target.PosX, m.PosX, target.PosZ, m.PosZ) <= applyRange);
-            IEnumerable<IKillable> chars = Players.Values.Where(p => p != target && p.Country != sender.Country && Distance(target.PosX, p.PosX, target.PosZ, p.PosZ) <= applyRange);
+            IEnumerable<IKillable> mobs = Mobs.Values.Where(m => Distance(target.PosX, m.PosX, target.PosZ, m.PosZ) <= applyRange);
+            IEnumerable<IKillable> chars = Players.Values.Where(p => p.Country != sender.Country && Distance(target.PosX, p.PosX, target.PosZ, p.PosZ) <= applyRange);
 
             return mobs.Concat(chars);
         }

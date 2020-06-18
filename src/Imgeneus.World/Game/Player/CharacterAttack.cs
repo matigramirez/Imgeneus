@@ -2,6 +2,7 @@
 using Imgeneus.World.Game.Monster;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Timers;
 
@@ -138,83 +139,111 @@ namespace Imgeneus.World.Game.Player
             CurrentSP -= skill.NeedSP;
             SendUseSMMP(skill.NeedMP, skill.NeedSP);
 
-            if (!AttackSuccessRate(target, skill.TypeAttack, skill))
+            var targets = new List<IKillable>();
+            switch (skill.TargetType)
             {
-                OnUsedSkill?.Invoke(this, target, skill, new AttackResult(AttackSuccess.Miss, new Damage(0, 0, 0)));
-                return;
-            }
-
-            AttackResult result = CalculateDamage(skill, target);
-
-            if (target != null && target.IsDead)
-                return;
-
-            if (target != null)
-            {
-                target.DecreaseHP(result.Damage.HP, this);
-                target.CurrentSP -= result.Damage.SP;
-                target.CurrentMP -= result.Damage.MP;
-            }
-
-            switch (skill.Type)
-            {
-                case TypeDetail.Buff:
-                case TypeDetail.SubtractingDebuff:
-                case TypeDetail.PeriodicalHeal:
-                case TypeDetail.PeriodicalDebuff:
-                case TypeDetail.PreventAttack:
-                case TypeDetail.Immobilize:
-                    UsedBuffSkill(skill, target);
+                case TargetType.Caster:
+                    targets.Add(this);
                     break;
 
-                case TypeDetail.Healing:
-                    result = UsedHealingSkill(skill, target);
+                case TargetType.SelectedEnemy:
+                    if (target != null)
+                        targets.Add(target);
+                    else
+                        targets.Add(this);
                     break;
 
-                case TypeDetail.Stealth:
-                    if (target is null)
-                        target = this;
-                    result = UsedStealthSkill(skill, target);
+                case TargetType.PartyMembers:
+                    if (Party != null)
+                        foreach (var member in Party.Members)
+                            targets.Add(member);
+                    else
+                        targets.Add(this);
                     break;
 
-                case TypeDetail.UniqueHitAttack:
-                    switch (skill.TargetType)
-                    {
-                        case TargetType.EnemiesNearTarget:
-                            var enemies = Map.GetEnemies(this, target, skill.ApplyRange);
-                            foreach (var e in enemies)
-                            {
-                                if (target.IsDead)
-                                    continue;
-
-                                if (AttackSuccessRate(e, skill.TypeAttack, skill))
-                                {
-                                    var res = CalculateDamage(skill, e);
-                                    e.DecreaseHP(res.Damage.HP, this);
-                                    e.CurrentSP -= res.Damage.SP;
-                                    e.CurrentMP -= res.Damage.MP;
-
-                                    OnUsedRangeSkill?.Invoke(this, e, skill, res);
-                                }
-                            }
-                            break;
-
-                        default:
-                            throw new NotImplementedException("Not implemented target type.");
-                    }
+                case TargetType.EnemiesNearTarget:
+                    var enemies = Map.GetEnemies(this, target, skill.ApplyRange);
+                    foreach (var e in enemies)
+                        targets.Add(e);
                     break;
 
                 default:
-                    throw new NotImplementedException("Not implemented skill type.");
+                    throw new NotImplementedException("Not implemented skill target.");
             }
 
-            OnUsedSkill?.Invoke(this, target, skill, result);
+            foreach (var t in targets)
+            {
+                if (t.IsDead)
+                    continue;
+
+                if (!AttackSuccessRate(t, skill.TypeAttack, skill))
+                {
+                    if (target == t)
+                        OnUsedSkill?.Invoke(this, t, skill, new AttackResult(AttackSuccess.Miss, new Damage(0, 0, 0)));
+                    else
+                        OnUsedRangeSkill?.Invoke(this, t, skill, new AttackResult(AttackSuccess.Miss, new Damage(0, 0, 0)));
+
+                    continue;
+                }
+
+                var attackResult = CalculateAttackResult(skill, t);
+
+                if (attackResult.Damage.HP > 0)
+                    t.DecreaseHP(attackResult.Damage.HP, this);
+                if (attackResult.Damage.SP > 0)
+                    t.CurrentSP -= attackResult.Damage.SP;
+                if (attackResult.Damage.MP > 0)
+                    t.CurrentMP -= attackResult.Damage.MP;
+
+                switch (skill.Type)
+                {
+                    case TypeDetail.Buff:
+                    case TypeDetail.SubtractingDebuff:
+                    case TypeDetail.PeriodicalHeal:
+                    case TypeDetail.PeriodicalDebuff:
+                    case TypeDetail.PreventAttack:
+                    case TypeDetail.Immobilize:
+                        t.AddActiveBuff(skill, this);
+
+                        if (target == t || this == t)
+                            OnUsedSkill?.Invoke(this, target, skill, attackResult);
+                        else
+                            OnUsedRangeSkill?.Invoke(this, t, skill, attackResult);
+                        break;
+
+                    case TypeDetail.Healing:
+                        var result = UsedHealingSkill(skill, t);
+                        if (target == t || this == t)
+                            OnUsedSkill?.Invoke(this, target, skill, result);
+                        else
+                            OnUsedRangeSkill?.Invoke(this, t, skill, result);
+                        break;
+
+                    case TypeDetail.Stealth:
+                        result = UsedStealthSkill(skill, t);
+                        if (target == t || this == t)
+                            OnUsedSkill?.Invoke(this, target, skill, result);
+                        else
+                            OnUsedRangeSkill?.Invoke(this, t, skill, result);
+                        break;
+
+                    case TypeDetail.UniqueHitAttack:
+                        if (target == t || this == t)
+                            OnUsedSkill?.Invoke(this, target, skill, attackResult);
+                        else
+                            OnUsedRangeSkill?.Invoke(this, t, skill, attackResult);
+                        break;
+
+                    default:
+                        throw new NotImplementedException("Not implemented skill type.");
+                }
+            }
         }
 
         /// <summary>
-        /// Calculates damage based on skill type and target.
+        /// Calculates attack result based on skill type and target.
         /// </summary>
-        private AttackResult CalculateDamage(Skill skill, IKillable target)
+        private AttackResult CalculateAttackResult(Skill skill, IKillable target)
         {
             switch (skill.DamageType)
             {

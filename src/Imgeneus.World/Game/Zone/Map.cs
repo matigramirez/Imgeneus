@@ -125,7 +125,6 @@ namespace Imgeneus.World.Game.Zone
             character.OnUsedSkill += Character_OnUsedSkill;
             character.OnAutoAttack += Character_OnAutoAttack;
             character.OnDead += Character_OnDead;
-            character.OnAddedBuffToAnotherCharacter += Character_OnAddedBuff;
             character.OnSkillCastStarted += Character_OnSkillCastStarted;
             character.OnUsedItem += Character_OnUsedItem;
             character.OnMaxHPChanged += Character_OnMaxHPChanged;
@@ -150,7 +149,6 @@ namespace Imgeneus.World.Game.Zone
             character.OnUsedSkill -= Character_OnUsedSkill;
             character.OnAutoAttack -= Character_OnAutoAttack;
             character.OnDead -= Character_OnDead;
-            character.OnAddedBuffToAnotherCharacter -= Character_OnAddedBuff;
             character.OnSkillCastStarted -= Character_OnSkillCastStarted;
             character.OnUsedItem -= Character_OnUsedItem;
             character.OnMaxHPChanged -= Character_OnMaxHPChanged;
@@ -248,15 +246,6 @@ namespace Imgeneus.World.Game.Zone
         {
             foreach (var player in Players)
                 _packetHelper.SendCharacterKilled(player.Value.Client, (Character)sender, killer);
-        }
-
-        /// <summary>
-        /// Notifies other players, that player added buff to someone.
-        /// </summary>
-        private void Character_OnAddedBuff(Character sender, IKillable receiver, ActiveBuff buff)
-        {
-            foreach (var player in Players)
-                _packetHelper.SendCharacterAddedBuff(player.Value.Client, sender, receiver, buff);
         }
 
         /// <summary>

@@ -157,17 +157,6 @@ namespace Imgeneus.World.Packets
             client.SendPacket(packet);
         }
 
-        internal void SendCharacterAddedBuff(WorldClient client, Character sender, IKillable receiver, ActiveBuff buff)
-        {
-            using var packet = new Packet(PacketType.CHARACTER_ADDED_BUFF);
-            packet.Write(false); // IsFailed?
-            packet.Write(sender.Id);
-            packet.Write(receiver.Id);
-            packet.Write(buff.SkillId);
-            packet.Write(buff.SkillLevel);
-            client.SendPacket(packet);
-        }
-
         internal void SendSkillCastStarted(WorldClient client, Character sender, IKillable target, Skill skill)
         {
             PacketType type;
@@ -236,7 +225,15 @@ namespace Imgeneus.World.Packets
 
         internal void SendUsedRangeSkill(WorldClient client, Character sender, IKillable target, Skill skill, AttackResult attackResult)
         {
-            using var packet = new Packet(PacketType.USE_MOB_RANGE_SKILL);
+            PacketType type;
+            if (target is Character)
+                type = PacketType.USE_CHARACTER_RANGE_SKILL;
+            else if (target is Mob)
+                type = PacketType.USE_MOB_RANGE_SKILL;
+            else
+                type = PacketType.USE_CHARACTER_RANGE_SKILL;
+
+            using var packet = new Packet(type);
             packet.Write(new SkillRange(sender.Id, target.Id, skill, attackResult).Serialize());
             client.SendPacket(packet);
         }

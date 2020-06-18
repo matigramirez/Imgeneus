@@ -25,11 +25,6 @@ namespace Imgeneus.World.Game.Player
         public event Action<Character, IKillable, Skill, AttackResult> OnUsedRangeSkill;
 
         /// <summary>
-        /// Event, that is fired, when character adds some buff to another character.
-        /// </summary>
-        public event Action<Character, IKillable, ActiveBuff> OnAddedBuffToAnotherCharacter;
-
-        /// <summary>
         /// ?
         /// </summary>
         public event Action<Character, ActiveBuff, AttackResult> OnSkillKeep;
@@ -114,24 +109,24 @@ namespace Imgeneus.World.Game.Player
             {
                 case TargetType.Caster:
                     buff = AddActiveBuff(skill, this);
-                    OnAddedBuffToAnotherCharacter?.Invoke(this, this, buff);
+                    OnUsedRangeSkill?.Invoke(this, this, skill, new AttackResult());
                     break;
 
                 case TargetType.SelectedEnemy:
                     buff = target.AddActiveBuff(skill, this);
-                    OnAddedBuffToAnotherCharacter?.Invoke(this, target, buff);
+                    OnUsedRangeSkill?.Invoke(this, target, skill, new AttackResult());
                     break;
 
                 case TargetType.PartyMembers:
                     buff = AddActiveBuff(skill, this);
-                    OnAddedBuffToAnotherCharacter?.Invoke(this, this, buff);
+                    OnUsedRangeSkill?.Invoke(this, this, skill, new AttackResult());
 
                     if (Party != null)
                     {
                         foreach (var member in Party.Members)
                         {
                             buff = member.AddActiveBuff(skill, this);
-                            OnAddedBuffToAnotherCharacter?.Invoke(this, member, buff);
+                            OnUsedRangeSkill?.Invoke(this, member, skill, new AttackResult());
                         }
                     }
                     break;

@@ -1,6 +1,7 @@
 ﻿using BinarySerialization;
 using Imgeneus.Network.Serialization;
 using Imgeneus.World.Game;
+using Imgeneus.World.Game.Monster;
 using Imgeneus.World.Game.Player;
 using System.Collections.Generic;
 
@@ -9,7 +10,7 @@ namespace Imgeneus.World.Serialization
     public class TargetBuffs : BaseSerializable
     {
         [FieldOrder(0)]
-        public byte UnknownByte = 1;
+        public byte TargetType;
 
         [FieldOrder(1)]
         public int TargetId;
@@ -24,6 +25,12 @@ namespace Imgeneus.World.Serialization
         public TargetBuffs(IKillable target)
         {
             TargetId = target.Id;
+
+            if (target is Mob)
+                TargetType = 2;
+            else
+                TargetType = 1;
+
             foreach (var buff in target.ActiveBuffs)
             {
                 Buffs.Add(new TargetBuff(buff));

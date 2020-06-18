@@ -228,9 +228,9 @@ namespace Imgeneus.World.Packets
             client.SendPacket(packet);
         }
 
-        internal void SendCharacterBuffs(WorldClient client, Character target)
+        internal void SendCurrentBuffs(WorldClient client, IKillable target)
         {
-            using var packet = new Packet(PacketType.TARGET_CHARACTER_BUFFS);
+            using var packet = new Packet(PacketType.TARGET_BUFFS);
             packet.Write(new TargetBuffs(target).Serialize());
             client.SendPacket(packet);
         }

@@ -15,6 +15,12 @@ namespace Imgeneus.World.Game.Monster
         public Mob(ILogger<Mob> logger)
         {
             _logger = logger;
+
+            // Dummy debuff for testing.
+            ActiveBuffs.Add(new ActiveBuff(null, 748, 2, StateType.HPDamageOverTime)
+            {
+                ResetTime = DateTime.Now.AddMinutes(10)
+            }); ;
         }
 
         private int _id;

@@ -49,6 +49,7 @@ namespace Imgeneus.World.Game.Player
             UseSuccessValue = dbSkill.SuccessType == SuccessType.SuccessBasedOnValue;
             SuccessValue = dbSkill.SuccessValue;
             Element = dbSkill.Element;
+            ApplyRange = dbSkill.ApplyRange;
         }
 
         /// <summary>
@@ -155,6 +156,11 @@ namespace Imgeneus.World.Game.Player
         /// Skill const element.
         /// </summary>
         public Element Element { get; }
+
+        /// <summary>
+        /// Skill will be applied within N meters.
+        /// </summary>
+        public byte ApplyRange { get; }
 
         /// <summary>
         /// How much stamina is needed in order to use this skill.

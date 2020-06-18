@@ -233,5 +233,12 @@ namespace Imgeneus.World.Packets
             packet.Write((byte)sender.Shape);
             client.SendPacket(packet);
         }
+
+        internal void SendUsedRangeSkill(WorldClient client, Character sender, IKillable target, Skill skill, AttackResult attackResult)
+        {
+            using var packet = new Packet(PacketType.USE_MOB_RANGE_SKILL);
+            packet.Write(new SkillRange(sender.Id, target.Id, skill, attackResult).Serialize());
+            client.SendPacket(packet);
+        }
     }
 }

@@ -93,6 +93,7 @@
         CHARACTER_ADDED_BUFF = 0x0513, // 1299
         MOB_SKILL_CASTING = 0x0516, // 1302
         USE_MOB_TARGET_SKILL = 0x0517, // 1303
+        USE_MOB_RANGE_SKILL = 0x0519, // 1305
 
         // GM commands
         GM_COMMAND_GET_ITEM = 0xF702,

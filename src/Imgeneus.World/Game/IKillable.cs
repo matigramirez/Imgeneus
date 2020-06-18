@@ -129,5 +129,20 @@ namespace Imgeneus.World.Game
         /// Possibility to escape magic hit.
         /// </summary>
         public double MagicEvasionChance { get; }
+
+        /// <summary>
+        /// Current x position.
+        /// </summary>
+        public float PosX { get; }
+
+        /// <summary>
+        /// Current y position.
+        /// </summary>
+        public float PosY { get; }
+
+        /// <summary>
+        /// Current z position.
+        /// </summary>
+        public float PosZ { get; }
     }
 }

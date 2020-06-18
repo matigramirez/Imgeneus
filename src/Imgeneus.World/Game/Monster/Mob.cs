@@ -123,20 +123,14 @@ namespace Imgeneus.World.Game.Monster
 
         public double MagicEvasionChance => 1.0 * TotalWis / 2;
 
-        /// <summary>
-        /// Current x position.
-        /// </summary>
-        public float PosX;
+        /// <inheritdoc />
+        public float PosX { get; set; }
 
-        /// <summary>
-        /// Current y position.
-        /// </summary>
-        public float PosY;
+        /// <inheritdoc />
+        public float PosY { get; set; }
 
-        /// <summary>
-        /// Current z position.
-        /// </summary>
-        public float PosZ;
+        /// <inheritdoc />
+        public float PosZ { get; set; }
 
         /// <summary>
         /// Describes if mob is "walking" or "running".

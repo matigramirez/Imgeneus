@@ -144,20 +144,7 @@ namespace Imgeneus.World.Game.Player
                 return;
             }
 
-            AttackResult result;
-            switch (skill.DamageType)
-            {
-                case DamageType.FixedDamage:
-                    result = new AttackResult(AttackSuccess.Normal, new Damage(skill.DamageHP, skill.DamageMP, skill.DamageSP));
-                    break;
-
-                case DamageType.PlusExtraDamage:
-                    result = CalculateDamage(target, skill.TypeAttack, skill);
-                    break;
-
-                default:
-                    throw new NotImplementedException("Not implemented damage type.");
-            }
+            AttackResult result = CalculateDamage(skill, target);
 
             if (target != null && target.IsDead)
                 return;
@@ -191,6 +178,30 @@ namespace Imgeneus.World.Game.Player
                     break;
 
                 case TypeDetail.UniqueHitAttack:
+                    switch (skill.TargetType)
+                    {
+                        case TargetType.EnemiesNearTarget:
+                            var enemies = Map.GetEnemies(this, target, skill.ApplyRange);
+                            foreach (var e in enemies)
+                            {
+                                if (target.IsDead)
+                                    continue;
+
+                                if (AttackSuccessRate(e, skill.TypeAttack, skill))
+                                {
+                                    var res = CalculateDamage(skill, e);
+                                    e.DecreaseHP(res.Damage.HP, this);
+                                    e.CurrentSP -= res.Damage.SP;
+                                    e.CurrentMP -= res.Damage.MP;
+
+                                    OnUsedRangeSkill?.Invoke(this, e, skill, res);
+                                }
+                            }
+                            break;
+
+                        default:
+                            throw new NotImplementedException("Not implemented target type.");
+                    }
                     break;
 
                 default:
@@ -198,6 +209,24 @@ namespace Imgeneus.World.Game.Player
             }
 
             OnUsedSkill?.Invoke(this, target, skill, result);
+        }
+
+        /// <summary>
+        /// Calculates damage based on skill type and target.
+        /// </summary>
+        private AttackResult CalculateDamage(Skill skill, IKillable target)
+        {
+            switch (skill.DamageType)
+            {
+                case DamageType.FixedDamage:
+                    return new AttackResult(AttackSuccess.Normal, new Damage(skill.DamageHP, skill.DamageMP, skill.DamageSP));
+
+                case DamageType.PlusExtraDamage:
+                    return CalculateDamage(target, skill.TypeAttack, skill);
+
+                default:
+                    throw new NotImplementedException("Not implemented damage type.");
+            }
         }
 
         /// <summary>

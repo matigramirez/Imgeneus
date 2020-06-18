@@ -10,6 +10,7 @@ using Imgeneus.World.Packets;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Imgeneus.World.Game.Zone
@@ -133,6 +134,7 @@ namespace Imgeneus.World.Game.Zone
             character.SP_Changed += Character_SP_Changed;
             character.OnSkillKeep += Character_OnSkillKeep;
             character.OnShapeChange += Character_OnShapeChange;
+            character.OnUsedRangeSkill += Character_OnUsedRangeSkill;
         }
 
         /// <summary>
@@ -157,6 +159,7 @@ namespace Imgeneus.World.Game.Zone
             character.SP_Changed -= Character_SP_Changed;
             character.OnSkillKeep -= Character_OnSkillKeep;
             character.OnShapeChange -= Character_OnShapeChange;
+            character.OnUsedRangeSkill -= Character_OnUsedRangeSkill;
         }
 
         /// <summary>
@@ -310,6 +313,13 @@ namespace Imgeneus.World.Game.Zone
                 _packetHelper.SendShapeUpdate(player.Value.Client, sender);
         }
 
+
+        private void Character_OnUsedRangeSkill(Character sender, IKillable target, Skill skill, AttackResult attackResult)
+        {
+            foreach (var player in Players)
+                _packetHelper.SendUsedRangeSkill(player.Value.Client, sender, target, skill, attackResult);
+        }
+
         #endregion
 
         #region Mobs
@@ -395,5 +405,32 @@ namespace Imgeneus.World.Game.Zone
 
         #endregion
 
+        #region Helpers
+
+        /// <summary>
+        /// Gets enemies near target.
+        /// </summary>
+        public IEnumerable<IKillable> GetEnemies(Character sender, IKillable target, byte applyRange)
+        {
+            IEnumerable<IKillable> mobs = Mobs.Values.Where(m => m != target && Distance(target.PosX, m.PosX, target.PosZ, m.PosZ) <= applyRange);
+            IEnumerable<IKillable> chars = Players.Values.Where(p => p != target && p.Country != sender.Country && Distance(target.PosX, p.PosX, target.PosZ, p.PosZ) <= applyRange);
+
+            return mobs.Concat(chars);
+        }
+
+        /// <summary>
+        /// Calculates distance between 2 points.
+        /// </summary>
+        /// <param name="x1">point1 x coordinate</param>
+        /// <param name="x2">point2 x coordinate</param>
+        /// <param name="z1">point1 z coordinate</param>
+        /// <param name="z2">point2 z coordinate</param>
+        /// <returns></returns>
+        private double Distance(float x1, float x2, float z1, float z2)
+        {
+            return Math.Sqrt(Math.Pow(x2 - x1, 2) + Math.Pow(z2 - z1, 2));
+        }
+
+        #endregion
     }
 }

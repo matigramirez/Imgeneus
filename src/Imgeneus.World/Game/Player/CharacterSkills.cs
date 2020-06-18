@@ -20,6 +20,11 @@ namespace Imgeneus.World.Game.Player
         public event Action<Character, IKillable, Skill, AttackResult> OnUsedSkill;
 
         /// <summary>
+        /// Event, that is fired, when character uses only range skill.
+        /// </summary>
+        public event Action<Character, IKillable, Skill, AttackResult> OnUsedRangeSkill;
+
+        /// <summary>
         /// Event, that is fired, when character adds some buff to another character.
         /// </summary>
         public event Action<Character, IKillable, ActiveBuff> OnAddedBuffToAnotherCharacter;

@@ -234,7 +234,7 @@ namespace Imgeneus.Database.Entities
         public TargetType TargetType { get; set; }
 
         /// <summary>
-        /// TODO: ?
+        /// Skill will be applied within N meters.
         /// </summary>
         public byte ApplyRange { get; set; }
 

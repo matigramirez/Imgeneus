@@ -121,7 +121,7 @@ namespace Imgeneus.World.Game
 
                 var map = Maps[player.MapId];
                 map.UnloadPlayer(player);
-                player.ClearConnection();
+                player.Dispose();
             }
             else
             {

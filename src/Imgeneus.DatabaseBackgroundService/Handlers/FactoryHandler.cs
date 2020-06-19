@@ -163,6 +163,17 @@ namespace Imgeneus.DatabaseBackgroundService.Handlers
             await database.SaveChangesAsync();
         }
 
+        [ActionHandler(ActionType.REMOVE_BUFF_ALL)]
+        internal static async Task RemoveBuffAll(object[] args)
+        {
+            int charId = (int)args[0];
+
+            using var database = DependencyContainer.Instance.Resolve<IDatabase>();
+            var buffs = database.ActiveBuffs.Where(b => b.CharacterId == charId);
+            database.ActiveBuffs.RemoveRange(buffs);
+            await database.SaveChangesAsync();
+        }
+
         [ActionHandler(ActionType.UPDATE_BUFF_RESET_TIME)]
         internal static async Task UpdateBuffResetTime(object[] args)
         {

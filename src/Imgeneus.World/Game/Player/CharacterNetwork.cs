@@ -309,7 +309,10 @@ namespace Imgeneus.World.Game.Player
 
         private void SendSkillBar() => _packetsHelper.SendSkillBar(Client, QuickItems);
 
-        protected override void SendAdditionalStats() => _packetsHelper.SendAdditionalStats(Client, this);
+        protected override void SendAdditionalStats()
+        {
+            if (Client != null) _packetsHelper.SendAdditionalStats(Client, this);
+        }
 
         private void SendMaxHP() => _packetsHelper.SendMaxHitpoints(Client, this, HitpointType.HP);
 

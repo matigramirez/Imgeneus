@@ -21,6 +21,7 @@
         // Buffs
         SAVE_BUFF,
         REMOVE_BUFF,
+        REMOVE_BUFF_ALL,
         UPDATE_BUFF_RESET_TIME
     }
 }

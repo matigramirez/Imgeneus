@@ -11,7 +11,7 @@ namespace Imgeneus.World.Game
     /// <summary>
     /// Abstract entity, that can be killed. Implements common features for killable object.
     /// </summary>
-    public abstract class BaseKillable : IKillable
+    public abstract class BaseKillable : IKillable, IDisposable
     {
         private readonly IDatabasePreloader _databasePreloader;
 
@@ -19,6 +19,11 @@ namespace Imgeneus.World.Game
         {
             _databasePreloader = databasePreloader;
             ActiveBuffs.CollectionChanged += ActiveBuffs_CollectionChanged;
+        }
+
+        public virtual void Dispose()
+        {
+            ActiveBuffs.CollectionChanged -= ActiveBuffs_CollectionChanged;
         }
 
         private int _id;
@@ -171,6 +176,16 @@ namespace Imgeneus.World.Game
         public ObservableRangeCollection<ActiveBuff> ActiveBuffs { get; private set; } = new ObservableRangeCollection<ActiveBuff>();
 
         /// <summary>
+        /// Event, that is fired, when buff is added.
+        /// </summary>
+        public event Action<IKillable, ActiveBuff> OnBuffAdded;
+
+        /// <summary>
+        /// Event, that is fired, when buff is removed.
+        /// </summary>
+        public event Action<IKillable, ActiveBuff> OnBuffRemoved;
+
+        /// <summary>
         /// Updates collection of active buffs.
         /// </summary>
         /// <param name="skill">skill, that client sends</param>
@@ -192,9 +207,6 @@ namespace Imgeneus.World.Game
                     // If bufs are the same level, we should only update reset time.
                     if (buff.SkillLevel == skill.SkillLevel)
                     {
-                        /*_taskQueue.Enqueue(ActionType.UPDATE_BUFF_RESET_TIME,
-                                           Id, skill.SkillId, skill.SkillLevel, resetTime);*/
-
                         buff.ResetTime = resetTime;
 
                         // Send update of buff.
@@ -204,9 +216,7 @@ namespace Imgeneus.World.Game
             }
             else
             {
-                // It's a new buff, add it to database.
-                /*_taskQueue.Enqueue(ActionType.SAVE_BUFF,
-                                   Id, skill.SkillId, skill.SkillLevel, resetTime);*/
+                // It's a new buff.
                 buff = new ActiveBuff(creator, skill.SkillId, skill.SkillLevel, skill.StateType)
                 {
                     ResetTime = resetTime
@@ -245,7 +255,6 @@ namespace Imgeneus.World.Game
             {
                 var buff = (ActiveBuff)e.OldItems[0];
                 RelieveBuffSkill(buff);
-
                 BuffRemoved(buff);
             }
         }
@@ -253,22 +262,24 @@ namespace Imgeneus.World.Game
         private void Buff_OnReset(ActiveBuff sender)
         {
             sender.OnReset -= Buff_OnReset;
-
-            /*_taskQueue.Enqueue(ActionType.REMOVE_BUFF,
-                               Id, sender.SkillId, sender.SkillLevel);*/
-
             ActiveBuffs.Remove(sender);
         }
 
         /// <summary>
         /// Call, that notifies about new added buff.
         /// </summary>
-        protected abstract void BuffAdded(ActiveBuff buff);
+        protected virtual void BuffAdded(ActiveBuff buff)
+        {
+            OnBuffAdded?.Invoke(this, buff);
+        }
 
         /// <summary>
         /// Call, that notifies about buff removed.
         /// </summary>
-        protected abstract void BuffRemoved(ActiveBuff buff);
+        protected virtual void BuffRemoved(ActiveBuff buff)
+        {
+            OnBuffRemoved?.Invoke(this, buff);
+        }
 
         /// <summary>
         /// Call, that notifies about move or attack speed change.

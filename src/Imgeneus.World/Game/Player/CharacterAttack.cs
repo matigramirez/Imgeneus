@@ -3,7 +3,6 @@ using Imgeneus.World.Game.Monster;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Linq;
 using System.Timers;
 
@@ -13,39 +12,36 @@ namespace Imgeneus.World.Game.Player
     {
         #region Target
 
-        private IKillable _target;
-        public IKillable Target
+        private BaseKillable _target;
+        public BaseKillable Target
         {
             get => _target; set
             {
                 if (_target != null)
                 {
-                    _target.ActiveBuffs.CollectionChanged -= Target_ActiveBuffs_CollectionChanged;
+                    _target.OnBuffAdded -= Target_OnBuffAdded;
+                    _target.OnBuffRemoved -= Target_OnBuffRemoved;
                 }
 
                 _target = value;
 
                 if (_target != null)
                 {
-                    _target.ActiveBuffs.CollectionChanged += Target_ActiveBuffs_CollectionChanged;
+                    _target.OnBuffAdded += Target_OnBuffAdded;
+                    _target.OnBuffRemoved += Target_OnBuffRemoved;
                     TargetChanged(Target);
                 }
             }
         }
 
-        private void Target_ActiveBuffs_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        private void Target_OnBuffAdded(IKillable sender, ActiveBuff buff)
         {
-            if (e.Action == NotifyCollectionChangedAction.Add)
-            {
-                SendTargetAddBuff(_target, (ActiveBuff)e.NewItems[0]);
-                return;
-            }
+            SendTargetAddBuff(sender, buff);
+        }
 
-            if (e.Action == NotifyCollectionChangedAction.Remove)
-            {
-                SendTargetRemoveBuff(_target, (ActiveBuff)e.OldItems[0]);
-                return;
-            }
+        private void Target_OnBuffRemoved(IKillable sender, ActiveBuff buff)
+        {
+            SendTargetRemoveBuff(sender, buff);
         }
 
         #endregion

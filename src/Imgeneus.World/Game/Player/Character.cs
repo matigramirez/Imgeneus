@@ -16,7 +16,7 @@ using System.Linq;
 
 namespace Imgeneus.World.Game.Player
 {
-    public partial class Character : BaseKillable, IKiller
+    public partial class Character : BaseKillable, IKiller, IDisposable
     {
         private readonly ILogger<Character> _logger;
         private readonly Character_HP_SP_MP_Configuration _characterConfig;
@@ -43,6 +43,29 @@ namespace Imgeneus.World.Game.Player
         private void Init()
         {
             InitEquipment();
+        }
+
+        public override void Dispose()
+        {
+            if (Party != null)
+                Party.LeaveParty(this);
+
+            InventoryItems.CollectionChanged -= InventoryItems_CollectionChanged;
+            _castTimer.Elapsed -= CastTimer_Elapsed;
+
+            OnMaxHPChanged -= Character_OnMaxHPChanged;
+            OnMaxMPChanged -= Character_OnMaxMPChanged;
+            OnMaxSPChanged -= Character_OnMaxSPChanged;
+
+            // Save current buffs to database.
+            _taskQueue.Enqueue(ActionType.REMOVE_BUFF_ALL, Id);
+            foreach (var buff in ActiveBuffs)
+            {
+                _taskQueue.Enqueue(ActionType.SAVE_BUFF, Id, buff.SkillId, buff.SkillLevel, buff.ResetTime);
+            }
+
+            ClearConnection();
+            base.Dispose();
         }
 
         #region Character info

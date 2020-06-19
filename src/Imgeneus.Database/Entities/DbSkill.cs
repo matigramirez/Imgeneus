@@ -78,9 +78,9 @@ namespace Imgeneus.Database.Entities
         public byte SkillPoint { get; set; }
 
         /// <summary>
-        /// TODO: ?
+        /// Category of skill. E.g. combat or special.
         /// </summary>
-        public byte TypeShow { get; set; }
+        public TypeShow TypeShow { get; set; }
 
         /// <summary>
         /// Passive, physical, magic or shooting attack.

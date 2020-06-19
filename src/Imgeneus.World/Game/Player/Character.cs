@@ -19,12 +19,12 @@ namespace Imgeneus.World.Game.Player
     public partial class Character : BaseKillable, IKiller, IDisposable
     {
         private readonly ILogger<Character> _logger;
-        private readonly Character_HP_SP_MP_Configuration _characterConfig;
+        private readonly ICharacterConfiguration _characterConfig;
         private readonly IBackgroundTaskQueue _taskQueue;
         private readonly CharacterPacketsHelper _packetsHelper;
         private readonly IDatabasePreloader _databasePreloader;
 
-        public Character(ILogger<Character> logger, Character_HP_SP_MP_Configuration characterConfig, IBackgroundTaskQueue taskQueue, IDatabasePreloader databasePreloader) : base(databasePreloader)
+        public Character(ILogger<Character> logger, ICharacterConfiguration characterConfig, IBackgroundTaskQueue taskQueue, IDatabasePreloader databasePreloader) : base(databasePreloader)
         {
             _logger = logger;
             _characterConfig = characterConfig;
@@ -43,6 +43,7 @@ namespace Imgeneus.World.Game.Player
         private void Init()
         {
             InitEquipment();
+            InitPassiveSkills();
         }
 
         public override void Dispose()
@@ -134,7 +135,7 @@ namespace Imgeneus.World.Game.Player
             {
                 var level = Level <= 60 ? Level : 60;
                 var index = (level - 1) * 6 + (byte)Class;
-                var constHP = _characterConfig.Configs[index].HP;
+                var constHP = _characterConfig.GetConfig(index).HP;
 
                 return constHP + ExtraHP;
             }
@@ -146,7 +147,7 @@ namespace Imgeneus.World.Game.Player
             {
                 var level = Level <= 60 ? Level : 60;
                 var index = (level - 1) * 6 + (byte)Class;
-                var constMP = _characterConfig.Configs[index].MP;
+                var constMP = _characterConfig.GetConfig(index).MP;
 
                 return constMP + ExtraMP;
             }
@@ -158,7 +159,7 @@ namespace Imgeneus.World.Game.Player
             {
                 var level = Level <= 60 ? Level : 60;
                 var index = (level - 1) * 6 + (byte)Class;
-                var constSP = _characterConfig.Configs[index].SP;
+                var constSP = _characterConfig.GetConfig(index).SP;
 
                 return constSP + ExtraSP;
             }
@@ -352,7 +353,7 @@ namespace Imgeneus.World.Game.Player
                     characterAttack = GetCharacterAttack();
                 }
 
-                return weaponAttack + characterAttack; // TODO: + passive and buffs
+                return weaponAttack + characterAttack + _skillPhysicalAttackPower;
             }
         }
 
@@ -374,7 +375,7 @@ namespace Imgeneus.World.Game.Player
                     characterAttack = GetCharacterAttack();
                 }
 
-                return weaponAttack + characterAttack; // TODO: + passive and buffs
+                return weaponAttack + characterAttack + _skillPhysicalAttackPower;
             }
         }
 
@@ -394,7 +395,7 @@ namespace Imgeneus.World.Game.Player
                     characterAttack = GetCharacterAttack();
                 }
 
-                return weaponAttack + characterAttack; // TODO: + passive and buffs
+                return weaponAttack + characterAttack + _skillMagicAttackPower;
             }
         }
 
@@ -414,7 +415,7 @@ namespace Imgeneus.World.Game.Player
                     characterAttack = GetCharacterAttack();
                 }
 
-                return weaponAttack + characterAttack; // TODO: + passive and buffs
+                return weaponAttack + characterAttack + _skillMagicAttackPower;
             }
         }
 
@@ -705,7 +706,7 @@ namespace Imgeneus.World.Game.Player
         /// <summary>
         /// Creates character from database information.
         /// </summary>
-        public static Character FromDbCharacter(DbCharacter dbCharacter, ILogger<Character> logger, Character_HP_SP_MP_Configuration characterConfig, IBackgroundTaskQueue taskQueue, IDatabasePreloader databasePreloader)
+        public static Character FromDbCharacter(DbCharacter dbCharacter, ILogger<Character> logger, CharacterConfiguration characterConfig, IBackgroundTaskQueue taskQueue, IDatabasePreloader databasePreloader)
         {
             var character = new Character(logger, characterConfig, taskQueue, databasePreloader)
             {

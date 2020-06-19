@@ -73,6 +73,11 @@ namespace Imgeneus.World.Game.Player
         public int CooldownInSeconds;
 
         /// <summary>
+        /// Is it pure passive skill? From passive tab.
+        /// </summary>
+        public bool IsPassive => TypeAttack == TypeAttack.Passive && Type != TypeDetail.Buff;
+
+        /// <summary>
         /// Skill type.
         /// </summary>
         public TypeDetail Type;
@@ -101,6 +106,11 @@ namespace Imgeneus.World.Game.Player
         /// State type contains information about what bad influence debuff has on target.
         /// </summary>
         public StateType StateType;
+
+        /// <summary>
+        /// Category of skill. E.g. combat or special.
+        /// </summary>
+        public TypeShow TypeShow;
 
         /// <summary>
         /// Time after which skill can be used again.

@@ -3,13 +3,35 @@ using Newtonsoft.Json;
 
 namespace Imgeneus.World.Game.Player
 {
-    public sealed class Character_HP_SP_MP_Configuration
+    public sealed class CharacterConfiguration : ICharacterConfiguration
     {
         /// <summary>
         /// Config for each job and level.
         /// </summary>
         [JsonProperty("Configs")]
         public Character_HP_SP_MP[] Configs { get; set; }
+
+        public Character_HP_SP_MP GetConfig(int index)
+        {
+            if (Configs.Length < index)
+            {
+                return Configs[index];
+            }
+            else
+            {
+                return Configs[Configs.Length - 1];
+            }
+        }
+    }
+
+    public interface ICharacterConfiguration
+    {
+        /// <summary>
+        /// Config for each job and level.
+        /// </summary>
+        public Character_HP_SP_MP[] Configs { get; }
+
+        public Character_HP_SP_MP GetConfig(int index);
     }
 
     public sealed class Character_HP_SP_MP

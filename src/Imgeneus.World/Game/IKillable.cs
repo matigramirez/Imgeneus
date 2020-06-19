@@ -81,6 +81,11 @@ namespace Imgeneus.World.Game
         public ActiveBuff AddActiveBuff(Skill skill, IKiller creator);
 
         /// <summary>
+        /// Collection of current applied passive buffs.
+        /// </summary>
+        public ObservableRangeCollection<ActiveBuff> PassiveBuffs { get; }
+
+        /// <summary>
         /// Luck value, needed for critical damage calculation.
         /// </summary>
         public int TotalLuc { get; }

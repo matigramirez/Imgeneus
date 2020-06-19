@@ -146,20 +146,25 @@ namespace Imgeneus.World.Game.Player
         /// </summary>
         private void UseSkill(Skill skill, IKillable target = null)
         {
-            SendAttackStart();
+            if (!skill.IsPassive)
+                SendAttackStart();
 
-            if (!CanAttack(skill.Number, target))
+            if (!skill.IsPassive && !CanAttack(skill.Number, target))
                 return;
 
             _nextAttackTime = DateTime.UtcNow.AddMilliseconds(NextAttackTime);
 
-            CurrentMP -= skill.NeedMP;
-            CurrentSP -= skill.NeedSP;
-            SendUseSMMP(skill.NeedMP, skill.NeedSP);
+            if (skill.NeedMP > 0 || skill.NeedSP > 0)
+            {
+                CurrentMP -= skill.NeedMP;
+                CurrentSP -= skill.NeedSP;
+                SendUseSMMP(skill.NeedMP, skill.NeedSP);
+            }
 
             var targets = new List<IKillable>();
             switch (skill.TargetType)
             {
+                case TargetType.None:
                 case TargetType.Caster:
                     targets.Add(this);
                     break;
@@ -194,7 +199,7 @@ namespace Imgeneus.World.Game.Player
                 if (t.IsDead)
                     continue;
 
-                if (!AttackSuccessRate(t, skill.TypeAttack, skill))
+                if (skill.TypeAttack != TypeAttack.Passive && !AttackSuccessRate(t, skill.TypeAttack, skill))
                 {
                     if (target == t)
                         OnUsedSkill?.Invoke(this, t, skill, new AttackResult(AttackSuccess.Miss, new Damage(0, 0, 0)));
@@ -252,8 +257,14 @@ namespace Imgeneus.World.Game.Player
                             OnUsedRangeSkill?.Invoke(this, t, skill, attackResult);
                         break;
 
+                    case TypeDetail.PassiveDefence:
+                        t.AddActiveBuff(skill, this);
+                        break;
+
                     default:
-                        throw new NotImplementedException("Not implemented skill type.");
+                        _logger.LogError($"Not implemented skill type {skill.Type}");
+                        //throw new NotImplementedException("Not implemented skill type.");
+                        break;
                 }
             }
         }

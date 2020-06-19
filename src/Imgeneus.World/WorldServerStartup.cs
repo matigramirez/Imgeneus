@@ -48,7 +48,7 @@ namespace Imgeneus.World
             DependencyContainer.Instance.Configure(services =>
             {
                 var worldConfiguration = ConfigurationHelper.Load<WorldConfiguration>(WorldConfigFile);
-                var characterConfiguration = ConfigurationHelper.Load<Character_HP_SP_MP_Configuration>(CharacterConfigFile);
+                var characterConfiguration = ConfigurationHelper.Load<CharacterConfiguration>(CharacterConfigFile);
                 services.AddSingleton(worldConfiguration);
                 services.AddSingleton(characterConfiguration);
             });

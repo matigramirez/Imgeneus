@@ -23,9 +23,9 @@ namespace Imgeneus.World.Game
         private readonly ILogger<GameWorld> _logger;
         private readonly IBackgroundTaskQueue _taskQueue;
         private readonly IDatabasePreloader _databasePreloader;
-        private readonly Character_HP_SP_MP_Configuration _characterConfig;
+        private readonly CharacterConfiguration _characterConfig;
 
-        public GameWorld(ILogger<GameWorld> logger, IBackgroundTaskQueue taskQueue, IDatabasePreloader databasePreloader, Character_HP_SP_MP_Configuration characterConfig)
+        public GameWorld(ILogger<GameWorld> logger, IBackgroundTaskQueue taskQueue, IDatabasePreloader databasePreloader, CharacterConfiguration characterConfig)
         {
             _logger = logger;
             _taskQueue = taskQueue;

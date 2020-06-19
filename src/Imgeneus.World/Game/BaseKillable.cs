@@ -19,6 +19,7 @@ namespace Imgeneus.World.Game
         {
             _databasePreloader = databasePreloader;
             ActiveBuffs.CollectionChanged += ActiveBuffs_CollectionChanged;
+            PassiveBuffs.CollectionChanged += PassiveBuffs_CollectionChanged;
         }
 
         public virtual void Dispose()
@@ -193,8 +194,18 @@ namespace Imgeneus.World.Game
         /// <returns>Newly added or updated active buff</returns>
         public ActiveBuff AddActiveBuff(Skill skill, IKiller creator)
         {
-            var resetTime = DateTime.UtcNow.AddSeconds(skill.KeepTime);
-            var buff = ActiveBuffs.FirstOrDefault(b => b.SkillId == skill.SkillId);
+            var resetTime = skill.KeepTime == 0 ? DateTime.UtcNow.AddDays(10) : DateTime.UtcNow.AddSeconds(skill.KeepTime);
+            ActiveBuff buff;
+
+            if (skill.IsPassive)
+            {
+                buff = PassiveBuffs.FirstOrDefault(b => b.SkillId == skill.SkillId);
+            }
+            else
+            {
+                buff = ActiveBuffs.FirstOrDefault(b => b.SkillId == skill.SkillId);
+            }
+
             if (buff != null) // We already have such buff. Try to update reset time.
             {
                 if (buff.SkillLevel > skill.SkillLevel)
@@ -210,18 +221,22 @@ namespace Imgeneus.World.Game
                         buff.ResetTime = resetTime;
 
                         // Send update of buff.
-                        BuffAdded(buff);
+                        if (!buff.IsPassive)
+                            BuffAdded(buff);
                     }
                 }
             }
             else
             {
                 // It's a new buff.
-                buff = new ActiveBuff(creator, skill.SkillId, skill.SkillLevel, skill.StateType)
+                buff = new ActiveBuff(creator, skill)
                 {
                     ResetTime = resetTime
                 };
-                ActiveBuffs.Add(buff);
+                if (skill.IsPassive)
+                    PassiveBuffs.Add(buff);
+                else
+                    ActiveBuffs.Add(buff);
             }
 
             return buff;
@@ -238,7 +253,7 @@ namespace Imgeneus.World.Game
             {
                 foreach (ActiveBuff newBuff in e.NewItems)
                 {
-                    newBuff.OnReset += Buff_OnReset;
+                    newBuff.OnReset += ActiveBuff_OnReset;
                     ApplyBuffSkill(newBuff);
                 }
 
@@ -259,9 +274,9 @@ namespace Imgeneus.World.Game
             }
         }
 
-        private void Buff_OnReset(ActiveBuff sender)
+        private void ActiveBuff_OnReset(ActiveBuff sender)
         {
-            sender.OnReset -= Buff_OnReset;
+            sender.OnReset -= ActiveBuff_OnReset;
             ActiveBuffs.Remove(sender);
         }
 
@@ -305,6 +320,7 @@ namespace Imgeneus.World.Game
             switch (skill.TypeDetail)
             {
                 case TypeDetail.Buff:
+                case TypeDetail.PassiveDefence:
                     ApplyAbility(skill.AbilityType1, skill.AbilityValue1, true);
                     ApplyAbility(skill.AbilityType2, skill.AbilityValue2, true);
                     ApplyAbility(skill.AbilityType3, skill.AbilityValue3, true);
@@ -374,6 +390,7 @@ namespace Imgeneus.World.Game
             switch (skill.TypeDetail)
             {
                 case TypeDetail.Buff:
+                case TypeDetail.PassiveDefence:
                     ApplyAbility(skill.AbilityType1, skill.AbilityValue1, false);
                     ApplyAbility(skill.AbilityType2, skill.AbilityValue2, false);
                     ApplyAbility(skill.AbilityType3, skill.AbilityValue3, false);
@@ -463,6 +480,21 @@ namespace Imgeneus.World.Game
                         _skillCriticalHittingChance += abilityValue;
                     else
                         _skillCriticalHittingChance -= abilityValue;
+                    return;
+
+                case AbilityType.PhysicalAttackPower:
+                case AbilityType.ShootingAttackPower:
+                    if (addAbility)
+                        _skillPhysicalAttackPower += abilityValue;
+                    else
+                        _skillPhysicalAttackPower -= abilityValue;
+                    return;
+
+                case AbilityType.MagicAttackPower:
+                    if (addAbility)
+                        _skillMagicAttackPower += abilityValue;
+                    else
+                        _skillMagicAttackPower -= abilityValue;
                     return;
 
                 case AbilityType.Str:
@@ -572,6 +604,9 @@ namespace Imgeneus.World.Game
                     else
                         SetAttackSpeedModifier(-1 * abilityValue);
                     return;
+
+                default:
+                    throw new NotImplementedException($"Not implemented ability type {abilityType}");
             }
         }
 
@@ -601,6 +636,40 @@ namespace Imgeneus.World.Game
             CurrentSP -= damage.SP;
 
             OnSkillKeep?.Invoke(this, buff, new AttackResult(AttackSuccess.Normal, damage));
+        }
+
+        #endregion
+
+        #region Passive buffs
+
+        /// <summary>
+        /// Passive buffs, that increase character characteristic, attack, defense etc.
+        /// Don't update it directly, use instead "AddPassiveBuff".
+        /// </summary>
+        public ObservableRangeCollection<ActiveBuff> PassiveBuffs { get; private set; } = new ObservableRangeCollection<ActiveBuff>();
+
+        private void PassiveBuffs_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.Action == NotifyCollectionChangedAction.Add)
+            {
+                foreach (ActiveBuff newBuff in e.NewItems)
+                {
+                    newBuff.OnReset += PassiveBuff_OnReset;
+                    ApplyBuffSkill(newBuff);
+                }
+            }
+
+            if (e.Action == NotifyCollectionChangedAction.Remove)
+            {
+                var buff = (ActiveBuff)e.OldItems[0];
+                RelieveBuffSkill(buff);
+            }
+        }
+
+        private void PassiveBuff_OnReset(ActiveBuff sender)
+        {
+            sender.OnReset -= PassiveBuff_OnReset;
+            PassiveBuffs.Remove(sender);
         }
 
         #endregion
@@ -804,6 +873,16 @@ namespace Imgeneus.World.Game
         /// Possibility to escape hit gained from skills.
         /// </summary>
         protected double _skillMagicEvasionChance;
+
+        /// <summary>
+        /// Additional attack power.
+        /// </summary>
+        protected int _skillPhysicalAttackPower;
+
+        /// <summary>
+        /// Additional attack power.
+        /// </summary>
+        protected int _skillMagicAttackPower;
 
         #endregion
 

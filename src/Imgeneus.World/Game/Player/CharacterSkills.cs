@@ -1,5 +1,4 @@
-﻿using Imgeneus.Database.Constants;
-using Imgeneus.DatabaseBackgroundService.Handlers;
+﻿using Imgeneus.DatabaseBackgroundService.Handlers;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -90,6 +89,10 @@ namespace Imgeneus.World.Game.Player
                 _packetsHelper.SendLearnedNewSkill(Client, skill);
 
             _logger.LogDebug($"Character {Id} learned skill {skill.SkillId} of level {skill.SkillLevel}");
+
+            // Activate passive skill as soon as it's learned. 
+            if (skill.IsPassive)
+                UseSkill(skill);
         }
 
         /// <summary>
@@ -116,6 +119,17 @@ namespace Imgeneus.World.Game.Player
         {
             target.AddActiveBuff(skill, this);
             return new AttackResult(AttackSuccess.Normal, new Damage());
+        }
+
+        /// <summary>
+        /// Initialize passive skills.
+        /// </summary>
+        private void InitPassiveSkills()
+        {
+            foreach (var skill in Skills.Values.Where(s => s.IsPassive))
+            {
+                UseSkill(skill);
+            }
         }
     }
 }

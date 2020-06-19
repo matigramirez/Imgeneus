@@ -75,7 +75,8 @@
         TARGET_GET_CHARACTER_BUFFS = 0x0308, // 776
         TARGET_GET_MOB_BUFFS = 0x0309, // 777
         TARGET_BUFFS = 0x030B, // 779
-        TARGET_MOB_BUFF_ADD = 0x030C, // 780 ???
+        TARGET_BUFF_ADD = 0x030C, // 780
+        TARGET_BUFF_REMOVE = 0x030D, // 781
 
         // PvP
         CHARACTER_MOVE = 0x0501, // 1281

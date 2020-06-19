@@ -144,5 +144,15 @@ namespace Imgeneus.World.Game
         /// Current z position.
         /// </summary>
         public float PosZ { get; }
+
+        /// <summary>
+        /// Attack speed.
+        /// </summary>
+        public AttackSpeed AttackSpeed { get; }
+
+        /// <summary>
+        /// Move speed.
+        /// </summary>
+        public int MoveSpeed { get; }
     }
 }

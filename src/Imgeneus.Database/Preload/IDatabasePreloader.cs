@@ -20,6 +20,11 @@ namespace Imgeneus.Database.Preload
         Dictionary<(ushort SkillId, byte SkillLevel), DbSkill> Skills { get; }
 
         /// <summary>
+        /// Preloaded mobs.
+        /// </summary>
+        Dictionary<ushort, DbMob> Mobs { get; }
+
+        /// <summary>
         /// Preloads all needed info.
         /// </summary>
         void Preload();

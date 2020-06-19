@@ -16,7 +16,7 @@ using System.Linq;
 
 namespace Imgeneus.World.Game.Player
 {
-    public partial class Character : IKillable, IKiller
+    public partial class Character : BaseKillable, IKiller
     {
         private readonly ILogger<Character> _logger;
         private readonly Character_HP_SP_MP_Configuration _characterConfig;
@@ -24,7 +24,7 @@ namespace Imgeneus.World.Game.Player
         private readonly CharacterPacketsHelper _packetsHelper;
         private readonly IDatabasePreloader _databasePreloader;
 
-        public Character(ILogger<Character> logger, Character_HP_SP_MP_Configuration characterConfig, IBackgroundTaskQueue taskQueue, IDatabasePreloader databasePreloader)
+        public Character(ILogger<Character> logger, Character_HP_SP_MP_Configuration characterConfig, IBackgroundTaskQueue taskQueue, IDatabasePreloader databasePreloader) : base(databasePreloader)
         {
             _logger = logger;
             _characterConfig = characterConfig;
@@ -33,8 +33,11 @@ namespace Imgeneus.World.Game.Player
             _packetsHelper = new CharacterPacketsHelper();
 
             InventoryItems.CollectionChanged += InventoryItems_CollectionChanged;
-            ActiveBuffs.CollectionChanged += ActiveBuffs_CollectionChanged;
             _castTimer.Elapsed += CastTimer_Elapsed;
+
+            OnMaxHPChanged += Character_OnMaxHPChanged;
+            OnMaxMPChanged += Character_OnMaxMPChanged;
+            OnMaxSPChanged += Character_OnMaxSPChanged;
         }
 
         private void Init()
@@ -44,10 +47,8 @@ namespace Imgeneus.World.Game.Player
 
         #region Character info
 
-        public int Id { get; private set; }
         public string Name;
         public Fraction Country;
-        public ushort Level { get; private set; }
         public ushort MapId;
         public Race Race;
         public CharacterProfession Class;
@@ -73,131 +74,38 @@ namespace Imgeneus.World.Game.Player
 
         #endregion
 
-        #region Additional stats
-
-        /// <summary>
-        /// Yellow strength stat, that is calculated based on worn items, orange stats and active buffs.
-        /// </summary>
-        public int ExtraStr { get; private set; }
-
-        /// <summary>
-        /// Yellow dexterity stat, that is calculated based on worn items, orange stats and active buffs.
-        /// </summary>
-        public int ExtraDex { get; private set; }
-
-        /// <summary>
-        /// Yellow rec stat, that is calculated based on worn items, orange stats and active buffs.
-        /// </summary>
-        public int ExtraRec { get; private set; }
-
-        /// <summary>
-        /// Yellow intelligence stat, that is calculated based on worn items, orange stats and active buffs.
-        /// </summary>
-        public int ExtraInt { get; private set; }
-
-        /// <summary>
-        /// Yellow luck stat, that is calculated based on worn items, orange stats and active buffs.
-        /// </summary>
-        public int ExtraLuc { get; private set; }
-
-        /// <summary>
-        /// Yellow wisdom stat, that is calculated based on worn items, orange stats and active buffs.
-        /// </summary>
-        public int ExtraWis { get; private set; }
-
-        /// <summary>
-        /// Physical defense from equipment and buffs.
-        /// </summary>
-        private int ExtraDefense { get; set; }
-
-        /// <summary>
-        /// Magical resistance from equipment and buffs.
-        /// </summary>
-        private int ExtraResistance { get; set; }
-
-        private int _extraHP;
-        /// <summary>
-        /// Health points, that are provided by equipment and buffs.
-        /// </summary>
-        public int ExtraHP
-        {
-            get => _extraHP;
-            private set
-            {
-                _extraHP = value;
-
-                if (Client != null)
-                    SendMaxHP();
-
-                if (CurrentHP > MaxHP)
-                    CurrentHP = MaxHP;
-
-                OnMaxHPChanged?.Invoke(this, MaxHP);
-            }
-        }
-
-        private int _extraSP;
-        /// <summary>
-        /// Stamina points, that are provided by equipment and buffs.
-        /// </summary>
-        public int ExtraSP
-        {
-            get => _extraSP;
-            private set
-            {
-                _extraSP = value;
-
-                if (Client != null)
-                    SendMaxSP();
-
-                if (CurrentSP > MaxSP)
-                    CurrentSP = MaxSP;
-
-                OnMaxSPChanged?.Invoke(this, MaxSP);
-            }
-        }
-
-        private int _extraMP;
-        /// <summary>
-        /// Mana points, that are provided by equipment and buffs.
-        /// </summary>
-        public int ExtraMP
-        {
-            get => _extraMP;
-            private set
-            {
-                _extraMP = value;
-
-                if (Client != null)
-                    SendMaxMP();
-
-                if (CurrentMP > MaxMP)
-                    CurrentMP = MaxMP;
-
-                OnMaxMPChanged?.Invoke(this, MaxMP);
-            }
-        }
-
-        #endregion
-
         #region Total stats
 
         public int TotalStr => Strength + ExtraStr;
-        public int TotalDex => Dexterity + ExtraDex;
+        public override int TotalDex => Dexterity + ExtraDex;
         public int TotalRec => Rec + ExtraRec;
         public int TotalInt => Intelligence + ExtraInt;
-        public int TotalWis => Wisdom + ExtraWis;
-        public int TotalLuc => Luck + ExtraLuc;
+        public override int TotalWis => Wisdom + ExtraWis;
+        public override int TotalLuc => Luck + ExtraLuc;
 
         #endregion
 
         #region Max HP & SP & MP
 
-        /// <summary>
-        /// Event, that is fired, when max hp changes.
-        /// </summary>
-        public event Action<Character, int> OnMaxHPChanged;
-        public int MaxHP
+        private void Character_OnMaxHPChanged(IKillable sender, int maxHP)
+        {
+            if (Client != null)
+                SendMaxHP();
+        }
+
+        private void Character_OnMaxMPChanged(IKillable sender, int maxMP)
+        {
+            if (Client != null)
+                SendMaxMP();
+        }
+
+        private void Character_OnMaxSPChanged(IKillable sender, int maxSP)
+        {
+            if (Client != null)
+                SendMaxSP();
+        }
+
+        public override int MaxHP
         {
             get
             {
@@ -209,11 +117,7 @@ namespace Imgeneus.World.Game.Player
             }
         }
 
-        /// <summary>
-        /// Event, that is fired, when max mp changes.
-        /// </summary>
-        public event Action<Character, int> OnMaxMPChanged;
-        public int MaxMP
+        public override int MaxMP
         {
             get
             {
@@ -225,11 +129,7 @@ namespace Imgeneus.World.Game.Player
             }
         }
 
-        /// <summary>
-        /// Event, that is fired, when max sp changes.
-        /// </summary>
-        public event Action<Character, int> OnMaxSPChanged;
-        public int MaxSP
+        public override int MaxSP
         {
             get
             {
@@ -243,131 +143,12 @@ namespace Imgeneus.World.Game.Player
 
         #endregion
 
-        #region HP & SP & MP
-
-        private bool _isDead;
-
-        /// <inheritdoc />
-        public bool IsDead
-        {
-            get => _isDead;
-            private set
-            {
-                _isDead = value;
-
-                if (_isDead)
-                    OnDead?.Invoke(this, MyKiller);
-            }
-        }
-
-        /// <inheritdoc />
-        public event Action<IKillable, IKiller> OnDead;
-
-        /// <inheritdoc />
-        public IKiller MyKiller { get; private set; }
-
-        /// <inheritdoc />
-        public void DecreaseHP(int hp, IKiller damageMaker)
-        {
-            if (hp == 0)
-                return;
-
-            MyKiller = damageMaker;
-            CurrentHP -= hp;
-        }
-
-        /// <summary>
-        /// Event, that is fired, when hp changes.
-        /// </summary>
-        public event Action<Character, HitpointArgs> HP_Changed;
-
-        private int _currentHP;
-        public int CurrentHP
-        {
-            get => _currentHP;
-            private set
-            {
-                if (_currentHP == value)
-                    return;
-
-                if (value > MaxHP)
-                    value = MaxHP;
-
-                var args = new HitpointArgs(_currentHP, value);
-                _currentHP = value;
-                if (_currentHP <= 0)
-                {
-                    _currentHP = 0;
-                    IsDead = true;
-                }
-
-                HP_Changed?.Invoke(this, args);
-            }
-        }
-
-        /// <inheritdoc />
-        public void IncreaseHP(int hp)
-        {
-            if (hp == 0)
-                return;
-
-            CurrentHP += hp;
-        }
-
-        /// <summary>
-        /// Event, that is fired, when mp changes.
-        /// </summary>
-        public event Action<Character, HitpointArgs> MP_Changed;
-
-        private int _currentMP;
-        public int CurrentMP
-        {
-            get => _currentMP;
-            set
-            {
-                if (_currentMP == value)
-                    return;
-
-                if (value > MaxMP)
-                    value = MaxMP;
-
-                var args = new HitpointArgs(_currentMP, value);
-                _currentMP = value;
-                MP_Changed?.Invoke(this, args);
-            }
-        }
-
-        /// <summary>
-        /// Event, that is fired, when sp changes.
-        /// </summary>
-        public event Action<Character, HitpointArgs> SP_Changed;
-
-        private int _currentSP;
-        public int CurrentSP
-        {
-            get => _currentSP;
-            set
-            {
-                if (_currentSP == value)
-                    return;
-
-                if (value > MaxSP)
-                    value = MaxSP;
-
-                var args = new HitpointArgs(_currentSP, value);
-                _currentSP = value;
-                SP_Changed?.Invoke(this, args);
-            }
-        }
-
-        #endregion
-
         #region Defense & Resistance
 
         /// <summary>
         /// Physical defense.
         /// </summary>
-        public int Defense
+        public override int Defense
         {
             get
             {
@@ -378,7 +159,7 @@ namespace Imgeneus.World.Game.Player
         /// <summary>
         /// Magic resistance.
         /// </summary>
-        public int Resistance
+        public override int Resistance
         {
             get
             {
@@ -391,11 +172,6 @@ namespace Imgeneus.World.Game.Player
         #region Attack & Move speed
 
         /// <summary>
-        /// Event, that is fired, when attack or move speed changes.
-        /// </summary>
-        public event Action<Character> OnAttackOrMoveChanged;
-
-        /// <summary>
         /// Pure weapon speed without any gems or buffs.
         /// </summary>
         private byte _weaponSpeed;
@@ -406,24 +182,7 @@ namespace Imgeneus.World.Game.Player
         private void SetWeaponSpeed(byte speed)
         {
             _weaponSpeed = speed;
-            OnAttackOrMoveChanged?.Invoke(this);
-        }
-
-        /// <summary>
-        /// Attack speed modifier is made of equipment and buffs.
-        /// </summary>
-        private int _attackSpeedModifier;
-
-        /// <summary>
-        /// Sets attack modifier.
-        /// </summary>
-        private void SetAttackSpeedModifier(int speed)
-        {
-            if (speed == 0)
-                return;
-
-            _attackSpeedModifier += speed;
-            OnAttackOrMoveChanged?.Invoke(this);
+            InvokeAttackOrMoveChanged();
         }
 
         private int NextAttackTime
@@ -468,7 +227,7 @@ namespace Imgeneus.World.Game.Player
         /// <summary>
         /// How fast character can make new hit.
         /// </summary>
-        public AttackSpeed AttackSpeed
+        public override AttackSpeed AttackSpeed
         {
             get
             {
@@ -489,9 +248,9 @@ namespace Imgeneus.World.Game.Player
         /// <summary>
         /// How fast character moves.
         /// </summary>
-        public int MoveSpeed
+        public override int MoveSpeed
         {
-            private set
+            protected set
             {
                 if (_moveSpeed == value)
                     return;
@@ -500,7 +259,7 @@ namespace Imgeneus.World.Game.Player
                     value = 0;
 
                 _moveSpeed = value;
-                OnAttackOrMoveChanged?.Invoke(this);
+                InvokeAttackOrMoveChanged();
             }
             get
             {
@@ -641,7 +400,7 @@ namespace Imgeneus.World.Game.Player
         #region Elements
 
         /// <inheritdoc />
-        public Element DefenceElement
+        public override Element DefenceElement
         {
             get
             {
@@ -653,7 +412,7 @@ namespace Imgeneus.World.Game.Player
         }
 
         /// <inheritdoc />
-        public Element AttackElement
+        public override Element AttackElement
         {
             get
             {
@@ -717,9 +476,9 @@ namespace Imgeneus.World.Game.Player
         /// <summary>
         /// Is player visible or not.
         /// </summary>
-        public bool IsStealth
+        public override bool IsStealth
         {
-            private set
+            protected set
             {
                 if (_isStealth == value)
                     return;
@@ -728,7 +487,7 @@ namespace Imgeneus.World.Game.Player
 
                 OnShapeChange?.Invoke(this);
                 SendRunMode(); // Do we need this in new eps?
-                OnAttackOrMoveChanged?.Invoke(this);
+                InvokeAttackOrMoveChanged();
             }
             get => _isStealth;
         }
@@ -758,16 +517,13 @@ namespace Imgeneus.World.Game.Player
 
         #endregion
 
-        #region Move
+        #region Position
 
         /// <summary>
         /// Event, that is fired, when character changes his/her position.
         /// </summary>
         public event Action<Character> OnPositionChanged;
 
-        public float PosX { get; private set; }
-        public float PosY { get; private set; }
-        public float PosZ { get; private set; }
         public ushort Angle { get; private set; }
 
         /// <summary>

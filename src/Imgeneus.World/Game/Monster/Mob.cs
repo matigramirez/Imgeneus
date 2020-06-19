@@ -1,142 +1,81 @@
 ﻿using Imgeneus.Database.Constants;
 using Imgeneus.Database.Entities;
+using Imgeneus.Database.Preload;
 using Imgeneus.World.Game.Player;
 using Microsoft.Extensions.Logging;
-using MvvmHelpers;
 using System;
 using System.Timers;
 
 namespace Imgeneus.World.Game.Monster
 {
-    public class Mob : IKillable, IKiller
+    public class Mob : BaseKillable, IKiller
     {
         private readonly ILogger<Mob> _logger;
+        private readonly DbMob _dbMob;
 
-        public Mob(ILogger<Mob> logger)
+        public Mob(ILogger<Mob> logger, IDatabasePreloader databasePreloader, ushort mobId) : base(databasePreloader)
         {
             _logger = logger;
+            _dbMob = databasePreloader.Mobs[mobId];
 
-            // Dummy debuff for testing.
-            ActiveBuffs.Add(new ActiveBuff(null, 748, 2, StateType.HPDamageOverTime)
-            {
-                ResetTime = DateTime.Now.AddMinutes(10)
-            }); ;
+            CurrentHP = _dbMob.HP;
+            Level = _dbMob.Level;
         }
-
-        private int _id;
-
-        /// <inheritdoc />
-        public int Id
-        {
-            get => _id;
-            set
-            {
-                if (_id == 0)
-                {
-                    _id = value;
-                }
-                else
-                {
-                    throw new ArgumentException("Mob id can not be set twice.");
-                }
-
-            }
-        }
-
-        #region IKillable
-
-        /// <inheritdoc />
-        public IKiller MyKiller { get; private set; }
-
-        /// <inheritdoc />
-        public void DecreaseHP(int hp, IKiller damageMaker)
-        {
-            if (hp == 0)
-                return;
-
-            CurrentHP -= hp;
-            MyKiller = damageMaker;
-
-            if (CurrentHP < 0)
-                OnDead?.Invoke(this, MyKiller);
-        }
-
-        /// <inheritdoc />
-        public void IncreaseHP(int hp)
-        {
-            if (hp == 0)
-                return;
-
-            CurrentHP += hp;
-        }
-
-        /// <inheritdoc />
-        public int CurrentHP { get; set; }
-
-        /// <inheritdoc />
-        public event Action<IKillable, IKiller> OnDead;
-
-        /// <inheritdoc />
-        public int CurrentSP { get; set; }
-
-        /// <inheritdoc />
-        public int CurrentMP { get; set; }
-
-        /// <inheritdoc />
-        public bool IsDead => false;
-
-        /// <inheritdoc />
-        public ObservableRangeCollection<ActiveBuff> ActiveBuffs { get; } = new ObservableRangeCollection<ActiveBuff>();
-
-        /// <inheritdoc />
-        public int TotalLuc { get; private set; }
-
-        /// <inheritdoc />
-        public int TotalWis { get; private set; }
-
-        /// <inheritdoc />
-        public int TotalDex { get; private set; }
-
-        /// <inheritdoc />
-        public int Defense { get; private set; }
-
-        /// <inheritdoc />
-        public int Resistance { get; private set; }
-
-        /// <inheritdoc />
-        public Element DefenceElement { get; private set; }
-
-        /// <inheritdoc />
-        public Element AttackElement { get; private set; }
-
-        #endregion
 
         /// <summary>
         /// Mob id from database.
         /// </summary>
-        public ushort MobId;
+        public ushort MobId => _dbMob.Id;
 
-        /// <summary>
-        /// Mob level.
-        /// </summary>
-        public ushort Level { get; private set; }
+        #region IKillable
 
-        public double PhysicalHittingChance => 1.0 * TotalDex / 2;
+        public override int MaxHP => _dbMob.HP;
 
-        public double PhysicalEvasionChance => 1.0 * TotalDex / 2;
+        public override int MaxSP => _dbMob.SP;
 
-        public double MagicHittingChance => 1.0 * TotalWis / 2;
-
-        public double MagicEvasionChance => 1.0 * TotalWis / 2;
+        public override int MaxMP => _dbMob.MP;
 
         /// <inheritdoc />
-        public float PosX { get; set; }
+        public override int TotalLuc => _dbMob.Luc;
 
         /// <inheritdoc />
-        public float PosY { get; set; }
+        public override int TotalWis => _dbMob.Wis;
 
         /// <inheritdoc />
-        public float PosZ { get; set; }
+        public override int TotalDex => _dbMob.Dex;
+
+        /// <inheritdoc />
+        public override int Defense => _dbMob.Defense;
+
+        /// <inheritdoc />
+        public override int Resistance => _dbMob.Magic;
+
+        /// <inheritdoc />
+        public override Element DefenceElement => _dbMob.Element;
+
+        /// <inheritdoc />
+        public override Element AttackElement => _dbMob.Element;
+
+        /// <inheritdoc />
+        public override double PhysicalHittingChance => 1.0 * TotalDex / 2;
+
+        /// <inheritdoc />
+        public override double PhysicalEvasionChance => 1.0 * TotalDex / 2;
+
+        /// <inheritdoc />
+        public override double MagicHittingChance => 1.0 * TotalWis / 2;
+
+        /// <inheritdoc />
+        public override double MagicEvasionChance => 1.0 * TotalWis / 2;
+
+        /// <inheritdoc />
+        public override bool IsStealth { get; protected set; } = false;
+
+        public override AttackSpeed AttackSpeed => AttackSpeed.Normal;
+
+        public override int MoveSpeed { get; protected set; } = 2;
+
+        #endregion
 
         /// <summary>
         /// Describes if mob is "walking" or "running".
@@ -186,30 +125,29 @@ namespace Imgeneus.World.Game.Monster
         /// </summary>
         public event Action<Mob, int> OnAttack;
 
-        public static Mob FromDbMob(DbMob mob, ILogger<Mob> logger)
+        #region Buffs
+
+        protected override void BuffAdded(ActiveBuff buff)
         {
-            return new Mob(logger)
-            {
-                MobId = mob.Id,
-                CurrentHP = mob.HP,
-                TotalLuc = mob.Luc,
-                TotalWis = mob.Wis,
-                TotalDex = mob.Dex,
-                Defense = mob.Defense,
-                Resistance = mob.Magic,
-                Level = mob.Level,
-                DefenceElement = mob.Element,
-                AttackElement = mob.Element
-            };
+            // Implement if needed.
         }
 
-        public ActiveBuff AddActiveBuff(Skill skill, IKiller creator)
+        protected override void BuffRemoved(ActiveBuff buff)
         {
-            var buff = new ActiveBuff(creator, skill.SkillId, skill.SkillLevel, skill.StateType);
-            ActiveBuffs.Add(buff);
-
-            return buff;
+            // Implement if needed.
         }
+
+        protected override void SendMoveAndAttackSpeed()
+        {
+            // Not implemented
+        }
+
+        protected override void SendAdditionalStats()
+        {
+            // Implement if needed.
+        }
+
+        #endregion
     }
 
     public enum MobMotion : byte

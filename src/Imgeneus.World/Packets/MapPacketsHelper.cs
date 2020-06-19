@@ -141,7 +141,7 @@ namespace Imgeneus.World.Packets
             client.SendPacket(packet);
         }
 
-        internal void SendAttackAndMovementSpeed(WorldClient client, Character sender)
+        internal void SendAttackAndMovementSpeed(WorldClient client, IKillable sender)
         {
             using var packet = new Packet(PacketType.CHARACTER_ATTACK_MOVEMENT_SPEED);
             packet.Write(new CharacterAttackAndMovement(sender).Serialize());
@@ -184,7 +184,7 @@ namespace Imgeneus.World.Packets
             client.SendPacket(packet);
         }
 
-        internal void SendRecoverCharacter(WorldClient client, Character sender)
+        internal void SendRecoverCharacter(WorldClient client, IKillable sender)
         {
             using var packet = new Packet(PacketType.CHARACTER_RECOVER);
             packet.Write(sender.Id);

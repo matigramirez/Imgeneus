@@ -3,6 +3,7 @@ using Imgeneus.World.Game.Monster;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Timers;
 
@@ -17,12 +18,33 @@ namespace Imgeneus.World.Game.Player
         {
             get => _target; set
             {
+                if (_target != null)
+                {
+                    _target.ActiveBuffs.CollectionChanged -= Target_ActiveBuffs_CollectionChanged;
+                }
+
                 _target = value;
 
                 if (_target != null)
                 {
+                    _target.ActiveBuffs.CollectionChanged += Target_ActiveBuffs_CollectionChanged;
                     TargetChanged(Target);
                 }
+            }
+        }
+
+        private void Target_ActiveBuffs_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.Action == NotifyCollectionChangedAction.Add)
+            {
+                SendTargetAddBuff(_target, (ActiveBuff)e.NewItems[0]);
+                return;
+            }
+
+            if (e.Action == NotifyCollectionChangedAction.Remove)
+            {
+                SendTargetRemoveBuff(_target, (ActiveBuff)e.OldItems[0]);
+                return;
             }
         }
 
@@ -553,12 +575,12 @@ namespace Imgeneus.World.Game.Player
         /// <summary>
         /// Possibility to hit enemy.
         /// </summary>
-        public double PhysicalHittingChance { get => 1.0 * TotalDex / 2 + _skillPhysicalHittingChance; }
+        public override double PhysicalHittingChance { get => 1.0 * TotalDex / 2 + _skillPhysicalHittingChance; }
 
         /// <summary>
         /// Possibility to escape hit.
         /// </summary>
-        public double PhysicalEvasionChance { get => 1.0 * TotalDex / 2 + _skillPhysicalEvasionChance; }
+        public override double PhysicalEvasionChance { get => 1.0 * TotalDex / 2 + _skillPhysicalEvasionChance; }
 
         /// <summary>
         /// Possibility to make critical hit.
@@ -568,12 +590,12 @@ namespace Imgeneus.World.Game.Player
         /// <summary>
         /// Possibility to hit enemy.
         /// </summary>
-        public double MagicHittingChance { get => 1.0 * TotalWis / 2 + _skillMagicHittingChance; }
+        public override double MagicHittingChance { get => 1.0 * TotalWis / 2 + _skillMagicHittingChance; }
 
         /// <summary>
         /// Possibility to escape hit.
         /// </summary>
-        public double MagicEvasionChance { get => 1.0 * TotalWis / 2 + _skillMagicEvasionChance; }
+        public override double MagicEvasionChance { get => 1.0 * TotalWis / 2 + _skillMagicEvasionChance; }
 
         /// <summary>
         /// Calculates element multiplier based on attack and defence elements.

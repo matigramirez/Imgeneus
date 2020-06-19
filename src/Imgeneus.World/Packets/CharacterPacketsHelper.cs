@@ -248,5 +248,41 @@ namespace Imgeneus.World.Packets
             packet.Write(character.MoveMotion);
             client.SendPacket(packet);
         }
+
+        internal void SendTargetAddBuff(WorldClient client, IKillable target, ActiveBuff buff)
+        {
+            using var packet = new Packet(PacketType.TARGET_BUFF_ADD);
+            if (target is Mob)
+            {
+                packet.WriteByte(2);
+            }
+            else
+            {
+                packet.WriteByte(1);
+            }
+            packet.Write(target.Id);
+            packet.Write(buff.SkillId);
+            packet.Write(buff.SkillLevel);
+
+            client.SendPacket(packet);
+        }
+
+        internal void SendTargetRemoveBuff(WorldClient client, IKillable target, ActiveBuff buff)
+        {
+            using var packet = new Packet(PacketType.TARGET_BUFF_REMOVE);
+            if (target is Mob)
+            {
+                packet.WriteByte(2);
+            }
+            else
+            {
+                packet.WriteByte(1);
+            }
+            packet.Write(target.Id);
+            packet.Write(buff.SkillId);
+            packet.Write(buff.SkillLevel);
+
+            client.SendPacket(packet);
+        }
     }
 }

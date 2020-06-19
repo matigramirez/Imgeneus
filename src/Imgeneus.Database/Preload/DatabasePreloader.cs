@@ -17,6 +17,9 @@ namespace Imgeneus.Database.Preload
         /// <inheritdoc />
         public Dictionary<(ushort SkillId, byte SkillLevel), DbSkill> Skills { get; private set; } = new Dictionary<(ushort SkillId, byte SkillLevel), DbSkill>();
 
+        /// <inheritdoc />
+        public Dictionary<ushort, DbMob> Mobs { get; private set; } = new Dictionary<ushort, DbMob>();
+
         public DatabasePreloader(ILogger<DatabasePreloader> logger, IDatabase database)
         {
             _logger = logger;
@@ -30,6 +33,7 @@ namespace Imgeneus.Database.Preload
             {
                 PreloadItems(_database);
                 PreloadSkills(_database);
+                PreloadMobs(_database);
 
                 _logger.LogInformation("Database was successfully preloaded.");
             }
@@ -61,6 +65,18 @@ namespace Imgeneus.Database.Preload
             foreach (var skill in skills)
             {
                 Skills.Add((skill.SkillId, skill.SkillLevel), skill);
+            }
+        }
+
+        /// <summary>
+        /// Preloads all available mobs from database.
+        /// </summary>
+        private void PreloadMobs(IDatabase database)
+        {
+            var mobs = database.Mobs;
+            foreach (var mob in mobs)
+            {
+                Mobs.Add(mob.Id, mob);
             }
         }
     }

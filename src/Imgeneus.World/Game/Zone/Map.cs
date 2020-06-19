@@ -215,7 +215,7 @@ namespace Imgeneus.World.Game.Zone
         /// <summary>
         /// Notifies other players, that player changed attack/move speed.
         /// </summary>
-        private void Character_OnAttackOrMoveChanged(Character sender)
+        private void Character_OnAttackOrMoveChanged(IKillable sender)
         {
             foreach (var player in Players)
                 _packetHelper.SendAttackAndMovementSpeed(player.Value.Client, sender);
@@ -266,31 +266,31 @@ namespace Imgeneus.World.Game.Zone
                 _packetHelper.SendUsedItem(player.Value.Client, sender, item);
         }
 
-        private void Character_HP_Changed(Character sender, HitpointArgs args)
+        private void Character_HP_Changed(IKillable sender, HitpointArgs args)
         {
             //foreach (var player in Players)
             //    _packetHelper.SendRecoverCharacter(player.Value.Client, sender);
         }
 
-        private void Character_MP_Changed(Character sender, HitpointArgs args)
+        private void Character_MP_Changed(IKillable sender, HitpointArgs args)
         {
             foreach (var player in Players)
                 _packetHelper.SendRecoverCharacter(player.Value.Client, sender);
         }
 
-        private void Character_SP_Changed(Character sender, HitpointArgs args)
+        private void Character_SP_Changed(IKillable sender, HitpointArgs args)
         {
             foreach (var player in Players)
                 _packetHelper.SendRecoverCharacter(player.Value.Client, sender);
         }
 
-        private void Character_OnMaxHPChanged(Character sender, int maxHP)
+        private void Character_OnMaxHPChanged(IKillable sender, int maxHP)
         {
             foreach (var player in Players)
                 _packetHelper.Send_Max_HP(player.Value.Client, sender.Id, maxHP);
         }
 
-        private void Character_OnSkillKeep(Character sender, ActiveBuff buff, AttackResult result)
+        private void Character_OnSkillKeep(IKillable sender, ActiveBuff buff, AttackResult result)
         {
             foreach (var player in Players)
                 _packetHelper.SendSkillKeep(player.Value.Client, sender.Id, buff.SkillId, buff.SkillLevel, result);

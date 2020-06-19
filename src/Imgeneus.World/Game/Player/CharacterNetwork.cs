@@ -140,7 +140,7 @@ namespace Imgeneus.World.Game.Player
                     // TODO: find out way to preload all awailable mobs.
                     using (var database = DependencyContainer.Instance.Resolve<IDatabase>())
                     {
-                        var mob = Mob.FromDbMob(database.Mobs.First(m => m.Id == gMCreateMobPacket.MobId), DependencyContainer.Instance.Resolve<ILogger<Mob>>());
+                        var mob = new Mob(DependencyContainer.Instance.Resolve<ILogger<Mob>>(), _databasePreloader, gMCreateMobPacket.MobId);
 
                         // TODO: mobs should be generated near character, not on his position directly.
                         mob.PosX = PosX;
@@ -309,7 +309,7 @@ namespace Imgeneus.World.Game.Player
 
         private void SendSkillBar() => _packetsHelper.SendSkillBar(Client, QuickItems);
 
-        private void SendAdditionalStats() => _packetsHelper.SendAdditionalStats(Client, this);
+        protected override void SendAdditionalStats() => _packetsHelper.SendAdditionalStats(Client, this);
 
         private void SendMaxHP() => _packetsHelper.SendMaxHitpoints(Client, this, HitpointType.HP);
 
@@ -335,9 +335,13 @@ namespace Imgeneus.World.Game.Player
 
         private void SendCooldownNotOver(IKillable target, Skill skill) => _packetsHelper.SendCooldownNotOver(Client, this, target, skill);
 
-        private void SendMoveAndAttackSpeed() => _packetsHelper.SendMoveAndAttackSpeed(Client, this);
+        protected override void SendMoveAndAttackSpeed() => _packetsHelper.SendMoveAndAttackSpeed(Client, this);
 
         private void SendRunMode() => _packetsHelper.SendRunMode(Client, this);
+
+        private void SendTargetAddBuff(IKillable target, ActiveBuff buff) => _packetsHelper.SendTargetAddBuff(Client, target, buff);
+
+        private void SendTargetRemoveBuff(IKillable target, ActiveBuff buff) => _packetsHelper.SendTargetRemoveBuff(Client, target, buff);
 
         private void TargetChanged(IKillable target)
         {

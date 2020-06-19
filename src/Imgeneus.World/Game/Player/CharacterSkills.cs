@@ -25,11 +25,6 @@ namespace Imgeneus.World.Game.Player
         public event Action<Character, IKillable, Skill, AttackResult> OnUsedRangeSkill;
 
         /// <summary>
-        /// ?
-        /// </summary>
-        public event Action<Character, ActiveBuff, AttackResult> OnSkillKeep;
-
-        /// <summary>
         /// Player learns new skill.
         /// </summary>
         /// <param name="skillId">skill id</param>
@@ -122,34 +117,5 @@ namespace Imgeneus.World.Game.Player
             target.AddActiveBuff(skill, this);
             return new AttackResult(AttackSuccess.Normal, new Damage());
         }
-
-        #region Hit chance modifiers
-
-        /// <summary>
-        /// Possibility to hit enemy gained from skills.
-        /// </summary>
-        private double _skillPhysicalHittingChance;
-
-        /// <summary>
-        /// Possibility to escape hit gained from skills.
-        /// </summary>
-        private double _skillPhysicalEvasionChance;
-
-        /// <summary>
-        /// Possibility to make critical hit.
-        /// </summary>
-        private double _skillCriticalHittingChance;
-
-        /// <summary>
-        /// Possibility to hit enemy gained from skills.
-        /// </summary>
-        private double _skillMagicHittingChance;
-
-        /// <summary>
-        /// Possibility to escape hit gained from skills.
-        /// </summary>
-        private double _skillMagicEvasionChance;
-
-        #endregion
     }
 }

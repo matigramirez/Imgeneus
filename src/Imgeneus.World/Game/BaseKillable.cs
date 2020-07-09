@@ -963,6 +963,9 @@ namespace Imgeneus.World.Game
             InvokeAttackOrMoveChanged();
         }
 
+        /// <summary>
+        /// How fast killable changes its' position.
+        /// </summary>
         public abstract int MoveSpeed { get; protected set; }
 
         #endregion

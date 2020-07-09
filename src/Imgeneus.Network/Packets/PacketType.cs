@@ -63,7 +63,7 @@
         MOB_ENTER = 0x0601, // 1537
 
         MOB_MOVE = 0x0603, // 1539
-        MOB_ATTACK = 0x605, // 1541
+        MOB_ATTACK = 0x0605, // 1541
 
         // Char skills
         LEARN_NEW_SKILL = 0x209,
@@ -96,6 +96,9 @@
         MOB_SKILL_CASTING = 0x0516, // 1302
         USE_MOB_TARGET_SKILL = 0x0517, // 1303
         USE_MOB_RANGE_SKILL = 0x0519, // 1305
+        DEAD_REBIRTH = 0x0551,// 1361
+        REBIRTH_TO_NEAREST_TOWN = 0x0553, // 1363
+        CHARACTER_LEAVE_DEAD = 0x0406, // 1030
 
         // GM commands
         GM_COMMAND_GET_ITEM = 0xF702,

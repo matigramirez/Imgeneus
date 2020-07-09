@@ -237,5 +237,24 @@ namespace Imgeneus.World.Packets
             packet.Write(new SkillRange(sender.Id, target.Id, skill, attackResult).Serialize());
             client.SendPacket(packet);
         }
+
+        internal void SendDeadRebirth(WorldClient client, Character sender)
+        {
+            using var packet = new Packet(PacketType.DEAD_REBIRTH);
+            packet.Write(sender.Id);
+            packet.WriteByte(4); // rebirth type.
+            packet.Write(sender.Exp);
+            packet.Write(sender.PosX);
+            packet.Write(sender.PosY);
+            packet.Write(sender.PosZ);
+            client.SendPacket(packet);
+        }
+
+        internal void SendCharacterRebirth(WorldClient client, IKillable sender)
+        {
+            using var packet = new Packet(PacketType.CHARACTER_LEAVE_DEAD);
+            packet.Write(sender.Id);
+            client.SendPacket(packet);
+        }
     }
 }

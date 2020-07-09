@@ -134,6 +134,11 @@ namespace Imgeneus.World.Game.Player
                     UseItem(useItemPacket.Bag, useItemPacket.Slot);
                     break;
 
+                case RebirthPacket rebirthPacket:
+                    // TODO: rebirth to nearest town, get coordinates from map.
+                    Rebirth(1, 1, 1);
+                    break;
+
                 case GMCreateMobPacket gMCreateMobPacket:
                     if (!IsAdmin)
                         return;

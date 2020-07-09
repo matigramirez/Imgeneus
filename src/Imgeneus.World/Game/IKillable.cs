@@ -159,5 +159,18 @@ namespace Imgeneus.World.Game
         /// Move speed.
         /// </summary>
         public int MoveSpeed { get; }
+
+        /// <summary>
+        /// Event, that is fired, when killable is resurrected.
+        /// </summary>
+        public event Action<IKillable> OnRebirthed;
+
+        /// <summary>
+        /// Resurrects killable to some coordinate.
+        /// </summary>
+        /// <param name="x">x coorditane</param>
+        /// <param name="y">y coordinate</param>
+        /// <param name="z">z coordinate</param>
+        public void Rebirth(float x, float y, float z);
     }
 }

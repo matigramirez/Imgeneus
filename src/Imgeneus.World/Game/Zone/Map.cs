@@ -134,6 +134,7 @@ namespace Imgeneus.World.Game.Zone
             character.OnSkillKeep += Character_OnSkillKeep;
             character.OnShapeChange += Character_OnShapeChange;
             character.OnUsedRangeSkill += Character_OnUsedRangeSkill;
+            character.OnRebirthed += Character_OnRebirthed;
         }
 
         /// <summary>
@@ -158,6 +159,7 @@ namespace Imgeneus.World.Game.Zone
             character.OnSkillKeep -= Character_OnSkillKeep;
             character.OnShapeChange -= Character_OnShapeChange;
             character.OnUsedRangeSkill -= Character_OnUsedRangeSkill;
+            character.OnRebirthed -= Character_OnRebirthed;
         }
 
         /// <summary>
@@ -302,11 +304,20 @@ namespace Imgeneus.World.Game.Zone
                 _packetHelper.SendShapeUpdate(player.Value.Client, sender);
         }
 
-
         private void Character_OnUsedRangeSkill(Character sender, IKillable target, Skill skill, AttackResult attackResult)
         {
             foreach (var player in Players)
                 _packetHelper.SendUsedRangeSkill(player.Value.Client, sender, target, skill, attackResult);
+        }
+
+        private void Character_OnRebirthed(IKillable sender)
+        {
+            foreach (var player in Players)
+            {
+                _packetHelper.SendCharacterRebirth(player.Value.Client, sender);
+                _packetHelper.SendDeadRebirth(player.Value.Client, (Character)sender);
+                _packetHelper.SendRecoverCharacter(player.Value.Client, sender);
+            }
         }
 
         #endregion

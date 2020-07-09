@@ -975,5 +975,27 @@ namespace Imgeneus.World.Game
         public abstract bool IsStealth { get; protected set; }
 
         #endregion
+
+        #region Resurrect
+
+        /// <inheritdoc />
+        public event Action<IKillable> OnRebirthed;
+
+        /// <inheritdoc />
+        public void Rebirth(float x, float y, float z)
+        {
+            CurrentHP = MaxHP;
+            CurrentMP = MaxMP;
+            CurrentSP = MaxSP;
+            IsDead = false;
+
+            PosX = x;
+            PosY = y;
+            PosZ = z;
+
+            OnRebirthed?.Invoke(this);
+        }
+
+        #endregion
     }
 }

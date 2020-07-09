@@ -1,4 +1,5 @@
-﻿using Imgeneus.DatabaseBackgroundService.Handlers;
+﻿using Imgeneus.Database.Constants;
+using Imgeneus.DatabaseBackgroundService.Handlers;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -126,7 +127,7 @@ namespace Imgeneus.World.Game.Player
         /// </summary>
         private void InitPassiveSkills()
         {
-            foreach (var skill in Skills.Values.Where(s => s.IsPassive))
+            foreach (var skill in Skills.Values.Where(s => s.IsPassive && s.Type != TypeDetail.Stealth))
             {
                 UseSkill(skill);
             }

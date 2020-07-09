@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using Imgeneus.Database.Constants;
@@ -224,6 +225,25 @@ namespace Imgeneus.World.Game
                         if (!buff.IsPassive)
                             BuffAdded(buff);
                     }
+
+                    if (buff.SkillLevel < skill.SkillLevel)
+                    {
+                        // Remove old buff.
+                        if (buff.IsPassive)
+                            PassiveBuffs.Remove(buff);
+                        else
+                            ActiveBuffs.Remove(buff);
+
+                        // Create new one with a higher level.
+                        buff = new ActiveBuff(creator, skill)
+                        {
+                            ResetTime = resetTime
+                        };
+                        if (skill.IsPassive)
+                            PassiveBuffs.Add(buff);
+                        else
+                            ActiveBuffs.Add(buff);
+                    }
                 }
             }
             else
@@ -376,6 +396,20 @@ namespace Imgeneus.World.Game
                         sprinterBuff.CancelBuff();
                     break;
 
+                case TypeDetail.WeaponMastery:
+                    if (!_weaponSpeedPassiveSkillModificator.ContainsKey(skill.Weapon1))
+                        _weaponSpeedPassiveSkillModificator.Add(skill.Weapon1, skill.Weaponvalue);
+                    else
+                        _weaponSpeedPassiveSkillModificator[skill.Weapon1] = skill.Weaponvalue;
+
+                    if (!_weaponSpeedPassiveSkillModificator.ContainsKey(skill.Weapon2))
+                        _weaponSpeedPassiveSkillModificator.Add(skill.Weapon2, skill.Weaponvalue);
+                    else
+                        _weaponSpeedPassiveSkillModificator[skill.Weapon2] = skill.Weaponvalue;
+
+                    SendMoveAndAttackSpeed();
+                    break;
+
                 default:
                     throw new NotImplementedException("Not implemented buff skill type.");
             }
@@ -431,6 +465,13 @@ namespace Imgeneus.World.Game
 
                 case TypeDetail.Stealth:
                     IsStealth = ActiveBuffs.Any(b => _databasePreloader.Skills[(b.SkillId, b.SkillLevel)].TypeDetail == TypeDetail.Stealth);
+                    break;
+
+                case TypeDetail.WeaponMastery:
+                    _weaponSpeedPassiveSkillModificator.Remove(skill.Weapon1);
+                    _weaponSpeedPassiveSkillModificator.Remove(skill.Weapon2);
+
+                    SendMoveAndAttackSpeed();
                     break;
 
                 default:
@@ -883,6 +924,11 @@ namespace Imgeneus.World.Game
         /// Additional attack power.
         /// </summary>
         protected int _skillMagicAttackPower;
+
+        /// <summary>
+        /// Wapon speed calculated from passive skill. Key is weapon, value is speed modificator.
+        /// </summary>
+        protected readonly Dictionary<byte, byte> _weaponSpeedPassiveSkillModificator = new Dictionary<byte, byte>();
 
         #endregion
 

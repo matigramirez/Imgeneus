@@ -528,5 +528,79 @@ namespace Imgeneus.World.Game.Player
                 Count = Count,
             };
         }
+
+        /// <summary>
+        /// Transforms weapon type to passive skill type.
+        /// </summary>
+        public byte ToPassiveSkillType()
+        {
+            switch (Type)
+            {
+                case 1:
+                case 45:
+                    return 1; // 1 Handed Sword
+
+                case 2:
+                case 46:
+                    return 2; // 2 Handed Sword.
+
+                case 3:
+                case 47:
+                    return 3; // 1 Handed Axe.
+
+                case 4:
+                case 48:
+                    return 4; // 2 Handed Axe.
+
+                case 5:
+                case 49:
+                case 50:
+                    return 5; // Double sword.
+
+                case 6:
+                case 51:
+                case 52:
+                    return 6; // Spear.
+
+                case 7:
+                case 53:
+                case 54:
+                    return 7; // 1 Handed blunt.
+
+                case 8:
+                case 55:
+                case 56:
+                    return 8; // 2 Handed blunt.
+
+                case 9:
+                case 57:
+                    return 9; // Reverse sword.
+
+                case 11:
+                case 59:
+                    return 11; // Javelin.
+
+                case 12:
+                case 60:
+                case 61:
+                    return 12; // Staff.
+
+                case 13:
+                case 62:
+                case 63:
+                    return 13; // Bow.
+
+                case 14:
+                case 64:
+                    return 14; // Crossbow.
+
+                case 15:
+                case 65:
+                    return 15; // Knuckle.
+
+                default:
+                    return 0;
+            }
+        }
     }
 }

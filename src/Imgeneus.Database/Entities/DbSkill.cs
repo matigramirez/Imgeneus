@@ -250,17 +250,17 @@ namespace Imgeneus.Database.Entities
         public int KeepTime { get; set; }
 
         /// <summary>
-        /// TODO: ?
+        /// Only for passive skills; Weapon type to which passive skill speed modificator can be applied.
         /// </summary>
         public byte Weapon1 { get; set; }
 
         /// <summary>
-        /// TODO: ?
+        /// Only for passive skills; Weapon type to which passive skill speed modificator can be applied.
         /// </summary>
         public byte Weapon2 { get; set; }
 
         /// <summary>
-        /// TODO: ?
+        /// Only for passive skills; passive skill speed modificator.
         /// </summary>
         public byte Weaponvalue { get; set; }
 

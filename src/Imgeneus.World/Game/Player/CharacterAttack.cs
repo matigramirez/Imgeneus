@@ -258,6 +258,7 @@ namespace Imgeneus.World.Game.Player
                         break;
 
                     case TypeDetail.PassiveDefence:
+                    case TypeDetail.WeaponMastery:
                         t.AddActiveBuff(skill, this);
                         break;
 

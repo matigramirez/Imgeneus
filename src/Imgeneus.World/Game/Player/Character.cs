@@ -258,13 +258,18 @@ namespace Imgeneus.World.Game.Player
                 if (_weaponSpeed == 0)
                     return AttackSpeed.None;
 
-                if (_weaponSpeed + _attackSpeedModifier < 0)
+                var weaponType = Weapon.ToPassiveSkillType();
+                _weaponSpeedPassiveSkillModificator.TryGetValue(weaponType, out var passiveSkillModifier);
+
+                var finalSpeed = _weaponSpeed + _attackSpeedModifier + passiveSkillModifier;
+
+                if (finalSpeed < 0)
                     return AttackSpeed.ExteremelySlow;
 
-                if (_weaponSpeed + _attackSpeedModifier > 9)
+                if (finalSpeed > 9)
                     return AttackSpeed.ExteremelyFast;
 
-                return (AttackSpeed)(_weaponSpeed + _attackSpeedModifier);
+                return (AttackSpeed)finalSpeed;
             }
         }
 

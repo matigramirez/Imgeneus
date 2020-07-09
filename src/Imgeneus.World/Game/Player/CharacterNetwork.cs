@@ -338,7 +338,10 @@ namespace Imgeneus.World.Game.Player
 
         private void SendCooldownNotOver(IKillable target, Skill skill) => _packetsHelper.SendCooldownNotOver(Client, this, target, skill);
 
-        protected override void SendMoveAndAttackSpeed() => _packetsHelper.SendMoveAndAttackSpeed(Client, this);
+        protected override void SendMoveAndAttackSpeed()
+        {
+            if (Client != null) _packetsHelper.SendMoveAndAttackSpeed(Client, this);
+        }
 
         private void SendRunMode() => _packetsHelper.SendRunMode(Client, this);
 

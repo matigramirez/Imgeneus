@@ -30,6 +30,30 @@ namespace Imgeneus.World.Tests
             AbilityValue1 = 110
         };
 
+        private DbSkill SharpenWeaponMastery_Lvl1 = new DbSkill()
+        {
+            SkillId = 15,
+            SkillLevel = 1,
+            TypeDetail = TypeDetail.WeaponMastery,
+            SkillName = "Sharpen Weapon Mastery Lvl 1",
+            TypeAttack = TypeAttack.Passive,
+            Weapon1 = 1,
+            Weapon2 = 3,
+            Weaponvalue = 1
+        };
+
+        private DbSkill SharpenWeaponMastery_Lvl2 = new DbSkill()
+        {
+            SkillId = 15,
+            SkillLevel = 2,
+            TypeDetail = TypeDetail.WeaponMastery,
+            SkillName = "Sharpen Weapon Mastery Lvl 2",
+            TypeAttack = TypeAttack.Passive,
+            Weapon1 = 1,
+            Weapon2 = 3,
+            Weaponvalue = 2
+        };
+
         public CharacterPassiveSkillsTest()
         {
             databasePreloader
@@ -37,7 +61,15 @@ namespace Imgeneus.World.Tests
                 .Returns(new Dictionary<(ushort SkillId, byte SkillLevel), DbSkill>()
                 {
                     { (1, 1) , StrengthTraining },
-                    { (14, 1), ManaTraining }
+                    { (14, 1), ManaTraining },
+                    { (15, 1), SharpenWeaponMastery_Lvl1 },
+                    { (15, 2), SharpenWeaponMastery_Lvl2 }
+                });
+
+            databasePreloader
+                .SetupGet((preloader) => preloader.Items)
+                .Returns(new Dictionary<(byte Type, byte TypeId), DbItem>() {
+                    { (1,1), new DbItem() { Type = 1, TypeId = 1, ItemName = "Long Sword", AttackTime = 5 } }
                 });
         }
 
@@ -72,6 +104,28 @@ namespace Imgeneus.World.Tests
             character.AddActiveBuff(new Skill(ManaTraining, 0, 0), null);
 
             Assert.Equal(200 + ManaTraining.AbilityValue1, character.MaxMP);
+        }
+
+        [Fact]
+        public void WeaponMasteryTest()
+        {
+            var character = new Character(loggerMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object)
+            {
+                Class = CharacterProfession.Fighter,
+            };
+            var sword = new Item(databasePreloader.Object, 1, 1);
+            Assert.Equal(AttackSpeed.None, character.AttackSpeed);
+
+            character.Weapon = sword;
+            Assert.Equal(AttackSpeed.Normal, character.AttackSpeed);
+
+            // Learn passive skill lvl 1.
+            character.LearnNewSkill(15, 1);
+            Assert.Equal(AttackSpeed.ABitFast, character.AttackSpeed);
+
+            // Learn passive skill lvl 2.
+            character.LearnNewSkill(15, 2);
+            Assert.Equal(AttackSpeed.Fast, character.AttackSpeed);
         }
     }
 }

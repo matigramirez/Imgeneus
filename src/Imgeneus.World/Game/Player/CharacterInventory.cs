@@ -22,7 +22,7 @@ namespace Imgeneus.World.Game.Player
         /// Worm helmet. Set it through <see cref="Helmet"/>.
         /// </summary>
         private Item _helmet;
-        private Item Helmet
+        public Item Helmet
         {
             get => _helmet;
             set
@@ -44,7 +44,7 @@ namespace Imgeneus.World.Game.Player
         /// Worm armor. Set it through <see cref="Armor"/>.
         /// </summary>
         private Item _armor;
-        private Item Armor
+        public Item Armor
         {
             get => _armor;
             set
@@ -65,7 +65,7 @@ namespace Imgeneus.World.Game.Player
         /// Worm pants. Set it through <see cref="Pants"/>.
         /// </summary>
         private Item _pants;
-        private Item Pants
+        public Item Pants
         {
             get => _pants;
             set
@@ -86,7 +86,7 @@ namespace Imgeneus.World.Game.Player
         /// Worm gauntlet. Set it through <see cref="Gauntlet"/>.
         /// </summary>
         private Item _gauntlet;
-        private Item Gauntlet
+        public Item Gauntlet
         {
             get => _gauntlet;
             set
@@ -107,7 +107,7 @@ namespace Imgeneus.World.Game.Player
         /// Worm boots. Set it through <see cref="Boots"/>.
         /// </summary>
         private Item _boots;
-        private Item Boots
+        public Item Boots
         {
             get => _boots;
             set
@@ -128,7 +128,7 @@ namespace Imgeneus.World.Game.Player
         /// Worm weapon. Set it through <see cref="Weapon"/>.
         /// </summary>
         private Item _weapon;
-        private Item Weapon
+        public Item Weapon
         {
             get => _weapon;
             set
@@ -155,7 +155,7 @@ namespace Imgeneus.World.Game.Player
         /// Worm shield. Set it through <see cref="Shield"/>.
         /// </summary>
         private Item _shield;
-        private Item Shield
+        public Item Shield
         {
             get => _shield;
             set
@@ -176,7 +176,7 @@ namespace Imgeneus.World.Game.Player
         /// Worm cape. Set it through <see cref="Cape"/>.
         /// </summary>
         private Item _cape;
-        private Item Cape
+        public Item Cape
         {
             get => _cape;
             set
@@ -197,7 +197,7 @@ namespace Imgeneus.World.Game.Player
         /// Worm amulet. Set it through <see cref="Amulet"/>.
         /// </summary>
         private Item _amulet;
-        private Item Amulet
+        public Item Amulet
         {
             get => _amulet;
             set
@@ -218,7 +218,7 @@ namespace Imgeneus.World.Game.Player
         /// Worm ring1. Set it through <see cref="Ring1"/>.
         /// </summary>
         private Item _ring1;
-        private Item Ring1
+        public Item Ring1
         {
             get => _ring1;
             set
@@ -239,7 +239,7 @@ namespace Imgeneus.World.Game.Player
         /// Worm ring2. Set it through <see cref="Ring2"/>.
         /// </summary>
         private Item _ring2;
-        private Item Ring2
+        public Item Ring2
         {
             get => _ring2;
             set
@@ -260,7 +260,7 @@ namespace Imgeneus.World.Game.Player
         /// Worm bracelet1. Set it through <see cref="Bracelet1"/>.
         /// </summary>
         private Item _bracelet1;
-        private Item Bracelet1
+        public Item Bracelet1
         {
             get => _bracelet1;
             set
@@ -281,7 +281,7 @@ namespace Imgeneus.World.Game.Player
         /// Worm bracelet2. Set it through <see cref="Bracelet2"/>.
         /// </summary>
         private Item _bracelet2;
-        private Item Bracelet2
+        public Item Bracelet2
         {
             get => _bracelet2;
             set
@@ -302,7 +302,7 @@ namespace Imgeneus.World.Game.Player
         /// Worm mount. Set it through <see cref="Mount"/>.
         /// </summary>
         private Item _mount;
-        private Item Mount
+        public Item Mount
         {
             get => _mount;
             set
@@ -323,7 +323,7 @@ namespace Imgeneus.World.Game.Player
         /// Worm pet. Set it through <see cref="Pet"/>.
         /// </summary>
         private Item _pet;
-        private Item Pet
+        public Item Pet
         {
             get => _pet;
             set
@@ -344,7 +344,7 @@ namespace Imgeneus.World.Game.Player
         /// Worm costume. Set it through <see cref="Costume"/>.
         /// </summary>
         private Item _costume;
-        private Item Costume
+        public Item Costume
         {
             get => _costume;
             set
@@ -365,7 +365,7 @@ namespace Imgeneus.World.Game.Player
         /// Worm wings. Set it through <see cref="Wings"/>.
         /// </summary>
         private Item _wings;
-        private Item Wings
+        public Item Wings
         {
             get => _wings;
             set

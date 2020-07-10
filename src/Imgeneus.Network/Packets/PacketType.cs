@@ -64,6 +64,7 @@
 
         MOB_MOVE = 0x0603, // 1539
         MOB_ATTACK = 0x0605, // 1541
+        MOB_DEATH = 0x0606, // 1542
 
         // Char skills
         LEARN_NEW_SKILL = 0x209,

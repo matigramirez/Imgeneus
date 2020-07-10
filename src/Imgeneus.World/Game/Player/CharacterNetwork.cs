@@ -145,7 +145,7 @@ namespace Imgeneus.World.Game.Player
                     // TODO: find out way to preload all awailable mobs.
                     using (var database = DependencyContainer.Instance.Resolve<IDatabase>())
                     {
-                        var mob = new Mob(DependencyContainer.Instance.Resolve<ILogger<Mob>>(), _databasePreloader, gMCreateMobPacket.MobId);
+                        var mob = new Mob(DependencyContainer.Instance.Resolve<ILogger<Mob>>(), _databasePreloader, gMCreateMobPacket.MobId, false);
 
                         // TODO: mobs should be generated near character, not on his position directly.
                         mob.PosX = PosX;

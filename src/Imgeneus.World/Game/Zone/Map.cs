@@ -1,8 +1,4 @@
-﻿using Imgeneus.Core.DependencyInjection;
-using Imgeneus.Database;
-using Imgeneus.Database.Constants;
-using Imgeneus.Network.Packets.Game;
-using Imgeneus.Network.Server;
+﻿using Imgeneus.Database.Constants;
 using Imgeneus.World.Game.Monster;
 using Imgeneus.World.Game.PartyAndRaid;
 using Imgeneus.World.Game.Player;
@@ -356,6 +352,8 @@ namespace Imgeneus.World.Game.Zone
             if (success)
             {
                 mob.Id = id;
+                AddListeners(mob);
+
                 _logger.LogDebug($"Mob {mob.MobId} entered game world");
 
                 foreach (var player in Players)
@@ -393,6 +391,40 @@ namespace Imgeneus.World.Game.Zone
         }
 
         /// <summary>
+        /// Adds listeners to mob events.
+        /// </summary>
+        /// <param name="mob">mob, that we listen</param>
+        private void AddListeners(Mob mob)
+        {
+            mob.OnDead += Mob_OnDead;
+        }
+
+        /// <summary>
+        /// Removes listeners from mob.
+        /// </summary>
+        /// <param name="mob">mob, that we listen</param>
+        private void RemoveListeners(Mob mob)
+        {
+            mob.OnDead -= Mob_OnDead;
+        }
+
+        private void Mob_OnDead(IKillable sender, IKiller killer)
+        {
+            foreach (var player in Players)
+                _packetHelper.SendMobDead(player.Value.Client, sender, killer);
+
+            var mob = (Mob)sender;
+            if (!mob.ShouldRebirth)
+            {
+                RemoveListeners(mob);
+                if (!Mobs.TryRemove(mob.Id, out var removedMob))
+                {
+                    _logger.LogError($"Could not remove mob {mob.Id} from map.");
+                }
+            }
+        }
+
+        /// <summary>
         /// Tries to get mob from map.
         /// </summary>
         /// <param name="mobId">id of mob, that you are trying to get.</param>
@@ -412,7 +444,7 @@ namespace Imgeneus.World.Game.Zone
         /// </summary>
         public IEnumerable<IKillable> GetEnemies(Character sender, IKillable target, byte applyRange)
         {
-            IEnumerable<IKillable> mobs = Mobs.Values.Where(m => Distance(target.PosX, m.PosX, target.PosZ, m.PosZ) <= applyRange);
+            IEnumerable<IKillable> mobs = Mobs.Values.Where(m => !m.IsDead && Distance(target.PosX, m.PosX, target.PosZ, m.PosZ) <= applyRange);
             IEnumerable<IKillable> chars = Players.Values.Where(p => p.Country != sender.Country && Distance(target.PosX, p.PosX, target.PosZ, p.PosZ) <= applyRange);
 
             return mobs.Concat(chars);

@@ -256,5 +256,14 @@ namespace Imgeneus.World.Packets
             packet.Write(sender.Id);
             client.SendPacket(packet);
         }
+
+        internal void SendMobDead(WorldClient client, IKillable sender, IKiller killer)
+        {
+            using var packet = new Packet(PacketType.MOB_DEATH);
+            packet.Write(sender.Id);
+            packet.WriteByte(1); // killer type. Always 1, since only player can kill the mob.
+            packet.Write(killer.Id);
+            client.SendPacket(packet);
+        }
     }
 }

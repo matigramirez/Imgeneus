@@ -10,19 +10,30 @@ namespace Imgeneus.World.Game.Monster
         private readonly ILogger<Mob> _logger;
         private readonly DbMob _dbMob;
 
-        public Mob(ILogger<Mob> logger, IDatabasePreloader databasePreloader, ushort mobId) : base(databasePreloader)
+        public Mob(ILogger<Mob> logger, IDatabasePreloader databasePreloader, ushort mobId, bool shouldRebirth) : base(databasePreloader)
         {
             _logger = logger;
             _dbMob = databasePreloader.Mobs[mobId];
 
             CurrentHP = _dbMob.HP;
             Level = _dbMob.Level;
+            ShouldRebirth = shouldRebirth;
+
+            if (ShouldRebirth)
+            {
+                OnDead += MobRebirth_OnDead;
+            }
         }
 
         /// <summary>
         /// Mob id from database.
         /// </summary>
         public ushort MobId => _dbMob.Id;
+
+        /// <summary>
+        /// Indicator, that shows if mob should rebirth after its' death.
+        /// </summary>
+        public bool ShouldRebirth { get; }
 
         #region Totel stats
 

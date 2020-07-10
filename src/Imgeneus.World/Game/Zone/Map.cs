@@ -354,11 +354,11 @@ namespace Imgeneus.World.Game.Zone
                 mob.Id = id;
                 AddListeners(mob);
 
-                _logger.LogDebug($"Mob {mob.MobId} entered game world");
+                _logger.LogDebug($"Mob {mob.MobId} with global id {mob.Id} entered map {Id}");
 
                 foreach (var player in Players)
                 {
-                    _packetHelper.SendMobEntered(player.Value.Client, mob);
+                    _packetHelper.SendMobEntered(player.Value.Client, mob, true);
                 }
 
 
@@ -410,18 +410,38 @@ namespace Imgeneus.World.Game.Zone
 
         private void Mob_OnDead(IKillable sender, IKiller killer)
         {
+            var mob = (Mob)sender;
+            RemoveListeners(mob);
+            if (!Mobs.TryRemove(mob.Id, out var removedMob))
+            {
+                _logger.LogError($"Could not remove mob {mob.Id} from map.");
+            }
+
             foreach (var player in Players)
                 _packetHelper.SendMobDead(player.Value.Client, sender, killer);
 
-            var mob = (Mob)sender;
-            if (!mob.ShouldRebirth)
+
+            if (mob.ShouldRebirth)
             {
-                RemoveListeners(mob);
-                if (!Mobs.TryRemove(mob.Id, out var removedMob))
-                {
-                    _logger.LogError($"Could not remove mob {mob.Id} from map.");
-                }
+                mob.TimeToRebirth += Mob_TimeToRebirth;
             }
+        }
+
+        /// <summary>
+        /// Called, when mob is rebirthed.
+        /// </summary>
+        /// <param name="sender">rebirthed mob</param>
+        private void Mob_TimeToRebirth(Mob sender)
+        {
+            // Create mob clone, because we can not reuse the same id.
+            var mob = sender.Clone();
+
+            // TODO: generate rebirth coordinates based on the spawn area.
+            mob.PosX = sender.PosX;
+            mob.PosY = sender.PosY;
+            mob.PosZ = sender.PosZ;
+
+            AddMob(mob);
         }
 
         /// <summary>
@@ -444,7 +464,7 @@ namespace Imgeneus.World.Game.Zone
         /// </summary>
         public IEnumerable<IKillable> GetEnemies(Character sender, IKillable target, byte applyRange)
         {
-            IEnumerable<IKillable> mobs = Mobs.Values.Where(m => !m.IsDead && Distance(target.PosX, m.PosX, target.PosZ, m.PosZ) <= applyRange);
+            IEnumerable<IKillable> mobs = Mobs.Values.Where(m => Distance(target.PosX, m.PosX, target.PosZ, m.PosZ) <= applyRange);
             IEnumerable<IKillable> chars = Players.Values.Where(p => p.Country != sender.Country && Distance(target.PosX, p.PosX, target.PosZ, p.PosZ) <= applyRange);
 
             return mobs.Concat(chars);

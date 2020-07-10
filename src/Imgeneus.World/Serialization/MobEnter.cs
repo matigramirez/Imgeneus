@@ -21,10 +21,10 @@ namespace Imgeneus.World.Serialization
         [FieldOrder(4)]
         public float PosZ { get; }
 
-        public MobEnter(Mob mob)
+        public MobEnter(Mob mob, bool isNew)
         {
             GlobalId = mob.Id;
-            IsNew = true; // TODO: find out when it can be false;
+            IsNew = isNew; // TODO: find out when it can be false;
             MobId = mob.MobId;
             PosX = mob.PosX;
             PosZ = mob.PosZ;

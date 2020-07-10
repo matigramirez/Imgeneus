@@ -21,6 +21,9 @@ namespace Imgeneus.World.Game.Monster
 
             if (ShouldRebirth)
             {
+                _rebirthTimer.Interval = RespawnTimeInMilliseconds;
+                _rebirthTimer.Elapsed += RebirthTimer_Elapsed;
+
                 OnDead += MobRebirth_OnDead;
             }
         }
@@ -103,5 +106,14 @@ namespace Imgeneus.World.Game.Monster
         public override bool IsStealth { get; protected set; } = false;
 
         #endregion
+
+        /// <summary>
+        /// Creates mob clone.
+        /// </summary>
+        public Mob Clone()
+        {
+            return new Mob(_logger, _databasePreloader, MobId, ShouldRebirth);
+        }
+
     }
 }

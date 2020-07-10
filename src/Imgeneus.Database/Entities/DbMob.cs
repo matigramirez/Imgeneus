@@ -155,35 +155,134 @@ namespace Imgeneus.Database.Entities
         public byte ChaseRange { get; set; }
 
         #region Attack 1
-        public ushort AttackType1 { get; set; }
+
+        /// <summary>
+        ///  List of skills (NpcSkills.sdata).
+        /// </summary>
+        public MobAttackType AttackType1 { get; set; }
+
+        /// <summary>
+        /// Delay.
+        /// </summary>
         public int AttackTime1 { get; set; }
+
+        /// <summary>
+        /// Range.
+        /// </summary>
         public byte AttackRange1 { get; set; }
+
+        /// <summary>
+        /// Damage.
+        /// </summary>
         public short Attack1 { get; set; }
+
+        /// <summary>
+        /// Additional damage.
+        /// </summary>
         public ushort AttackPlus1 { get; set; }
+
+        /// <summary>
+        /// Element.
+        /// </summary>
         public byte AttackAttrib1 { get; set; }
+
+        /// <summary>
+        /// Param.
+        /// </summary>
         public byte AttackSpecial1 { get; set; }
+
+        /// <summary>
+        /// On/off.
+        /// </summary>
         public byte AttackOk1 { get; set; }
         #endregion
 
         #region Attack 2
-        public ushort AttackType2 { get; set; }
+
+        /// <summary>
+        ///  List of skills (NpcSkills.sdata).
+        /// </summary>
+        public MobAttackType AttackType2 { get; set; }
+
+        /// <summary>
+        /// Delay.
+        /// </summary>
         public int AttackTime2 { get; set; }
+
+        /// <summary>
+        /// Range.
+        /// </summary>
         public byte AttackRange2 { get; set; }
+
+        /// <summary>
+        /// Damage.
+        /// </summary>
         public short Attack2 { get; set; }
+
+        /// <summary>
+        /// Additional damage.
+        /// </summary>
         public ushort AttackPlus2 { get; set; }
+
+        /// <summary>
+        /// Element.
+        /// </summary>
         public byte AttackAttrib2 { get; set; }
+
+        /// <summary>
+        /// Param.
+        /// </summary>
         public byte AttackSpecial2 { get; set; }
+
+        /// <summary>
+        /// On/off.
+        /// </summary>
         public byte AttackOk2 { get; set; }
         #endregion
 
+        //  AtkAttack.3 is the respawn delay (if presented?)
+        // https://www.elitepvpers.com/forum/shaiya-pserver-development/3532706-how-change-mob-respawns-time.html#post30486297
+        // https://www.elitepvpers.com/forum/shaiya-pserver-development/4298648-question-mob-respawn-time.html
         #region Attack 3
-        public ushort AttackType3 { get; set; }
+
+        /// <summary>
+        ///  List of skills (NpcSkills.sdata).
+        /// </summary>
+        public MobAttackType AttackType3 { get; set; }
+
+        /// <summary>
+        /// Delay.
+        /// </summary>
         public int AttackTime3 { get; set; }
+
+        /// <summary>
+        /// Range.
+        /// </summary>
         public byte AttackRange3 { get; set; }
+
+        /// <summary>
+        /// Damage.
+        /// </summary>
         public short Attack3 { get; set; }
+
+        /// <summary>
+        /// Additional damage.
+        /// </summary>
         public ushort AttackPlus3 { get; set; }
+
+        /// <summary>
+        /// Element.
+        /// </summary>
         public byte AttackAttrib3 { get; set; }
-        public byte AttackSpecial3 { get; set; }
+
+        /// <summary>
+        /// Param, probably respawn time according to forum discussions.
+        /// </summary>
+        public MobRespawnTime AttackSpecial3 { get; set; }
+
+        /// <summary>
+        /// ?
+        /// </summary>
         public byte AttackOk3 { get; set; }
         #endregion
 

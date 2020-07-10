@@ -22,14 +22,12 @@ namespace Imgeneus.World.Game.Player
         private readonly ICharacterConfiguration _characterConfig;
         private readonly IBackgroundTaskQueue _taskQueue;
         private readonly CharacterPacketsHelper _packetsHelper;
-        private readonly IDatabasePreloader _databasePreloader;
 
         public Character(ILogger<Character> logger, ICharacterConfiguration characterConfig, IBackgroundTaskQueue taskQueue, IDatabasePreloader databasePreloader) : base(databasePreloader)
         {
             _logger = logger;
             _characterConfig = characterConfig;
             _taskQueue = taskQueue;
-            _databasePreloader = databasePreloader;
             _packetsHelper = new CharacterPacketsHelper();
 
             InventoryItems.CollectionChanged += InventoryItems_CollectionChanged;

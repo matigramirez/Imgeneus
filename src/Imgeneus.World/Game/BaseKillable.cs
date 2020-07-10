@@ -14,7 +14,7 @@ namespace Imgeneus.World.Game
     /// </summary>
     public abstract class BaseKillable : IKillable, IDisposable
     {
-        private readonly IDatabasePreloader _databasePreloader;
+        protected readonly IDatabasePreloader _databasePreloader;
 
         public BaseKillable(IDatabasePreloader databasePreloader)
         {

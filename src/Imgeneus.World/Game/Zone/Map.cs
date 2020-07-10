@@ -412,6 +412,9 @@ namespace Imgeneus.World.Game.Zone
         {
             var mob = (Mob)sender;
             RemoveListeners(mob);
+            if (mob.ShouldRebirth)
+                mob.TimeToRebirth += Mob_TimeToRebirth;
+
             if (!Mobs.TryRemove(mob.Id, out var removedMob))
             {
                 _logger.LogError($"Could not remove mob {mob.Id} from map.");
@@ -419,12 +422,6 @@ namespace Imgeneus.World.Game.Zone
 
             foreach (var player in Players)
                 _packetHelper.SendMobDead(player.Value.Client, sender, killer);
-
-
-            if (mob.ShouldRebirth)
-            {
-                mob.TimeToRebirth += Mob_TimeToRebirth;
-            }
         }
 
         /// <summary>

@@ -20,6 +20,7 @@
         Days_3 = 12,
         Days_5 = 13,
         Days_7 = 14,
-        GRB = 15 // 7 days - 2 hours?
+        GRB = 15, // 7 days - 2 hours?
+        TestEnv = 16 // Only for tests.
     }
 }

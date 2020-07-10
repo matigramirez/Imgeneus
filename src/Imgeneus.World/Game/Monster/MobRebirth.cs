@@ -61,6 +61,9 @@ namespace Imgeneus.World.Game.Monster
                     case Database.Constants.MobRespawnTime.GRB:
                         return new TimeSpan(7, 0, 0, 0).Subtract(new TimeSpan(2, 0, 0)).TotalMilliseconds;
 
+                    case Database.Constants.MobRespawnTime.TestEnv:
+                        return 1;
+
                     default:
                         throw new NotImplementedException("Not implemented respawn time.");
                 }

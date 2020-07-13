@@ -30,9 +30,9 @@ namespace Imgeneus.Database.Entities
         public short Exp { get; set; }
 
         /// <summary>
-        /// Ai type. Maybe can be enum?
+        /// Ai type.
         /// </summary>
-        public byte AI { get; set; }
+        public MobAI AI { get; set; }
 
         /// <summary>
         /// Min amount of money, that character can get from the mob.

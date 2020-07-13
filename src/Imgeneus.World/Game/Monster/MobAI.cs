@@ -3,6 +3,8 @@ using Imgeneus.Database.Constants;
 using Imgeneus.World.Game.Player;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Linq;
+using System.Numerics;
 using System.Timers;
 
 namespace Imgeneus.World.Game.Monster
@@ -36,11 +38,25 @@ namespace Imgeneus.World.Game.Monster
             {
                 _state = value;
 
+                _logger.LogDebug($"Mob {Id} changed state to {_state}.");
+
                 switch (_state)
                 {
                     case MobState.Idle:
                         _idleTimer.Start();
-                        MoveMotion = MobMotion.Walk;
+
+                        // If this is combat mob start watching as soon as it's in idle state.
+                        if (AI != MobAI.Peaceful && AI != MobAI.Peaceful2)
+                            _watchTimer.Start();
+                        break;
+
+                    case MobState.Chase:
+                        StartChasing();
+                        break;
+
+                    case MobState.BackToBirthPosition:
+                        StopChasing();
+                        // TODO: return to birth position.
                         break;
 
                     default:
@@ -56,7 +72,16 @@ namespace Imgeneus.World.Game.Monster
         private void SetupAITimers()
         {
             _idleTimer.Interval = _dbMob.NormalTime * 10;
+            _idleTimer.AutoReset = false;
             _idleTimer.Elapsed += IdleTimer_Elapsed;
+
+            _watchTimer.Interval = 1000; // 1 second
+            _idleTimer.AutoReset = false;
+            _watchTimer.Elapsed += WatchTimer_Elapsed;
+
+            _chaseTimer.Interval = 500; // 0.5 second
+            _chaseTimer.AutoReset = false;
+            _chaseTimer.Elapsed += ChaseTimer_Elapsed;
         }
 
         /// <summary>
@@ -69,12 +94,12 @@ namespace Imgeneus.World.Game.Monster
 
         #endregion
 
-        #region Idle state
+        #region Idle
 
         /// <summary>
         /// Mob walks around each N seconds, when he is in idle state.
         /// </summary>
-        private Timer _idleTimer = new Timer();
+        private readonly Timer _idleTimer = new Timer();
 
         private void IdleTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
@@ -129,13 +154,129 @@ namespace Imgeneus.World.Game.Monster
         /// <summary>
         /// Describes if mob is "walking" or "running".
         /// </summary>
-        public MobMotion MoveMotion { get; private set; }
+        public MobMotion MoveMotion
+        {
+            get
+            {
+                switch (State)
+                {
+                    case MobState.Idle:
+                        return MobMotion.Walk;
+
+                    case MobState.Chase:
+                    case MobState.BackToBirthPosition:
+                    case MobState.ReadyToAttack:
+                        return MobMotion.Run;
+
+                    default:
+                        return MobMotion.Run;
+                }
+            }
+        }
+
+        #endregion
+
+        #region Watch
+
+        /// <summary>
+        /// This timer triggers call to map in order to get list of players near by.
+        /// </summary>
+        private readonly Timer _watchTimer = new Timer();
+
+        private void WatchTimer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            if (State != MobState.Idle)
+                return;
+
+            var players = Map.GetPlayers(PosX, PosZ, _dbMob.ChaseRange);
+
+            // No players, keep watching.
+            if (!players.Any())
+            {
+                _watchTimer.Start();
+                return;
+            }
+
+            // There is some player in vision.
+            Target = players.First();
+            State = MobState.Chase;
+        }
+
+        #endregion
+
+        #region Chase
+
+        /// <summary>
+        /// Chase timer triggers check if mob should follow user.
+        /// </summary>
+        private readonly Timer _chaseTimer = new Timer();
+
+        /// <summary>
+        /// Time, that is used to calculate delta time, which is used in speed calculation.
+        /// </summary>
+        private DateTime _lastChaseTime;
+
+        /// <summary>
+        /// Since when we sent the last update to players about mob position.
+        /// </summary>
+        private DateTime _lastMoveUpdate;
+
+        /// <summary>
+        /// Start chasing player.
+        /// </summary>
+        private void StartChasing()
+        {
+            _chaseTimer.Start();
+            _lastChaseTime = DateTime.UtcNow;
+        }
+
+        private void StopChasing()
+        {
+            _chaseTimer.Stop();
+        }
+
+        private void ChaseTimer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            var now = DateTime.UtcNow;
+
+            if (MathExtensions.Distance(PosX, Target.PosX, PosZ, Target.PosZ) <= _dbMob.AttackRange1)
+            {
+                // TODO: use attack 1.
+                _logger.LogDebug("Got close to target player");
+                _lastChaseTime = now;
+                _chaseTimer.Start();
+                return;
+            }
+
+            var mobVector = new Vector2(PosX, PosZ);
+            var playerVector = new Vector2(Target.PosX, Target.PosZ);
+
+            var normalizedVector = Vector2.Normalize(playerVector - mobVector);
+            var deltaTime = now.Subtract(_lastChaseTime);
+            var temp = normalizedVector * (float)(_dbMob.ChaseStep * 1.0 / _dbMob.ChaseTime * deltaTime.TotalMilliseconds);
+            PosX += float.IsNaN(temp.X) ? 0 : temp.X;
+            PosZ += float.IsNaN(temp.Y) ? 0 : temp.Y;
+
+            _lastChaseTime = now;
+
+            // Send update to players, that mob position has changed.
+            if (DateTime.UtcNow.Subtract(_lastMoveUpdate).TotalMilliseconds > 1000)
+            {
+                OnMove?.Invoke(this);
+                _lastMoveUpdate = now;
+            }
+
+            _chaseTimer.Start();
+        }
 
         #endregion
 
         #region Attack
 
-        public int TargetId;
+        /// <summary>
+        /// Mob's target.
+        /// </summary>
+        public IKillable Target { get; private set; }
 
         /// <inheritdoc />
         public override AttackSpeed AttackSpeed => AttackSpeed.Normal;
@@ -150,15 +291,23 @@ namespace Imgeneus.World.Game.Monster
         /// </summary>
         public void EmulateAttack(int targetId)
         {
-            TargetId = targetId;
             var timer = new Timer();
             timer.Interval = 3000; // 3 seconds.
             timer.Elapsed += (s, e) =>
             {
                 timer.Stop();
-                OnAttack?.Invoke(this, TargetId);
+                OnAttack?.Invoke(this, Target.Id);
             };
             timer.Start();
+        }
+
+        /// <summary>
+        /// Clears target.
+        /// </summary>
+        public void ClearTarget()
+        {
+            State = MobState.BackToBirthPosition;
+            Target = null;
         }
 
         #endregion

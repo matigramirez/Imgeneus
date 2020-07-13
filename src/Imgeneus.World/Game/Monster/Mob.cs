@@ -1,6 +1,7 @@
 ﻿using Imgeneus.Database.Constants;
 using Imgeneus.Database.Entities;
 using Imgeneus.Database.Preload;
+using Imgeneus.World.Game.Zone;
 using Microsoft.Extensions.Logging;
 using System;
 
@@ -11,7 +12,12 @@ namespace Imgeneus.World.Game.Monster
         private readonly ILogger<Mob> _logger;
         private readonly DbMob _dbMob;
 
-        public Mob(ILogger<Mob> logger, IDatabasePreloader databasePreloader, ushort mobId, bool shouldRebirth, MoveArea moveArea) : base(databasePreloader)
+        public Mob(ILogger<Mob> logger,
+                   IDatabasePreloader databasePreloader,
+                   ushort mobId,
+                   bool shouldRebirth,
+                   MoveArea moveArea,
+                   Map map) : base(databasePreloader)
         {
             _logger = logger;
             _dbMob = databasePreloader.Mobs[mobId];
@@ -21,6 +27,7 @@ namespace Imgeneus.World.Game.Monster
             AI = _dbMob.AI;
             ShouldRebirth = shouldRebirth;
             MoveArea = moveArea;
+            Map = map;
 
             if (ShouldRebirth)
             {
@@ -43,6 +50,11 @@ namespace Imgeneus.World.Game.Monster
         /// Indicator, that shows if mob should rebirth after its' death.
         /// </summary>
         public bool ShouldRebirth { get; }
+
+        /// <summary>
+        /// Map, where mob was created.
+        /// </summary>
+        private readonly Map Map;
 
         #region Totel stats
 
@@ -118,7 +130,7 @@ namespace Imgeneus.World.Game.Monster
         /// </summary>
         public Mob Clone()
         {
-            return new Mob(_logger, _databasePreloader, MobId, ShouldRebirth, MoveArea);
+            return new Mob(_logger, _databasePreloader, MobId, ShouldRebirth, MoveArea, Map);
         }
 
         public override void Dispose()

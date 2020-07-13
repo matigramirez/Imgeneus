@@ -38,7 +38,7 @@ namespace Imgeneus.World.Tests
         public async void MobRespawnsAfterDeath()
         {
             var map = new Map(1, mapLoggerMock.Object);
-            var mob = new Mob(mobpLoggerMock.Object, databasePreloader.Object, 1, true, new MoveArea(0, 0, 0, 0, 0, 0));
+            var mob = new Mob(mobpLoggerMock.Object, databasePreloader.Object, 1, true, new MoveArea(0, 0, 0, 0, 0, 0), map);
 
             map.AddMob(mob);
             Assert.NotNull(map.GetMob(1));

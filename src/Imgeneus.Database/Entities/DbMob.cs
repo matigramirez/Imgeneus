@@ -150,7 +150,7 @@ namespace Imgeneus.Database.Entities
         public byte ChaseStep { get; set; }
 
         /// <summary>
-        /// How far mob will chase player?
+        /// How far mob will chase player. Also vision of mob.
         /// </summary>
         public byte ChaseRange { get; set; }
 

@@ -147,7 +147,7 @@ namespace Imgeneus.World.Game.Player
                     {
                         // TODO: calculate move area.
                         var moveArea = new MoveArea(PosX > 10 ? PosX - 10 : 1, PosX + 10, PosY > 10 ? PosY - 10 : PosY, PosY + 10, PosZ > 10 ? PosZ - 10 : 1, PosZ + 10);
-                        var mob = new Mob(DependencyContainer.Instance.Resolve<ILogger<Mob>>(), _databasePreloader, gMCreateMobPacket.MobId, false, moveArea);
+                        var mob = new Mob(DependencyContainer.Instance.Resolve<ILogger<Mob>>(), _databasePreloader, gMCreateMobPacket.MobId, false, moveArea, Map);
 
                         // TODO: mobs should be generated near character, not on his position directly.
                         mob.PosX = PosX;

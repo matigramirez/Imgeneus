@@ -1,10 +1,11 @@
-﻿using Imgeneus.Database.Constants;
+﻿using Imgeneus.Core.Extensions;
+using Imgeneus.Database.Constants;
+using Imgeneus.Database.Entities;
 using Imgeneus.World.Game.Monster;
 using Imgeneus.World.Game.PartyAndRaid;
 using Imgeneus.World.Game.Player;
 using Imgeneus.World.Packets;
 using Microsoft.Extensions.Logging;
-using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
@@ -103,6 +104,11 @@ namespace Imgeneus.World.Game.Zone
                     _packetHelper.SendCharacterLeftMap(player.Value.Client, removedCharacter);
                 }
                 RemoveListeners(character);
+
+                foreach (var mob in Mobs.Values.Where(m => m.Target == character))
+                {
+                    mob.ClearTarget();
+                };
             }
 
             return success;
@@ -460,25 +466,23 @@ namespace Imgeneus.World.Game.Zone
         /// <summary>
         /// Gets enemies near target.
         /// </summary>
-        public IEnumerable<IKillable> GetEnemies(Character sender, IKillable target, byte applyRange)
+        public IEnumerable<IKillable> GetEnemies(Character sender, IKillable target, byte range)
         {
-            IEnumerable<IKillable> mobs = Mobs.Values.Where(m => Distance(target.PosX, m.PosX, target.PosZ, m.PosZ) <= applyRange);
-            IEnumerable<IKillable> chars = Players.Values.Where(p => p.Country != sender.Country && Distance(target.PosX, p.PosX, target.PosZ, p.PosZ) <= applyRange);
+            IEnumerable<IKillable> mobs = Mobs.Values.Where(m => !m.IsDead && MathExtensions.Distance(target.PosX, m.PosX, target.PosZ, m.PosZ) <= range);
+            IEnumerable<IKillable> chars = Players.Values.Where(p => !p.IsDead && p.Country != sender.Country && MathExtensions.Distance(target.PosX, p.PosX, target.PosZ, p.PosZ) <= range);
 
             return mobs.Concat(chars);
         }
 
         /// <summary>
-        /// Calculates distance between 2 points.
+        /// Gets player near point.
         /// </summary>
-        /// <param name="x1">point1 x coordinate</param>
-        /// <param name="x2">point2 x coordinate</param>
-        /// <param name="z1">point1 z coordinate</param>
-        /// <param name="z2">point2 z coordinate</param>
-        /// <returns></returns>
-        private double Distance(float x1, float x2, float z1, float z2)
+        /// <param name="x">x coordinate</param>
+        /// <param name="z">z coordinate</param>
+        /// <param name="fraction">light, dark or both</param>
+        public IEnumerable<IKillable> GetPlayers(float x, float z, byte range, Fraction fraction = Fraction.NotSelected)
         {
-            return Math.Sqrt(Math.Pow(x2 - x1, 2) + Math.Pow(z2 - z1, 2));
+            return Players.Values.Where(p => !p.IsDead && (p.Country == fraction || fraction == Fraction.NotSelected) && MathExtensions.Distance(x, p.PosX, z, p.PosZ) <= range);
         }
 
         #endregion

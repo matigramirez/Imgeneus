@@ -21,7 +21,8 @@ namespace Imgeneus.World.Tests
             Level = 38,
             HP = 2765,
             Element = Database.Constants.Element.Wind1,
-            AttackSpecial3 = Database.Constants.MobRespawnTime.TestEnv
+            AttackSpecial3 = Database.Constants.MobRespawnTime.TestEnv,
+            NormalTime = 1
         };
 
         public MapMobRespawnTest()

@@ -130,22 +130,22 @@ namespace Imgeneus.Database.Entities
         public byte ResistSkill6 { get; set; }
 
         /// <summary>
-        /// ?
+        /// Delay in idle state.
         /// </summary>
         public int NormalTime { get; set; }
 
         /// <summary>
-        /// ?
+        /// Speed of mob in idle state.
         /// </summary>
         public byte NormalStep { get; set; }
 
         /// <summary>
-        /// ?
+        /// Delay in chase state.
         /// </summary>
         public int ChaseTime { get; set; }
 
         /// <summary>
-        /// ?
+        /// Speed of mob in chase state.
         /// </summary>
         public byte ChaseStep { get; set; }
 

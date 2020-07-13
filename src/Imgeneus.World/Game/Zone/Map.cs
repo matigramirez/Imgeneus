@@ -365,16 +365,6 @@ namespace Imgeneus.World.Game.Zone
                 // TODO: I'm investigating all available mob packets now.
                 // Remove it, when start working on AI implementation!
 
-                // Emulates mob move within 3 seconds after it's created.
-                //mob.OnMove += (sender) =>
-                //{
-                //    foreach (var player in Players)
-                //    {
-                //        _packetHelper.SendMobEntered(player.Value.Client, sender);
-                //    }
-                //};
-                //mob.EmulateMovement();
-
                 // Emulates mob attack within 3 seconds after it's created.
                 //mob.OnAttack += (mob, playerId) =>
                 //{
@@ -397,6 +387,7 @@ namespace Imgeneus.World.Game.Zone
         private void AddListeners(Mob mob)
         {
             mob.OnDead += Mob_OnDead;
+            mob.OnMove += Mob_OnMove;
         }
 
         /// <summary>
@@ -406,6 +397,7 @@ namespace Imgeneus.World.Game.Zone
         private void RemoveListeners(Mob mob)
         {
             mob.OnDead -= Mob_OnDead;
+            mob.OnMove -= Mob_OnMove;
         }
 
         private void Mob_OnDead(IKillable sender, IKiller killer)
@@ -415,6 +407,7 @@ namespace Imgeneus.World.Game.Zone
             if (mob.ShouldRebirth)
                 mob.TimeToRebirth += Mob_TimeToRebirth;
 
+            mob.Dispose();
             if (!Mobs.TryRemove(mob.Id, out var removedMob))
             {
                 _logger.LogError($"Could not remove mob {mob.Id} from map.");
@@ -422,6 +415,14 @@ namespace Imgeneus.World.Game.Zone
 
             foreach (var player in Players)
                 _packetHelper.SendMobDead(player.Value.Client, sender, killer);
+        }
+
+        private void Mob_OnMove(Mob sender)
+        {
+            foreach (var player in Players)
+            {
+                _packetHelper.SendMobMove(player.Value.Client, sender);
+            }
         }
 
         /// <summary>

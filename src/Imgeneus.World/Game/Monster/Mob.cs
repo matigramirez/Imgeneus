@@ -2,22 +2,25 @@
 using Imgeneus.Database.Entities;
 using Imgeneus.Database.Preload;
 using Microsoft.Extensions.Logging;
+using System;
 
 namespace Imgeneus.World.Game.Monster
 {
-    public partial class Mob : BaseKillable, IKiller
+    public partial class Mob : BaseKillable, IKiller, IDisposable
     {
         private readonly ILogger<Mob> _logger;
         private readonly DbMob _dbMob;
 
-        public Mob(ILogger<Mob> logger, IDatabasePreloader databasePreloader, ushort mobId, bool shouldRebirth) : base(databasePreloader)
+        public Mob(ILogger<Mob> logger, IDatabasePreloader databasePreloader, ushort mobId, bool shouldRebirth, MoveArea moveArea) : base(databasePreloader)
         {
             _logger = logger;
             _dbMob = databasePreloader.Mobs[mobId];
 
             CurrentHP = _dbMob.HP;
             Level = _dbMob.Level;
+            AI = _dbMob.AI;
             ShouldRebirth = shouldRebirth;
+            MoveArea = moveArea;
 
             if (ShouldRebirth)
             {
@@ -26,6 +29,9 @@ namespace Imgeneus.World.Game.Monster
 
                 OnDead += MobRebirth_OnDead;
             }
+
+            SetupAITimers();
+            State = MobState.Idle;
         }
 
         /// <summary>
@@ -112,7 +118,13 @@ namespace Imgeneus.World.Game.Monster
         /// </summary>
         public Mob Clone()
         {
-            return new Mob(_logger, _databasePreloader, MobId, ShouldRebirth);
+            return new Mob(_logger, _databasePreloader, MobId, ShouldRebirth, MoveArea);
+        }
+
+        public override void Dispose()
+        {
+            base.Dispose();
+            ClearTimers();
         }
 
     }

@@ -159,7 +159,7 @@ namespace Imgeneus.Database.Entities
         /// <summary>
         ///  List of skills (NpcSkills.sdata).
         /// </summary>
-        public MobAttackType AttackType1 { get; set; }
+        public ushort AttackType1 { get; set; }
 
         /// <summary>
         /// Delay.
@@ -202,7 +202,7 @@ namespace Imgeneus.Database.Entities
         /// <summary>
         ///  List of skills (NpcSkills.sdata).
         /// </summary>
-        public MobAttackType AttackType2 { get; set; }
+        public ushort AttackType2 { get; set; }
 
         /// <summary>
         /// Delay.
@@ -248,7 +248,7 @@ namespace Imgeneus.Database.Entities
         /// <summary>
         ///  List of skills (NpcSkills.sdata).
         /// </summary>
-        public MobAttackType AttackType3 { get; set; }
+        public ushort AttackType3 { get; set; }
 
         /// <summary>
         /// Delay.

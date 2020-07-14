@@ -92,6 +92,13 @@ namespace Imgeneus.World.Packets
             client.SendPacket(packet);
         }
 
+        internal void SendMobUsedSkill(WorldClient client, Mob mob, int targetId, Skill skill, AttackResult attackResult)
+        {
+            using var packet = new Packet(PacketType.MOB_SKILL_USE);
+            packet.Write(new MobSkillAttack(mob, targetId, skill, attackResult).Serialize());
+            client.SendPacket(packet);
+        }
+
         internal void SendCharacterChangedEquipment(WorldClient client, int characterId, Item equipmentItem, byte slot)
         {
             using var packet = new Packet(PacketType.SEND_EQUIPMENT);

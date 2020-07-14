@@ -4,6 +4,7 @@ using Imgeneus.Database.Entities;
 using Imgeneus.World.Game.Player;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using System.Timers;
@@ -78,7 +79,7 @@ namespace Imgeneus.World.Game.Monster
             _idleTimer.Elapsed += IdleTimer_Elapsed;
 
             _watchTimer.Interval = 1000; // 1 second
-            _idleTimer.AutoReset = false;
+            _watchTimer.AutoReset = false;
             _watchTimer.Elapsed += WatchTimer_Elapsed;
 
             _chaseTimer.Interval = 500; // 0.5 second
@@ -92,6 +93,35 @@ namespace Imgeneus.World.Game.Monster
         private void ClearTimers()
         {
             _idleTimer.Elapsed -= IdleTimer_Elapsed;
+            _watchTimer.Elapsed -= WatchTimer_Elapsed;
+            _chaseTimer.Elapsed -= ChaseTimer_Elapsed;
+        }
+
+        /// <summary>
+        /// Returns fraction of those players, who are enemies to this mob.
+        /// </summary>
+        public Fraction EnemyPlayersFraction
+        {
+            get
+            {
+                Fraction playerFraction;
+                switch (_dbMob.Fraction)
+                {
+                    case MobFraction.Dark:
+                        playerFraction = Fraction.Light;
+                        break;
+
+                    case MobFraction.Light:
+                        playerFraction = Fraction.Dark;
+                        break;
+
+                    default:
+                        playerFraction = Fraction.NotSelected;
+                        break;
+                }
+
+                return playerFraction;
+            }
         }
 
         #endregion
@@ -190,23 +220,7 @@ namespace Imgeneus.World.Game.Monster
             if (State != MobState.Idle)
                 return;
 
-            Fraction playerFraction;
-            switch (_dbMob.Fraction)
-            {
-                case MobFraction.Dark:
-                    playerFraction = Fraction.Light;
-                    break;
-
-                case MobFraction.Light:
-                    playerFraction = Fraction.Dark;
-                    break;
-
-                default:
-                    playerFraction = Fraction.NotSelected;
-                    break;
-            }
-
-            var players = Map.GetPlayers(PosX, PosZ, _dbMob.ChaseRange, playerFraction);
+            var players = Map.GetPlayers(PosX, PosZ, _dbMob.ChaseRange, EnemyPlayersFraction);
 
             // No players, keep watching.
             if (!players.Any())
@@ -271,7 +285,7 @@ namespace Imgeneus.World.Game.Monster
                 if (useAttack1 && (distanceToPlayer <= _dbMob.AttackRange1 || _dbMob.AttackRange1 == 0))
                 {
                     _logger.LogDebug($"Mob {Id} used attack 1.");
-                    UseAttack(Target, _dbMob.AttackType1, _dbMob.Attack1, _dbMob.AttackAttrib1, _dbMob.AttackPlus1);
+                    Attack(Target, _dbMob.AttackType1, _dbMob.Attack1, _dbMob.AttackAttrib1, _dbMob.AttackPlus1);
                     _nextAttackTime = now.AddMilliseconds(_dbMob.AttackTime1);
                     _lastAttack1Time = now;
                 }
@@ -279,7 +293,7 @@ namespace Imgeneus.World.Game.Monster
                 if (useAttack2 && (distanceToPlayer <= _dbMob.AttackRange2 || _dbMob.AttackRange2 == 0))
                 {
                     _logger.LogDebug($"Mob {Id} used attack 2.");
-                    UseAttack(Target, _dbMob.AttackType2, _dbMob.Attack2, _dbMob.AttackAttrib2, _dbMob.AttackPlus2);
+                    Attack(Target, _dbMob.AttackType2, _dbMob.Attack2, _dbMob.AttackAttrib2, _dbMob.AttackPlus2);
                     _nextAttackTime = now.AddMilliseconds(_dbMob.AttackTime2);
                     _lastAttack2Time = now;
                 }
@@ -287,7 +301,7 @@ namespace Imgeneus.World.Game.Monster
                 if (useAttack3 && (distanceToPlayer <= _dbMob.AttackRange3 || _dbMob.AttackRange3 == 0))
                 {
                     _logger.LogDebug($"Mob {Id} used attack 3.");
-                    UseAttack(Target, _dbMob.AttackType3, _dbMob.Attack3, Element.None, _dbMob.AttackPlus3);
+                    Attack(Target, _dbMob.AttackType3, _dbMob.Attack3, Element.None, _dbMob.AttackPlus3);
                     _nextAttackTime = now.AddMilliseconds(_dbMob.AttackTime3);
                     _lastAttack3Time = now;
                 }
@@ -420,6 +434,11 @@ namespace Imgeneus.World.Game.Monster
         public event Action<Mob, int, AttackResult> OnAttack;
 
         /// <summary>
+        /// Event, that is fired, when mob uses some skill.
+        /// </summary>
+        public event Action<Mob, int, Skill, AttackResult> OnUsedSkill;
+
+        /// <summary>
         /// Time since the last attack.
         /// </summary>
         private DateTime _nextAttackTime;
@@ -437,13 +456,84 @@ namespace Imgeneus.World.Game.Monster
         /// Uses some attack.
         /// </summary>
         /// <param name="target">target</param>
-        /// <param name="attackType">type of attack</param>
+        /// <param name="skillId">skill id</param>
         /// <param name="damage">normal damage</param>
         /// <param name="element">element</param>
         /// <param name="additionalDamage">plus damage</param>
-        private void UseAttack(IKillable target, MobAttackType attackType, short damage, Element element, ushort additionalDamage)
+        public void Attack(IKillable target, ushort skillId, short damage, Element element, ushort additionalDamage)
         {
-            // TODO: calculate damage.
+            var isMeleeAttack = false;
+            Skill skill = null;
+            if (skillId == 0) // Usual melee attack.
+            {
+                isMeleeAttack = true;
+            }
+            else
+            {
+                if (_databasePreloader.Skills.TryGetValue((skillId, 100), out var dbSkill))
+                {
+                    skill = new Skill(dbSkill, 0, 0);
+                }
+                else
+                {
+                    isMeleeAttack = true;
+                    _logger.LogError($"Mob {Id} ({MobId}) used unknow skill {skillId}, fallback to melee attack.");
+                }
+            }
+
+            if (isMeleeAttack)
+            {
+                MeleeAttack(target, damage, element, additionalDamage);
+            }
+            else
+            {
+                UseSkill(target, skill, damage, element, additionalDamage);
+            }
+        }
+
+        private void UseSkill(IKillable target, Skill skill, short damage, Element element, ushort additionalDamage)
+        {
+            var targets = new List<IKillable>();
+            switch (skill.TargetType)
+            {
+                case TargetType.None:
+                case TargetType.SelectedEnemy:
+                    targets.Add(target);
+                    break;
+
+                case TargetType.EnemiesNearCaster:
+                    targets.AddRange(Map.GetPlayers(PosX, PosZ, skill.ApplyRange, EnemyPlayersFraction));
+                    break;
+
+                case TargetType.EnemiesNearTarget:
+                    targets.AddRange(Map.GetPlayers(target.PosX, target.PosZ, skill.ApplyRange, EnemyPlayersFraction));
+                    break;
+
+                default:
+                    _logger.LogError($"Unimplemented target type: {skill.TargetType}");
+                    break;
+            }
+
+
+            foreach (var t in targets)
+            {
+                if (t.IsDead)
+                    continue;
+
+                if (!((IKiller)this).AttackSuccessRate(t, skill.TypeAttack, skill))
+                {
+                    // Send missed skill.
+                    OnUsedSkill?.Invoke(this, t.Id, skill, new AttackResult(AttackSuccess.Miss, new Damage(0, 0, 0)));
+                    continue;
+                }
+
+                var attackResult = new AttackResult(AttackSuccess.Critical, new Damage(15, 0, 0));//CalculateAttackResult(skill, t);
+                OnUsedSkill?.Invoke(this, t.Id, skill, attackResult);
+            }
+        }
+
+        private void MeleeAttack(IKillable target, short damage, Element element, ushort additionalDamage)
+        {
             var res = new AttackResult(AttackSuccess.Normal, new Damage(10, 0, 0));
 
             _logger.LogDebug($"Mob {Id} deals damage to player {target.Id}: {res.Damage.HP} HP; {res.Damage.MP} MP; {res.Damage.SP} SP ");

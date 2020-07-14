@@ -1,5 +1,4 @@
 ﻿using Imgeneus.Database.Constants;
-using Imgeneus.World.Game.Monster;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -8,7 +7,7 @@ using System.Timers;
 
 namespace Imgeneus.World.Game.Player
 {
-    public partial class Character : IKillable
+    public partial class Character : IKillable, IKiller
     {
         #region Target
 
@@ -199,7 +198,7 @@ namespace Imgeneus.World.Game.Player
                 if (t.IsDead)
                     continue;
 
-                if (skill.TypeAttack != TypeAttack.Passive && !AttackSuccessRate(t, skill.TypeAttack, skill))
+                if (skill.TypeAttack != TypeAttack.Passive && !((IKiller)this).AttackSuccessRate(t, skill.TypeAttack, skill))
                 {
                     if (target == t)
                         OnUsedSkill?.Invoke(this, t, skill, new AttackResult(AttackSuccess.Miss, new Damage(0, 0, 0)));
@@ -306,7 +305,7 @@ namespace Imgeneus.World.Game.Player
             _nextAttackTime = DateTime.UtcNow.AddMilliseconds(NextAttackTime);
 
             AttackResult result;
-            if (!AttackSuccessRate(Target, TypeAttack.PhysicalAttack))
+            if (!((IKiller)this).AttackSuccessRate(Target, TypeAttack.PhysicalAttack))
             {
                 result = new AttackResult(AttackSuccess.Miss, new Damage());
                 OnAutoAttack?.Invoke(this, result);
@@ -481,86 +480,6 @@ namespace Imgeneus.World.Game.Player
                 return new AttackResult(AttackSuccess.Critical, new Damage(Convert.ToUInt16(damage), 0, 0));
             else
                 return new AttackResult(AttackSuccess.Normal, new Damage(Convert.ToUInt16(damage), 0, 0));
-        }
-
-        private bool AttackSuccessRate(IKillable target, TypeAttack typeAttack, Skill skill = null)
-        {
-            // Uncomment this code, if you want to always hit target.
-            // return true;
-            if (skill != null && (skill.StateType == StateType.FlatDamage || skill.StateType == StateType.DeathTouch))
-                return true;
-
-            if (skill != null && skill.UseSuccessValue)
-                return new Random().Next(1, 101) < skill.SuccessValue;
-
-
-            double levelDifference;
-            double result;
-
-            // Starting from here there might be not clear code.
-            // This code is not my invention, it's raw implementation of ep 4 calculations.
-            // You're free to change it to whatever you think fits better your server.
-            switch (typeAttack)
-            {
-                case TypeAttack.PhysicalAttack:
-                case TypeAttack.ShootingAttack:
-                    levelDifference = Level * 1.0 / (target.Level + Level);
-                    var targetAttackPercent = target.PhysicalHittingChance / (target.PhysicalHittingChance + PhysicalEvasionChance);
-                    var myAttackPercent = PhysicalHittingChance / (PhysicalHittingChance + target.PhysicalEvasionChance);
-                    result = levelDifference * 160 - (targetAttackPercent * 100 - myAttackPercent * 100);
-                    if (result >= 20)
-                    {
-                        if (result > 99)
-                            result = 99;
-                    }
-                    else
-                    {
-                        if (target is Mob)
-                            result = 20;
-                        else
-                            result = 1;
-                    }
-
-                    return new Random().Next(1, 101) < result;
-
-                case TypeAttack.MagicAttack:
-                    levelDifference = ((target.Level - Level - 2) * 100 + target.Level) / (target.Level + Level) * 1.1;
-                    var fxDef = levelDifference + target.MagicEvasionChance;
-                    if (fxDef >= 1)
-                    {
-                        if (fxDef > 70)
-                            fxDef = 70;
-                    }
-                    else
-                    {
-                        fxDef = 1;
-                    }
-
-                    var wisDifference = (11 * target.TotalWis - 10 * TotalWis) / (target.TotalWis + TotalWis) * 3.9000001;
-                    var nAttackTypea = wisDifference + MagicHittingChance;
-                    if (nAttackTypea >= 1)
-                    {
-                        if (nAttackTypea > 70)
-                            nAttackTypea = 70;
-                    }
-                    else
-                    {
-                        nAttackTypea = 1;
-                    }
-
-                    result = nAttackTypea + fxDef;
-                    if (result >= 1)
-                    {
-                        if (result > 90)
-                            result = 90;
-                    }
-                    else
-                    {
-                        result = 1;
-                    }
-                    return new Random().Next(1, 101) < result;
-            }
-            return true;
         }
 
         /// <summary>

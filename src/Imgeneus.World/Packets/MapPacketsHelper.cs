@@ -85,10 +85,10 @@ namespace Imgeneus.World.Packets
             client.SendPacket(packet);
         }
 
-        internal void SendMobAttack(WorldClient client, Mob mob, int targetId)
+        internal void SendMobAttack(WorldClient client, Mob mob, int targetId, AttackResult attackResult)
         {
             using var packet = new Packet(PacketType.MOB_ATTACK);
-            packet.Write(new MobAttack(mob, targetId).Serialize());
+            packet.Write(new MobAttack(mob, targetId, attackResult).Serialize());
             client.SendPacket(packet);
         }
 

@@ -184,7 +184,7 @@ namespace Imgeneus.Database.Entities
         /// <summary>
         /// Element.
         /// </summary>
-        public byte AttackAttrib1 { get; set; }
+        public Element AttackAttrib1 { get; set; }
 
         /// <summary>
         /// Param.
@@ -227,7 +227,7 @@ namespace Imgeneus.Database.Entities
         /// <summary>
         /// Element.
         /// </summary>
-        public byte AttackAttrib2 { get; set; }
+        public Element AttackAttrib2 { get; set; }
 
         /// <summary>
         /// Param.
@@ -271,9 +271,10 @@ namespace Imgeneus.Database.Entities
         public ushort AttackPlus3 { get; set; }
 
         /// <summary>
-        /// Element.
+        /// Fraction of mob.
         /// </summary>
-        public byte AttackAttrib3 { get; set; }
+        [Column("AttackAttrib3")]
+        public MobFraction Fraction { get; set; }
 
         /// <summary>
         /// Param, probably respawn time according to forum discussions.

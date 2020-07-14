@@ -363,24 +363,7 @@ namespace Imgeneus.World.Game.Zone
                 _logger.LogDebug($"Mob {mob.MobId} with global id {mob.Id} entered map {Id}");
 
                 foreach (var player in Players)
-                {
                     _packetHelper.SendMobEntered(player.Value.Client, mob, true);
-                }
-
-
-                // TODO: I'm investigating all available mob packets now.
-                // Remove it, when start working on AI implementation!
-
-                // Emulates mob attack within 3 seconds after it's created.
-                //mob.OnAttack += (mob, playerId) =>
-                //{
-                //    // Send notification each player, that mob attacked.
-                //    foreach (var player in Players)
-                //    {
-                //        _packetHelper.SendMobAttack(player.Value.Client, mob, playerId);
-                //    }
-                //};
-                //mob.EmulateAttack(Players.First().Key);
             }
 
             return success;
@@ -394,6 +377,7 @@ namespace Imgeneus.World.Game.Zone
         {
             mob.OnDead += Mob_OnDead;
             mob.OnMove += Mob_OnMove;
+            mob.OnAttack += Mob_OnAttack;
         }
 
         /// <summary>
@@ -404,6 +388,7 @@ namespace Imgeneus.World.Game.Zone
         {
             mob.OnDead -= Mob_OnDead;
             mob.OnMove -= Mob_OnMove;
+            mob.OnAttack -= Mob_OnAttack;
         }
 
         private void Mob_OnDead(IKillable sender, IKiller killer)
@@ -426,9 +411,13 @@ namespace Imgeneus.World.Game.Zone
         private void Mob_OnMove(Mob sender)
         {
             foreach (var player in Players)
-            {
                 _packetHelper.SendMobMove(player.Value.Client, sender);
-            }
+        }
+
+        private void Mob_OnAttack(Mob mob, int targetId, AttackResult attackResult)
+        {
+            foreach (var player in Players)
+                _packetHelper.SendMobAttack(player.Value.Client, mob, targetId, attackResult);
         }
 
         /// <summary>

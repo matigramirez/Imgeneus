@@ -1,13 +1,14 @@
 ﻿using BinarySerialization;
 using Imgeneus.Network.Serialization;
 using Imgeneus.World.Game.Monster;
+using Imgeneus.World.Game.Player;
 
 namespace Imgeneus.World.Serialization
 {
     public class MobAttack : BaseSerializable
     {
         [FieldOrder(0)]
-        public bool IsSuccess;
+        public AttackSuccess IsSuccess;
 
         [FieldOrder(1)]
         public int MobId;
@@ -18,15 +19,12 @@ namespace Imgeneus.World.Serialization
         [FieldOrder(3)]
         public ushort[] Damage;
 
-        public MobAttack(Mob mob, int targetId)
+        public MobAttack(Mob mob, int targetId, AttackResult attackResult)
         {
-            IsSuccess = true; // I assume it's critical or not critical hit.
+            IsSuccess = attackResult.Success;
             MobId = mob.Id;
             TargetId = targetId;
-            Damage = new ushort[3]; // TODO: write damage here.
-            Damage[0] = 10; // Health damage
-            Damage[1] = 5; // Stamina damage
-            Damage[2] = 3; // Mana damage
+            Damage = new ushort[] { attackResult.Damage.HP, attackResult.Damage.SP, attackResult.Damage.MP };
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Imgeneus.Core.Extensions;
 using Imgeneus.Database.Constants;
+using Imgeneus.Database.Entities;
 using Imgeneus.World.Game.Player;
 using Microsoft.Extensions.Logging;
 using System;
@@ -71,7 +72,8 @@ namespace Imgeneus.World.Game.Monster
         /// </summary>
         private void SetupAITimers()
         {
-            _idleTimer.Interval = _dbMob.NormalTime * 10;
+            var idleTime = _dbMob.NormalTime <= 0 ? 4000 : _dbMob.NormalTime;
+            _idleTimer.Interval = idleTime * 10;
             _idleTimer.AutoReset = false;
             _idleTimer.Elapsed += IdleTimer_Elapsed;
 
@@ -188,7 +190,23 @@ namespace Imgeneus.World.Game.Monster
             if (State != MobState.Idle)
                 return;
 
-            var players = Map.GetPlayers(PosX, PosZ, _dbMob.ChaseRange);
+            Fraction playerFraction;
+            switch (_dbMob.Fraction)
+            {
+                case MobFraction.Dark:
+                    playerFraction = Fraction.Light;
+                    break;
+
+                case MobFraction.Light:
+                    playerFraction = Fraction.Dark;
+                    break;
+
+                default:
+                    playerFraction = Fraction.NotSelected;
+                    break;
+            }
+
+            var players = Map.GetPlayers(PosX, PosZ, _dbMob.ChaseRange, playerFraction);
 
             // No players, keep watching.
             if (!players.Any())
@@ -230,6 +248,9 @@ namespace Imgeneus.World.Game.Monster
             _lastChaseTime = DateTime.UtcNow;
         }
 
+        /// <summary>
+        /// Stops chasing player.
+        /// </summary>
         private void StopChasing()
         {
             _chaseTimer.Stop();
@@ -238,11 +259,42 @@ namespace Imgeneus.World.Game.Monster
         private void ChaseTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
             var now = DateTime.UtcNow;
+            var distanceToPlayer = MathExtensions.Distance(PosX, Target.PosX, PosZ, Target.PosZ);
 
-            if (MathExtensions.Distance(PosX, Target.PosX, PosZ, Target.PosZ) <= _dbMob.AttackRange1)
+            if (now > _nextAttackTime)
             {
-                // TODO: use attack 1.
-                _logger.LogDebug("Got close to target player");
+                var attackId = RandomiseAttack(now);
+                var useAttack1 = attackId == 1;
+                var useAttack2 = attackId == 2;
+                var useAttack3 = attackId == 3;
+
+                if (useAttack1 && (distanceToPlayer <= _dbMob.AttackRange1 || _dbMob.AttackRange1 == 0))
+                {
+                    _logger.LogDebug($"Mob {Id} used attack 1.");
+                    UseAttack(Target, _dbMob.AttackType1, _dbMob.Attack1, _dbMob.AttackAttrib1, _dbMob.AttackPlus1);
+                    _nextAttackTime = now.AddMilliseconds(_dbMob.AttackTime1);
+                    _lastAttack1Time = now;
+                }
+
+                if (useAttack2 && (distanceToPlayer <= _dbMob.AttackRange2 || _dbMob.AttackRange2 == 0))
+                {
+                    _logger.LogDebug($"Mob {Id} used attack 2.");
+                    UseAttack(Target, _dbMob.AttackType2, _dbMob.Attack2, _dbMob.AttackAttrib2, _dbMob.AttackPlus2);
+                    _nextAttackTime = now.AddMilliseconds(_dbMob.AttackTime2);
+                    _lastAttack2Time = now;
+                }
+
+                if (useAttack3 && (distanceToPlayer <= _dbMob.AttackRange3 || _dbMob.AttackRange3 == 0))
+                {
+                    _logger.LogDebug($"Mob {Id} used attack 3.");
+                    UseAttack(Target, _dbMob.AttackType3, _dbMob.Attack3, Element.None, _dbMob.AttackPlus3);
+                    _nextAttackTime = now.AddMilliseconds(_dbMob.AttackTime3);
+                    _lastAttack3Time = now;
+                }
+            }
+
+            if (distanceToPlayer <= _dbMob.AttackRange1 || distanceToPlayer <= _dbMob.AttackRange2 || distanceToPlayer <= _dbMob.AttackRange3)
+            {
                 _lastChaseTime = now;
                 _chaseTimer.Start();
                 return;
@@ -269,6 +321,87 @@ namespace Imgeneus.World.Game.Monster
             _chaseTimer.Start();
         }
 
+        /// <summary>
+        /// Randomly selects the next attack.
+        /// </summary>
+        /// <param name="now">now time</param>
+        /// <returns>attack type: 1, 2, 3 or 0, when can not attack</returns>
+        private byte RandomiseAttack(DateTime now)
+        {
+            var useAttack1 = false;
+            var useAttack2 = false;
+            var useAttack3 = false;
+
+            int chanceForAttack1 = 0;
+            int chanceForAttack2 = 0;
+            int chanceForAttack3 = 0;
+
+            if (IsAttack1Enabled && IsAttack2Enabled && IsAttack3Enabled)
+            {
+                if (now.Subtract(_lastAttack1Time).TotalMilliseconds >= _dbMob.AttackTime1)
+                    chanceForAttack1 = 60;
+                else
+                    chanceForAttack1 = 0;
+
+                if (now.Subtract(_lastAttack2Time).TotalMilliseconds >= _dbMob.AttackTime2)
+                    chanceForAttack2 = 85;
+                else
+                    chanceForAttack2 = 0;
+
+                if (now.Subtract(_lastAttack3Time).TotalMilliseconds >= _dbMob.AttackTime3)
+                    chanceForAttack3 = 100;
+                else
+                    chanceForAttack3 = 0;
+            }
+            else if (IsAttack1Enabled && IsAttack2Enabled && !IsAttack3Enabled)
+            {
+                if (now.Subtract(_lastAttack1Time).TotalMilliseconds >= _dbMob.AttackTime1)
+                    chanceForAttack1 = 70;
+                else
+                    chanceForAttack1 = 0;
+
+                if (now.Subtract(_lastAttack2Time).TotalMilliseconds >= _dbMob.AttackTime2)
+                    chanceForAttack2 = 100;
+                else
+                    chanceForAttack2 = 0;
+
+                chanceForAttack3 = 0;
+            }
+            else if (IsAttack1Enabled && !IsAttack2Enabled && !IsAttack3Enabled)
+            {
+                if (now.Subtract(_lastAttack1Time).TotalMilliseconds >= _dbMob.AttackTime1)
+                    chanceForAttack1 = 100;
+                else
+                    chanceForAttack1 = 0;
+
+                chanceForAttack2 = 0;
+                chanceForAttack3 = 0;
+            }
+            if (!IsAttack1Enabled && !IsAttack2Enabled && !IsAttack3Enabled)
+            {
+                chanceForAttack1 = 0;
+                chanceForAttack2 = 0;
+                chanceForAttack3 = 0;
+            }
+
+            var random = new Random().Next(1, 100);
+            if (random <= chanceForAttack1)
+                useAttack1 = true;
+            else if (random > chanceForAttack1 && random <= chanceForAttack2)
+                useAttack2 = true;
+            else if (random > chanceForAttack2 && random <= chanceForAttack3)
+                useAttack3 = true;
+
+            if (useAttack1)
+                return 1;
+            else if (useAttack2)
+                return 2;
+            else if (useAttack3)
+                return 3;
+            else
+                return 0;
+        }
+
         #endregion
 
         #region Attack
@@ -284,22 +417,12 @@ namespace Imgeneus.World.Game.Monster
         /// <summary>
         /// Event, that is fired, when mob attacks some user.
         /// </summary>
-        public event Action<Mob, int> OnAttack;
+        public event Action<Mob, int, AttackResult> OnAttack;
 
         /// <summary>
-        /// TODO: remove me! This is only for attack emulation.
+        /// Time since the last attack.
         /// </summary>
-        public void EmulateAttack(int targetId)
-        {
-            var timer = new Timer();
-            timer.Interval = 3000; // 3 seconds.
-            timer.Elapsed += (s, e) =>
-            {
-                timer.Stop();
-                OnAttack?.Invoke(this, Target.Id);
-            };
-            timer.Start();
-        }
+        private DateTime _nextAttackTime;
 
         /// <summary>
         /// Clears target.
@@ -309,6 +432,70 @@ namespace Imgeneus.World.Game.Monster
             State = MobState.BackToBirthPosition;
             Target = null;
         }
+
+        /// <summary>
+        /// Uses some attack.
+        /// </summary>
+        /// <param name="target">target</param>
+        /// <param name="attackType">type of attack</param>
+        /// <param name="damage">normal damage</param>
+        /// <param name="element">element</param>
+        /// <param name="additionalDamage">plus damage</param>
+        private void UseAttack(IKillable target, MobAttackType attackType, short damage, Element element, ushort additionalDamage)
+        {
+            // TODO: calculate damage.
+            var res = new AttackResult(AttackSuccess.Normal, new Damage(10, 0, 0));
+
+            _logger.LogDebug($"Mob {Id} deals damage to player {target.Id}: {res.Damage.HP} HP; {res.Damage.MP} MP; {res.Damage.SP} SP ");
+
+            Target.DecreaseHP(res.Damage.HP, this);
+            Target.CurrentMP -= res.Damage.MP;
+            Target.CurrentSP -= res.Damage.SP;
+
+            OnAttack?.Invoke(this, Target.Id, res);
+        }
+
+        #endregion
+
+        #region Attack 1
+
+        /// <summary>
+        /// Time since the last attack 1.
+        /// </summary>
+        private DateTime _lastAttack1Time;
+
+        /// <summary>
+        /// Indicator of attack 1.
+        /// </summary>
+        private readonly bool IsAttack1Enabled;
+
+        #endregion
+
+        #region Attack 2
+
+        /// <summary>
+        /// Time since the last attack 2.
+        /// </summary>
+        private DateTime _lastAttack2Time;
+
+        /// <summary>
+        /// Indicator of attack 2.
+        /// </summary>
+        private readonly bool IsAttack2Enabled;
+
+        #endregion
+
+        #region Attack 3
+
+        /// <summary>
+        /// Time since the last attack 3.
+        /// </summary>
+        private DateTime _lastAttack3Time;
+
+        /// <summary>
+        /// Indicator of attack 3.
+        /// </summary>
+        private readonly bool IsAttack3Enabled;
 
         #endregion
     }

@@ -28,6 +28,9 @@ namespace Imgeneus.World.Game.Monster
             ShouldRebirth = shouldRebirth;
             MoveArea = moveArea;
             Map = map;
+            IsAttack1Enabled = _dbMob.AttackOk1 != 0;
+            IsAttack2Enabled = _dbMob.AttackOk2 != 0;
+            IsAttack3Enabled = _dbMob.AttackOk3 != 0;
 
             if (ShouldRebirth)
             {

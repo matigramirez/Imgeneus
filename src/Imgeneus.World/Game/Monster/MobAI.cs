@@ -2,6 +2,7 @@
 using Imgeneus.Database.Constants;
 using Imgeneus.Database.Entities;
 using Imgeneus.World.Game.Player;
+using Imgeneus.World.Game.Zone;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -77,11 +78,11 @@ namespace Imgeneus.World.Game.Monster
             _idleTimer.AutoReset = false;
             _idleTimer.Elapsed += IdleTimer_Elapsed;
 
-            _watchTimer.Interval = 1000; // 1 second
+            _watchTimer.Interval = Map.Id == Map.TEST_MAP_ID ? 1 : 1000; // 1 second
             _watchTimer.AutoReset = false;
             _watchTimer.Elapsed += WatchTimer_Elapsed;
 
-            _chaseTimer.Interval = 500; // 0.5 second
+            _chaseTimer.Interval = Map.Id == Map.TEST_MAP_ID ? 1 : 500; // 0.5 second
             _chaseTimer.AutoReset = false;
             _chaseTimer.Elapsed += ChaseTimer_Elapsed;
         }
@@ -437,10 +438,42 @@ namespace Imgeneus.World.Game.Monster
 
         #region Attack
 
+        private IKillable _target;
+
         /// <summary>
         /// Mob's target.
         /// </summary>
-        public IKillable Target { get; private set; }
+        public IKillable Target
+        {
+            get
+            {
+                return _target;
+            }
+
+            private set
+            {
+                if (_target != null)
+                {
+                    _target.OnDead -= Target_OnDead;
+                }
+                _target = value;
+
+                if (_target != null)
+                {
+                    _target.OnDead += Target_OnDead;
+                }
+            }
+        }
+
+        /// <summary>
+        /// When target is dead, mob returns to its' original place.
+        /// </summary>
+        /// <param name="sender">player, that is dead</param>
+        /// <param name="killer">player's killer</param>
+        private void Target_OnDead(IKillable sender, IKiller killer)
+        {
+            ClearTarget();
+        }
 
         /// <inheritdoc />
         public override AttackSpeed AttackSpeed => AttackSpeed.Normal;
@@ -598,9 +631,9 @@ namespace Imgeneus.World.Game.Monster
                                                       minAttack + additionalDamage);
             _logger.LogDebug($"Mob {Id} deals damage to player {target.Id}: {res.Damage.HP} HP; {res.Damage.MP} MP; {res.Damage.SP} SP ");
 
-            Target.DecreaseHP(res.Damage.HP, this);
             Target.CurrentMP -= res.Damage.MP;
             Target.CurrentSP -= res.Damage.SP;
+            Target.DecreaseHP(res.Damage.HP, this);
 
             OnAttack?.Invoke(this, Target, res);
         }

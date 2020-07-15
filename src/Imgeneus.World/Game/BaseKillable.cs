@@ -885,27 +885,63 @@ namespace Imgeneus.World.Game
         /// <summary>
         /// Possibility to hit enemy.
         /// </summary>
-        public double PhysicalHittingChance { get => 1.0 * TotalDex / 2 + _skillPhysicalHittingChance; }
+        public double PhysicalHittingChance
+        {
+            get
+            {
+                var calculated = 1.0 * TotalDex / 2 + _skillPhysicalHittingChance;
+                return calculated > 0 ? calculated : 1;
+            }
+        }
 
         /// <summary>
         /// Possibility to escape hit.
         /// </summary>
-        public double PhysicalEvasionChance { get => 1.0 * TotalDex / 2 + _skillPhysicalEvasionChance; }
+        public double PhysicalEvasionChance
+        {
+            get
+            {
+                var calculated = 1.0 * TotalDex / 2 + _skillPhysicalEvasionChance;
+                return calculated > 0 ? calculated : 1;
+            }
+        }
 
         /// <summary>
         /// Possibility to make critical hit.
         /// </summary>
-        public double CriticalHittingChance { get => 0.2 * TotalLuc + _skillCriticalHittingChance; } // each 5 luck is 1% of critical.
+        public double CriticalHittingChance
+        {
+            get
+            {
+                // each 5 luck is 1% of critical.
+                var calculated = 0.2 * TotalLuc + _skillCriticalHittingChance;
+                return calculated > 0 ? calculated : 1;
+            }
+        }
 
         /// <summary>
         /// Possibility to hit enemy.
         /// </summary>
-        public double MagicHittingChance { get => 1.0 * TotalWis / 2 + _skillMagicHittingChance; }
+        public double MagicHittingChance
+        {
+            get
+            {
+                var calculated = 1.0 * TotalWis / 2 + _skillMagicHittingChance;
+                return calculated > 0 ? calculated : 1;
+            }
+        }
 
         /// <summary>
         /// Possibility to escape hit.
         /// </summary>
-        public double MagicEvasionChance { get => 1.0 * TotalWis / 2 + _skillMagicEvasionChance; }
+        public double MagicEvasionChance
+        {
+            get
+            {
+                var calculated = 1.0 * TotalWis / 2 + _skillMagicEvasionChance;
+                return calculated > 0 ? calculated : 1;
+            }
+        }
 
         /// <summary>
         /// Possibility to hit enemy gained from skills.

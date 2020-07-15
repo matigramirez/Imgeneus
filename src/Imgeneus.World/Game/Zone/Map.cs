@@ -27,6 +27,8 @@ namespace Imgeneus.World.Game.Zone
         /// </summary>
         public ushort Id { get; private set; }
 
+        public static readonly ushort TEST_MAP_ID = 9999;
+
         public Map(ushort id, ILogger<Map> logger)
         {
             Id = id;
@@ -119,6 +121,9 @@ namespace Imgeneus.World.Game.Zone
         /// </summary>
         private void AddListeners(Character character)
         {
+            // Map with id is test map.
+            if (Id == TEST_MAP_ID)
+                return;
             character.OnPositionChanged += Character_OnPositionChanged;
             character.OnMotion += Character_OnMotion;
             character.OnEquipmentChanged += Character_OnEquipmentChanged;

@@ -105,22 +105,6 @@ namespace Imgeneus.World.Game.Monster
 
         #endregion
 
-        #region Hitting chance
-
-        /// <inheritdoc />
-        public override double PhysicalHittingChance => 1.0 * TotalDex / 2;
-
-        /// <inheritdoc />
-        public override double PhysicalEvasionChance => 1.0 * TotalDex / 2;
-
-        /// <inheritdoc />
-        public override double MagicHittingChance => 1.0 * TotalWis / 2;
-
-        /// <inheritdoc />
-        public override double MagicEvasionChance => 1.0 * TotalWis / 2;
-
-        #endregion
-
         #region Stealth
 
         /// <inheritdoc />

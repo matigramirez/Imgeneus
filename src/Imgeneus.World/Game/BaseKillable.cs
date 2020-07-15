@@ -882,13 +882,30 @@ namespace Imgeneus.World.Game
 
         #region Hitting chances
 
-        public abstract double PhysicalHittingChance { get; }
+        /// <summary>
+        /// Possibility to hit enemy.
+        /// </summary>
+        public double PhysicalHittingChance { get => 1.0 * TotalDex / 2 + _skillPhysicalHittingChance; }
 
-        public abstract double PhysicalEvasionChance { get; }
+        /// <summary>
+        /// Possibility to escape hit.
+        /// </summary>
+        public double PhysicalEvasionChance { get => 1.0 * TotalDex / 2 + _skillPhysicalEvasionChance; }
 
-        public abstract double MagicHittingChance { get; }
+        /// <summary>
+        /// Possibility to make critical hit.
+        /// </summary>
+        public double CriticalHittingChance { get => 0.2 * TotalLuc + _skillCriticalHittingChance; } // each 5 luck is 1% of critical.
 
-        public abstract double MagicEvasionChance { get; }
+        /// <summary>
+        /// Possibility to hit enemy.
+        /// </summary>
+        public double MagicHittingChance { get => 1.0 * TotalWis / 2 + _skillMagicHittingChance; }
+
+        /// <summary>
+        /// Possibility to escape hit.
+        /// </summary>
+        public double MagicEvasionChance { get => 1.0 * TotalWis / 2 + _skillMagicEvasionChance; }
 
         /// <summary>
         /// Possibility to hit enemy gained from skills.

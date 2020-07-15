@@ -280,7 +280,14 @@ namespace Imgeneus.World.Game.Player
                     return new AttackResult(AttackSuccess.Normal, new Damage(skill.DamageHP, skill.DamageMP, skill.DamageSP));
 
                 case DamageType.PlusExtraDamage:
-                    return CalculateDamage(target, skill.TypeAttack, skill);
+                    return ((IKiller)this).CalculateDamage(target,
+                                                           skill.TypeAttack,
+                                                           AttackElement,
+                                                           MinAttack,
+                                                           MaxAttack,
+                                                           MinMagicAttack,
+                                                           MaxMagicAttack,
+                                                           skill);
 
                 default:
                     throw new NotImplementedException("Not implemented damage type.");
@@ -312,7 +319,13 @@ namespace Imgeneus.World.Game.Player
                 return;
             }
 
-            result = CalculateDamage(Target, TypeAttack.PhysicalAttack);
+            result = ((IKiller)this).CalculateDamage(Target,
+                                                     TypeAttack.PhysicalAttack,
+                                                     AttackElement,
+                                                     MinAttack,
+                                                     MaxAttack,
+                                                     MinMagicAttack,
+                                                     MaxMagicAttack);
             Target.DecreaseHP(result.Damage.HP, this);
             Target.CurrentSP -= result.Damage.SP;
             Target.CurrentMP -= result.Damage.MP;
@@ -410,265 +423,6 @@ namespace Imgeneus.World.Game.Player
             }
 
             return true;
-        }
-
-        /// <summary>
-        /// Calculates damage based on player stats and target stats.
-        /// </summary>
-        private AttackResult CalculateDamage(IKillable target, TypeAttack typeAttack, Skill skill = null)
-        {
-            double damage = 0;
-
-            // First, caculate damage, that is made of stats, weapon and buffs.
-            switch (typeAttack)
-            {
-                case TypeAttack.PhysicalAttack:
-                    damage = new Random().Next(MinAttack, MaxAttack);
-                    if (skill != null)
-                    {
-                        damage += skill.DamageHP;
-                    }
-                    damage -= target.Defense;
-                    if (damage < 0)
-                        damage = 1;
-                    damage = damage * 1.5;
-                    break;
-
-                case TypeAttack.ShootingAttack:
-                    damage = new Random().Next(MinAttack, MaxAttack);
-                    if (skill != null)
-                    {
-                        damage += skill.DamageHP;
-                    }
-                    damage -= target.Defense;
-                    if (damage < 0)
-                        damage = 1;
-                    // TODO: multiply by range to the target.
-                    damage = damage * 1.5; // * 0.7 if target is too close.
-                    break;
-
-                case TypeAttack.MagicAttack:
-                    damage = new Random().Next(MinMagicAttack, MaxMagicAttack);
-                    if (skill != null)
-                    {
-                        damage += skill.DamageHP;
-                    }
-                    damage -= target.Resistance;
-                    if (damage < 0)
-                        damage = 1;
-                    damage = damage * 1.5;
-                    break;
-            }
-
-            // Second, add element calculation.
-            Element attackElement = skill != null && skill.Element != Element.None ? skill.Element : AttackElement;
-            var elementFactor = GetElementFactor(attackElement, target.DefenceElement);
-            damage = damage * elementFactor;
-
-            // Third, caculate if critical damage should be added.
-            var criticalDamage = false;
-            if (new Random().Next(1, 101) < CriticalSuccessRate(target))
-            {
-                criticalDamage = true;
-                damage += Convert.ToInt32(TotalLuc * new Random().NextDouble() * 1.5);
-            }
-
-            if (damage > 30000)
-                damage = 30000;
-
-            if (criticalDamage)
-                return new AttackResult(AttackSuccess.Critical, new Damage(Convert.ToUInt16(damage), 0, 0));
-            else
-                return new AttackResult(AttackSuccess.Normal, new Damage(Convert.ToUInt16(damage), 0, 0));
-        }
-
-        /// <summary>
-        /// Calculates critical rate or possibility to make critical hit.
-        /// Can be only more then 5 and less than 99.
-        /// </summary>
-        private int CriticalSuccessRate(IKillable target)
-        {
-            var result = Convert.ToInt32(CriticalHittingChance - (target.TotalLuc * 0.034000002));
-
-            if (result < 5)
-                result = 5;
-
-            if (result > 99)
-                result = 99;
-
-            return result;
-        }
-
-        /// <summary>
-        /// Possibility to hit enemy.
-        /// </summary>
-        public override double PhysicalHittingChance { get => 1.0 * TotalDex / 2 + _skillPhysicalHittingChance; }
-
-        /// <summary>
-        /// Possibility to escape hit.
-        /// </summary>
-        public override double PhysicalEvasionChance { get => 1.0 * TotalDex / 2 + _skillPhysicalEvasionChance; }
-
-        /// <summary>
-        /// Possibility to make critical hit.
-        /// </summary>
-        public double CriticalHittingChance { get => 0.2 * TotalLuc + _skillCriticalHittingChance; } // each 5 luck is 1% of critical.
-
-        /// <summary>
-        /// Possibility to hit enemy.
-        /// </summary>
-        public override double MagicHittingChance { get => 1.0 * TotalWis / 2 + _skillMagicHittingChance; }
-
-        /// <summary>
-        /// Possibility to escape hit.
-        /// </summary>
-        public override double MagicEvasionChance { get => 1.0 * TotalWis / 2 + _skillMagicEvasionChance; }
-
-        /// <summary>
-        /// Calculates element multiplier based on attack and defence elements.
-        /// </summary>
-        public static double GetElementFactor(Element attackElement, Element defenceElement)
-        {
-            if (attackElement == defenceElement)
-                return 1;
-
-            if (attackElement != Element.None && defenceElement == Element.None)
-            {
-                if (attackElement == Element.Fire1 || attackElement == Element.Earth1 || attackElement == Element.Water1 || attackElement == Element.Wind1)
-                    return 1.2;
-                if (attackElement == Element.Fire2 || attackElement == Element.Earth2 || attackElement == Element.Water2 || attackElement == Element.Wind2)
-                    return 1.3;
-            }
-
-            if (attackElement == Element.None && defenceElement != Element.None)
-            {
-                if (defenceElement == Element.Fire1 || defenceElement == Element.Earth1 || defenceElement == Element.Water1 || defenceElement == Element.Wind1)
-                    return 0.8;
-                if (defenceElement == Element.Fire2 || defenceElement == Element.Earth2 || defenceElement == Element.Water2 || defenceElement == Element.Wind2)
-                    return 0.7;
-            }
-
-            if (attackElement == Element.Water1)
-            {
-                if (defenceElement == Element.Fire1)
-                    return 1.4;
-                if (defenceElement == Element.Fire2)
-                    return 1.3;
-
-                if (defenceElement == Element.Earth1)
-                    return 0.5;
-                if (defenceElement == Element.Earth2)
-                    return 0.4;
-
-                return 1; // wind or water
-            }
-
-            if (attackElement == Element.Fire1)
-            {
-                if (defenceElement == Element.Wind1)
-                    return 1.4;
-                if (defenceElement == Element.Wind2)
-                    return 1.3;
-
-                if (defenceElement == Element.Water1)
-                    return 0.5;
-                if (defenceElement == Element.Water2)
-                    return 0.4;
-
-                return 1; // earth or fire
-            }
-
-            if (attackElement == Element.Wind1)
-            {
-                if (defenceElement == Element.Earth1)
-                    return 1.4;
-                if (defenceElement == Element.Earth2)
-                    return 1.3;
-
-                if (defenceElement == Element.Fire1)
-                    return 0.5;
-                if (defenceElement == Element.Fire2)
-                    return 0.4;
-
-                return 1; // wind or water
-            }
-
-            if (attackElement == Element.Earth1)
-            {
-                if (defenceElement == Element.Water1)
-                    return 1.4;
-                if (defenceElement == Element.Water2)
-                    return 1.3;
-
-                if (defenceElement == Element.Wind1)
-                    return 0.5;
-                if (defenceElement == Element.Wind2)
-                    return 0.4;
-
-                return 1; // earth or fire
-            }
-
-            if (attackElement == Element.Water2)
-            {
-                if (defenceElement == Element.Fire1)
-                    return 1.6;
-                if (defenceElement == Element.Fire2)
-                    return 1.4;
-
-                if (defenceElement == Element.Earth1)
-                    return 0.5;
-                if (defenceElement == Element.Earth2)
-                    return 0.5;
-
-                return 1; // wind or water
-            }
-
-            if (attackElement == Element.Fire2)
-            {
-                if (defenceElement == Element.Wind1)
-                    return 1.6;
-                if (defenceElement == Element.Wind2)
-                    return 1.4;
-
-                if (defenceElement == Element.Water1)
-                    return 0.5;
-                if (defenceElement == Element.Water2)
-                    return 0.5;
-
-                return 1; // earth or fire
-            }
-
-            if (attackElement == Element.Wind2)
-            {
-                if (defenceElement == Element.Earth1)
-                    return 1.6;
-                if (defenceElement == Element.Earth2)
-                    return 1.4;
-
-                if (defenceElement == Element.Fire1)
-                    return 0.5;
-                if (defenceElement == Element.Fire2)
-                    return 0.5;
-
-                return 1; // wind or water
-            }
-
-            if (attackElement == Element.Earth2)
-            {
-                if (defenceElement == Element.Water1)
-                    return 1.6;
-                if (defenceElement == Element.Water2)
-                    return 1.4;
-
-                if (defenceElement == Element.Wind1)
-                    return 0.5;
-                if (defenceElement == Element.Wind2)
-                    return 0.5;
-
-                return 1; // earth or fire
-            }
-
-            return 1;
         }
 
         #endregion

@@ -10,13 +10,8 @@ namespace Imgeneus.World.Game
     /// Special interface, that all killable objects must implement.
     /// Killable objects like: players, mobs.
     /// </summary>
-    public interface IKillable
+    public interface IKillable : IWorldMember, IStatsHolder
     {
-        /// <summary>
-        /// Unique id inside of a game world.
-        /// </summary>
-        public int Id { get; }
-
         /// <summary>
         /// Current health.
         /// </summary>
@@ -84,56 +79,6 @@ namespace Imgeneus.World.Game
         /// Collection of current applied passive buffs.
         /// </summary>
         public ObservableRangeCollection<ActiveBuff> PassiveBuffs { get; }
-
-        /// <summary>
-        /// Luck value, needed for critical damage calculation.
-        /// </summary>
-        public int TotalLuc { get; }
-
-        /// <summary>
-        /// Wis value, needed for damage calculation.
-        /// </summary>
-        public int TotalWis { get; }
-
-        /// <summary>
-        /// Dex value, needed for damage calculation.
-        /// </summary>
-        public int TotalDex { get; }
-
-        /// <summary>
-        /// Physical defense.
-        /// </summary>
-        public int Defense { get; }
-
-        /// <summary>
-        /// Magic resistance.
-        /// </summary>
-        public int Resistance { get; }
-
-        /// <summary>
-        /// Level.
-        /// </summary>
-        public ushort Level { get; }
-
-        /// <summary>
-        /// Possibility to hit enemy.
-        /// </summary>
-        public double PhysicalHittingChance { get; }
-
-        /// <summary>
-        /// Possibility to escape hit.
-        /// </summary>
-        public double PhysicalEvasionChance { get; }
-
-        /// <summary>
-        /// Possibility to magic hit enemy.
-        /// </summary>
-        public double MagicHittingChance { get; }
-
-        /// <summary>
-        /// Possibility to escape magic hit.
-        /// </summary>
-        public double MagicEvasionChance { get; }
 
         /// <summary>
         /// Current x position.

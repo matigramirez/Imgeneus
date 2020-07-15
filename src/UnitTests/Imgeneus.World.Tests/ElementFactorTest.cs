@@ -1,11 +1,12 @@
 ﻿using Imgeneus.Database.Constants;
+using Imgeneus.World.Game;
 using Imgeneus.World.Game.Player;
 using System.ComponentModel;
 using Xunit;
 
 namespace Imgeneus.World.Tests
 {
-    public class ElementFactorTest
+    public class ElementFactorTest : BaseTest
     {
         [Theory]
 
@@ -119,7 +120,8 @@ namespace Imgeneus.World.Tests
         [Description("Check right element factors.")]
         public void ElementTests(Element attackElement, Element defenceElement, double expectedFactor)
         {
-            Assert.Equal(expectedFactor, Character.GetElementFactor(attackElement, defenceElement));
+            IKiller character = new Character(loggerMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object);
+            Assert.Equal(expectedFactor, character.GetElementFactor(attackElement, defenceElement));
         }
     }
 }

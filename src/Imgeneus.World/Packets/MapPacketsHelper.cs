@@ -120,7 +120,7 @@ namespace Imgeneus.World.Packets
             client.SendPacket(packet);
         }
 
-        internal void SendCharacterUsualAttack(WorldClient client, Character sender, IKillable target, AttackResult attackResult)
+        internal void SendCharacterUsualAttack(WorldClient client, IKiller sender, IKillable target, AttackResult attackResult)
         {
             PacketType attackType;
             if (target is Character)

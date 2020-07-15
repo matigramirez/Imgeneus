@@ -448,12 +448,17 @@ namespace Imgeneus.World.Game.Monster
         /// <summary>
         /// Event, that is fired, when mob attacks some user.
         /// </summary>
-        public event Action<Mob, IKillable, AttackResult> OnAttack;
+        public event Action<IKiller, IKillable, AttackResult> OnAttack;
 
         /// <summary>
         /// Event, that is fired, when mob uses some skill.
         /// </summary>
-        public event Action<Mob, IKillable, Skill, AttackResult> OnUsedSkill;
+        public event Action<IKiller, IKillable, Skill, AttackResult> OnUsedSkill;
+
+        /// <summary>
+        /// Event, that is fired, when mob uses only range skill.
+        /// </summary>
+        public event Action<IKiller, IKillable, Skill, AttackResult> OnUsedRangeSkill;
 
         /// <summary>
         /// Time since the last attack.
@@ -508,6 +513,16 @@ namespace Imgeneus.World.Game.Monster
             }
         }
 
+        public void OnUsedSkillInvoke(IKillable target, Skill skill, AttackResult attackResult)
+        {
+            OnUsedSkill?.Invoke(this, target, skill, attackResult);
+        }
+
+        public void OnUsedRangeSkillInvoke(IKillable target, Skill skill, AttackResult attackResult)
+        {
+            OnUsedRangeSkill?.Invoke(this, target, skill, attackResult);
+        }
+
         private void UseSkill(IKillable target, Skill skill, Element element, short minAttack, ushort additionalDamage)
         {
             var targets = new List<IKillable>();
@@ -553,20 +568,13 @@ namespace Imgeneus.World.Game.Monster
                 if (attackResult.Damage.MP > 0)
                     t.CurrentMP -= attackResult.Damage.MP;
 
-                switch (skill.Type)
+                try
                 {
-                    case TypeDetail.Buff:
-                    case TypeDetail.SubtractingDebuff:
-                    case TypeDetail.PeriodicalDebuff:
-                    case TypeDetail.PreventAttack:
-                    case TypeDetail.Immobilize:
-                        t.AddActiveBuff(skill, this);
-                        OnUsedSkill?.Invoke(this, t, skill, attackResult);
-                        break;
-
-                    default:
-                        _logger.LogError($"Not implemented skill type {skill.Type}");
-                        break;
+                    ((IKiller)this).PerformSkill(skill, target, t, attackResult);
+                }
+                catch (NotImplementedException)
+                {
+                    _logger.LogError($"Not implemented skill type {skill.Type}");
                 }
             }
         }
@@ -638,6 +646,29 @@ namespace Imgeneus.World.Game.Monster
         /// Indicator of attack 3.
         /// </summary>
         private readonly bool IsAttack3Enabled;
+
+        #endregion
+
+        #region Stealth
+
+        /// <inheritdoc />
+        public override bool IsStealth { get; protected set; } = false;
+
+        public AttackResult UsedStealthSkill(Skill skill, IKillable target)
+        {
+            // Mobs do not support stealth now.
+            throw new NotImplementedException();
+        }
+
+        #endregion
+
+        #region Healing
+
+        public AttackResult UsedHealingSkill(Skill skill, IKillable target)
+        {
+            // Mob doesn't support healing for now.
+            throw new NotImplementedException();
+        }
 
         #endregion
     }

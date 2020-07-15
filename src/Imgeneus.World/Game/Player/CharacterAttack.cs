@@ -140,6 +140,16 @@ namespace Imgeneus.World.Game.Player
             }
         }
 
+        public void OnUsedSkillInvoke(IKillable target, Skill skill, AttackResult attackResult)
+        {
+            OnUsedSkill?.Invoke(this, target, skill, attackResult);
+        }
+
+        public void OnUsedRangeSkillInvoke(IKillable target, Skill skill, AttackResult attackResult)
+        {
+            OnUsedRangeSkill?.Invoke(this, target, skill, attackResult);
+        }
+
         /// <summary>
         /// Make character use skill.
         /// </summary>
@@ -217,54 +227,13 @@ namespace Imgeneus.World.Game.Player
                 if (attackResult.Damage.MP > 0)
                     t.CurrentMP -= attackResult.Damage.MP;
 
-                switch (skill.Type)
+                try
                 {
-                    case TypeDetail.Buff:
-                    case TypeDetail.SubtractingDebuff:
-                    case TypeDetail.PeriodicalHeal:
-                    case TypeDetail.PeriodicalDebuff:
-                    case TypeDetail.PreventAttack:
-                    case TypeDetail.Immobilize:
-                        t.AddActiveBuff(skill, this);
-
-                        if (target == t || this == t)
-                            OnUsedSkill?.Invoke(this, target, skill, attackResult);
-                        else
-                            OnUsedRangeSkill?.Invoke(this, t, skill, attackResult);
-                        break;
-
-                    case TypeDetail.Healing:
-                        var result = UsedHealingSkill(skill, t);
-                        if (target == t || this == t)
-                            OnUsedSkill?.Invoke(this, target, skill, result);
-                        else
-                            OnUsedRangeSkill?.Invoke(this, t, skill, result);
-                        break;
-
-                    case TypeDetail.Stealth:
-                        result = UsedStealthSkill(skill, t);
-                        if (target == t || this == t)
-                            OnUsedSkill?.Invoke(this, target, skill, result);
-                        else
-                            OnUsedRangeSkill?.Invoke(this, t, skill, result);
-                        break;
-
-                    case TypeDetail.UniqueHitAttack:
-                        if (target == t || this == t)
-                            OnUsedSkill?.Invoke(this, target, skill, attackResult);
-                        else
-                            OnUsedRangeSkill?.Invoke(this, t, skill, attackResult);
-                        break;
-
-                    case TypeDetail.PassiveDefence:
-                    case TypeDetail.WeaponMastery:
-                        t.AddActiveBuff(skill, this);
-                        break;
-
-                    default:
-                        _logger.LogError($"Not implemented skill type {skill.Type}");
-                        //throw new NotImplementedException("Not implemented skill type.");
-                        break;
+                    ((IKiller)this).PerformSkill(skill, target, t, attackResult);
+                }
+                catch (NotImplementedException)
+                {
+                    _logger.LogError($"Not implemented skill type {skill.Type}");
                 }
             }
         }
@@ -272,7 +241,7 @@ namespace Imgeneus.World.Game.Player
         /// <summary>
         /// Event, that is fired, when character uses auto attack.
         /// </summary>
-        public event Action<Character, AttackResult> OnAutoAttack;
+        public event Action<IKiller, IKillable, AttackResult> OnAttack;
 
         /// <summary>
         /// Usual physical attack, "auto attack".
@@ -290,7 +259,7 @@ namespace Imgeneus.World.Game.Player
             if (!((IKiller)this).AttackSuccessRate(Target, TypeAttack.PhysicalAttack))
             {
                 result = new AttackResult(AttackSuccess.Miss, new Damage());
-                OnAutoAttack?.Invoke(this, result);
+                OnAttack?.Invoke(this, Target, result);
                 return;
             }
 
@@ -305,7 +274,7 @@ namespace Imgeneus.World.Game.Player
             Target.CurrentSP -= result.Damage.SP;
             Target.CurrentMP -= result.Damage.MP;
 
-            OnAutoAttack?.Invoke(this, result);
+            OnAttack?.Invoke(this, Target, result);
         }
 
         /// <summary>

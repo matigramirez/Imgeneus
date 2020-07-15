@@ -12,6 +12,99 @@ namespace Imgeneus.World.Game
     public interface IKiller : IWorldMember, IStatsHolder
     {
         /// <summary>
+        /// Event, that is fired, when killer makes melee attack.
+        /// </summary>
+        event Action<IKiller, IKillable, AttackResult> OnAttack;
+
+        /// <summary>
+        /// Event, that is fired, when killer uses any skill.
+        /// </summary>
+        event Action<IKiller, IKillable, Skill, AttackResult> OnUsedSkill;
+
+        /// <summary>
+        /// Event, that is fired, when killer uses only range skill.
+        /// </summary>
+        event Action<IKiller, IKillable, Skill, AttackResult> OnUsedRangeSkill;
+
+        /// <summary>
+        /// Invoke OnUsedSkill event.
+        /// </summary>
+        void OnUsedSkillInvoke(IKillable target, Skill skill, AttackResult attackResult);
+
+        /// <summary>
+        /// Invoke OnUsedRangeSkill event.
+        /// </summary>
+        void OnUsedRangeSkillInvoke(IKillable target, Skill skill, AttackResult attackResult);
+
+        /// <summary>
+        /// Performs side effect of skill.
+        /// </summary>
+        /// <param name="skill">skill</param>
+        /// <param name="initialTarget">target, that was initially selected</param>
+        /// <param name="target">current target, usualy is the same as initialTarget, but if it's AoE (area of effect) skill, then can be different from initial target</param>
+        /// <param name="attackResult">result after performing skill</param>
+        public void PerformSkill(Skill skill, IKillable initialTarget, IKillable target, AttackResult attackResult)
+        {
+            switch (skill.Type)
+            {
+                case TypeDetail.Buff:
+                case TypeDetail.SubtractingDebuff:
+                case TypeDetail.PeriodicalHeal:
+                case TypeDetail.PeriodicalDebuff:
+                case TypeDetail.PreventAttack:
+                case TypeDetail.Immobilize:
+                    target.AddActiveBuff(skill, this);
+
+                    if (initialTarget == target || this == target)
+                        OnUsedSkillInvoke(initialTarget, skill, attackResult);
+                    else
+                        OnUsedRangeSkillInvoke(target, skill, attackResult);
+                    break;
+
+                case TypeDetail.Healing:
+                    var result = UsedHealingSkill(skill, target);
+                    if (initialTarget == target || this == target)
+                        OnUsedSkillInvoke(target, skill, result);
+                    else
+                        OnUsedRangeSkillInvoke(target, skill, result);
+                    break;
+
+                case TypeDetail.Stealth:
+                    result = UsedStealthSkill(skill, target);
+                    if (initialTarget == target || this == target)
+                        OnUsedSkillInvoke(initialTarget, skill, result);
+                    else
+                        OnUsedRangeSkillInvoke(target, skill, result);
+                    break;
+
+                case TypeDetail.UniqueHitAttack:
+                    if (initialTarget == target || this == target)
+                        OnUsedSkillInvoke(initialTarget, skill, attackResult);
+                    else
+                        OnUsedRangeSkillInvoke(target, skill, attackResult);
+                    break;
+
+                case TypeDetail.PassiveDefence:
+                case TypeDetail.WeaponMastery:
+                    target.AddActiveBuff(skill, this);
+                    break;
+
+                default:
+                    throw new NotImplementedException("Not implemented skill type.");
+            }
+        }
+
+        /// <summary>
+        /// Use Healing skill.
+        /// </summary>
+        AttackResult UsedHealingSkill(Skill skill, IKillable target);
+
+        /// <summary>
+        /// Use Stealth skill.
+        /// </summary>
+        AttackResult UsedStealthSkill(Skill skill, IKillable target);
+
+        /// <summary>
         /// Calculates attack result based on skill type and target.
         /// </summary>
         public AttackResult CalculateAttackResult(Skill skill, IKillable target, Element element, int minAttack, int maxAttack, int minMagicAttack, int maxMagicAttack)

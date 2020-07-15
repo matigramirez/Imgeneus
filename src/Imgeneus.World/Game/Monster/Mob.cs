@@ -1,6 +1,7 @@
 ﻿using Imgeneus.Database.Constants;
 using Imgeneus.Database.Entities;
 using Imgeneus.Database.Preload;
+using Imgeneus.World.Game.Player;
 using Imgeneus.World.Game.Zone;
 using Microsoft.Extensions.Logging;
 using System;
@@ -105,13 +106,6 @@ namespace Imgeneus.World.Game.Monster
 
         #endregion
 
-        #region Stealth
-
-        /// <inheritdoc />
-        public override bool IsStealth { get; protected set; } = false;
-
-        #endregion
-
         /// <summary>
         /// Creates mob clone.
         /// </summary>
@@ -125,6 +119,5 @@ namespace Imgeneus.World.Game.Monster
             base.Dispose();
             ClearTimers();
         }
-
     }
 }

@@ -17,12 +17,12 @@ namespace Imgeneus.World.Game.Player
         /// <summary>
         /// Event, that is fired, when character uses any skill.
         /// </summary>
-        public event Action<Character, IKillable, Skill, AttackResult> OnUsedSkill;
+        public event Action<IKiller, IKillable, Skill, AttackResult> OnUsedSkill;
 
         /// <summary>
         /// Event, that is fired, when character uses only range skill.
         /// </summary>
-        public event Action<Character, IKillable, Skill, AttackResult> OnUsedRangeSkill;
+        public event Action<IKiller, IKillable, Skill, AttackResult> OnUsedRangeSkill;
 
         /// <summary>
         /// Player learns new skill.
@@ -99,7 +99,7 @@ namespace Imgeneus.World.Game.Player
         /// <summary>
         /// Calculates healing result.
         /// </summary>
-        private AttackResult UsedHealingSkill(Skill skill, IKillable target)
+        public AttackResult UsedHealingSkill(Skill skill, IKillable target)
         {
             var healHP = TotalWis * 4 + skill.HealHP;
             var healSP = skill.HealSP;
@@ -116,7 +116,7 @@ namespace Imgeneus.World.Game.Player
         /// <summary>
         /// Makes target invisible.
         /// </summary>
-        private AttackResult UsedStealthSkill(Skill skill, IKillable target)
+        public AttackResult UsedStealthSkill(Skill skill, IKillable target)
         {
             target.AddActiveBuff(skill, this);
             return new AttackResult(AttackSuccess.Normal, new Damage());
@@ -125,7 +125,7 @@ namespace Imgeneus.World.Game.Player
         /// <summary>
         /// Initialize passive skills.
         /// </summary>
-        private void InitPassiveSkills()
+        public void InitPassiveSkills()
         {
             foreach (var skill in Skills.Values.Where(s => s.IsPassive && s.Type != TypeDetail.Stealth))
             {

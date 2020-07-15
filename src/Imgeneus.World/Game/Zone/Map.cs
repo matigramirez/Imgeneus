@@ -125,7 +125,7 @@ namespace Imgeneus.World.Game.Zone
             character.OnPartyChanged += Character_OnPartyChanged;
             character.OnAttackOrMoveChanged += Character_OnAttackOrMoveChanged;
             character.OnUsedSkill += Character_OnUsedSkill;
-            character.OnAutoAttack += Character_OnAutoAttack;
+            character.OnAttack += Character_OnAttack;
             character.OnDead += Character_OnDead;
             character.OnSkillCastStarted += Character_OnSkillCastStarted;
             character.OnUsedItem += Character_OnUsedItem;
@@ -150,7 +150,7 @@ namespace Imgeneus.World.Game.Zone
             character.OnPartyChanged -= Character_OnPartyChanged;
             character.OnAttackOrMoveChanged -= Character_OnAttackOrMoveChanged;
             character.OnUsedSkill -= Character_OnUsedSkill;
-            character.OnAutoAttack -= Character_OnAutoAttack;
+            character.OnAttack -= Character_OnAttack;
             character.OnDead -= Character_OnDead;
             character.OnSkillCastStarted -= Character_OnSkillCastStarted;
             character.OnUsedItem -= Character_OnUsedItem;
@@ -228,19 +228,19 @@ namespace Imgeneus.World.Game.Zone
         /// <summary>
         /// Notifies other players, that player used skill.
         /// </summary>
-        private void Character_OnUsedSkill(Character sender, IKillable target, Skill skill, AttackResult attackResult)
+        private void Character_OnUsedSkill(IKiller sender, IKillable target, Skill skill, AttackResult attackResult)
         {
             foreach (var player in Players)
-                _packetHelper.SendCharacterUsedSkill(player.Value.Client, sender, target, skill, attackResult);
+                _packetHelper.SendCharacterUsedSkill(player.Value.Client, (Character)sender, target, skill, attackResult);
         }
 
         /// <summary>
         /// Notifies other players, that player used auto attack.
         /// </summary>
-        private void Character_OnAutoAttack(Character sender, AttackResult attackResult)
+        private void Character_OnAttack(IKiller sender, IKillable target, AttackResult attackResult)
         {
             foreach (var player in Players)
-                _packetHelper.SendCharacterUsualAttack(player.Value.Client, sender, sender.Target, attackResult);
+                _packetHelper.SendCharacterUsualAttack(player.Value.Client, sender, target, attackResult);
         }
 
         /// <summary>
@@ -306,10 +306,10 @@ namespace Imgeneus.World.Game.Zone
                 _packetHelper.SendShapeUpdate(player.Value.Client, sender);
         }
 
-        private void Character_OnUsedRangeSkill(Character sender, IKillable target, Skill skill, AttackResult attackResult)
+        private void Character_OnUsedRangeSkill(IKiller sender, IKillable target, Skill skill, AttackResult attackResult)
         {
             foreach (var player in Players)
-                _packetHelper.SendUsedRangeSkill(player.Value.Client, sender, target, skill, attackResult);
+                _packetHelper.SendUsedRangeSkill(player.Value.Client, (Character)sender, target, skill, attackResult);
         }
 
         private void Character_OnRebirthed(IKillable sender)
@@ -416,16 +416,16 @@ namespace Imgeneus.World.Game.Zone
                 _packetHelper.SendMobMove(player.Value.Client, sender);
         }
 
-        private void Mob_OnAttack(Mob mob, IKillable target, AttackResult attackResult)
+        private void Mob_OnAttack(IKiller sender, IKillable target, AttackResult attackResult)
         {
             foreach (var player in Players)
-                _packetHelper.SendMobAttack(player.Value.Client, mob, target.Id, attackResult);
+                _packetHelper.SendMobAttack(player.Value.Client, (Mob)sender, target.Id, attackResult);
         }
 
-        private void Mob_OnUsedSkill(Mob mob, IKillable target, Skill skill, AttackResult attackResult)
+        private void Mob_OnUsedSkill(IKiller sender, IKillable target, Skill skill, AttackResult attackResult)
         {
             foreach (var player in Players)
-                _packetHelper.SendMobUsedSkill(player.Value.Client, mob, target.Id, skill, attackResult);
+                _packetHelper.SendMobUsedSkill(player.Value.Client, (Mob)sender, target.Id, skill, attackResult);
         }
 
         /// <summary>

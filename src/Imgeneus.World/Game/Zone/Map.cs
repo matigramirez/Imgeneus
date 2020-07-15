@@ -416,16 +416,16 @@ namespace Imgeneus.World.Game.Zone
                 _packetHelper.SendMobMove(player.Value.Client, sender);
         }
 
-        private void Mob_OnAttack(Mob mob, int targetId, AttackResult attackResult)
+        private void Mob_OnAttack(Mob mob, IKillable target, AttackResult attackResult)
         {
             foreach (var player in Players)
-                _packetHelper.SendMobAttack(player.Value.Client, mob, targetId, attackResult);
+                _packetHelper.SendMobAttack(player.Value.Client, mob, target.Id, attackResult);
         }
 
-        private void Mob_OnUsedSkill(Mob mob, int targetId, Skill skill, AttackResult attackResult)
+        private void Mob_OnUsedSkill(Mob mob, IKillable target, Skill skill, AttackResult attackResult)
         {
             foreach (var player in Players)
-                _packetHelper.SendMobUsedSkill(player.Value.Client, mob, targetId, skill, attackResult);
+                _packetHelper.SendMobUsedSkill(player.Value.Client, mob, target.Id, skill, attackResult);
         }
 
         /// <summary>

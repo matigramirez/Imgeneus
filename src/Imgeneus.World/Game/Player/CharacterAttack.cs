@@ -208,7 +208,7 @@ namespace Imgeneus.World.Game.Player
                     continue;
                 }
 
-                var attackResult = CalculateAttackResult(skill, t);
+                var attackResult = ((IKiller)this).CalculateAttackResult(skill, t, AttackElement, MinAttack, MaxAttack, MinMagicAttack, MaxMagicAttack);
 
                 if (attackResult.Damage.HP > 0)
                     t.DecreaseHP(attackResult.Damage.HP, this);
@@ -266,31 +266,6 @@ namespace Imgeneus.World.Game.Player
                         //throw new NotImplementedException("Not implemented skill type.");
                         break;
                 }
-            }
-        }
-
-        /// <summary>
-        /// Calculates attack result based on skill type and target.
-        /// </summary>
-        private AttackResult CalculateAttackResult(Skill skill, IKillable target)
-        {
-            switch (skill.DamageType)
-            {
-                case DamageType.FixedDamage:
-                    return new AttackResult(AttackSuccess.Normal, new Damage(skill.DamageHP, skill.DamageMP, skill.DamageSP));
-
-                case DamageType.PlusExtraDamage:
-                    return ((IKiller)this).CalculateDamage(target,
-                                                           skill.TypeAttack,
-                                                           AttackElement,
-                                                           MinAttack,
-                                                           MaxAttack,
-                                                           MinMagicAttack,
-                                                           MaxMagicAttack,
-                                                           skill);
-
-                default:
-                    throw new NotImplementedException("Not implemented damage type.");
             }
         }
 

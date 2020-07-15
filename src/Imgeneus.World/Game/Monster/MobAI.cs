@@ -448,12 +448,12 @@ namespace Imgeneus.World.Game.Monster
         /// <summary>
         /// Event, that is fired, when mob attacks some user.
         /// </summary>
-        public event Action<Mob, int, AttackResult> OnAttack;
+        public event Action<Mob, IKillable, AttackResult> OnAttack;
 
         /// <summary>
         /// Event, that is fired, when mob uses some skill.
         /// </summary>
-        public event Action<Mob, int, Skill, AttackResult> OnUsedSkill;
+        public event Action<Mob, IKillable, Skill, AttackResult> OnUsedSkill;
 
         /// <summary>
         /// Time since the last attack.
@@ -540,14 +540,34 @@ namespace Imgeneus.World.Game.Monster
                 if (!((IKiller)this).AttackSuccessRate(t, skill.TypeAttack, skill))
                 {
                     // Send missed skill.
-                    OnUsedSkill?.Invoke(this, t.Id, skill, new AttackResult(AttackSuccess.Miss, new Damage(0, 0, 0)));
+                    OnUsedSkill?.Invoke(this, t, skill, new AttackResult(AttackSuccess.Miss, new Damage(0, 0, 0)));
                     continue;
                 }
 
+                var attackResult = ((IKiller)this).CalculateAttackResult(skill, t, element, minAttack, minAttack + additionalDamage, minAttack, minAttack + additionalDamage);
 
+                if (attackResult.Damage.HP > 0)
+                    t.DecreaseHP(attackResult.Damage.HP, this);
+                if (attackResult.Damage.SP > 0)
+                    t.CurrentSP -= attackResult.Damage.SP;
+                if (attackResult.Damage.MP > 0)
+                    t.CurrentMP -= attackResult.Damage.MP;
 
-                var attackResult = new AttackResult(AttackSuccess.Critical, new Damage(15, 0, 0));//CalculateAttackResult(skill, t);
-                OnUsedSkill?.Invoke(this, t.Id, skill, attackResult);
+                switch (skill.Type)
+                {
+                    case TypeDetail.Buff:
+                    case TypeDetail.SubtractingDebuff:
+                    case TypeDetail.PeriodicalDebuff:
+                    case TypeDetail.PreventAttack:
+                    case TypeDetail.Immobilize:
+                        t.AddActiveBuff(skill, this);
+                        OnUsedSkill?.Invoke(this, t, skill, attackResult);
+                        break;
+
+                    default:
+                        _logger.LogError($"Not implemented skill type {skill.Type}");
+                        break;
+                }
             }
         }
 
@@ -556,7 +576,7 @@ namespace Imgeneus.World.Game.Monster
             if (!((IKiller)this).AttackSuccessRate(target, TypeAttack.PhysicalAttack))
             {
                 // Send missed attack.
-                OnAttack?.Invoke(this, Target.Id, new AttackResult(AttackSuccess.Miss, new Damage(0, 0, 0)));
+                OnAttack?.Invoke(this, Target, new AttackResult(AttackSuccess.Miss, new Damage(0, 0, 0)));
                 _logger.LogDebug($"Mob {Id} missed attack on character {target.Id}");
                 return;
             }
@@ -574,7 +594,7 @@ namespace Imgeneus.World.Game.Monster
             Target.CurrentMP -= res.Damage.MP;
             Target.CurrentSP -= res.Damage.SP;
 
-            OnAttack?.Invoke(this, Target.Id, res);
+            OnAttack?.Invoke(this, Target, res);
         }
 
         #endregion

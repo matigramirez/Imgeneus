@@ -12,6 +12,31 @@ namespace Imgeneus.World.Game
     public interface IKiller : IWorldMember, IStatsHolder
     {
         /// <summary>
+        /// Calculates attack result based on skill type and target.
+        /// </summary>
+        public AttackResult CalculateAttackResult(Skill skill, IKillable target, Element element, int minAttack, int maxAttack, int minMagicAttack, int maxMagicAttack)
+        {
+            switch (skill.DamageType)
+            {
+                case DamageType.FixedDamage:
+                    return new AttackResult(AttackSuccess.Normal, new Damage(skill.DamageHP, skill.DamageMP, skill.DamageSP));
+
+                case DamageType.PlusExtraDamage:
+                    return CalculateDamage(target,
+                                                           skill.TypeAttack,
+                                                           element,
+                                                           minAttack,
+                                                           maxAttack,
+                                                           minMagicAttack,
+                                                           maxMagicAttack,
+                                                           skill);
+
+                default:
+                    throw new NotImplementedException("Not implemented damage type.");
+            }
+        }
+
+        /// <summary>
         /// The calculation of the attack success.
         /// </summary>
         /// <param name="target">target</param>

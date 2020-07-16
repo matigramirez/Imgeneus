@@ -354,6 +354,12 @@ namespace Imgeneus.World.Game.Monster
         private void ChaseTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
             var now = DateTime.UtcNow;
+            if (Target is null)
+            {
+                _logger.LogDebug("target is already cleared.");
+                return;
+            }
+
             var distanceToPlayer = MathExtensions.Distance(PosX, Target.PosX, PosZ, Target.PosZ);
 
             if (now > _nextAttackTime)
@@ -705,7 +711,8 @@ namespace Imgeneus.World.Game.Monster
                     continue;
                 }
 
-                var attackResult = ((IKiller)this).CalculateAttackResult(skill, t, element, minAttack, minAttack + additionalDamage, minAttack, minAttack + additionalDamage);
+                //var attackResult = ((IKiller)this).CalculateAttackResult(skill, t, element, minAttack, minAttack + additionalDamage, minAttack, minAttack + additionalDamage);
+                var attackResult = new AttackResult(AttackSuccess.Normal, new Damage(1, 0, 0));
 
                 if (attackResult.Damage.HP > 0)
                     t.DecreaseHP(attackResult.Damage.HP, this);

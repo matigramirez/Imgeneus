@@ -431,6 +431,9 @@ namespace Imgeneus.World.Game.Player
         {
             get
             {
+                if (RemoveElement)
+                    return Element.None;
+
                 if (Armor is null)
                     return Element.None;
 

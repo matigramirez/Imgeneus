@@ -53,6 +53,7 @@ namespace Imgeneus.World.Game
                 case TypeDetail.PeriodicalDebuff:
                 case TypeDetail.PreventAttack:
                 case TypeDetail.Immobilize:
+                case TypeDetail.RemoveAttribute:
                     target.AddActiveBuff(skill, this);
 
                     if (initialTarget == target || this == target)

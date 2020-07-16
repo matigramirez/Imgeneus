@@ -41,7 +41,14 @@ namespace Imgeneus.World.Tests
                     { (14, 1), ManaTraining },
                     { (15, 1), SharpenWeaponMastery_Lvl1 },
                     { (15, 2), SharpenWeaponMastery_Lvl2 },
-                    { (35, 1), MagicRoots_Lvl1 }
+                    { (35, 1), MagicRoots_Lvl1 },
+                    { (273, 100), AttributeRemove }
+                });
+            databasePreloader
+                .SetupGet((preloader) => preloader.Items)
+                .Returns(new Dictionary<(byte Type, byte TypeId), DbItem>()
+                {
+                    { (17, 2), WaterArmor }
                 });
         }
 
@@ -51,11 +58,11 @@ namespace Imgeneus.World.Tests
         {
             Id = 1,
             MobName = "Small Ruined Wolf",
-            AI = Database.Constants.MobAI.Combative,
+            AI = MobAI.Combative,
             Level = 38,
             HP = 2765,
-            Element = Database.Constants.Element.Wind1,
-            AttackSpecial3 = Database.Constants.MobRespawnTime.TestEnv,
+            Element = Element.Wind1,
+            AttackSpecial3 = MobRespawnTime.TestEnv,
             NormalTime = 1
         };
 
@@ -63,7 +70,7 @@ namespace Imgeneus.World.Tests
         {
             Id = 3041,
             MobName = "Cryptic the Immortal",
-            AI = Database.Constants.MobAI.CrypticImmortal,
+            AI = MobAI.CrypticImmortal,
             Level = 75,
             HP = 35350000,
             AttackOk1 = 1,
@@ -136,6 +143,28 @@ namespace Imgeneus.World.Tests
             ResetTime = 10,
             KeepTime = 5,
             DamageType = DamageType.PlusExtraDamage,
+        };
+
+        protected DbSkill AttributeRemove = new DbSkill()
+        {
+            SkillId = 273,
+            SkillLevel = 100,
+            TypeDetail = TypeDetail.RemoveAttribute,
+            SkillName = "Attribute Remove",
+            TypeAttack = TypeAttack.MagicAttack,
+            DamageType = DamageType.FixedDamage
+        };
+
+        #endregion
+
+        #region Items
+
+        protected DbItem WaterArmor = new DbItem()
+        {
+            Type = 17,
+            TypeId = 2,
+            ItemName = "Water armor",
+            Element = Element.Water1
         };
 
         #endregion

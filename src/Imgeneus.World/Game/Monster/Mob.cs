@@ -100,7 +100,15 @@ namespace Imgeneus.World.Game.Monster
         #region Element
 
         /// <inheritdoc />
-        public override Element DefenceElement => _dbMob.Element;
+        public override Element DefenceElement
+        {
+            get
+            {
+                if (RemoveElement)
+                    return Element.None;
+                return _dbMob.Element;
+            }
+        }
 
         /// <inheritdoc />
         public override Element AttackElement => _dbMob.Element;

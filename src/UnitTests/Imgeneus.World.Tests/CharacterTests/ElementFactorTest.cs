@@ -123,5 +123,19 @@ namespace Imgeneus.World.Tests
             IKiller character = new Character(loggerMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object);
             Assert.Equal(expectedFactor, character.GetElementFactor(attackElement, defenceElement));
         }
+
+        [Fact]
+        [Description("When debuff, that removes element is used, character element should be none.")]
+        public void RemoveElementTest()
+        {
+            Character character = new Character(loggerMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object);
+            Assert.Equal(Element.None, character.DefenceElement);
+
+            character.Armor = new Item(databasePreloader.Object, WaterArmor.Type, WaterArmor.TypeId);
+            Assert.Equal(Element.Water1, character.DefenceElement);
+
+            character.AddActiveBuff(new Skill(AttributeRemove, 0, 0), null);
+            Assert.Equal(Element.None, character.DefenceElement);
+        }
     }
 }

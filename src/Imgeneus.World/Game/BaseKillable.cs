@@ -410,6 +410,10 @@ namespace Imgeneus.World.Game
                     SendMoveAndAttackSpeed();
                     break;
 
+                case TypeDetail.RemoveAttribute:
+                    RemoveElement = true;
+                    break;
+
                 default:
                     throw new NotImplementedException("Not implemented buff skill type.");
             }
@@ -472,6 +476,10 @@ namespace Imgeneus.World.Game
                     _weaponSpeedPassiveSkillModificator.Remove(skill.Weapon2);
 
                     SendMoveAndAttackSpeed();
+                    break;
+
+                case TypeDetail.RemoveAttribute:
+                    RemoveElement = false;
                     break;
 
                 default:
@@ -722,6 +730,11 @@ namespace Imgeneus.World.Game
 
         /// <inheritdoc />
         public abstract Element AttackElement { get; }
+
+        /// <summary>
+        /// Indicator, that shows if defence element should be removed.
+        /// </summary>
+        protected bool RemoveElement { get; private set; }
 
         #endregion
 

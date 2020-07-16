@@ -1,7 +1,6 @@
 ﻿using Imgeneus.Database.Constants;
 using Imgeneus.Database.Entities;
 using Imgeneus.Database.Preload;
-using Imgeneus.World.Game.Player;
 using Imgeneus.World.Game.Zone;
 using Microsoft.Extensions.Logging;
 using System;
@@ -40,6 +39,8 @@ namespace Imgeneus.World.Game.Monster
 
                 OnDead += MobRebirth_OnDead;
             }
+
+            HP_Changed += Mob_HP_Changed;
 
             SetupAITimers();
             State = MobState.Idle;
@@ -118,6 +119,7 @@ namespace Imgeneus.World.Game.Monster
         {
             base.Dispose();
             ClearTimers();
+            HP_Changed -= Mob_HP_Changed;
         }
     }
 }

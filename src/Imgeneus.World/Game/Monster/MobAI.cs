@@ -26,6 +26,11 @@ namespace Imgeneus.World.Game.Monster
         /// </summary>
         public readonly MoveArea MoveArea;
 
+        /// <summary>
+        /// Delta between positions.
+        /// </summary>
+        public readonly float DELTA = 1f;
+
         private MobState _state = MobState.Idle;
         /// <summary>
         /// Current ai state.
@@ -58,7 +63,7 @@ namespace Imgeneus.World.Game.Monster
 
                     case MobState.BackToBirthPosition:
                         StopChasing();
-                        // TODO: return to birth position.
+                        ReturnToBirthPosition();
                         break;
 
                     default:
@@ -85,6 +90,10 @@ namespace Imgeneus.World.Game.Monster
             _chaseTimer.Interval = Map.Id == Map.TEST_MAP_ID ? 1 : 500; // 0.5 second
             _chaseTimer.AutoReset = false;
             _chaseTimer.Elapsed += ChaseTimer_Elapsed;
+
+            _backToBirthPositionTimer.Interval = Map.Id == Map.TEST_MAP_ID ? 1 : 500; // 0.5 second
+            _backToBirthPositionTimer.AutoReset = false;
+            _backToBirthPositionTimer.Elapsed += BackToBirthPositionTimer_Elapsed;
         }
 
         /// <summary>
@@ -95,6 +104,7 @@ namespace Imgeneus.World.Game.Monster
             _idleTimer.Elapsed -= IdleTimer_Elapsed;
             _watchTimer.Elapsed -= WatchTimer_Elapsed;
             _chaseTimer.Elapsed -= ChaseTimer_Elapsed;
+            _backToBirthPositionTimer.Elapsed -= BackToBirthPositionTimer_Elapsed;
         }
 
         /// <summary>
@@ -140,6 +150,15 @@ namespace Imgeneus.World.Game.Monster
                     State = MobState.Chase;
                     break;
             }
+        }
+
+        /// <summary>
+        /// When user hits mob, it automatically turns on ai.
+        /// </summary>
+        private void Mob_HP_Changed(IKillable mob, HitpointArgs hitpoints)
+        {
+            if (hitpoints.NewValue < hitpoints.OldValue)
+                TurnOnAI();
         }
 
         #endregion
@@ -202,6 +221,16 @@ namespace Imgeneus.World.Game.Monster
         public event Action<Mob> OnMove;
 
         /// <summary>
+        /// Since when we sent the last update to players about mob position.
+        /// </summary>
+        private DateTime _lastMoveUpdateSent;
+
+        /// <summary>
+        /// Used for calculation delta time.
+        /// </summary>
+        private DateTime _lastMoveUpdate;
+
+        /// <summary>
         /// Describes if mob is "walking" or "running".
         /// </summary>
         public MobMotion MoveMotion
@@ -221,6 +250,37 @@ namespace Imgeneus.World.Game.Monster
                     default:
                         return MobMotion.Run;
                 }
+            }
+        }
+
+        /// <summary>
+        /// Moves mob to the specified position.
+        /// </summary>
+        /// <param name="x">x coordinate</param>
+        /// <param name="z">z coordinate</param>
+        private void Move(float x, float z)
+        {
+            if (Math.Abs(PosX - x) < DELTA && Math.Abs(PosZ - z) < DELTA)
+                return;
+
+            var now = DateTime.UtcNow;
+            var mobVector = new Vector2(PosX, PosZ);
+            var destinationVector = new Vector2(x, z);
+
+            var normalizedVector = Vector2.Normalize(destinationVector - mobVector);
+            var deltaTime = now.Subtract(_lastMoveUpdate);
+            var deltaMilliseconds = deltaTime.TotalMilliseconds > 2000 ? 500 : deltaTime.TotalMilliseconds;
+            var temp = normalizedVector * (float)(_dbMob.ChaseStep * 1.0 / _dbMob.ChaseTime * deltaMilliseconds);
+            PosX += float.IsNaN(temp.X) ? 0 : temp.X;
+            PosZ += float.IsNaN(temp.Y) ? 0 : temp.Y;
+
+            _lastMoveUpdate = now;
+
+            // Send update to players, that mob position has changed.
+            if (DateTime.UtcNow.Subtract(_lastMoveUpdateSent).TotalMilliseconds > 1000)
+            {
+                OnMove?.Invoke(this);
+                _lastMoveUpdateSent = now;
             }
         }
 
@@ -262,22 +322,13 @@ namespace Imgeneus.World.Game.Monster
         private readonly Timer _chaseTimer = new Timer();
 
         /// <summary>
-        /// Time, that is used to calculate delta time, which is used in speed calculation.
-        /// </summary>
-        private DateTime _lastChaseTime;
-
-        /// <summary>
-        /// Since when we sent the last update to players about mob position.
-        /// </summary>
-        private DateTime _lastMoveUpdate;
-
-        /// <summary>
         /// Start chasing player.
         /// </summary>
         private void StartChasing()
         {
             _chaseTimer.Start();
-            _lastChaseTime = DateTime.UtcNow;
+            StartPosX = PosX;
+            StartPosZ = PosZ;
         }
 
         /// <summary>
@@ -327,30 +378,21 @@ namespace Imgeneus.World.Game.Monster
 
             if (distanceToPlayer <= _dbMob.AttackRange1 || distanceToPlayer <= _dbMob.AttackRange2 || distanceToPlayer <= _dbMob.AttackRange3)
             {
-                _lastChaseTime = now;
                 _chaseTimer.Start();
                 return;
             }
 
-            var mobVector = new Vector2(PosX, PosZ);
-            var playerVector = new Vector2(Target.PosX, Target.PosZ);
+            Move(Target.PosX, Target.PosZ);
 
-            var normalizedVector = Vector2.Normalize(playerVector - mobVector);
-            var deltaTime = now.Subtract(_lastChaseTime);
-            var temp = normalizedVector * (float)(_dbMob.ChaseStep * 1.0 / _dbMob.ChaseTime * deltaTime.TotalMilliseconds);
-            PosX += float.IsNaN(temp.X) ? 0 : temp.X;
-            PosZ += float.IsNaN(temp.Y) ? 0 : temp.Y;
-
-            _lastChaseTime = now;
-
-            // Send update to players, that mob position has changed.
-            if (DateTime.UtcNow.Subtract(_lastMoveUpdate).TotalMilliseconds > 1000)
+            if (IsTooFarAway)
             {
-                OnMove?.Invoke(this);
-                _lastMoveUpdate = now;
+                _logger.LogDebug($"Mob {Id} is too far away from its' birth position, returing home.");
+                State = MobState.BackToBirthPosition;
             }
-
-            _chaseTimer.Start();
+            else
+            {
+                _chaseTimer.Start();
+            }
         }
 
         /// <summary>
@@ -432,6 +474,64 @@ namespace Imgeneus.World.Game.Monster
                 return 3;
             else
                 return 0;
+        }
+
+        #endregion
+
+        #region Return to birth place
+
+        /// <summary>
+        /// Position x, where mob started chasing.
+        /// </summary>
+        private float StartPosX;
+
+        /// <summary>
+        /// Position z, where mob started chasing.
+        /// </summary>
+        private float StartPosZ;
+
+        /// <summary>
+        /// Back to birth position timer.
+        /// </summary>
+        private Timer _backToBirthPositionTimer = new Timer();
+
+        /// <summary>
+        /// Is mob too far away from its' area?
+        /// </summary>
+        private bool IsTooFarAway
+        {
+            get
+            {
+                return (PosX < MoveArea.X1 && MathExtensions.Distance(PosX, MoveArea.X1, PosZ, MoveArea.Z1) > _dbMob.ChaseRange) ||
+                       (PosZ < MoveArea.Z1 && MathExtensions.Distance(PosX, MoveArea.X1, PosZ, MoveArea.Z1) > _dbMob.ChaseRange) ||
+                       (PosX > MoveArea.X2 && MathExtensions.Distance(PosX, MoveArea.X2, PosZ, MoveArea.Z2) > _dbMob.ChaseRange) ||
+                       (PosZ > MoveArea.Z2 && MathExtensions.Distance(PosX, MoveArea.X2, PosZ, MoveArea.Z2) > _dbMob.ChaseRange);
+            }
+        }
+
+        /// <summary>
+        /// Returns mob back to birth position.
+        /// </summary>
+        private void ReturnToBirthPosition()
+        {
+            if (Math.Abs(PosX - StartPosX) > DELTA || Math.Abs(PosZ - StartPosZ) > DELTA)
+            {
+                _backToBirthPositionTimer.Start();
+            }
+        }
+
+        private void BackToBirthPositionTimer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            if (Math.Abs(PosX - StartPosX) > DELTA || Math.Abs(PosZ - StartPosZ) > DELTA)
+            {
+                Move(StartPosX, StartPosZ);
+                _backToBirthPositionTimer.Start();
+            }
+            else
+            {
+                _logger.LogDebug($"Mob {Id} reached birth position, back to idle state.");
+                State = MobState.Idle;
+            }
         }
 
         #endregion

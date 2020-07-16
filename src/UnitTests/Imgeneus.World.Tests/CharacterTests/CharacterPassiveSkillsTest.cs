@@ -1,5 +1,4 @@
-﻿using Imgeneus.Database.Constants;
-using Imgeneus.Database.Entities;
+﻿using Imgeneus.Database.Entities;
 using Imgeneus.World.Game.Player;
 using System.Collections.Generic;
 using Xunit;
@@ -8,64 +7,8 @@ namespace Imgeneus.World.Tests
 {
     public class CharacterPassiveSkillsTest : BaseTest
     {
-        private DbSkill StrengthTraining = new DbSkill()
-        {
-            SkillId = 1,
-            SkillLevel = 1,
-            TypeDetail = TypeDetail.PassiveDefence,
-            SkillName = "Strength Training Lv1",
-            TypeAttack = TypeAttack.Passive,
-            AbilityType1 = AbilityType.PhysicalAttackPower,
-            AbilityValue1 = 18
-        };
-
-        private DbSkill ManaTraining = new DbSkill()
-        {
-            SkillId = 14,
-            SkillLevel = 1,
-            TypeDetail = TypeDetail.PassiveDefence,
-            SkillName = "Mana Training",
-            TypeAttack = TypeAttack.Passive,
-            AbilityType1 = AbilityType.MP,
-            AbilityValue1 = 110
-        };
-
-        private DbSkill SharpenWeaponMastery_Lvl1 = new DbSkill()
-        {
-            SkillId = 15,
-            SkillLevel = 1,
-            TypeDetail = TypeDetail.WeaponMastery,
-            SkillName = "Sharpen Weapon Mastery Lvl 1",
-            TypeAttack = TypeAttack.Passive,
-            Weapon1 = 1,
-            Weapon2 = 3,
-            Weaponvalue = 1
-        };
-
-        private DbSkill SharpenWeaponMastery_Lvl2 = new DbSkill()
-        {
-            SkillId = 15,
-            SkillLevel = 2,
-            TypeDetail = TypeDetail.WeaponMastery,
-            SkillName = "Sharpen Weapon Mastery Lvl 2",
-            TypeAttack = TypeAttack.Passive,
-            Weapon1 = 1,
-            Weapon2 = 3,
-            Weaponvalue = 2
-        };
-
         public CharacterPassiveSkillsTest()
         {
-            databasePreloader
-                .SetupGet((preloader) => preloader.Skills)
-                .Returns(new Dictionary<(ushort SkillId, byte SkillLevel), DbSkill>()
-                {
-                    { (1, 1) , StrengthTraining },
-                    { (14, 1), ManaTraining },
-                    { (15, 1), SharpenWeaponMastery_Lvl1 },
-                    { (15, 2), SharpenWeaponMastery_Lvl2 }
-                });
-
             databasePreloader
                 .SetupGet((preloader) => preloader.Items)
                 .Returns(new Dictionary<(byte Type, byte TypeId), DbItem>() {

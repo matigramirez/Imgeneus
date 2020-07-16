@@ -1,10 +1,9 @@
 ﻿using Imgeneus.World.Game.Monster;
 using Imgeneus.World.Game.Player;
 using Imgeneus.World.Game.Zone;
-using System.Threading.Tasks;
 using Xunit;
 
-namespace Imgeneus.World.Tests
+namespace Imgeneus.World.Tests.MobTests
 {
     public class MobAITest : BaseTest
     {

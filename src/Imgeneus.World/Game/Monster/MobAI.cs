@@ -78,7 +78,7 @@ namespace Imgeneus.World.Game.Monster
         /// </summary>
         private void SetupAITimers()
         {
-            if (Map.Id == Map.TEST_MAP_ID)
+            if (Map is null || Map.Id == Map.TEST_MAP_ID)
                 return;
 
             var idleTime = _dbMob.NormalTime <= 0 ? 4000 : _dbMob.NormalTime;

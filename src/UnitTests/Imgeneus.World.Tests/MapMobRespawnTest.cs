@@ -11,7 +11,7 @@ namespace Imgeneus.World.Tests
     {
 
         [Fact]
-        public async void MobRespawnsAfterDeath()
+        public void MobCanRespawnAfterDeath()
         {
             var map = new Map(1, mapLoggerMock.Object);
             var mob = new Mob(mobLoggerMock.Object, databasePreloader.Object, 1, true, new MoveArea(0, 0, 0, 0, 0, 0), map);
@@ -22,8 +22,7 @@ namespace Imgeneus.World.Tests
             mob.DecreaseHP(mob.CurrentHP, null);
             Assert.Null(map.GetMob(1));
 
-            // Wait until mob rebirth.
-            await Task.Delay(1000);
+            map.RebirthMob(mob);
 
             // Should rebirth with new id.
             var newMob = map.GetMob(2);

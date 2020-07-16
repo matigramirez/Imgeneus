@@ -403,7 +403,7 @@ namespace Imgeneus.World.Game.Zone
             var mob = (Mob)sender;
             RemoveListeners(mob);
             if (mob.ShouldRebirth)
-                mob.TimeToRebirth += Mob_TimeToRebirth;
+                mob.TimeToRebirth += RebirthMob;
 
             mob.Dispose();
             if (!Mobs.TryRemove(mob.Id, out var removedMob))
@@ -437,7 +437,7 @@ namespace Imgeneus.World.Game.Zone
         /// Called, when mob is rebirthed.
         /// </summary>
         /// <param name="sender">rebirthed mob</param>
-        private void Mob_TimeToRebirth(Mob sender)
+        public void RebirthMob(Mob sender)
         {
             // Create mob clone, because we can not reuse the same id.
             var mob = sender.Clone();

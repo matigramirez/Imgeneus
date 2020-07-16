@@ -418,6 +418,10 @@ namespace Imgeneus.World.Game
                     AttackSkillElement = skill.Element;
                     break;
 
+                case TypeDetail.ElementalProtection:
+                    DefenceSkillElement = skill.Element;
+                    break;
+
                 default:
                     throw new NotImplementedException("Not implemented buff skill type.");
             }
@@ -488,6 +492,10 @@ namespace Imgeneus.World.Game
 
                 case TypeDetail.ElementalAttack:
                     AttackSkillElement = Element.None;
+                    break;
+
+                case TypeDetail.ElementalProtection:
+                    DefenceSkillElement = Element.None;
                     break;
 
                 default:
@@ -748,6 +756,11 @@ namespace Imgeneus.World.Game
         /// Element set by skill.
         /// </summary>
         protected Element AttackSkillElement { get; private set; }
+
+        /// <summary>
+        /// Element set by skill.
+        /// </summary>
+        protected Element DefenceSkillElement { get; private set; }
 
         #endregion
 

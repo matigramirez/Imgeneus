@@ -437,6 +437,9 @@ namespace Imgeneus.World.Game.Player
                 if (Armor is null)
                     return Element.None;
 
+                if (DefenceSkillElement != Element.None)
+                    return DefenceSkillElement;
+
                 return Armor.Element;
             }
         }

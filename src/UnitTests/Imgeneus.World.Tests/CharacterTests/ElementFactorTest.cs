@@ -151,5 +151,19 @@ namespace Imgeneus.World.Tests
             character.AddActiveBuff(new Skill(EarthWeapon, 0, 0), null);
             Assert.Equal(Element.Earth1, character.AttackElement);
         }
+
+        [Fact]
+        [Description("Character should be able to change his defence element by using special skill")]
+        public void ElementalProtectionTest()
+        {
+            Character character = new Character(loggerMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object);
+            Assert.Equal(Element.None, character.DefenceElement);
+
+            character.Armor = new Item(databasePreloader.Object, WaterArmor.Type, WaterArmor.TypeId);
+            Assert.Equal(Element.Water1, character.DefenceElement);
+
+            character.AddActiveBuff(new Skill(EarthSkin, 0, 0), null);
+            Assert.Equal(Element.Earth1, character.DefenceElement);
+        }
     }
 }

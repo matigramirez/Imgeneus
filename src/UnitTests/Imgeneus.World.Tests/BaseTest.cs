@@ -43,7 +43,8 @@ namespace Imgeneus.World.Tests
                     { (15, 2), SharpenWeaponMastery_Lvl2 },
                     { (35, 1), MagicRoots_Lvl1 },
                     { (273, 100), AttributeRemove },
-                    { (735, 1), EarthWeapon }
+                    { (735, 1), EarthWeapon },
+                    { (765, 1), EarthSkin }
                 });
             databasePreloader
                 .SetupGet((preloader) => preloader.Items)
@@ -163,6 +164,15 @@ namespace Imgeneus.World.Tests
             SkillLevel = 1,
             SkillName = "Earth Weapon",
             TypeDetail = TypeDetail.ElementalAttack,
+            Element = Element.Earth1
+        };
+
+        protected DbSkill EarthSkin = new DbSkill()
+        {
+            SkillId = 765,
+            SkillLevel = 1,
+            SkillName = "Earth Skin",
+            TypeDetail = TypeDetail.ElementalProtection,
             Element = Element.Earth1
         };
 

@@ -449,6 +449,9 @@ namespace Imgeneus.World.Game.Player
                 if (Weapon is null)
                     return Element.None;
 
+                if (AttackSkillElement != Element.None)
+                    return AttackSkillElement;
+
                 return Weapon.Element;
             }
         }

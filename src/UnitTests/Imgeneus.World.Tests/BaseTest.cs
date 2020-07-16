@@ -42,13 +42,15 @@ namespace Imgeneus.World.Tests
                     { (15, 1), SharpenWeaponMastery_Lvl1 },
                     { (15, 2), SharpenWeaponMastery_Lvl2 },
                     { (35, 1), MagicRoots_Lvl1 },
-                    { (273, 100), AttributeRemove }
+                    { (273, 100), AttributeRemove },
+                    { (735, 1), EarthWeapon }
                 });
             databasePreloader
                 .SetupGet((preloader) => preloader.Items)
                 .Returns(new Dictionary<(byte Type, byte TypeId), DbItem>()
                 {
-                    { (17, 2), WaterArmor }
+                    { (17, 2), WaterArmor },
+                    { (2, 92), FireSword }
                 });
         }
 
@@ -155,6 +157,15 @@ namespace Imgeneus.World.Tests
             DamageType = DamageType.FixedDamage
         };
 
+        protected DbSkill EarthWeapon = new DbSkill()
+        {
+            SkillId = 735,
+            SkillLevel = 1,
+            SkillName = "Earth Weapon",
+            TypeDetail = TypeDetail.ElementalAttack,
+            Element = Element.Earth1
+        };
+
         #endregion
 
         #region Items
@@ -165,6 +176,14 @@ namespace Imgeneus.World.Tests
             TypeId = 2,
             ItemName = "Water armor",
             Element = Element.Water1
+        };
+
+        protected DbItem FireSword = new DbItem()
+        {
+            Type = 2,
+            TypeId = 92,
+            ItemName = "Thane Breaker of Fire",
+            Element = Element.Fire1
         };
 
         #endregion

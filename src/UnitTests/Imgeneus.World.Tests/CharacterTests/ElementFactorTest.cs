@@ -137,5 +137,19 @@ namespace Imgeneus.World.Tests
             character.AddActiveBuff(new Skill(AttributeRemove, 0, 0), null);
             Assert.Equal(Element.None, character.DefenceElement);
         }
+
+        [Fact]
+        [Description("Character should be able to change his attack element by using special skill.")]
+        public void AttackElementSkillTest()
+        {
+            Character character = new Character(loggerMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object);
+            Assert.Equal(Element.None, character.AttackElement);
+
+            character.Weapon = new Item(databasePreloader.Object, FireSword.Type, FireSword.TypeId);
+            Assert.Equal(Element.Fire1, character.AttackElement);
+
+            character.AddActiveBuff(new Skill(EarthWeapon, 0, 0), null);
+            Assert.Equal(Element.Earth1, character.AttackElement);
+        }
     }
 }

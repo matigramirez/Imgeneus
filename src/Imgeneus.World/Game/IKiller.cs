@@ -54,6 +54,7 @@ namespace Imgeneus.World.Game
                 case TypeDetail.PreventAttack:
                 case TypeDetail.Immobilize:
                 case TypeDetail.RemoveAttribute:
+                case TypeDetail.ElementalAttack:
                     target.AddActiveBuff(skill, this);
 
                     if (initialTarget == target || this == target)

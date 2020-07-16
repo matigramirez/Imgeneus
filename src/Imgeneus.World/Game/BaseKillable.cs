@@ -414,6 +414,10 @@ namespace Imgeneus.World.Game
                     RemoveElement = true;
                     break;
 
+                case TypeDetail.ElementalAttack:
+                    AttackSkillElement = skill.Element;
+                    break;
+
                 default:
                     throw new NotImplementedException("Not implemented buff skill type.");
             }
@@ -480,6 +484,10 @@ namespace Imgeneus.World.Game
 
                 case TypeDetail.RemoveAttribute:
                     RemoveElement = false;
+                    break;
+
+                case TypeDetail.ElementalAttack:
+                    AttackSkillElement = Element.None;
                     break;
 
                 default:
@@ -735,6 +743,11 @@ namespace Imgeneus.World.Game
         /// Indicator, that shows if defence element should be removed.
         /// </summary>
         protected bool RemoveElement { get; private set; }
+
+        /// <summary>
+        /// Element set by skill.
+        /// </summary>
+        protected Element AttackSkillElement { get; private set; }
 
         #endregion
 

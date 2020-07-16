@@ -78,20 +78,23 @@ namespace Imgeneus.World.Game.Monster
         /// </summary>
         private void SetupAITimers()
         {
+            if (Map.Id == Map.TEST_MAP_ID)
+                return;
+
             var idleTime = _dbMob.NormalTime <= 0 ? 4000 : _dbMob.NormalTime;
             _idleTimer.Interval = idleTime * 10;
             _idleTimer.AutoReset = false;
             _idleTimer.Elapsed += IdleTimer_Elapsed;
 
-            _watchTimer.Interval = Map.Id == Map.TEST_MAP_ID ? 1 : 1000; // 1 second
+            _watchTimer.Interval = 1000; // 1 second
             _watchTimer.AutoReset = false;
             _watchTimer.Elapsed += WatchTimer_Elapsed;
 
-            _chaseTimer.Interval = Map.Id == Map.TEST_MAP_ID ? 1 : 500; // 0.5 second
+            _chaseTimer.Interval = 500; // 0.5 second
             _chaseTimer.AutoReset = false;
             _chaseTimer.Elapsed += ChaseTimer_Elapsed;
 
-            _backToBirthPositionTimer.Interval = Map.Id == Map.TEST_MAP_ID ? 1 : 500; // 0.5 second
+            _backToBirthPositionTimer.Interval = 500; // 0.5 second
             _backToBirthPositionTimer.AutoReset = false;
             _backToBirthPositionTimer.Elapsed += BackToBirthPositionTimer_Elapsed;
         }
@@ -298,18 +301,27 @@ namespace Imgeneus.World.Game.Monster
             if (State != MobState.Idle)
                 return;
 
+            if (TryGetPlayer())
+                TurnOnAI();
+        }
+
+        /// <summary>
+        /// Tries to get the nearest player on the map.
+        /// </summary>
+        public bool TryGetPlayer()
+        {
             var players = Map.GetPlayers(PosX, PosZ, _dbMob.ChaseRange, EnemyPlayersFraction);
 
             // No players, keep watching.
             if (!players.Any())
             {
                 _watchTimer.Start();
-                return;
+                return false;
             }
 
             // There is some player in vision.
             Target = players.First();
-            TurnOnAI();
+            return true;
         }
 
         #endregion

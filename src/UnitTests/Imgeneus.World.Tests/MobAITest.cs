@@ -9,7 +9,7 @@ namespace Imgeneus.World.Tests
     public class MobAITest : BaseTest
     {
         [Fact]
-        public async void MobCanFindPlayerOnMap()
+        public void MobCanFindPlayerOnMap()
         {
             var map = new Map(Map.TEST_MAP_ID, mapLoggerMock.Object);
             var mob = new Mob(mobLoggerMock.Object, databasePreloader.Object, Wolf.Id, true, new MoveArea(0, 0, 0, 0, 0, 0), map);
@@ -17,14 +17,12 @@ namespace Imgeneus.World.Tests
             var character = new Character(loggerMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object);
             map.LoadPlayer(character);
 
-            // Wait for watch timer.
-            await Task.Delay(200);
-
+            Assert.True(mob.TryGetPlayer());
             Assert.Equal(mob.Target, character);
         }
 
         [Fact]
-        public async void MobCanKillPlayer()
+        public void MobCanKillPlayer()
         {
             var map = new Map(Map.TEST_MAP_ID, mapLoggerMock.Object);
             var mob = new Mob(mobLoggerMock.Object, databasePreloader.Object, CrypticImmortal.Id, true, new MoveArea(0, 0, 0, 0, 0, 0), map);
@@ -37,8 +35,8 @@ namespace Imgeneus.World.Tests
             Assert.True(character.CurrentHP > 0);
             map.LoadPlayer(character);
 
-            // Wait for watch timer.
-            await Task.Delay(200);
+            Assert.True(mob.TryGetPlayer());
+            mob.Attack(character, 0, Database.Constants.Element.None, 100, 100);
 
             Assert.True(character.IsDead);
             Assert.Equal(MobState.BackToBirthPosition, mob.State);

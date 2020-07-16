@@ -384,6 +384,7 @@ namespace Imgeneus.World.Game.Zone
             mob.OnMove += Mob_OnMove;
             mob.OnAttack += Mob_OnAttack;
             mob.OnUsedSkill += Mob_OnUsedSkill;
+            mob.OnRecover += Mob_OnRecover;
         }
 
         /// <summary>
@@ -396,6 +397,7 @@ namespace Imgeneus.World.Game.Zone
             mob.OnMove -= Mob_OnMove;
             mob.OnAttack -= Mob_OnAttack;
             mob.OnUsedSkill -= Mob_OnUsedSkill;
+            mob.OnRecover -= Mob_OnRecover;
         }
 
         private void Mob_OnDead(IKillable sender, IKiller killer)
@@ -431,6 +433,12 @@ namespace Imgeneus.World.Game.Zone
         {
             foreach (var player in Players)
                 _packetHelper.SendMobUsedSkill(player.Value.Client, (Mob)sender, target.Id, skill, attackResult);
+        }
+
+        private void Mob_OnRecover(IKillable sender)
+        {
+            foreach (var player in Players)
+                _packetHelper.SendMobRecover(player.Value.Client, sender);
         }
 
         /// <summary>

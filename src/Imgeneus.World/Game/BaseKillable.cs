@@ -1050,5 +1050,25 @@ namespace Imgeneus.World.Game
         }
 
         #endregion
+
+        #region Recover
+
+        /// <summary>
+        /// Event if fired, when killable is recovered.
+        /// </summary>
+        public event Action<IKillable> OnRecover;
+
+        /// <summary>
+        /// Fully recovers hitpoints.
+        /// </summary>
+        public void FullRecover()
+        {
+            CurrentHP = MaxHP;
+            CurrentMP = MaxMP;
+            CurrentSP = MaxSP;
+            OnRecover?.Invoke(this);
+        }
+
+        #endregion
     }
 }

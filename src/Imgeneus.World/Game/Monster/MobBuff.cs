@@ -1,7 +1,4 @@
 ﻿using Imgeneus.World.Game.Player;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Imgeneus.World.Game.Monster
 {
@@ -9,12 +6,12 @@ namespace Imgeneus.World.Game.Monster
     {
         protected override void BuffAdded(ActiveBuff buff)
         {
-            // Implement if needed.
+            base.BuffAdded(buff);
         }
 
         protected override void BuffRemoved(ActiveBuff buff)
         {
-            // Implement if needed.
+            base.BuffRemoved(buff);
         }
 
         protected override void SendMoveAndAttackSpeed()

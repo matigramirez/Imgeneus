@@ -272,5 +272,13 @@ namespace Imgeneus.World.Packets
             packet.Write(killer.Id);
             client.SendPacket(packet);
         }
+
+        internal void SendMobRecover(WorldClient client, IKillable sender)
+        {
+            using var packet = new Packet(PacketType.MOB_RECOVER);
+            packet.Write(sender.Id);
+            packet.Write(sender.CurrentHP);
+            client.SendPacket(packet);
+        }
     }
 }

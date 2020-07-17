@@ -50,7 +50,9 @@ namespace Imgeneus.World.Game.Monster
                 switch (_state)
                 {
                     case MobState.Idle:
-                        _idleTimer.Start();
+                        // Idle timer generates a mob walk. Not available for altars.
+                        if (AI != MobAI.Relic)
+                            _idleTimer.Start();
 
                         // If this is combat mob start watching as soon as it's in idle state.
                         if (AI != MobAI.Peaceful && AI != MobAI.Peaceful2)
@@ -59,6 +61,10 @@ namespace Imgeneus.World.Game.Monster
 
                     case MobState.Chase:
                         StartChasing();
+                        break;
+
+                    case MobState.ReadyToAttack:
+                        UseAttack();
                         break;
 
                     case MobState.BackToBirthPosition:
@@ -72,6 +78,11 @@ namespace Imgeneus.World.Game.Monster
                 }
             }
         }
+
+        /// <summary>
+        /// Any action, that mob makes should do though this timer.
+        /// </summary>
+        private Timer _attackTimer = new Timer();
 
         /// <summary>
         /// Configures ai timers.
@@ -93,6 +104,9 @@ namespace Imgeneus.World.Game.Monster
             _chaseTimer.Interval = 500; // 0.5 second
             _chaseTimer.AutoReset = false;
             _chaseTimer.Elapsed += ChaseTimer_Elapsed;
+
+            _attackTimer.AutoReset = false;
+            _attackTimer.Elapsed += AttackTimer_Elapsed;
 
             _backToBirthPositionTimer.Interval = 500; // 0.5 second
             _backToBirthPositionTimer.AutoReset = false;
@@ -140,12 +154,19 @@ namespace Imgeneus.World.Game.Monster
         /// <summary>
         /// Turns on ai of mob, based on its' type.
         /// </summary>
-        private void TurnOnAI()
+        private void SelectActionBasedOnAI()
         {
             switch (AI)
             {
                 case MobAI.Combative:
                     State = MobState.Chase;
+                    break;
+
+                case MobAI.Relic:
+                    if (Target != null && MathExtensions.Distance(PosX, Target.PosX, PosZ, Target.PosZ) <= _dbMob.ChaseRange)
+                        State = MobState.ReadyToAttack;
+                    else
+                        State = MobState.Idle;
                     break;
 
                 default:
@@ -161,7 +182,7 @@ namespace Imgeneus.World.Game.Monster
         private void Mob_HP_Changed(IKillable mob, HitpointArgs hitpoints)
         {
             if (hitpoints.NewValue < hitpoints.OldValue)
-                TurnOnAI();
+                SelectActionBasedOnAI();
         }
 
         #endregion
@@ -266,6 +287,9 @@ namespace Imgeneus.World.Game.Monster
             if (Math.Abs(PosX - x) < DELTA && Math.Abs(PosZ - z) < DELTA)
                 return;
 
+            if (_dbMob.ChaseStep == 0 || _dbMob.ChaseTime == 0)
+                return;
+
             var now = DateTime.UtcNow;
             var mobVector = new Vector2(PosX, PosZ);
             var destinationVector = new Vector2(x, z);
@@ -302,7 +326,7 @@ namespace Imgeneus.World.Game.Monster
                 return;
 
             if (TryGetPlayer())
-                TurnOnAI();
+                SelectActionBasedOnAI();
         }
 
         /// <summary>
@@ -353,7 +377,6 @@ namespace Imgeneus.World.Game.Monster
 
         private void ChaseTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
-            var now = DateTime.UtcNow;
             if (Target is null)
             {
                 _logger.LogDebug("target is already cleared.");
@@ -361,42 +384,10 @@ namespace Imgeneus.World.Game.Monster
             }
 
             var distanceToPlayer = MathExtensions.Distance(PosX, Target.PosX, PosZ, Target.PosZ);
-
-            if (now > _nextAttackTime)
-            {
-                var attackId = RandomiseAttack(now);
-                var useAttack1 = attackId == 1;
-                var useAttack2 = attackId == 2;
-                var useAttack3 = attackId == 3;
-
-                if (useAttack1 && (distanceToPlayer <= _dbMob.AttackRange1 || _dbMob.AttackRange1 == 0))
-                {
-                    _logger.LogDebug($"Mob {Id} used attack 1.");
-                    Attack(Target, _dbMob.AttackType1, _dbMob.AttackAttrib1, _dbMob.Attack1, _dbMob.AttackPlus1);
-                    _nextAttackTime = now.AddMilliseconds(_dbMob.AttackTime1);
-                    _lastAttack1Time = now;
-                }
-
-                if (useAttack2 && (distanceToPlayer <= _dbMob.AttackRange2 || _dbMob.AttackRange2 == 0))
-                {
-                    _logger.LogDebug($"Mob {Id} used attack 2.");
-                    Attack(Target, _dbMob.AttackType2, _dbMob.AttackAttrib2, _dbMob.Attack2, _dbMob.AttackPlus2);
-                    _nextAttackTime = now.AddMilliseconds(_dbMob.AttackTime2);
-                    _lastAttack2Time = now;
-                }
-
-                if (useAttack3 && (distanceToPlayer <= _dbMob.AttackRange3 || _dbMob.AttackRange3 == 0))
-                {
-                    _logger.LogDebug($"Mob {Id} used attack 3.");
-                    Attack(Target, _dbMob.AttackType3, Element.None, _dbMob.Attack3, _dbMob.AttackPlus3);
-                    _nextAttackTime = now.AddMilliseconds(_dbMob.AttackTime3);
-                    _lastAttack3Time = now;
-                }
-            }
-
             if (distanceToPlayer <= _dbMob.AttackRange1 || distanceToPlayer <= _dbMob.AttackRange2 || distanceToPlayer <= _dbMob.AttackRange3)
             {
-                _chaseTimer.Start();
+                State = MobState.ReadyToAttack;
+                //_chaseTimer.Start();
                 return;
             }
 
@@ -411,87 +402,6 @@ namespace Imgeneus.World.Game.Monster
             {
                 _chaseTimer.Start();
             }
-        }
-
-        /// <summary>
-        /// Randomly selects the next attack.
-        /// </summary>
-        /// <param name="now">now time</param>
-        /// <returns>attack type: 1, 2, 3 or 0, when can not attack</returns>
-        private byte RandomiseAttack(DateTime now)
-        {
-            var useAttack1 = false;
-            var useAttack2 = false;
-            var useAttack3 = false;
-
-            int chanceForAttack1 = 0;
-            int chanceForAttack2 = 0;
-            int chanceForAttack3 = 0;
-
-            if (IsAttack1Enabled && IsAttack2Enabled && IsAttack3Enabled)
-            {
-                if (now.Subtract(_lastAttack1Time).TotalMilliseconds >= _dbMob.AttackTime1)
-                    chanceForAttack1 = 60;
-                else
-                    chanceForAttack1 = 0;
-
-                if (now.Subtract(_lastAttack2Time).TotalMilliseconds >= _dbMob.AttackTime2)
-                    chanceForAttack2 = 85;
-                else
-                    chanceForAttack2 = 0;
-
-                if (now.Subtract(_lastAttack3Time).TotalMilliseconds >= _dbMob.AttackTime3)
-                    chanceForAttack3 = 100;
-                else
-                    chanceForAttack3 = 0;
-            }
-            else if (IsAttack1Enabled && IsAttack2Enabled && !IsAttack3Enabled)
-            {
-                if (now.Subtract(_lastAttack1Time).TotalMilliseconds >= _dbMob.AttackTime1)
-                    chanceForAttack1 = 70;
-                else
-                    chanceForAttack1 = 0;
-
-                if (now.Subtract(_lastAttack2Time).TotalMilliseconds >= _dbMob.AttackTime2)
-                    chanceForAttack2 = 100;
-                else
-                    chanceForAttack2 = 0;
-
-                chanceForAttack3 = 0;
-            }
-            else if (IsAttack1Enabled && !IsAttack2Enabled && !IsAttack3Enabled)
-            {
-                if (now.Subtract(_lastAttack1Time).TotalMilliseconds >= _dbMob.AttackTime1)
-                    chanceForAttack1 = 100;
-                else
-                    chanceForAttack1 = 0;
-
-                chanceForAttack2 = 0;
-                chanceForAttack3 = 0;
-            }
-            if (!IsAttack1Enabled && !IsAttack2Enabled && !IsAttack3Enabled)
-            {
-                chanceForAttack1 = 0;
-                chanceForAttack2 = 0;
-                chanceForAttack3 = 0;
-            }
-
-            var random = new Random().Next(1, 100);
-            if (random <= chanceForAttack1)
-                useAttack1 = true;
-            else if (random > chanceForAttack1 && random <= chanceForAttack2)
-                useAttack2 = true;
-            else if (random > chanceForAttack2 && random <= chanceForAttack3)
-                useAttack3 = true;
-
-            if (useAttack1)
-                return 1;
-            else if (useAttack2)
-                return 2;
-            else if (useAttack3)
-                return 3;
-            else
-                return 0;
         }
 
         #endregion
@@ -613,17 +523,142 @@ namespace Imgeneus.World.Game.Monster
         public event Action<IKiller, IKillable, Skill, AttackResult> OnUsedRangeSkill;
 
         /// <summary>
-        /// Time since the last attack.
-        /// </summary>
-        private DateTime _nextAttackTime;
-
-        /// <summary>
         /// Clears target.
         /// </summary>
         public void ClearTarget()
         {
             State = MobState.BackToBirthPosition;
             Target = null;
+        }
+
+        /// <summary>
+        /// When time from the last attack elapsed, we can decide what to do next.
+        /// </summary>
+        private void AttackTimer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            SelectActionBasedOnAI();
+        }
+
+        /// <summary>
+        /// Uses 1 from 3 available attacks.
+        /// </summary>
+        public void UseAttack()
+        {
+            var distanceToPlayer = MathExtensions.Distance(PosX, Target.PosX, PosZ, Target.PosZ);
+            var now = DateTime.UtcNow;
+            int delay = 1000;
+            var attackId = RandomiseAttack(now);
+            var useAttack1 = attackId == 1;
+            var useAttack2 = attackId == 2;
+            var useAttack3 = attackId == 3;
+
+            if (useAttack1 && (distanceToPlayer <= _dbMob.AttackRange1 || _dbMob.AttackRange1 == 0))
+            {
+                _logger.LogDebug($"Mob {Id} used attack 1.");
+                Attack(Target, _dbMob.AttackType1, _dbMob.AttackAttrib1, _dbMob.Attack1, _dbMob.AttackPlus1);
+                _lastAttack1Time = now;
+                delay = AI == MobAI.Relic ? 5000 : _dbMob.AttackTime1;
+            }
+
+            if (useAttack2 && (distanceToPlayer <= _dbMob.AttackRange2 || _dbMob.AttackRange2 == 0))
+            {
+                _logger.LogDebug($"Mob {Id} used attack 2.");
+                Attack(Target, _dbMob.AttackType2, _dbMob.AttackAttrib2, _dbMob.Attack2, _dbMob.AttackPlus2);
+                _lastAttack2Time = now;
+                delay = AI == MobAI.Relic ? 5000 : _dbMob.AttackTime2;
+            }
+
+            if (useAttack3 && (distanceToPlayer <= _dbMob.AttackRange3 || _dbMob.AttackRange3 == 0))
+            {
+                _logger.LogDebug($"Mob {Id} used attack 3.");
+                Attack(Target, _dbMob.AttackType3, Element.None, _dbMob.Attack3, _dbMob.AttackPlus3);
+                _lastAttack3Time = now;
+                delay = AI == MobAI.Relic ? 5000 : _dbMob.AttackTime3;
+            }
+
+            _attackTimer.Interval = delay;
+            _attackTimer.Start();
+        }
+
+        /// <summary>
+        /// Randomly selects the next attack.
+        /// </summary>
+        /// <param name="now">now time</param>
+        /// <returns>attack type: 1, 2, 3 or 0, when can not attack</returns>
+        private byte RandomiseAttack(DateTime now)
+        {
+            var useAttack1 = false;
+            var useAttack2 = false;
+            var useAttack3 = false;
+
+            int chanceForAttack1 = 0;
+            int chanceForAttack2 = 0;
+            int chanceForAttack3 = 0;
+
+            if (IsAttack1Enabled && IsAttack2Enabled && IsAttack3Enabled)
+            {
+                if (now.Subtract(_lastAttack1Time).TotalMilliseconds >= _dbMob.AttackTime1)
+                    chanceForAttack1 = 60;
+                else
+                    chanceForAttack1 = 0;
+
+                if (now.Subtract(_lastAttack2Time).TotalMilliseconds >= _dbMob.AttackTime2)
+                    chanceForAttack2 = 85;
+                else
+                    chanceForAttack2 = 0;
+
+                if (now.Subtract(_lastAttack3Time).TotalMilliseconds >= _dbMob.AttackTime3)
+                    chanceForAttack3 = 100;
+                else
+                    chanceForAttack3 = 0;
+            }
+            else if (IsAttack1Enabled && IsAttack2Enabled && !IsAttack3Enabled)
+            {
+                if (now.Subtract(_lastAttack1Time).TotalMilliseconds >= _dbMob.AttackTime1)
+                    chanceForAttack1 = 70;
+                else
+                    chanceForAttack1 = 0;
+
+                if (now.Subtract(_lastAttack2Time).TotalMilliseconds >= _dbMob.AttackTime2)
+                    chanceForAttack2 = 100;
+                else
+                    chanceForAttack2 = 0;
+
+                chanceForAttack3 = 0;
+            }
+            else if (IsAttack1Enabled && !IsAttack2Enabled && !IsAttack3Enabled)
+            {
+                if (now.Subtract(_lastAttack1Time).TotalMilliseconds >= _dbMob.AttackTime1)
+                    chanceForAttack1 = 100;
+                else
+                    chanceForAttack1 = 0;
+
+                chanceForAttack2 = 0;
+                chanceForAttack3 = 0;
+            }
+            if (!IsAttack1Enabled && !IsAttack2Enabled && !IsAttack3Enabled)
+            {
+                chanceForAttack1 = 0;
+                chanceForAttack2 = 0;
+                chanceForAttack3 = 0;
+            }
+
+            var random = new Random().Next(1, 100);
+            if (random <= chanceForAttack1)
+                useAttack1 = true;
+            else if (random > chanceForAttack1 && random <= chanceForAttack2)
+                useAttack2 = true;
+            else if (random > chanceForAttack2 && random <= chanceForAttack3)
+                useAttack3 = true;
+
+            if (useAttack1)
+                return 1;
+            else if (useAttack2)
+                return 2;
+            else if (useAttack3)
+                return 3;
+            else
+                return 0;
         }
 
         /// <summary>

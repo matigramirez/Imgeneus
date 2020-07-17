@@ -44,7 +44,9 @@ namespace Imgeneus.World.Tests
                     { (35, 1), MagicRoots_Lvl1 },
                     { (273, 100), AttributeRemove },
                     { (735, 1), EarthWeapon },
-                    { (765, 1), EarthSkin }
+                    { (765, 1), EarthSkin },
+                    { (672, 1), Panic_Lvl1 },
+                    { (787, 1), Dispel }
                 });
             databasePreloader
                 .SetupGet((preloader) => preloader.Items)
@@ -174,6 +176,26 @@ namespace Imgeneus.World.Tests
             SkillName = "Earth Skin",
             TypeDetail = TypeDetail.ElementalProtection,
             Element = Element.Earth1
+        };
+
+        protected DbSkill Panic_Lvl1 = new DbSkill()
+        {
+            SkillId = 672,
+            SkillLevel = 1,
+            SkillName = "Panic",
+            TypeDetail = TypeDetail.SubtractingDebuff,
+            AbilityType1 = AbilityType.PhysicalDefense,
+            AbilityValue1 = 119,
+            TypeAttack = TypeAttack.MagicAttack,
+        };
+
+        protected DbSkill Dispel = new DbSkill()
+        {
+            SkillId = 787,
+            SkillLevel = 1,
+            SkillName = "Dispel",
+            TypeDetail = TypeDetail.Dispel,
+            TypeAttack = TypeAttack.MagicAttack,
         };
 
         #endregion

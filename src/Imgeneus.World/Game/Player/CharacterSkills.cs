@@ -123,6 +123,20 @@ namespace Imgeneus.World.Game.Player
         }
 
         /// <summary>
+        /// Clears debuffs.
+        /// </summary>
+        public AttackResult UsedDispelSkill(Skill skill, IKillable target)
+        {
+            var debuffs = target.ActiveBuffs.Where(b => b.IsDebuff).ToList();
+            foreach (var debuff in debuffs)
+            {
+                debuff.CancelBuff();
+            }
+
+            return new AttackResult(AttackSuccess.Normal, new Damage());
+        }
+
+        /// <summary>
         /// Initialize passive skills.
         /// </summary>
         public void InitPassiveSkills()

@@ -46,6 +46,39 @@ namespace Imgeneus.World.Game.Player
             _periodicalDebuffTimer.Elapsed += PeriodicalDebuffTimer_Elapsed;
         }
 
+        #region IsDebuff
+
+        /// <summary>
+        /// Indicator, that shows if this buff is "bad".
+        /// </summary>
+        public bool IsDebuff
+        {
+            get
+            {
+                switch (_skill.Type)
+                {
+                    case TypeDetail.EnergyDrain:
+                    case TypeDetail.PeriodicalDebuff:
+                    case TypeDetail.SubtractingDebuff:
+                    case TypeDetail.DeathTouch:
+                    case TypeDetail.Stun:
+                    case TypeDetail.Immobilize:
+                    case TypeDetail.Sleep:
+                    case TypeDetail.PreventAttack:
+                    case TypeDetail.RemoveAttribute:
+                    case TypeDetail.EnergyBackhole:
+                    case TypeDetail.MentalStormConfusion:
+                    case TypeDetail.SoulMenace:
+                    case TypeDetail.MentalStormDistortion:
+                        return true;
+                    default:
+                        return false;
+                }
+            }
+        }
+
+        #endregion
+
         #region Buff reset
 
         private DateTime _resetTime;

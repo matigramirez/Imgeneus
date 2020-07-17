@@ -809,8 +809,7 @@ namespace Imgeneus.World.Game.Monster
 
         public AttackResult UsedStealthSkill(Skill skill, IKillable target)
         {
-            // Mobs do not support stealth now.
-            throw new NotImplementedException();
+            throw new NotImplementedException("Mobs do not support stealth for now.");
         }
 
         #endregion
@@ -819,8 +818,16 @@ namespace Imgeneus.World.Game.Monster
 
         public AttackResult UsedHealingSkill(Skill skill, IKillable target)
         {
-            // Mob doesn't support healing for now.
-            throw new NotImplementedException();
+            throw new NotImplementedException("Mob doesn't support healing for now.");
+        }
+
+        #endregion
+
+        #region Dispel
+
+        public AttackResult UsedDispelSkill(Skill skill, IKillable target)
+        {
+            throw new NotImplementedException("Mob doesn't support dispel for now.");
         }
 
         #endregion

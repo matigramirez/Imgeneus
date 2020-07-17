@@ -3,6 +3,7 @@ using Imgeneus.Database.Entities;
 using Imgeneus.Network.Serialization;
 using Imgeneus.World.Game.Player;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Imgeneus.World.Serialization
 {
@@ -79,7 +80,7 @@ namespace Imgeneus.World.Serialization
                 Name[i] = (byte)chars[i];
             }
 
-            foreach (var buff in character.ActiveBuffs)
+            foreach (var buff in character.ActiveBuffs.ToList())
             {
                 Buffs.Add(new PartyMemberBuff(buff));
             }

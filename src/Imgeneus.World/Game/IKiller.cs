@@ -65,19 +65,27 @@ namespace Imgeneus.World.Game
                     break;
 
                 case TypeDetail.Healing:
-                    var result = UsedHealingSkill(skill, target);
+                    attackResult = UsedHealingSkill(skill, target);
                     if (initialTarget == target || this == target)
-                        OnUsedSkillInvoke(target, skill, result);
+                        OnUsedSkillInvoke(target, skill, attackResult);
                     else
-                        OnUsedRangeSkillInvoke(target, skill, result);
+                        OnUsedRangeSkillInvoke(target, skill, attackResult);
+                    break;
+
+                case TypeDetail.Dispel:
+                    attackResult = UsedDispelSkill(skill, target);
+                    if (initialTarget == target || this == target)
+                        OnUsedSkillInvoke(target, skill, attackResult);
+                    else
+                        OnUsedRangeSkillInvoke(target, skill, attackResult);
                     break;
 
                 case TypeDetail.Stealth:
-                    result = UsedStealthSkill(skill, target);
+                    attackResult = UsedStealthSkill(skill, target);
                     if (initialTarget == target || this == target)
-                        OnUsedSkillInvoke(initialTarget, skill, result);
+                        OnUsedSkillInvoke(initialTarget, skill, attackResult);
                     else
-                        OnUsedRangeSkillInvoke(target, skill, result);
+                        OnUsedRangeSkillInvoke(target, skill, attackResult);
                     break;
 
                 case TypeDetail.UniqueHitAttack:
@@ -106,6 +114,11 @@ namespace Imgeneus.World.Game
         /// Use Stealth skill.
         /// </summary>
         AttackResult UsedStealthSkill(Skill skill, IKillable target);
+
+        /// <summary>
+        /// Use Dispel skill.
+        /// </summary>
+        AttackResult UsedDispelSkill(Skill skill, IKillable target);
 
         /// <summary>
         /// Calculates attack result based on skill type and target.

@@ -75,7 +75,7 @@ namespace Imgeneus.World.Game.Player
         /// <summary>
         /// Is it pure passive skill? From passive tab.
         /// </summary>
-        public bool IsPassive => TypeAttack == TypeAttack.Passive && Type != TypeDetail.Buff;
+        public bool IsPassive => TypeAttack == TypeAttack.Passive && Type != TypeDetail.Buff && Type != TypeDetail.BlockMagicAttack;
 
         /// <summary>
         /// Skill type.

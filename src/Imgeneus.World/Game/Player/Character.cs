@@ -63,6 +63,9 @@ namespace Imgeneus.World.Game.Player
                 _taskQueue.Enqueue(ActionType.SAVE_BUFF, Id, buff.SkillId, buff.SkillLevel, buff.ResetTime);
             }
 
+            // Save current HP, MP, SP to database.
+            _taskQueue.Enqueue(ActionType.SAVE_CHARACTER_HP_MP_SP, Id, CurrentHP, CurrentMP, CurrentSP);
+
             ClearConnection();
             base.Dispose();
         }

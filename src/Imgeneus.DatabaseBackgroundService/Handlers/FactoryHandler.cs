@@ -189,5 +189,21 @@ namespace Imgeneus.DatabaseBackgroundService.Handlers
 
             await database.SaveChangesAsync();
         }
+
+        [ActionHandler(ActionType.SAVE_CHARACTER_HP_MP_SP)]
+        internal static async Task SaveCharacterHP_MP_SP(object[] args)
+        {
+            int charId = (int)args[0];
+            int hp = (int)args[1];
+            int mp = (int)args[2];
+            int sp = (int)args[3];
+
+            using var database = DependencyContainer.Instance.Resolve<IDatabase>();
+            var dbCharacter = database.Characters.Find(charId);
+            dbCharacter.HealthPoints = (ushort)hp;
+            dbCharacter.ManaPoints = (ushort)mp;
+            dbCharacter.StaminaPoints = (ushort)sp;
+            await database.SaveChangesAsync();
+        }
     }
 }

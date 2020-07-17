@@ -7,6 +7,7 @@
     {
         // Character
         SAVE_CHARACTER_MOVE,
+        SAVE_CHARACTER_HP_MP_SP,
 
         // Inventory
         SAVE_ITEM_IN_INVENTORY,

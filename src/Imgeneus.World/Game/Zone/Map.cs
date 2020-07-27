@@ -22,7 +22,6 @@ namespace Imgeneus.World.Game.Zone
 
         private readonly ILogger<Map> _logger;
         private readonly MapPacketsHelper _packetHelper;
-        private readonly IChatManager _chatManager;
 
         /// <summary>
         /// Map id.
@@ -31,14 +30,11 @@ namespace Imgeneus.World.Game.Zone
 
         public static readonly ushort TEST_MAP_ID = 9999;
 
-        public Map(ushort id, ILogger<Map> logger, IChatManager chatManager)
+        public Map(ushort id, ILogger<Map> logger)
         {
             Id = id;
             _logger = logger;
-            _chatManager = chatManager;
             _packetHelper = new MapPacketsHelper();
-
-            _chatManager.OnNormalMessage += Chat_OnNormalMessage;
         }
 
         #endregion
@@ -329,15 +325,6 @@ namespace Imgeneus.World.Game.Zone
                 _packetHelper.SendCharacterRebirth(player.Value.Client, sender);
                 _packetHelper.SendDeadRebirth(player.Value.Client, (Character)sender);
                 _packetHelper.SendRecoverCharacter(player.Value.Client, sender);
-            }
-        }
-
-        private void Chat_OnNormalMessage(Character sender, string message)
-        {
-            var players = GetPlayers(sender.PosX, sender.PosZ, 100, Fraction.NotSelected, true);
-            foreach (var player in players)
-            {
-                _packetHelper.SendNormalMessage(((Character)player).Client, sender, message);
             }
         }
 

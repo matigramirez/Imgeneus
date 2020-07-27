@@ -134,7 +134,9 @@ namespace Imgeneus.World
             { PacketType.CHARACTER_SHAPE, (s) => new CharacterShapePacket(s)},
             { PacketType.USE_ITEM, (s) => new UseItemPacket(s) },
             { PacketType.REBIRTH_TO_NEAREST_TOWN, (s) => new RebirthPacket(s) },
-            { PacketType.CHAT_NORMAL, (s) => new ChatNormalPacket(s) }
+            { PacketType.CHAT_NORMAL, (s) => new ChatNormalPacket(s) },
+            { PacketType.CHAT_WHISPER, (s) => new ChatWhisperPacket(s) },
+            { PacketType.CHAT_WHISPER_RESPONSE, (s) => new ChatWhisperPacket(s) },
         };
 
         /// <inheritdoc />

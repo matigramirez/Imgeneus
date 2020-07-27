@@ -139,10 +139,11 @@
         MAP_PARTY_SET = 0x0520, // 1312
 
         // Chat
-        CHAT_NORMAL = 0xF101, // 61697
-        CHAT_WISPER = 0xF102, // 61698
+        CHAT_NORMAL = 0xF101, // 61697, -3837
+        CHAT_WHISPER = 0xF102, // 61698, -3838
         CHAT_GUILD = 0xF104, //  61700
         CHAT_PARTY = 0xF105, // 61701
+        CHAT_WHISPER_RESPONSE = 0x1102, // 4354
         CHAT_WORLD = 0x1103, // 4355
         CHAT_ANOUNCEMENT = 0x1108, // 4360
         CHAT_MAP = 0x1111, // 4369

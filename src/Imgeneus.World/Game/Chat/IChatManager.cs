@@ -11,11 +11,7 @@ namespace Imgeneus.World.Game.Chat
         /// <param name="sender">Character, that generated message.</param>
         /// <param name="messageType">type of message</param>
         /// <param name="message">message itself</param>
-        public void SendMessage(Character sender, MessageType messageType, string message);
-
-        /// <summary>
-        /// Sends notification about normal message.
-        /// </summary>
-        event Action<Character, string> OnNormalMessage;
+        /// <param name="targetName">optional, target name</param>
+        public void SendMessage(Character sender, MessageType messageType, string message, string targetName = "");
     }
 }

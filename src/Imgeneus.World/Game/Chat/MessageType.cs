@@ -2,6 +2,7 @@
 {
     public enum MessageType
     {
-        Normal
+        Normal,
+        Whisper
     }
 }

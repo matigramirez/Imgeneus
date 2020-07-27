@@ -25,15 +25,13 @@ namespace Imgeneus.World.Game
         private readonly IBackgroundTaskQueue _taskQueue;
         private readonly IDatabasePreloader _databasePreloader;
         private readonly CharacterConfiguration _characterConfig;
-        private readonly IChatManager _chatManager;
 
-        public GameWorld(ILogger<GameWorld> logger, IBackgroundTaskQueue taskQueue, IDatabasePreloader databasePreloader, CharacterConfiguration characterConfig, IChatManager chatManager)
+        public GameWorld(ILogger<GameWorld> logger, IBackgroundTaskQueue taskQueue, IDatabasePreloader databasePreloader, CharacterConfiguration characterConfig)
         {
             _logger = logger;
             _taskQueue = taskQueue;
             _databasePreloader = databasePreloader;
             _characterConfig = characterConfig;
-            _chatManager = chatManager;
 
             InitMaps();
         }
@@ -51,7 +49,7 @@ namespace Imgeneus.World.Game
         private void InitMaps()
         {
             // TODO: init maps here. For now create 0-map(DWaterBorderland, Lvl 40-80)
-            Maps.TryAdd(0, new Map(0, DependencyContainer.Instance.Resolve<ILogger<Map>>(), _chatManager));
+            Maps.TryAdd(0, new Map(0, DependencyContainer.Instance.Resolve<ILogger<Map>>()));
         }
 
         #endregion
@@ -75,7 +73,12 @@ namespace Imgeneus.World.Game
                                                .Include(c => c.QuickItems)
                                                .Include(c => c.User)
                                                .FirstOrDefault(c => c.Id == characterId);
-            var newPlayer = Character.FromDbCharacter(dbCharacter, DependencyContainer.Instance.Resolve<ILogger<Character>>(), _characterConfig, _taskQueue, _databasePreloader, _chatManager);
+            var newPlayer = Character.FromDbCharacter(dbCharacter,
+                                                     DependencyContainer.Instance.Resolve<ILogger<Character>>(),
+                                                     _characterConfig,
+                                                     _taskQueue,
+                                                     _databasePreloader,
+                                                     DependencyContainer.Instance.Resolve<IChatManager>());
             newPlayer.Client = client;
 
             Players.TryAdd(newPlayer.Id, newPlayer);

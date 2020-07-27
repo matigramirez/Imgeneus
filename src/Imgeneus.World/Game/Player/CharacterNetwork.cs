@@ -138,6 +138,10 @@ namespace Imgeneus.World.Game.Player
                     _chatManager.SendMessage(this, Chat.MessageType.Normal, chatNormalPacket.Message);
                     break;
 
+                case ChatWhisperPacket chatWisperPacket:
+                    _chatManager.SendMessage(this, Chat.MessageType.Whisper, chatWisperPacket.Message, chatWisperPacket.TargetName);
+                    break;
+
                 case RebirthPacket rebirthPacket:
                     // TODO: rebirth to nearest town, get coordinates from map.
                     Rebirth(1, 1, 1);

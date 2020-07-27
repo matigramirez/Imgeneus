@@ -11,7 +11,7 @@ namespace Imgeneus.World.Tests
         [Fact]
         public void MobCanRespawnAfterDeath()
         {
-            var map = new Map(1, mapLoggerMock.Object, chatMock.Object);
+            var map = new Map(1, mapLoggerMock.Object);
             var mob = new Mob(mobLoggerMock.Object, databasePreloader.Object, 1, true, new MoveArea(0, 0, 0, 0, 0, 0), map);
 
             map.AddMob(mob);

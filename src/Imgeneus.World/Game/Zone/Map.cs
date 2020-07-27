@@ -490,11 +490,15 @@ namespace Imgeneus.World.Game.Zone
         /// </summary>
         /// <param name="x">x coordinate</param>
         /// <param name="z">z coordinate</param>
+        /// <param name="range">minimum range to target, if set to 0 is not calculated</param>
         /// <param name="fraction">light, dark or both</param>
         /// <param name="includeDead">include dead players or not</param>
         public IEnumerable<IKillable> GetPlayers(float x, float z, byte range, Fraction fraction = Fraction.NotSelected, bool includeDead = false)
         {
-            return Players.Values.Where(p => (includeDead || !p.IsDead) && (p.Country == fraction || fraction == Fraction.NotSelected) && MathExtensions.Distance(x, p.PosX, z, p.PosZ) <= range);
+            return Players.Values.Where(
+                p => (includeDead || !p.IsDead) && // filter by death
+                     (p.Country == fraction || fraction == Fraction.NotSelected) && // filter by fraction
+                     (range == 0 || MathExtensions.Distance(x, p.PosX, z, p.PosZ) <= range)); // filter by range
         }
 
         #endregion

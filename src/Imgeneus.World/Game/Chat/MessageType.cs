@@ -4,6 +4,7 @@
     {
         Normal,
         Whisper,
-        Party
+        Party,
+        Map
     }
 }

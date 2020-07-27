@@ -60,7 +60,7 @@ namespace Imgeneus.World
                 {
                     if (Enum.IsDefined(typeof(PacketType), packet.PacketType))
                     {
-                        this.logger.LogWarning("Received an unimplemented packet {0} from {2}.", packet.PacketType, this.RemoteEndPoint);
+                        this.logger.LogWarning("Received an unimplemented packet {0} from {1}.", packet.PacketType, this.RemoteEndPoint);
                     }
                     else
                     {
@@ -140,6 +140,7 @@ namespace Imgeneus.World
             { PacketType.CHAT_WHISPER, (s) => new ChatWhisperPacket(s) },
             { PacketType.CHAT_PARTY_ADMIN, (s) => new ChatPartyPacket(s) },
             { PacketType.CHAT_PARTY, (s) => new ChatPartyPacket(s) },
+            { PacketType.CHAT_MAP, (s) => new ChatMapPacket(s) }
         };
 
         /// <inheritdoc />

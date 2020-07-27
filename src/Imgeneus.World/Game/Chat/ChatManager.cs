@@ -48,6 +48,14 @@ namespace Imgeneus.World.Game.Chat
                         }
                     break;
 
+                case MessageType.Map:
+                    var mapPlayers = sender.Map.GetPlayers(sender.PosX, sender.PosZ, 0, sender.Country, true);
+                    foreach (var player in mapPlayers)
+                    {
+                        SendMap((Character)player, sender.Name, message);
+                    }
+                    break;
+
                 default:
                     _logger.LogError("Not implemented message type.");
                     break;
@@ -97,6 +105,21 @@ namespace Imgeneus.World.Game.Chat
         {
             using var packet = new Packet(PacketType.CHAT_PARTY);
             packet.Write(senderId);
+            packet.WriteByte((byte)message.Length);
+            packet.Write(message);
+            character.Client.SendPacket(packet);
+        }
+
+        /// <summary>
+        /// Send message to all players on map.
+        /// </summary>
+        /// <param name="character">To whom we are sending.</param>
+        /// <param name="senderName">Message creator name.</param>
+        /// <param name="message">Message text.</param>
+        private void SendMap(Character character, string senderName, string message)
+        {
+            using var packet = new Packet(PacketType.CHAT_MAP);
+            packet.WriteString(senderName, 21);
             packet.WriteByte((byte)message.Length);
             packet.Write(message);
             character.Client.SendPacket(packet);

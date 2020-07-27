@@ -2,6 +2,7 @@
 using Imgeneus.Database.Entities;
 using Imgeneus.Database.Preload;
 using Imgeneus.DatabaseBackgroundService;
+using Imgeneus.World.Game.Chat;
 using Imgeneus.World.Game.Monster;
 using Imgeneus.World.Game.Player;
 using Imgeneus.World.Game.Zone;
@@ -19,6 +20,7 @@ namespace Imgeneus.World.Tests
         protected Mock<ICharacterConfiguration> config = new Mock<ICharacterConfiguration>();
         protected Mock<ILogger<Map>> mapLoggerMock = new Mock<ILogger<Map>>();
         protected Mock<ILogger<Mob>> mobLoggerMock = new Mock<ILogger<Mob>>();
+        protected Mock<IChatManager> chatMock = new Mock<IChatManager>();
 
         public BaseTest()
         {

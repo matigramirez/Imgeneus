@@ -1,6 +1,7 @@
 ﻿using Imgeneus.Core.Extensions;
 using Imgeneus.Database.Constants;
 using Imgeneus.Database.Entities;
+using Imgeneus.World.Game.Chat;
 using Imgeneus.World.Game.Monster;
 using Imgeneus.World.Game.PartyAndRaid;
 using Imgeneus.World.Game.Player;
@@ -21,6 +22,7 @@ namespace Imgeneus.World.Game.Zone
 
         private readonly ILogger<Map> _logger;
         private readonly MapPacketsHelper _packetHelper;
+        private readonly IChatManager _chatManager;
 
         /// <summary>
         /// Map id.
@@ -29,11 +31,14 @@ namespace Imgeneus.World.Game.Zone
 
         public static readonly ushort TEST_MAP_ID = 9999;
 
-        public Map(ushort id, ILogger<Map> logger)
+        public Map(ushort id, ILogger<Map> logger, IChatManager chatManager)
         {
             Id = id;
             _logger = logger;
+            _chatManager = chatManager;
             _packetHelper = new MapPacketsHelper();
+
+            _chatManager.OnNormalMessage += Chat_OnNormalMessage;
         }
 
         #endregion
@@ -327,6 +332,15 @@ namespace Imgeneus.World.Game.Zone
             }
         }
 
+        private void Chat_OnNormalMessage(Character sender, string message)
+        {
+            var players = GetPlayers(sender.PosX, sender.PosZ, 100, Fraction.NotSelected, true);
+            foreach (var player in players)
+            {
+                _packetHelper.SendNormalMessage(((Character)player).Client, sender, message);
+            }
+        }
+
         #endregion
 
         #region Mobs
@@ -490,9 +504,10 @@ namespace Imgeneus.World.Game.Zone
         /// <param name="x">x coordinate</param>
         /// <param name="z">z coordinate</param>
         /// <param name="fraction">light, dark or both</param>
-        public IEnumerable<IKillable> GetPlayers(float x, float z, byte range, Fraction fraction = Fraction.NotSelected)
+        /// <param name="includeDead">include dead players or not</param>
+        public IEnumerable<IKillable> GetPlayers(float x, float z, byte range, Fraction fraction = Fraction.NotSelected, bool includeDead = false)
         {
-            return Players.Values.Where(p => !p.IsDead && (p.Country == fraction || fraction == Fraction.NotSelected) && MathExtensions.Distance(x, p.PosX, z, p.PosZ) <= range);
+            return Players.Values.Where(p => (includeDead || !p.IsDead) && (p.Country == fraction || fraction == Fraction.NotSelected) && MathExtensions.Distance(x, p.PosX, z, p.PosZ) <= range);
         }
 
         #endregion

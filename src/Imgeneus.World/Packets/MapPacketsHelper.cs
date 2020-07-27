@@ -280,5 +280,14 @@ namespace Imgeneus.World.Packets
             packet.Write(sender.CurrentHP);
             client.SendPacket(packet);
         }
+
+        internal void SendNormalMessage(WorldClient client, Character sender, string message)
+        {
+            using var packet = new Packet(PacketType.CHAT_NORMAL);
+            packet.Write(sender.Id);
+            packet.WriteByte((byte)message.Length);
+            packet.Write(message);
+            client.SendPacket(packet);
+        }
     }
 }

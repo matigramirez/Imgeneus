@@ -4,6 +4,7 @@ using Imgeneus.Database.Preload;
 using Imgeneus.DatabaseBackgroundService;
 using Imgeneus.Network.Packets.Game;
 using Imgeneus.Network.Server;
+using Imgeneus.World.Game.Chat;
 using Imgeneus.World.Game.PartyAndRaid;
 using Imgeneus.World.Game.Player;
 using Imgeneus.World.Game.Trade;
@@ -24,13 +25,15 @@ namespace Imgeneus.World.Game
         private readonly IBackgroundTaskQueue _taskQueue;
         private readonly IDatabasePreloader _databasePreloader;
         private readonly CharacterConfiguration _characterConfig;
+        private readonly IChatManager _chatManager;
 
-        public GameWorld(ILogger<GameWorld> logger, IBackgroundTaskQueue taskQueue, IDatabasePreloader databasePreloader, CharacterConfiguration characterConfig)
+        public GameWorld(ILogger<GameWorld> logger, IBackgroundTaskQueue taskQueue, IDatabasePreloader databasePreloader, CharacterConfiguration characterConfig, IChatManager chatManager)
         {
             _logger = logger;
             _taskQueue = taskQueue;
             _databasePreloader = databasePreloader;
             _characterConfig = characterConfig;
+            _chatManager = chatManager;
 
             InitMaps();
         }
@@ -48,7 +51,7 @@ namespace Imgeneus.World.Game
         private void InitMaps()
         {
             // TODO: init maps here. For now create 0-map(DWaterBorderland, Lvl 40-80)
-            Maps.TryAdd(0, new Map(0, DependencyContainer.Instance.Resolve<ILogger<Map>>()));
+            Maps.TryAdd(0, new Map(0, DependencyContainer.Instance.Resolve<ILogger<Map>>(), _chatManager));
         }
 
         #endregion
@@ -72,7 +75,7 @@ namespace Imgeneus.World.Game
                                                .Include(c => c.QuickItems)
                                                .Include(c => c.User)
                                                .FirstOrDefault(c => c.Id == characterId);
-            var newPlayer = Character.FromDbCharacter(dbCharacter, DependencyContainer.Instance.Resolve<ILogger<Character>>(), _characterConfig, _taskQueue, _databasePreloader);
+            var newPlayer = Character.FromDbCharacter(dbCharacter, DependencyContainer.Instance.Resolve<ILogger<Character>>(), _characterConfig, _taskQueue, _databasePreloader, _chatManager);
             newPlayer.Client = client;
 
             Players.TryAdd(newPlayer.Id, newPlayer);

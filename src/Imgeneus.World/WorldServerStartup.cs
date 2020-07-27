@@ -6,6 +6,7 @@ using Imgeneus.Database;
 using Imgeneus.Database.Preload;
 using Imgeneus.DatabaseBackgroundService;
 using Imgeneus.World.Game;
+using Imgeneus.World.Game.Chat;
 using Imgeneus.World.Game.Player;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -31,6 +32,7 @@ namespace Imgeneus.World
             DependencyContainer.Instance.Register<IWorldServer, WorldServer>(ServiceLifetime.Singleton);
             DependencyContainer.Instance.Register<IGameWorld, GameWorld>(ServiceLifetime.Singleton);
             DependencyContainer.Instance.Register<IDatabasePreloader, DatabasePreloader>(ServiceLifetime.Singleton);
+            DependencyContainer.Instance.Register<IChatManager, ChatManager>(ServiceLifetime.Singleton);
             DependencyContainer.Instance.Configure(services => services.AddLogging(builder =>
             {
                 builder.AddFilter("Microsoft", LogLevel.Warning);

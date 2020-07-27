@@ -5,6 +5,7 @@ using Imgeneus.Database.Entities;
 using Imgeneus.Database.Preload;
 using Imgeneus.DatabaseBackgroundService;
 using Imgeneus.DatabaseBackgroundService.Handlers;
+using Imgeneus.World.Game.Chat;
 using Imgeneus.World.Game.PartyAndRaid;
 using Imgeneus.World.Game.Trade;
 using Imgeneus.World.Game.Zone;
@@ -22,12 +23,14 @@ namespace Imgeneus.World.Game.Player
         private readonly ICharacterConfiguration _characterConfig;
         private readonly IBackgroundTaskQueue _taskQueue;
         private readonly CharacterPacketsHelper _packetsHelper;
+        private readonly IChatManager _chatManager;
 
-        public Character(ILogger<Character> logger, ICharacterConfiguration characterConfig, IBackgroundTaskQueue taskQueue, IDatabasePreloader databasePreloader) : base(databasePreloader)
+        public Character(ILogger<Character> logger, ICharacterConfiguration characterConfig, IBackgroundTaskQueue taskQueue, IDatabasePreloader databasePreloader, IChatManager chatManager) : base(databasePreloader)
         {
             _logger = logger;
             _characterConfig = characterConfig;
             _taskQueue = taskQueue;
+            _chatManager = chatManager;
             _packetsHelper = new CharacterPacketsHelper();
 
             InventoryItems.CollectionChanged += InventoryItems_CollectionChanged;
@@ -721,9 +724,9 @@ namespace Imgeneus.World.Game.Player
         /// <summary>
         /// Creates character from database information.
         /// </summary>
-        public static Character FromDbCharacter(DbCharacter dbCharacter, ILogger<Character> logger, CharacterConfiguration characterConfig, IBackgroundTaskQueue taskQueue, IDatabasePreloader databasePreloader)
+        public static Character FromDbCharacter(DbCharacter dbCharacter, ILogger<Character> logger, CharacterConfiguration characterConfig, IBackgroundTaskQueue taskQueue, IDatabasePreloader databasePreloader, IChatManager chatManager)
         {
-            var character = new Character(logger, characterConfig, taskQueue, databasePreloader)
+            var character = new Character(logger, characterConfig, taskQueue, databasePreloader, chatManager)
             {
                 Id = dbCharacter.Id,
                 Name = dbCharacter.Name,

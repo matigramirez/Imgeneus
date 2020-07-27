@@ -33,7 +33,7 @@ namespace Imgeneus.World.Game.Chat
 
                 case MessageType.Whisper:
                     var target = _gameWorld.Players.Values.FirstOrDefault(p => p.Name == targetName);
-                    if (target != null)
+                    if (target != null && target.Country == sender.Country)
                     {
                         SendWhisper(sender, sender.Name, message);
                         SendWhisper(target, sender.Name, message);
@@ -53,6 +53,17 @@ namespace Imgeneus.World.Game.Chat
                     foreach (var player in mapPlayers)
                     {
                         SendMap((Character)player, sender.Name, message);
+                    }
+                    break;
+
+                case MessageType.World:
+                    if (sender.Level > 10)
+                    {
+                        var worldPlayers = _gameWorld.Players.Values.Where(p => p.Country == sender.Country);
+                        foreach (var player in worldPlayers)
+                        {
+                            SendWorld(player, sender.Name, message);
+                        }
                     }
                     break;
 
@@ -119,6 +130,21 @@ namespace Imgeneus.World.Game.Chat
         private void SendMap(Character character, string senderName, string message)
         {
             using var packet = new Packet(PacketType.CHAT_MAP);
+            packet.WriteString(senderName, 21);
+            packet.WriteByte((byte)message.Length);
+            packet.Write(message);
+            character.Client.SendPacket(packet);
+        }
+
+        /// <summary>
+        /// Sends message to all players of the same fraction.
+        /// </summary>
+        /// <param name="character">To whom we are sending</param>
+        /// <param name="senderName">Message creator name</param>
+        /// <param name="message">Message text</param>
+        private void SendWorld(Character character, string senderName, string message)
+        {
+            using var packet = new Packet(PacketType.CHAT_WORLD);
             packet.WriteString(senderName, 21);
             packet.WriteByte((byte)message.Length);
             packet.Write(message);

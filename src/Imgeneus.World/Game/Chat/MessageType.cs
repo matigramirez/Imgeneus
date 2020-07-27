@@ -5,6 +5,7 @@
         Normal,
         Whisper,
         Party,
-        Map
+        Map,
+        World
     }
 }

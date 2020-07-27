@@ -140,7 +140,8 @@ namespace Imgeneus.World
             { PacketType.CHAT_WHISPER, (s) => new ChatWhisperPacket(s) },
             { PacketType.CHAT_PARTY_ADMIN, (s) => new ChatPartyPacket(s) },
             { PacketType.CHAT_PARTY, (s) => new ChatPartyPacket(s) },
-            { PacketType.CHAT_MAP, (s) => new ChatMapPacket(s) }
+            { PacketType.CHAT_MAP, (s) => new ChatMapPacket(s) },
+            { PacketType.CHAT_WORLD, (s) => new ChatWorldPacket(s) }
         };
 
         /// <inheritdoc />

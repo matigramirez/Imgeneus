@@ -150,6 +150,10 @@ namespace Imgeneus.World.Game.Player
                     _chatManager.SendMessage(this, Chat.MessageType.Map, chatMapPacket.Message);
                     break;
 
+                case ChatWorldPacket chatWorldPacket:
+                    _chatManager.SendMessage(this, Chat.MessageType.World, chatWorldPacket.Message);
+                    break;
+
                 case RebirthPacket rebirthPacket:
                     // TODO: rebirth to nearest town, get coordinates from map.
                     Rebirth(1, 1, 1);

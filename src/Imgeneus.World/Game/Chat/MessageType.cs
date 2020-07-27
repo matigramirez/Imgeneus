@@ -3,6 +3,7 @@
     public enum MessageType
     {
         Normal,
-        Whisper
+        Whisper,
+        Party
     }
 }

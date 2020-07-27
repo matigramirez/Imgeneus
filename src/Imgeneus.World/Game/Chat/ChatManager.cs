@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Imgeneus.Database.Entities;
 using Imgeneus.Network.Data;
 using Imgeneus.Network.Packets;
@@ -39,6 +40,14 @@ namespace Imgeneus.World.Game.Chat
                     }
                     break;
 
+                case MessageType.Party:
+                    if (sender.Party != null)
+                        foreach (var player in sender.Party.Members.ToList())
+                        {
+                            SendParty(player, sender.Id, message);
+                        }
+                    break;
+
                 default:
                     _logger.LogError("Not implemented message type.");
                     break;
@@ -55,7 +64,7 @@ namespace Imgeneus.World.Game.Chat
         /// <param name="message">Message text.</param>
         private void SendNormal(Character character, int senderId, string message)
         {
-            using var packet = new Packet(PacketType.CHAT_NORMAL);
+            using var packet = new Packet(PacketType.CHAT_NORMAL_ADMIN);
             packet.Write(senderId);
             packet.WriteByte((byte)message.Length);
             packet.Write(message);
@@ -70,9 +79,24 @@ namespace Imgeneus.World.Game.Chat
         /// <param name="message">Message text.</param>
         private void SendWhisper(Character character, string senderName, string message)
         {
-            using var packet = new Packet(PacketType.CHAT_WHISPER);
+            using var packet = new Packet(PacketType.CHAT_WHISPER_ADMIN);
             packet.Write(false); // false == use sender name, if set to true, sender name will be ignored
             packet.WriteString(senderName, 21);
+            packet.WriteByte((byte)message.Length);
+            packet.Write(message);
+            character.Client.SendPacket(packet);
+        }
+
+        /// <summary>
+        /// Send message to party members.
+        /// </summary>
+        /// <param name="character">To whom we are sending.</param>
+        /// <param name="senderId">Message creator id.</param>
+        /// <param name="message">Message text.</param>
+        private void SendParty(Character character, int senderId, string message)
+        {
+            using var packet = new Packet(PacketType.CHAT_PARTY);
+            packet.Write(senderId);
             packet.WriteByte((byte)message.Length);
             packet.Write(message);
             character.Client.SendPacket(packet);

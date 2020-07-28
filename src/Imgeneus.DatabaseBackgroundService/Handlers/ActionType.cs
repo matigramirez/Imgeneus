@@ -23,6 +23,9 @@
         SAVE_BUFF,
         REMOVE_BUFF,
         REMOVE_BUFF_ALL,
-        UPDATE_BUFF_RESET_TIME
+        UPDATE_BUFF_RESET_TIME,
+
+        // Logs
+        LOG_SAVE_CHAT_MESSAGE
     }
 }

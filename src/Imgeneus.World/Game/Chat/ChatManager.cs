@@ -1,6 +1,7 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using Imgeneus.Database.Entities;
+using Imgeneus.DatabaseBackgroundService;
+using Imgeneus.DatabaseBackgroundService.Handlers;
 using Imgeneus.Network.Data;
 using Imgeneus.Network.Packets;
 using Imgeneus.World.Game.Player;
@@ -12,11 +13,13 @@ namespace Imgeneus.World.Game.Chat
     {
         private readonly ILogger<IChatManager> _logger;
         private readonly IGameWorld _gameWorld;
+        private readonly IBackgroundTaskQueue _taskQueue;
 
-        public ChatManager(ILogger<IChatManager> logger, IGameWorld gameWorld)
+        public ChatManager(ILogger<IChatManager> logger, IGameWorld gameWorld, IBackgroundTaskQueue taskQueue)
         {
             _logger = logger;
             _gameWorld = gameWorld;
+            _taskQueue = taskQueue;
         }
 
         public void SendMessage(Character sender, MessageType messageType, string message, string targetName = "")
@@ -29,23 +32,28 @@ namespace Imgeneus.World.Game.Chat
                     {
                         SendNormal((Character)player, sender.Id, message);
                     }
+                    _taskQueue.Enqueue(ActionType.LOG_SAVE_CHAT_MESSAGE, sender.Client.UserID, sender.Id, sender.Name, MessageType.Normal.ToString(), message);
                     break;
 
                 case MessageType.Whisper:
                     var target = _gameWorld.Players.Values.FirstOrDefault(p => p.Name == targetName);
-                    if (target != null && target.Country == sender.Country)
+                    if (target != null && target.Id != sender.Id && target.Country == sender.Country)
                     {
                         SendWhisper(sender, sender.Name, message);
                         SendWhisper(target, sender.Name, message);
+                        _taskQueue.Enqueue(ActionType.LOG_SAVE_CHAT_MESSAGE, sender.Client.UserID, sender.Id, sender.Name, MessageType.Whisper.ToString(), message, target.Id, target.Name);
                     }
                     break;
 
                 case MessageType.Party:
                     if (sender.Party != null)
+                    {
                         foreach (var player in sender.Party.Members.ToList())
                         {
                             SendParty(player, sender.Id, message);
                         }
+                        _taskQueue.Enqueue(ActionType.LOG_SAVE_CHAT_MESSAGE, sender.Client.UserID, sender.Id, sender.Name, MessageType.Party.ToString(), message);
+                    }
                     break;
 
                 case MessageType.Map:
@@ -54,6 +62,7 @@ namespace Imgeneus.World.Game.Chat
                     {
                         SendMap((Character)player, sender.Name, message);
                     }
+                    _taskQueue.Enqueue(ActionType.LOG_SAVE_CHAT_MESSAGE, sender.Client.UserID, sender.Id, sender.Name, MessageType.Map.ToString(), message);
                     break;
 
                 case MessageType.World:
@@ -64,6 +73,7 @@ namespace Imgeneus.World.Game.Chat
                         {
                             SendWorld(player, sender.Name, message);
                         }
+                        _taskQueue.Enqueue(ActionType.LOG_SAVE_CHAT_MESSAGE, sender.Client.UserID, sender.Id, sender.Name, MessageType.World.ToString(), message);
                     }
                     break;
 

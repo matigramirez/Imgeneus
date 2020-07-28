@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Imgeneus.DatabaseBackgroundService.Handlers
 {
-    internal static class FactoryHandler
+    internal static partial class FactoryHandler
     {
         [ActionHandler(ActionType.SAVE_CHARACTER_MOVE)]
         internal static async Task SaveCharacterMove(object[] args)

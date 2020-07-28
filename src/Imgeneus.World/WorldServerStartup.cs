@@ -5,6 +5,7 @@ using Imgeneus.Core.Structures.Configuration;
 using Imgeneus.Database;
 using Imgeneus.Database.Preload;
 using Imgeneus.DatabaseBackgroundService;
+using Imgeneus.Logs;
 using Imgeneus.World.Game;
 using Imgeneus.World.Game.Chat;
 using Imgeneus.World.Game.Player;
@@ -28,6 +29,8 @@ namespace Imgeneus.World
             DependencyContainer.Instance
                 .GetServiceCollection()
                 .RegisterDatabaseServices();
+
+            DependencyContainer.Instance.Register<ILogsDatabase, LogsDbContext>(ServiceLifetime.Transient);
 
             DependencyContainer.Instance.Register<IWorldServer, WorldServer>(ServiceLifetime.Singleton);
             DependencyContainer.Instance.Register<IGameWorld, GameWorld>(ServiceLifetime.Singleton);
@@ -68,6 +71,8 @@ namespace Imgeneus.World
         {
             var logger = DependencyContainer.Instance.Resolve<ILogger<WorldServerStartup>>();
             var server = DependencyContainer.Instance.Resolve<IWorldServer>();
+            var logsDb = DependencyContainer.Instance.Resolve<ILogsDatabase>();
+            logsDb.Migrate();
             var dbWorker = DependencyContainer.Instance.Resolve<DatabaseWorker>();
             dbWorker.StartAsync(new System.Threading.CancellationToken());
             var dbPreloader = DependencyContainer.Instance.Resolve<IDatabasePreloader>();

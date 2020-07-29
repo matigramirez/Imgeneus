@@ -24,5 +24,9 @@ namespace Imgeneus.World.Game.Monster
             // Implement if needed.
         }
 
+        protected override void SendCurrentHitpoints()
+        {
+            // Implement if needed.
+        }
     }
 }

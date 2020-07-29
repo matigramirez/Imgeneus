@@ -191,13 +191,15 @@ namespace Imgeneus.World.Packets
             client.SendPacket(packet);
         }
 
-        internal void SendRecoverCharacter(WorldClient client, IKillable sender)
+        internal void SendRecoverCharacter(WorldClient client, IKillable sender, int hp, int mp, int sp)
         {
+            // NB!!! In previous episodes and in china ep 8 with recover packet it's sent how much hitpoints recovered.
+            // But in os ep8 this packet sends current hitpoints.
             using var packet = new Packet(PacketType.CHARACTER_RECOVER);
             packet.Write(sender.Id);
-            packet.Write(sender.CurrentHP);
-            packet.Write(sender.CurrentMP);
-            packet.Write(sender.CurrentSP);
+            packet.Write(sender.CurrentHP); // old eps: packet.Write(hp);
+            packet.Write(sender.CurrentMP); // old eps: packet.Write(mp);
+            packet.Write(sender.CurrentSP); // old eps: packet.Write(sp);
             client.SendPacket(packet);
         }
 

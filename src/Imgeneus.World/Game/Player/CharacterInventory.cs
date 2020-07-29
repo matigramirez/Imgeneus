@@ -741,7 +741,10 @@ namespace Imgeneus.World.Game.Player
         {
             var item = InventoryItems.FirstOrDefault(itm => itm.Bag == bag && itm.Slot == slot);
             if (item is null)
+            {
+                _logger.LogWarning($"Character {Id} is trying to use item, that does not exist. Possible hack?");
                 return;
+            }
 
             if (!CanUseItem(item))
                 return;
@@ -750,9 +753,10 @@ namespace Imgeneus.World.Game.Player
 
             // TODO: implement all useable items.
 
-            CurrentHP += item.HP;
-            CurrentMP += item.MP;
-            CurrentSP += item.SP;
+            if (item.HP > 0 || item.MP > 0 || item.SP > 0)
+            {
+                Recover(item.HP, item.MP, item.SP);
+            }
 
             OnUsedItem?.Invoke(this, item);
 

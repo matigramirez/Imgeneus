@@ -136,9 +136,7 @@ namespace Imgeneus.World.Game.Zone
             character.OnSkillCastStarted += Character_OnSkillCastStarted;
             character.OnUsedItem += Character_OnUsedItem;
             character.OnMaxHPChanged += Character_OnMaxHPChanged;
-            character.HP_Changed += Character_HP_Changed;
-            character.MP_Changed += Character_MP_Changed;
-            character.SP_Changed += Character_SP_Changed;
+            character.OnRecover += Character_OnRecover;
             character.OnSkillKeep += Character_OnSkillKeep;
             character.OnShapeChange += Character_OnShapeChange;
             character.OnUsedRangeSkill += Character_OnUsedRangeSkill;
@@ -161,9 +159,7 @@ namespace Imgeneus.World.Game.Zone
             character.OnSkillCastStarted -= Character_OnSkillCastStarted;
             character.OnUsedItem -= Character_OnUsedItem;
             character.OnMaxHPChanged -= Character_OnMaxHPChanged;
-            character.HP_Changed -= Character_HP_Changed;
-            character.MP_Changed -= Character_MP_Changed;
-            character.SP_Changed -= Character_SP_Changed;
+            character.OnRecover -= Character_OnRecover;
             character.OnSkillKeep -= Character_OnSkillKeep;
             character.OnShapeChange -= Character_OnShapeChange;
             character.OnUsedRangeSkill -= Character_OnUsedRangeSkill;
@@ -276,22 +272,10 @@ namespace Imgeneus.World.Game.Zone
                 _packetHelper.SendUsedItem(player.Value.Client, sender, item);
         }
 
-        private void Character_HP_Changed(IKillable sender, HitpointArgs args)
-        {
-            //foreach (var player in Players)
-            //    _packetHelper.SendRecoverCharacter(player.Value.Client, sender);
-        }
-
-        private void Character_MP_Changed(IKillable sender, HitpointArgs args)
+        private void Character_OnRecover(IKillable sender, int hp, int mp, int sp)
         {
             foreach (var player in Players)
-                _packetHelper.SendRecoverCharacter(player.Value.Client, sender);
-        }
-
-        private void Character_SP_Changed(IKillable sender, HitpointArgs args)
-        {
-            foreach (var player in Players)
-                _packetHelper.SendRecoverCharacter(player.Value.Client, sender);
+                _packetHelper.SendRecoverCharacter(player.Value.Client, sender, hp, mp, sp);
         }
 
         private void Character_OnMaxHPChanged(IKillable sender, int maxHP)
@@ -324,7 +308,7 @@ namespace Imgeneus.World.Game.Zone
             {
                 _packetHelper.SendCharacterRebirth(player.Value.Client, sender);
                 _packetHelper.SendDeadRebirth(player.Value.Client, (Character)sender);
-                _packetHelper.SendRecoverCharacter(player.Value.Client, sender);
+                _packetHelper.SendRecoverCharacter(player.Value.Client, sender, sender.CurrentHP, sender.CurrentMP, sender.CurrentSP);
             }
         }
 
@@ -385,7 +369,7 @@ namespace Imgeneus.World.Game.Zone
             mob.OnMove += Mob_OnMove;
             mob.OnAttack += Mob_OnAttack;
             mob.OnUsedSkill += Mob_OnUsedSkill;
-            mob.OnRecover += Mob_OnRecover;
+            mob.OnFullRecover += Mob_OnRecover;
         }
 
         /// <summary>
@@ -398,7 +382,7 @@ namespace Imgeneus.World.Game.Zone
             mob.OnMove -= Mob_OnMove;
             mob.OnAttack -= Mob_OnAttack;
             mob.OnUsedSkill -= Mob_OnUsedSkill;
-            mob.OnRecover -= Mob_OnRecover;
+            mob.OnFullRecover -= Mob_OnRecover;
         }
 
         private void Mob_OnDead(IKillable sender, IKiller killer)

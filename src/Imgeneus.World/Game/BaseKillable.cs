@@ -327,6 +327,11 @@ namespace Imgeneus.World.Game
         protected abstract void SendAdditionalStats();
 
         /// <summary>
+        /// Call, that notifies about current hp, mp, sp.
+        /// </summary>
+        protected abstract void SendCurrentHitpoints();
+
+        /// <summary>
         /// ?
         /// </summary>
         public event Action<IKillable, ActiveBuff, AttackResult> OnSkillKeep;
@@ -875,7 +880,10 @@ namespace Imgeneus.World.Game
                 _extraHP = value;
 
                 if (CurrentHP > MaxHP)
+                {
                     CurrentHP = MaxHP;
+                    SendCurrentHitpoints();
+                }
 
                 OnMaxHPChanged?.Invoke(this, MaxHP);
             }
@@ -1090,12 +1098,12 @@ namespace Imgeneus.World.Game
 
         #endregion
 
-        #region Recover
+        #region Full Recover
 
         /// <summary>
         /// Event if fired, when killable is recovered.
         /// </summary>
-        public event Action<IKillable> OnRecover;
+        public event Action<IKillable> OnFullRecover;
 
         /// <summary>
         /// Fully recovers hitpoints.
@@ -1105,7 +1113,7 @@ namespace Imgeneus.World.Game
             CurrentHP = MaxHP;
             CurrentMP = MaxMP;
             CurrentSP = MaxSP;
-            OnRecover?.Invoke(this);
+            OnFullRecover?.Invoke(this);
         }
 
         #endregion

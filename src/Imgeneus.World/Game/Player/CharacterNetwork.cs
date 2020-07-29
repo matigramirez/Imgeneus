@@ -322,7 +322,7 @@ namespace Imgeneus.World.Game.Player
 
         private void SendDetails() => _packetsHelper.SendDetails(Client, this);
 
-        private void SendCurrentHitpoints() => _packetsHelper.SendCurrentHitpoints(Client, this);
+        protected override void SendCurrentHitpoints() => _packetsHelper.SendCurrentHitpoints(Client, this);
 
         private void SendInventoryItems() => _packetsHelper.SendInventoryItems(Client, InventoryItems);
 

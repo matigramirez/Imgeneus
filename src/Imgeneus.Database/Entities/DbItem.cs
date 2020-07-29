@@ -158,13 +158,13 @@ namespace Imgeneus.Database.Entities
         public Element Element { get; set; }
 
         /// <summary>
-        /// ?
+        /// Special effect.
         /// </summary>
         [Required]
-        public byte Special { get; set; }
+        public SpecialEffect Special { get; set; }
 
         /// <summary>
-        /// ?
+        /// How many slots lapis will take.
         /// </summary>
         [Required]
         public byte Slot { get; set; }

@@ -301,13 +301,15 @@ namespace Imgeneus.World.Game.Player
         private void HandleGetCharacterBuffs(int targetId)
         {
             var target = Map.GetPlayer(targetId);
-            _packetsHelper.SendCurrentBuffs(Client, target);
+            if (target != null)
+                _packetsHelper.SendCurrentBuffs(Client, target);
         }
 
         private void HandleGetMobBuffs(int targetId)
         {
             var target = Map.GetMob(targetId);
-            _packetsHelper.SendCurrentBuffs(Client, target);
+            if (target != null)
+                _packetsHelper.SendCurrentBuffs(Client, target);
         }
 
         private void HandleCharacterShape(int characterId)

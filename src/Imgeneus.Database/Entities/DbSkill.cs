@@ -239,7 +239,7 @@ namespace Imgeneus.Database.Entities
         public byte ApplyRange { get; set; }
 
         /// <summary>
-        /// TODO: ?
+        /// Used in multiple skill attacks.
         /// </summary>
         public byte MultiAttack { get; set; }
 

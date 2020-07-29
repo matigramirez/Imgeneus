@@ -43,7 +43,8 @@ namespace Imgeneus.World.Game
         /// <param name="initialTarget">target, that was initially selected</param>
         /// <param name="target">current target, usualy is the same as initialTarget, but if it's AoE (area of effect) skill, then can be different from initial target</param>
         /// <param name="attackResult">result after performing skill</param>
-        public void PerformSkill(Skill skill, IKillable initialTarget, IKillable target, AttackResult attackResult)
+        /// <param name="n">How many times this skill was called, used in multy skills.</param>
+        public void PerformSkill(Skill skill, IKillable initialTarget, IKillable target, AttackResult attackResult, int n = 0)
         {
             switch (skill.Type)
             {
@@ -89,7 +90,8 @@ namespace Imgeneus.World.Game
                     break;
 
                 case TypeDetail.UniqueHitAttack:
-                    if (initialTarget == target || this == target)
+                case TypeDetail.MultipleHitsAttack:
+                    if ((initialTarget == target || this == target) && n == 0)
                         OnUsedSkillInvoke(initialTarget, skill, attackResult);
                     else
                         OnUsedRangeSkillInvoke(target, skill, attackResult);
@@ -132,13 +134,13 @@ namespace Imgeneus.World.Game
 
                 case DamageType.PlusExtraDamage:
                     return CalculateDamage(target,
-                                                           skill.TypeAttack,
-                                                           element,
-                                                           minAttack,
-                                                           maxAttack,
-                                                           minMagicAttack,
-                                                           maxMagicAttack,
-                                                           skill);
+                                           skill.TypeAttack,
+                                           element,
+                                           minAttack,
+                                           maxAttack,
+                                           minMagicAttack,
+                                           maxMagicAttack,
+                                           skill);
 
                 default:
                     throw new NotImplementedException("Not implemented damage type.");
@@ -176,7 +178,8 @@ namespace Imgeneus.World.Game
                     levelDifference = Level * 1.0 / (target.Level + Level);
                     var targetAttackPercent = target.PhysicalHittingChance / (target.PhysicalHittingChance + PhysicalEvasionChance);
                     var myAttackPercent = PhysicalHittingChance / (PhysicalHittingChance + target.PhysicalEvasionChance);
-                    result = levelDifference * 160 - Math.Abs(targetAttackPercent * 100 - myAttackPercent * 100);
+                    var attackPercent = targetAttackPercent * 100 - myAttackPercent * 100;
+                    result = levelDifference * 160 - attackPercent;
                     if (result >= 20)
                     {
                         if (result > 99)

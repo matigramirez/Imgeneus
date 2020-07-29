@@ -712,59 +712,65 @@ namespace Imgeneus.World.Game.Monster
 
         private void UseSkill(IKillable target, Skill skill, Element element, short minAttack, ushort additionalDamage)
         {
-            var targets = new List<IKillable>();
-            switch (skill.TargetType)
+            int n = 0;
+            do
             {
-                case TargetType.None:
-                case TargetType.SelectedEnemy:
-                    targets.Add(target);
-                    break;
+                var targets = new List<IKillable>();
+                switch (skill.TargetType)
+                {
+                    case TargetType.None:
+                    case TargetType.SelectedEnemy:
+                        targets.Add(target);
+                        break;
 
-                case TargetType.EnemiesNearCaster:
-                    targets.AddRange(Map.GetPlayers(PosX, PosZ, skill.ApplyRange, EnemyPlayersFraction));
-                    break;
+                    case TargetType.EnemiesNearCaster:
+                        targets.AddRange(Map.GetPlayers(PosX, PosZ, skill.ApplyRange, EnemyPlayersFraction));
+                        break;
 
-                case TargetType.EnemiesNearTarget:
-                    targets.AddRange(Map.GetPlayers(target.PosX, target.PosZ, skill.ApplyRange, EnemyPlayersFraction));
-                    break;
+                    case TargetType.EnemiesNearTarget:
+                        targets.AddRange(Map.GetPlayers(target.PosX, target.PosZ, skill.ApplyRange, EnemyPlayersFraction));
+                        break;
 
-                default:
-                    _logger.LogError($"Unimplemented target type: {skill.TargetType}");
-                    break;
+                    default:
+                        _logger.LogError($"Unimplemented target type: {skill.TargetType}");
+                        break;
+                }
+
+
+                foreach (var t in targets)
+                {
+                    // While implementing multiple attack I commented this out. Maybe it's not needed.
+                    //if (t.IsDead)
+                    //continue;
+
+                    if (!((IKiller)this).AttackSuccessRate(t, skill.TypeAttack, skill))
+                    {
+                        // Send missed skill.
+                        OnUsedSkill?.Invoke(this, t, skill, new AttackResult(AttackSuccess.Miss, new Damage(0, 0, 0)));
+                        continue;
+                    }
+
+                    //var attackResult = ((IKiller)this).CalculateAttackResult(skill, t, element, minAttack, minAttack + additionalDamage, minAttack, minAttack + additionalDamage);
+                    var attackResult = new AttackResult(AttackSuccess.Normal, new Damage(1, 0, 0));
+
+                    if (attackResult.Damage.HP > 0)
+                        t.DecreaseHP(attackResult.Damage.HP, this);
+                    if (attackResult.Damage.SP > 0)
+                        t.CurrentSP -= attackResult.Damage.SP;
+                    if (attackResult.Damage.MP > 0)
+                        t.CurrentMP -= attackResult.Damage.MP;
+
+                    try
+                    {
+                        ((IKiller)this).PerformSkill(skill, target, t, attackResult, n);
+                    }
+                    catch (NotImplementedException)
+                    {
+                        _logger.LogError($"Not implemented skill type {skill.Type}");
+                    }
+                }
             }
-
-
-            foreach (var t in targets)
-            {
-                if (t.IsDead)
-                    continue;
-
-                if (!((IKiller)this).AttackSuccessRate(t, skill.TypeAttack, skill))
-                {
-                    // Send missed skill.
-                    OnUsedSkill?.Invoke(this, t, skill, new AttackResult(AttackSuccess.Miss, new Damage(0, 0, 0)));
-                    continue;
-                }
-
-                //var attackResult = ((IKiller)this).CalculateAttackResult(skill, t, element, minAttack, minAttack + additionalDamage, minAttack, minAttack + additionalDamage);
-                var attackResult = new AttackResult(AttackSuccess.Normal, new Damage(1, 0, 0));
-
-                if (attackResult.Damage.HP > 0)
-                    t.DecreaseHP(attackResult.Damage.HP, this);
-                if (attackResult.Damage.SP > 0)
-                    t.CurrentSP -= attackResult.Damage.SP;
-                if (attackResult.Damage.MP > 0)
-                    t.CurrentMP -= attackResult.Damage.MP;
-
-                try
-                {
-                    ((IKiller)this).PerformSkill(skill, target, t, attackResult);
-                }
-                catch (NotImplementedException)
-                {
-                    _logger.LogError($"Not implemented skill type {skill.Type}");
-                }
-            }
+            while (n < skill.MultiAttack);
         }
 
         private void MeleeAttack(IKillable target, Element element, short minAttack, ushort additionalDamage)

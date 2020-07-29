@@ -170,72 +170,80 @@ namespace Imgeneus.World.Game.Player
                 SendUseSMMP(skill.NeedMP, skill.NeedSP);
             }
 
-            var targets = new List<IKillable>();
-            switch (skill.TargetType)
+            int n = 0;
+            do
             {
-                case TargetType.None:
-                case TargetType.Caster:
-                    targets.Add(this);
-                    break;
-
-                case TargetType.SelectedEnemy:
-                    if (target != null)
-                        targets.Add(target);
-                    else
+                var targets = new List<IKillable>();
+                switch (skill.TargetType)
+                {
+                    case TargetType.None:
+                    case TargetType.Caster:
                         targets.Add(this);
-                    break;
+                        break;
 
-                case TargetType.PartyMembers:
-                    if (Party != null)
-                        foreach (var member in Party.Members)
-                            targets.Add(member);
-                    else
-                        targets.Add(this);
-                    break;
+                    case TargetType.SelectedEnemy:
+                        if (target != null)
+                            targets.Add(target);
+                        else
+                            targets.Add(this);
+                        break;
 
-                case TargetType.EnemiesNearTarget:
-                    var enemies = Map.GetEnemies(this, target, skill.ApplyRange);
-                    foreach (var e in enemies)
-                        targets.Add(e);
-                    break;
+                    case TargetType.PartyMembers:
+                        if (Party != null)
+                            foreach (var member in Party.Members)
+                                targets.Add(member);
+                        else
+                            targets.Add(this);
+                        break;
 
-                default:
-                    throw new NotImplementedException("Not implemented skill target.");
+                    case TargetType.EnemiesNearTarget:
+                        var enemies = Map.GetEnemies(this, target, skill.ApplyRange);
+                        foreach (var e in enemies)
+                            targets.Add(e);
+                        break;
+
+                    default:
+                        throw new NotImplementedException("Not implemented skill target.");
+                }
+
+                foreach (var t in targets)
+                {
+                    // While implementing multiple attack I commented this out. Maybe it's not needed.
+                    //if (t.IsDead)
+                    //continue;
+
+                    if (skill.TypeAttack != TypeAttack.Passive && !((IKiller)this).AttackSuccessRate(t, skill.TypeAttack, skill))
+                    {
+                        if (target == t)
+                            OnUsedSkill?.Invoke(this, t, skill, new AttackResult(AttackSuccess.Miss, new Damage(0, 0, 0)));
+                        else
+                            OnUsedRangeSkill?.Invoke(this, t, skill, new AttackResult(AttackSuccess.Miss, new Damage(0, 0, 0)));
+
+                        continue;
+                    }
+
+                    var attackResult = ((IKiller)this).CalculateAttackResult(skill, t, AttackElement, MinAttack, MaxAttack, MinMagicAttack, MaxMagicAttack);
+
+                    if (attackResult.Damage.HP > 0)
+                        t.DecreaseHP(attackResult.Damage.HP, this);
+                    if (attackResult.Damage.SP > 0)
+                        t.CurrentSP -= attackResult.Damage.SP;
+                    if (attackResult.Damage.MP > 0)
+                        t.CurrentMP -= attackResult.Damage.MP;
+
+                    try
+                    {
+                        ((IKiller)this).PerformSkill(skill, target, t, attackResult, n);
+                    }
+                    catch (NotImplementedException)
+                    {
+                        _logger.LogError($"Not implemented skill type {skill.Type}");
+                    }
+                }
+
+                n++;
             }
-
-            foreach (var t in targets)
-            {
-                if (t.IsDead)
-                    continue;
-
-                if (skill.TypeAttack != TypeAttack.Passive && !((IKiller)this).AttackSuccessRate(t, skill.TypeAttack, skill))
-                {
-                    if (target == t)
-                        OnUsedSkill?.Invoke(this, t, skill, new AttackResult(AttackSuccess.Miss, new Damage(0, 0, 0)));
-                    else
-                        OnUsedRangeSkill?.Invoke(this, t, skill, new AttackResult(AttackSuccess.Miss, new Damage(0, 0, 0)));
-
-                    continue;
-                }
-
-                var attackResult = ((IKiller)this).CalculateAttackResult(skill, t, AttackElement, MinAttack, MaxAttack, MinMagicAttack, MaxMagicAttack);
-
-                if (attackResult.Damage.HP > 0)
-                    t.DecreaseHP(attackResult.Damage.HP, this);
-                if (attackResult.Damage.SP > 0)
-                    t.CurrentSP -= attackResult.Damage.SP;
-                if (attackResult.Damage.MP > 0)
-                    t.CurrentMP -= attackResult.Damage.MP;
-
-                try
-                {
-                    ((IKiller)this).PerformSkill(skill, target, t, attackResult);
-                }
-                catch (NotImplementedException)
-                {
-                    _logger.LogError($"Not implemented skill type {skill.Type}");
-                }
-            }
+            while (n < skill.MultiAttack);
         }
 
         /// <summary>

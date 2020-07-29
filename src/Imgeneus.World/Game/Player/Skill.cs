@@ -50,6 +50,7 @@ namespace Imgeneus.World.Game.Player
             SuccessValue = dbSkill.SuccessValue;
             Element = dbSkill.Element;
             ApplyRange = dbSkill.ApplyRange;
+            MultiAttack = dbSkill.MultiAttack;
         }
 
         /// <summary>
@@ -171,6 +172,11 @@ namespace Imgeneus.World.Game.Player
         /// Skill will be applied within N meters.
         /// </summary>
         public byte ApplyRange { get; }
+
+        /// <summary>
+        /// Skill damage will be multiplied by this number.
+        /// </summary>
+        public byte MultiAttack { get; }
 
         /// <summary>
         /// How much stamina is needed in order to use this skill.

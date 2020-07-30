@@ -70,6 +70,7 @@ namespace Imgeneus.World.Game.Player
                 ConstPlusAttack = item.PlusAttack;
                 MaxCount = item.Count;
                 ConstElement = item.Element;
+                Special = item.Special;
             }
         }
 
@@ -494,6 +495,11 @@ namespace Imgeneus.World.Game.Player
                 return Element.None;
             }
         }
+
+        /// <summary>
+        /// Special effect like teleport/cure/summon etc.
+        /// </summary>
+        public SpecialEffect Special { get; }
 
         #endregion
 

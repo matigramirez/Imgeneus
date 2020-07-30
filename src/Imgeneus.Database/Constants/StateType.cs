@@ -70,9 +70,9 @@
         LowerAttackOrDefence = 13,
 
         /// <summary>
-        /// Used only in skill "Tranquilizing Shot".
+        /// Used only in skill "Tranquilizing Shot" and in mob's skills like "Dull".
         /// </summary>
-        SlumpShot = 14,
+        DexDecrease = 14,
 
         /// <summary>
         /// Target's luck is decreased.

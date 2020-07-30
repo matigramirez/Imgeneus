@@ -1,4 +1,5 @@
-﻿using Imgeneus.DatabaseBackgroundService.Handlers;
+﻿using Imgeneus.Database.Constants;
+using Imgeneus.DatabaseBackgroundService.Handlers;
 using Microsoft.Extensions.Logging;
 using MvvmHelpers;
 using System;
@@ -750,14 +751,7 @@ namespace Imgeneus.World.Game.Player
                 return;
 
             item.Count--;
-
-            // TODO: implement all useable items.
-
-            if (item.HP > 0 || item.MP > 0 || item.SP > 0)
-            {
-                Recover(item.HP, item.MP, item.SP);
-            }
-
+            ApplyItemEffect(item);
             OnUsedItem?.Invoke(this, item);
 
             if (item.Count > 0)
@@ -770,6 +764,128 @@ namespace Imgeneus.World.Game.Player
                 InventoryItems.Remove(item);
                 _taskQueue.Enqueue(ActionType.REMOVE_ITEM_FROM_INVENTORY,
                                    Id, item.Bag, item.Slot);
+            }
+        }
+
+        /// <summary>
+        /// Adds the effect of the item to the character.
+        /// </summary>
+        private void ApplyItemEffect(Item item)
+        {
+            switch (item.Special)
+            {
+
+                case SpecialEffect.HealingPotion:
+                    UseHealingPotion(item);
+                    break;
+
+                case SpecialEffect.HypnosisCure:
+                    UseCureDebuffPotion(StateType.Sleep);
+                    break;
+
+                case SpecialEffect.StunCure:
+                    UseCureDebuffPotion(StateType.Stun);
+                    break;
+
+                case SpecialEffect.SilenceCure:
+                    UseCureDebuffPotion(StateType.Silence);
+                    break;
+
+                case SpecialEffect.DarknessCure:
+                    UseCureDebuffPotion(StateType.Darkness);
+                    break;
+
+                case SpecialEffect.StopCure:
+                    UseCureDebuffPotion(StateType.Immobilize);
+                    break;
+
+                case SpecialEffect.SlowCure:
+                    UseCureDebuffPotion(StateType.Slow);
+                    break;
+
+                case SpecialEffect.VenomCure:
+                    UseCureDebuffPotion(StateType.HPDamageOverTime);
+                    break;
+
+                case SpecialEffect.DiseaseCure:
+                    UseCureDebuffPotion(StateType.SPDamageOverTime);
+                    UseCureDebuffPotion(StateType.MPDamageOverTime);
+                    break;
+
+                case SpecialEffect.IllnessDelusionCure:
+                    UseCureDebuffPotion(StateType.HPDamageOverTime);
+                    UseCureDebuffPotion(StateType.SPDamageOverTime);
+                    UseCureDebuffPotion(StateType.MPDamageOverTime);
+                    break;
+
+                case SpecialEffect.SleepStunStopSlowCure:
+                    UseCureDebuffPotion(StateType.Sleep);
+                    UseCureDebuffPotion(StateType.Stun);
+                    UseCureDebuffPotion(StateType.Immobilize);
+                    UseCureDebuffPotion(StateType.Slow);
+                    break;
+
+                case SpecialEffect.SilenceDarknessCure:
+                    UseCureDebuffPotion(StateType.Silence);
+                    UseCureDebuffPotion(StateType.Darkness);
+                    break;
+
+                case SpecialEffect.DullBadLuckCure:
+                    UseCureDebuffPotion(StateType.DexDecrease);
+                    UseCureDebuffPotion(StateType.Misfortunate);
+                    break;
+
+                case SpecialEffect.DoomFearCure:
+                    UseCureDebuffPotion(StateType.MentalSmasher);
+                    UseCureDebuffPotion(StateType.LowerAttackOrDefence);
+                    break;
+
+                case SpecialEffect.FullCure:
+                    UseCureDebuffPotion(StateType.Sleep);
+                    UseCureDebuffPotion(StateType.Stun);
+                    UseCureDebuffPotion(StateType.Silence);
+                    UseCureDebuffPotion(StateType.Darkness);
+                    UseCureDebuffPotion(StateType.Immobilize);
+                    UseCureDebuffPotion(StateType.Slow);
+                    UseCureDebuffPotion(StateType.HPDamageOverTime);
+                    UseCureDebuffPotion(StateType.SPDamageOverTime);
+                    UseCureDebuffPotion(StateType.MPDamageOverTime);
+                    UseCureDebuffPotion(StateType.DexDecrease);
+                    UseCureDebuffPotion(StateType.Misfortunate);
+                    UseCureDebuffPotion(StateType.MentalSmasher);
+                    UseCureDebuffPotion(StateType.LowerAttackOrDefence);
+                    break;
+
+                case SpecialEffect.DisorderCure:
+                    // ?
+                    break;
+
+                case SpecialEffect.None:
+                    break;
+                default:
+                    _logger.LogError($"Uninplemented item effect {item.Special}.");
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// Uses potion, that restores hp,sp,mp.
+        /// </summary>
+        private void UseHealingPotion(Item potion)
+        {
+            if (potion.HP > 0 || potion.MP > 0 || potion.SP > 0)
+                Recover(potion.HP, potion.MP, potion.SP);
+        }
+
+        /// <summary>
+        /// Cures characterfrom some debuff.
+        /// </summary>
+        private void UseCureDebuffPotion(StateType debuffType)
+        {
+            var debuffs = ActiveBuffs.Where(b => b.StateType == debuffType).ToList();
+            foreach (var d in debuffs)
+            {
+                d.CancelBuff();
             }
         }
 

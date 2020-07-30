@@ -15,8 +15,8 @@
         DiseaseCure = 10,
         DisorderCure = 11,
         HealingPotion = 17,
-        PoisonIllnessDelusionCure = 18,
-        SleepStunPauseSlowCure = 19,
+        IllnessDelusionCure = 18,
+        SleepStunStopSlowCure = 19,
         SilenceDarknessCure = 20,
         DullBadLuckCure = 21,
         DoomFearCure = 22,
@@ -91,5 +91,8 @@
         PreventEXPDrop = 115,
         TyrosStone = 116,
         AbsoluteRecreationRune = 117,
+        NPC_SummingStone = 200,
+
+        // Next are new pets skills and debuff lapis skills.
     }
 }

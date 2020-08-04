@@ -5,6 +5,7 @@ using Imgeneus.DatabaseBackgroundService;
 using Imgeneus.Network.Packets.Game;
 using Imgeneus.Network.Server;
 using Imgeneus.World.Game.Chat;
+using Imgeneus.World.Game.Duel;
 using Imgeneus.World.Game.PartyAndRaid;
 using Imgeneus.World.Game.Player;
 using Imgeneus.World.Game.Trade;
@@ -63,6 +64,8 @@ namespace Imgeneus.World.Game
 
         public ConcurrentDictionary<int, PartyManager> PartyManagers { get; private set; } = new ConcurrentDictionary<int, PartyManager>();
 
+        public ConcurrentDictionary<int, DuelManager> DuelManagers { get; private set; } = new ConcurrentDictionary<int, DuelManager>();
+
         /// <inheritdoc />
         public Character LoadPlayer(int characterId, WorldClient client)
         {
@@ -84,6 +87,7 @@ namespace Imgeneus.World.Game
             Players.TryAdd(newPlayer.Id, newPlayer);
             TradeManagers.TryAdd(newPlayer.Id, new TradeManager(this, newPlayer));
             PartyManagers.TryAdd(newPlayer.Id, new PartyManager(this, newPlayer));
+            DuelManagers.TryAdd(newPlayer.Id, new DuelManager(this, newPlayer));
 
             _logger.LogDebug($"Player {newPlayer.Id} connected to game world");
             newPlayer.Client.OnPacketArrived += Client_OnPacketArrived;
@@ -122,6 +126,9 @@ namespace Imgeneus.World.Game
 
                 PartyManagers.TryRemove(characterId, out var partyManager);
                 partyManager.Dispose();
+
+                DuelManagers.TryRemove(characterId, out var duelManager);
+                duelManager.Dispose();
 
                 player.Client.OnPacketArrived -= Client_OnPacketArrived;
 

@@ -861,6 +861,8 @@ namespace Imgeneus.World.Game.Player
                     break;
 
                 case SpecialEffect.None:
+                    // Some herbs do not have HealingPotion effect, but still they heal.
+                    UseHealingPotion(item);
                     break;
                 default:
                     _logger.LogError($"Uninplemented item effect {item.Special}.");

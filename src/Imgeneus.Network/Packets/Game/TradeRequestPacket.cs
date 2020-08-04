@@ -8,7 +8,7 @@ namespace Imgeneus.Network.Packets.Game
 
         public TradeRequestPacket(IPacketStream packet)
         {
-            TradeToWhomId = packet.Read<byte>();
+            TradeToWhomId = packet.Read<int>();
         }
     }
 }

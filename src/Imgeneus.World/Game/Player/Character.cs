@@ -667,6 +667,15 @@ namespace Imgeneus.World.Game.Player
 
         #endregion
 
+        #region Duel
+
+        /// <summary>
+        /// Duel opponent.
+        /// </summary>
+        public Character DuelOpponent;
+
+        #endregion
+
         #region Party & Raid
 
         /// <summary>

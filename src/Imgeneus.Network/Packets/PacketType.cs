@@ -150,5 +150,10 @@
         CHAT_PARTY = 0x1105, // 4357
         CHAT_ANOUNCEMENT = 0x1108, // 4360
         CHAT_MAP = 0x1111, // 4369
+
+        // DUEL
+        DUEL_REQUEST = 0x2401, // 9217
+        DUEL_RESPONSE = 0x2402, // 9218
+        DUEL_TRADE = 0x2407, // 9223
     }
 }

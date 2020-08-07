@@ -143,7 +143,11 @@ namespace Imgeneus.World
             { PacketType.CHAT_MAP, (s) => new ChatMapPacket(s) },
             { PacketType.CHAT_WORLD, (s) => new ChatWorldPacket(s) },
             { PacketType.DUEL_REQUEST, (s) => new DuelRequestPacket(s) },
-            { PacketType.DUEL_RESPONSE, (s) => new DuelResponsePacket(s) }
+            { PacketType.DUEL_RESPONSE, (s) => new DuelResponsePacket(s) },
+            { PacketType.DUEL_TRADE_ADD_ITEM, (s) => new DuelAddItemPacket(s) },
+            { PacketType.DUEL_TRADE_REMOVE_ITEM, (s) => new DuelRemoveItemPacket(s) },
+            { PacketType.DUEL_TRADE_ADD_MONEY, (s) => new DuelAddMoneyPacket(s) },
+            { PacketType.DUEL_TRADE_OK, (s) => new DuelOkPacket(s) }
         };
 
         /// <inheritdoc />

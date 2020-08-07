@@ -122,9 +122,14 @@ namespace Imgeneus.World.Game.Trade
             var trader = _gameWorld.Players[sender.CharID];
             var partner = trader.TradePartner;
 
-            var tradeItem = trader.InventoryItems.First(item => item.Bag == tradeAddItemPacket.Bag && item.Slot == tradeAddItemPacket.Slot);
+            var tradeItem = trader.InventoryItems.FirstOrDefault(item => item.Bag == tradeAddItemPacket.Bag && item.Slot == tradeAddItemPacket.Slot);
+            if (tradeItem is null)
+            {
+                // Possible cheating?
+                return;
+            }
             tradeItem.TradeQuantity = tradeItem.Count > tradeAddItemPacket.Quantity ? tradeAddItemPacket.Quantity : tradeItem.Count;
-            trader.TradeItems.Add(tradeItem);
+            trader.TradeItems.Add(tradeAddItemPacket.SlotInTradeWindow, tradeItem);
 
             SendAddedItemToTrade(trader.Client, tradeAddItemPacket.Bag, tradeAddItemPacket.Slot, tradeAddItemPacket.Quantity, tradeAddItemPacket.SlotInTradeWindow);
             SendAddedItemToTrade(partner.Client, tradeItem, tradeAddItemPacket.Quantity, tradeAddItemPacket.SlotInTradeWindow);
@@ -233,7 +238,8 @@ namespace Imgeneus.World.Game.Trade
             var trader = _gameWorld.Players[sender.CharID];
             var partner = trader.TradePartner;
 
-            ClearTrade(trader, partner);
+            trader.ClearTrade();
+            partner.ClearTrade();
 
             SendTradeCanceled(sender);
             SendTradeCanceled(partner.Client);
@@ -282,29 +288,24 @@ namespace Imgeneus.World.Game.Trade
             client.SendPacket(packet);
         }
 
-        private void ClearTrade(Character trader, Character partner)
-        {
-            trader.TradeItems.Clear();
-            trader.TradeRequest = null;
-            trader.TradePartner = null;
-
-            partner.TradeItems.Clear();
-            partner.TradeRequest = null;
-            partner.TradePartner = null;
-        }
-
         private void FinishTradeSuccessful(Character trader, Character partner)
         {
             foreach (var item in trader.TradeItems)
             {
-                var resultItm = trader.RemoveItemFromInventory(item);
-                partner.AddItemToInventory(resultItm);
+                var resultItm = trader.RemoveItemFromInventory(item.Value);
+                if (partner.AddItemToInventory(resultItm) is null) // No place for this item.
+                {
+                    trader.AddItemToInventory(resultItm);
+                }
             }
 
             foreach (var item in partner.TradeItems)
             {
-                var resultItm = partner.RemoveItemFromInventory(item);
-                trader.AddItemToInventory(resultItm);
+                var resultItm = partner.RemoveItemFromInventory(item.Value);
+                if (trader.AddItemToInventory(resultItm) is null) // No place for this item.
+                {
+                    partner.AddItemToInventory(resultItm);
+                }
             }
 
             if (trader.TradeMoney > 0)
@@ -319,7 +320,9 @@ namespace Imgeneus.World.Game.Trade
                 trader.ChangeGold(trader.Gold + partner.TradeMoney);
             }
 
-            ClearTrade(trader, partner);
+            trader.ClearTrade();
+            partner.ClearTrade();
+
             SendTradeFinished(trader.Client);
             SendTradeFinished(partner.Client);
         }

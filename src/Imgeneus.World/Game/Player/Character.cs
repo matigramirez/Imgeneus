@@ -1,4 +1,5 @@
 ﻿using Imgeneus.Core.DependencyInjection;
+using Imgeneus.Core.Extensions;
 using Imgeneus.Database;
 using Imgeneus.Database.Constants;
 using Imgeneus.Database.Entities;
@@ -6,6 +7,7 @@ using Imgeneus.Database.Preload;
 using Imgeneus.DatabaseBackgroundService;
 using Imgeneus.DatabaseBackgroundService.Handlers;
 using Imgeneus.World.Game.Chat;
+using Imgeneus.World.Game.Duel;
 using Imgeneus.World.Game.PartyAndRaid;
 using Imgeneus.World.Game.Trade;
 using Imgeneus.World.Game.Zone;
@@ -39,6 +41,8 @@ namespace Imgeneus.World.Game.Player
             OnMaxHPChanged += Character_OnMaxHPChanged;
             OnMaxMPChanged += Character_OnMaxMPChanged;
             OnMaxSPChanged += Character_OnMaxSPChanged;
+
+            OnDead += Character_OnDead;
         }
 
         private void Init()
@@ -51,6 +55,8 @@ namespace Imgeneus.World.Game.Player
         {
             if (Party != null)
                 Party.LeaveParty(this);
+            if (IsDuelApproved)
+                FinishDuel(DuelCancelReason.OpponentDisconnected);
 
             InventoryItems.CollectionChanged -= InventoryItems_CollectionChanged;
             _castTimer.Elapsed -= CastTimer_Elapsed;
@@ -58,6 +64,8 @@ namespace Imgeneus.World.Game.Player
             OnMaxHPChanged -= Character_OnMaxHPChanged;
             OnMaxMPChanged -= Character_OnMaxMPChanged;
             OnMaxSPChanged -= Character_OnMaxSPChanged;
+
+            OnDead -= Character_OnDead;
 
             // Save current buffs to database.
             _taskQueue.Enqueue(ActionType.REMOVE_BUFF_ALL, Id);
@@ -605,7 +613,12 @@ namespace Imgeneus.World.Game.Player
             PosZ = z;
             Angle = angle;
 
-            _logger.LogDebug($"Character {Id} moved to x={PosX} y={PosY} z={PosZ} angle={Angle}");
+            if (IsDuelApproved && MathExtensions.Distance(PosX, DuelX, PosZ, DuelZ) >= 45)
+            {
+                FinishDuel(DuelCancelReason.TooFarAway);
+            }
+
+            //_logger.LogDebug($"Character {Id} moved to x={PosX} y={PosY} z={PosZ} angle={Angle}");
 
             if (saveChangesToDB)
             {
@@ -640,9 +653,9 @@ namespace Imgeneus.World.Game.Player
         public TradeRequest TradeRequest;
 
         /// <summary>
-        /// Otems, that are currently in trade window.
+        /// Items, that are currently in trade window.
         /// </summary>
-        public List<Item> TradeItems = new List<Item>();
+        public Dictionary<byte, Item> TradeItems = new Dictionary<byte, Item>();
 
         /// <summary>
         /// Money in trade window.
@@ -665,6 +678,17 @@ namespace Imgeneus.World.Game.Player
                                Id, Gold);
         }
 
+        /// <summary>
+        /// Clears trade items and gold.
+        /// </summary>
+        public void ClearTrade()
+        {
+            TradeItems.Clear();
+            TradeMoney = 0;
+            TradeRequest = null;
+            TradePartner = null;
+        }
+
         #endregion
 
         #region Duel
@@ -673,6 +697,48 @@ namespace Imgeneus.World.Game.Player
         /// Duel opponent.
         /// </summary>
         public Character DuelOpponent;
+
+        /// <summary>
+        /// Indicator, that shows if a player has answered duel request.
+        /// </summary>
+        public bool AnsweredDuelRequest;
+
+        /// <summary>
+        /// Indicator, that shows if a player has clicked "ok" in trade window of duel.
+        /// </summary>
+        public bool IsDuelApproved;
+
+        /// <summary>
+        /// Duel x position start.
+        /// </summary>
+        public float DuelX;
+
+        /// <summary>
+        /// Duel z position start.
+        /// </summary>
+        public float DuelZ;
+
+        /// <summary>
+        /// Finishes duel, because of any reason.
+        /// </summary>
+        public event Action<DuelCancelReason> OnDuelFinish;
+
+        /// <summary>
+        /// Finishes duel.
+        /// </summary>
+        /// <param name="reason">Reason why duel was finished.</param>
+        private void FinishDuel(DuelCancelReason reason)
+        {
+            if (IsDuelApproved)
+            {
+                if (reason == DuelCancelReason.Lose)
+                {
+                    Defeats++;
+                    DuelOpponent.Victories++;
+                }
+                OnDuelFinish?.Invoke(reason);
+            }
+        }
 
         #endregion
 
@@ -744,6 +810,16 @@ namespace Imgeneus.World.Game.Player
         /// Bool indicator, shows if player is the party/raid leader.
         /// </summary>
         public bool IsPartyLead { get => Party != null && Party.Leader == this; }
+
+        #endregion
+
+        #region Death
+
+        private void Character_OnDead(IKillable sender, IKiller killer)
+        {
+            if (IsDuelApproved && killer == DuelOpponent)
+                FinishDuel(DuelCancelReason.Lose);
+        }
 
         #endregion
 

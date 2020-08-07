@@ -154,6 +154,16 @@
         // DUEL
         DUEL_REQUEST = 0x2401, // 9217
         DUEL_RESPONSE = 0x2402, // 9218
+        DUEL_READY = 0x2403, // 9219
+        DUEL_START = 0x2404, // 9220
+        DUEL_WIN_LOSE = 0x2405, // 9221
+        DUEL_CANCEL = 0x2406, // 9222
         DUEL_TRADE = 0x2407, // 9223
+        DUEL_CLOSE_TRADE = 0x2408, // 9224
+        DUEL_TRADE_OK = 0x2409, // 9225
+        DUEL_TRADE_ADD_ITEM = 0x240A, // 9226
+        DUEL_TRADE_REMOVE_ITEM = 0x240B, // 9227
+        DUEL_TRADE_ADD_MONEY = 0x240C, // 9228
+        DUEL_TRADE_OPPONENT_ADD_ITEM = 0x240D, // 9229
     }
 }

@@ -147,7 +147,8 @@ namespace Imgeneus.World
             { PacketType.DUEL_TRADE_ADD_ITEM, (s) => new DuelAddItemPacket(s) },
             { PacketType.DUEL_TRADE_REMOVE_ITEM, (s) => new DuelRemoveItemPacket(s) },
             { PacketType.DUEL_TRADE_ADD_MONEY, (s) => new DuelAddMoneyPacket(s) },
-            { PacketType.DUEL_TRADE_OK, (s) => new DuelOkPacket(s) }
+            { PacketType.DUEL_TRADE_OK, (s) => new DuelOkPacket(s) },
+            { PacketType.DUEL_CANCEL, (s) => new DuelDefeatPacket(s) }
         };
 
         /// <inheritdoc />

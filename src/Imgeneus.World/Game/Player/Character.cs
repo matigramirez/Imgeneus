@@ -55,8 +55,6 @@ namespace Imgeneus.World.Game.Player
         {
             if (Party != null)
                 Party.LeaveParty(this);
-            if (IsDuelApproved)
-                FinishDuel(DuelCancelReason.OpponentDisconnected);
 
             InventoryItems.CollectionChanged -= InventoryItems_CollectionChanged;
             _castTimer.Elapsed -= CastTimer_Elapsed;
@@ -731,7 +729,7 @@ namespace Imgeneus.World.Game.Player
         {
             if (IsDuelApproved)
             {
-                if (reason == DuelCancelReason.Lose)
+                if (reason == DuelCancelReason.Lose || reason == DuelCancelReason.AdmitDefeat)
                 {
                     Defeats++;
                     DuelOpponent.Victories++;

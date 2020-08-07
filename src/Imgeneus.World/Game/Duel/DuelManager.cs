@@ -43,6 +43,9 @@ namespace Imgeneus.World.Game.Duel
 
         public void Dispose()
         {
+            if (Sender.IsDuelApproved)
+                Sender_OnDuelFinish(DuelCancelReason.OpponentDisconnected);
+
             Sender.Client.OnPacketArrived -= Client_OnPacketArrived;
             Sender.OnDuelFinish -= Sender_OnDuelFinish;
             _duelRequestTimer.Elapsed -= DuelRequestTimer_Elapsed;
@@ -324,7 +327,7 @@ namespace Imgeneus.World.Game.Duel
         private void SendDuelCancel(WorldClient client, DuelCancelReason cancelReason, int playerId)
         {
             using var packet = new Packet(PacketType.DUEL_CANCEL);
-            packet.Write(cancelReason);
+            packet.Write((byte)cancelReason);
             packet.Write(playerId);
             client.SendPacket(packet);
         }
@@ -414,14 +417,19 @@ namespace Imgeneus.World.Game.Duel
 
                 case DuelCancelReason.TooFarAway:
                     SendDuelCancel(Sender.Client, DuelCancelReason.TooFarAway, Sender.Id);
-                    SendDuelCancel(Sender.DuelOpponent.Client, DuelCancelReason.Other, Sender.Id);
+                    SendDuelCancel(Sender.DuelOpponent.Client, DuelCancelReason.TooFarAway, Sender.Id);
                     break;
 
                 case DuelCancelReason.OpponentDisconnected:
                     SendDuelCancel(Sender.DuelOpponent.Client, DuelCancelReason.OpponentDisconnected, Sender.Id);
                     break;
 
-                    // TODO: implement AdmitDefeat and MobAttack.
+                case DuelCancelReason.AdmitDefeat:
+                    SendDuelCancel(Sender.Client, DuelCancelReason.AdmitDefeat, Sender.Id);
+                    SendDuelCancel(Sender.DuelOpponent.Client, DuelCancelReason.AdmitDefeat, Sender.Id);
+                    break;
+
+                    // TODO: implement MobAttack.
             }
 
             StopDuel();
@@ -434,20 +442,7 @@ namespace Imgeneus.World.Game.Duel
         /// <param name="loser">Duel loser</param>
         private void FinishTradeSuccessful(Character winner, Character loser)
         {
-            foreach (var item in loser.TradeItems)
-            {
-                var resultItm = loser.RemoveItemFromInventory(item.Value);
-                if (winner.AddItemToInventory(resultItm) is null) // No place for this item.
-                {
-                    loser.AddItemToInventory(item.Value);
-                }
-            }
-
-            if (loser.TradeMoney > 0)
-            {
-                loser.ChangeGold(loser.Gold - loser.TradeMoney);
-                winner.ChangeGold(winner.Gold + loser.TradeMoney);
-            }
+            // TODO: drop loser's items on the floor.
 
             winner.ClearTrade();
             loser.ClearTrade();

@@ -154,6 +154,10 @@ namespace Imgeneus.World.Game.Player
                     _chatManager.SendMessage(this, Chat.MessageType.World, chatWorldPacket.Message);
                     break;
 
+                case DuelDefeatPacket duelDefeatPacket:
+                    FinishDuel(Duel.DuelCancelReason.AdmitDefeat);
+                    break;
+
                 case RebirthPacket rebirthPacket:
                     // TODO: rebirth to nearest town, get coordinates from map.
                     Rebirth(1, 1, 1);

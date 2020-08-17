@@ -158,6 +158,32 @@ namespace Imgeneus.World.Game.Player
                     FinishDuel(Duel.DuelCancelReason.AdmitDefeat);
                     break;
 
+                case RemoveItemPacket removeItemPacket:
+                    var item = InventoryItems.FirstOrDefault(itm => itm.Slot == removeItemPacket.Slot && itm.Bag == removeItemPacket.Bag);
+                    if (item is null) // TODO: add check if item can be thrown away.
+                        return;
+                    item.TradeQuantity = removeItemPacket.Count <= item.Count ? removeItemPacket.Count : item.Count;
+                    item = RemoveItemFromInventory(item);
+                    item.Owner = this;
+                    Map.AddItem(item, PosX, PosY, PosZ);
+                    break;
+
+                case MapPickUpItemPacket mapPickUpItemPacket:
+                    var mapItem = Map.GetItem(mapPickUpItemPacket.ItemId, this);
+                    if (mapItem is null)
+                    {
+                        // TODO: send this doesn't belong to you.
+                        return;
+                    }
+                    var inventoryItem = AddItemToInventory(mapItem);
+                    if (inventoryItem is null)
+                    {
+                        // TODO: send inventory is full.
+                        return;
+                    }
+                    Map.RemoveItem(mapItem.Id);
+                    break;
+
                 case RebirthPacket rebirthPacket:
                     // TODO: rebirth to nearest town, get coordinates from map.
                     Rebirth(1, 1, 1);

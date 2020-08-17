@@ -282,5 +282,26 @@ namespace Imgeneus.World.Packets
             packet.Write(sender.CurrentHP);
             client.SendPacket(packet);
         }
+
+        internal void SendAddItem(WorldClient client, Item item, float x, float y, float z)
+        {
+            using var packet = new Packet(PacketType.MAP_ADD_ITEM);
+            packet.Write(item.Id);
+            packet.WriteByte(1); // kind of item
+            packet.Write(item.Type);
+            packet.Write(item.TypeId);
+            packet.Write(item.Count);
+            packet.Write(x);
+            packet.Write(y);
+            packet.Write(z);
+            client.SendPacket(packet);
+        }
+
+        internal void SendRemoveItem(WorldClient client, Item item)
+        {
+            using var packet = new Packet(PacketType.MAP_REMOVE_ITEM);
+            packet.Write(item.Id);
+            client.SendPacket(packet);
+        }
     }
 }

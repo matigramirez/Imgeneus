@@ -40,11 +40,13 @@
         // Game 
         GAME_HANDSHAKE = 0xA301,
         PING = 0xA303,
-        CASH_POINT = 0x2605,
+        CASH_POINT = 0x2605, // 9733
         CHANGE_ENCRYPTION = 0xB106, // I'm not really sure, that exactly this packet starts another encryption, but for now let's assume so.
         CHARACTER_ENTERED_MAP = 0x0201, // 513
         CHARACTER_LEFT_MAP = 0x0202,  // 514
         CHARACTER_SHAPE = 0x0303,
+        MAP_ADD_ITEM = 0x0401, // 1025
+        MAP_REMOVE_ITEM = 0x0402, // 1026
         CHARACTER_DEAD = 0x0405,
         CHARACTER_MOTION = 0x0506,
         CHARACTER_CURRENT_HITPOINTS = 0x0521, // 1313

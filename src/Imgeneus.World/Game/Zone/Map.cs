@@ -320,10 +320,10 @@ namespace Imgeneus.World.Game.Zone
         private readonly object _currentGlobalMobIdMutex = new object();
 
         /// <summary>
-        /// Each mob in game has its' own id.
-        /// Call this method, when you need to get new mob id.
+        /// Each entity in game has its' own id.
+        /// Call this method, when you need to get new id.
         /// </summary>
-        private int GenerateMobId()
+        private int GenerateId()
         {
             lock (_currentGlobalMobIdMutex)
             {
@@ -343,7 +343,7 @@ namespace Imgeneus.World.Game.Zone
         /// <returns>turue if mob was added, otherwise false</returns>
         public bool AddMob(Mob mob)
         {
-            var id = GenerateMobId();
+            var id = GenerateId();
             var success = Mobs.TryAdd(id, mob);
             if (success)
             {
@@ -454,6 +454,67 @@ namespace Imgeneus.World.Game.Zone
             return mob;
         }
 
+        #endregion
+
+        #region Items
+
+        /// <summary>
+        /// Dropped items.
+        /// </summary>
+        private readonly ConcurrentDictionary<int, (Item Item, float X, float Y, float Z)> Items = new ConcurrentDictionary<int, (Item, float, float, float)>();
+
+        /// <summary>
+        /// Adds item on map.
+        /// </summary>
+        /// <param name="item">new added item</param>
+        public void AddItem(Item item, float x, float y, float z)
+        {
+            item.Id = GenerateId();
+            if (Items.TryAdd(item.Id, (item, x, y, z)))
+            {
+                foreach (var player in Players)
+                {
+                    _packetHelper.SendAddItem(player.Value.Client, item, x, y, z);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Tries to get item from map.
+        /// </summary>
+        /// <returns>if item is null, means that item doen't belong to player yet</returns>
+        public Item GetItem(int itemId, Character requester)
+        {
+            if (Items.TryGetValue(itemId, out var tuple))
+            {
+                if (tuple.Item.Owner == null || tuple.Item.Owner == requester)
+                {
+                    return tuple.Item;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Removes item from map.
+        /// </summary>
+        public void RemoveItem(int itemId)
+        {
+            if (Items.TryRemove(itemId, out var tuple))
+            {
+                foreach (var player in Players)
+                {
+                    _packetHelper.SendRemoveItem(player.Value.Client, tuple.Item);
+                }
+            }
+        }
         #endregion
 
         #region Helpers

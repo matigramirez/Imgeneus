@@ -1,12 +1,15 @@
 ﻿using Imgeneus.Database.Constants;
 using Imgeneus.Database.Entities;
 using Imgeneus.Database.Preload;
+using System.Timers;
 
 namespace Imgeneus.World.Game.Player
 {
     public class Item
     {
         private readonly IDatabasePreloader _databasePreloader;
+
+        public int Id;
 
         public byte Bag;
         public byte Slot;
@@ -72,6 +75,10 @@ namespace Imgeneus.World.Game.Player
                 ConstElement = item.Element;
                 Special = item.Special;
             }
+
+            _ownerClearTimer.Interval = 7000; // 7 seconds
+            _ownerClearTimer.AutoReset = false;
+            _ownerClearTimer.Elapsed += OwnerClearTimer_Elapsed;
         }
 
         #region Trade
@@ -513,6 +520,37 @@ namespace Imgeneus.World.Game.Player
         public bool IsJoinable
         {
             get => MaxCount > 1;
+        }
+
+        #endregion
+
+        #region Owner
+
+        private Timer _ownerClearTimer = new Timer();
+        private Character _owner;
+        /// <summary>
+        /// Item owner, when item is dropped in the map.
+        /// </summary>
+        public Character Owner
+        {
+            get
+            {
+                return _owner;
+            }
+            set
+            {
+                _owner = value;
+                if (_owner is null)
+                    _ownerClearTimer.Stop();
+                else
+                    _ownerClearTimer.Start();
+
+            }
+        }
+
+        private void OwnerClearTimer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            _owner = null;
         }
 
         #endregion

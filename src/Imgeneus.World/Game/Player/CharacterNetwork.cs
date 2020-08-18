@@ -160,7 +160,7 @@ namespace Imgeneus.World.Game.Player
 
                 case RemoveItemPacket removeItemPacket:
                     var item = InventoryItems.FirstOrDefault(itm => itm.Slot == removeItemPacket.Slot && itm.Bag == removeItemPacket.Bag);
-                    if (item is null) // TODO: add check if item can be thrown away.
+                    if (item is null || item.AccountRestriction == ItemAccountRestrictionType.AccountRestricted || item.AccountRestriction == ItemAccountRestrictionType.CharacterRestricted)
                         return;
                     item.TradeQuantity = removeItemPacket.Count <= item.Count ? removeItemPacket.Count : item.Count;
                     item = RemoveItemFromInventory(item);
@@ -172,13 +172,13 @@ namespace Imgeneus.World.Game.Player
                     var mapItem = Map.GetItem(mapPickUpItemPacket.ItemId, this);
                     if (mapItem is null)
                     {
-                        // TODO: send this doesn't belong to you.
+                        _packetsHelper.SendItemDoesNotBelong(Client);
                         return;
                     }
                     var inventoryItem = AddItemToInventory(mapItem);
                     if (inventoryItem is null)
                     {
-                        // TODO: send inventory is full.
+                        _packetsHelper.SendFullInventory(Client);
                         return;
                     }
                     Map.RemoveItem(mapItem.Id);
@@ -192,20 +192,16 @@ namespace Imgeneus.World.Game.Player
                 case GMCreateMobPacket gMCreateMobPacket:
                     if (!IsAdmin)
                         return;
-                    // TODO: find out way to preload all awailable mobs.
-                    using (var database = DependencyContainer.Instance.Resolve<IDatabase>())
-                    {
-                        // TODO: calculate move area.
-                        var moveArea = new MoveArea(PosX > 10 ? PosX - 10 : 1, PosX + 10, PosY > 10 ? PosY - 10 : PosY, PosY + 10, PosZ > 10 ? PosZ - 10 : 1, PosZ + 10);
-                        var mob = new Mob(DependencyContainer.Instance.Resolve<ILogger<Mob>>(), _databasePreloader, gMCreateMobPacket.MobId, false, moveArea, Map);
+                    // TODO: calculate move area.
+                    var moveArea = new MoveArea(PosX > 10 ? PosX - 10 : 1, PosX + 10, PosY > 10 ? PosY - 10 : PosY, PosY + 10, PosZ > 10 ? PosZ - 10 : 1, PosZ + 10);
+                    var mob = new Mob(DependencyContainer.Instance.Resolve<ILogger<Mob>>(), _databasePreloader, gMCreateMobPacket.MobId, false, moveArea, Map);
 
-                        // TODO: mobs should be generated near character, not on his position directly.
-                        mob.PosX = PosX;
-                        mob.PosY = PosY;
-                        mob.PosZ = PosZ;
+                    // TODO: mobs should be generated near character, not on his position directly.
+                    mob.PosX = PosX;
+                    mob.PosY = PosY;
+                    mob.PosZ = PosZ;
 
-                        Map.AddMob(mob);
-                    }
+                    Map.AddMob(mob);
                     break;
             }
         }

@@ -128,10 +128,10 @@ namespace Imgeneus.Database.Entities
         public ushort ReqVg { get; set; }
 
         /// <summary>
-        /// Required og(?) to use it.
+        /// Account restrictions.
         /// </summary>
         [Required]
-        public byte ReqOg { get; set; }
+        public ItemAccountRestrictionType ReqOg { get; set; }
 
         /// <summary>
         /// Required ig(?) to use it.

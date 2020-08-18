@@ -174,6 +174,22 @@ namespace Imgeneus.World.Packets
             client.SendPacket(packet);
         }
 
+        internal void SendItemDoesNotBelong(WorldClient client)
+        {
+            using var packet = new Packet(PacketType.ADD_ITEM);
+            packet.WriteByte(0);
+            packet.WriteByte(0); // Item doesn't belong to player.
+            client.SendPacket(packet);
+        }
+
+        internal void SendFullInventory(WorldClient client)
+        {
+            using var packet = new Packet(PacketType.ADD_ITEM);
+            packet.WriteByte(0);
+            packet.WriteByte(1); // Inventory is full.
+            client.SendPacket(packet);
+        }
+
         internal void SendSkillWrongTarget(WorldClient client, Character sender, Skill skill, IKillable target)
         {
             PacketType type = target is Character ? PacketType.USE_CHARACTER_TARGET_SKILL : PacketType.USE_MOB_TARGET_SKILL;

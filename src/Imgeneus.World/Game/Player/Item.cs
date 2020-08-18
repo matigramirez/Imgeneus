@@ -74,6 +74,7 @@ namespace Imgeneus.World.Game.Player
                 MaxCount = item.Count;
                 ConstElement = item.Element;
                 Special = item.Special;
+                AccountRestriction = item.ReqOg;
             }
 
             _ownerClearTimer.Interval = 7000; // 7 seconds
@@ -507,6 +508,11 @@ namespace Imgeneus.World.Game.Player
         /// Special effect like teleport/cure/summon etc.
         /// </summary>
         public SpecialEffect Special { get; }
+
+        /// <summary>
+        /// If item can be given away.
+        /// </summary>
+        public ItemAccountRestrictionType AccountRestriction { get; }
 
         #endregion
 

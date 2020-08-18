@@ -74,34 +74,41 @@ namespace Imgeneus.World.Game.PartyAndRaid
                     break;
 
                 case PartyLeavePacket partyLeavePacket:
-                    if (_gameWorld.Players.TryGetValue(worldSender.CharID, out var partyLeaver))
-                    {
-                        partyLeaver.Party.LeaveParty(partyLeaver);
-                    }
+                    _player.Party.LeaveParty(_player);
                     break;
 
                 case PartyKickPacket partyKickPacket:
-                    if (_gameWorld.Players.TryGetValue(worldSender.CharID, out var leader))
-                    {
-                        if (!leader.IsPartyLead)
-                            return;
+                    if (!_player.IsPartyLead)
+                        return;
 
-                        var playerToKick = leader.Party.Members.FirstOrDefault(m => m.Id == partyKickPacket.CharacterId);
-                        if (playerToKick != null)
-                            leader.Party.KickMember(playerToKick);
-                    }
+                    var playerToKick = _player.Party.Members.FirstOrDefault(m => m.Id == partyKickPacket.CharacterId);
+                    if (playerToKick != null)
+                        _player.Party.KickMember(playerToKick);
                     break;
 
                 case PartyChangeLeaderPacket changeLeaderPacket:
-                    if (_gameWorld.Players.TryGetValue(worldSender.CharID, out var partyLeader))
-                    {
-                        if (!partyLeader.IsPartyLead)
-                            return;
+                    if (!_player.IsPartyLead)
+                        return;
 
-                        var newLeader = partyLeader.Party.Members.FirstOrDefault(m => m.Id == changeLeaderPacket.CharacterId);
-                        if (newLeader != null)
-                            partyLeader.Party.SetLeader(newLeader);
+                    var newLeader = _player.Party.Members.FirstOrDefault(m => m.Id == changeLeaderPacket.CharacterId);
+                    if (newLeader != null)
+                        _player.Party.SetLeader(newLeader);
+                    break;
+
+                case RaidCreatePacket raidCreatePacket:
+                    if (!_player.IsPartyLead)
+                        return;
+                    var raid = new Raid(raidCreatePacket.AutoJoin, (RaidDropType)raidCreatePacket.DropType);
+                    foreach (var member in _player.Party.Members.ToList())
+                    {
+                        member.Party = raid;
                     }
+                    raid.SetLeader(_player);
+                    foreach (var m in raid.Members)
+                    {
+                        SendRaidCreated(m.Client, raid);
+                    }
+
                     break;
             }
         }
@@ -118,6 +125,17 @@ namespace Imgeneus.World.Game.PartyAndRaid
             using var packet = new Packet(PacketType.PARTY_RESPONSE);
             packet.Write(false);
             packet.Write(charID);
+            client.SendPacket(packet);
+        }
+
+        private void SendRaidCreated(WorldClient client, Raid raid)
+        {
+            using var packet = new Packet(PacketType.RAID_CREATE);
+            packet.Write(true); // raid type ?
+            packet.Write(raid.AutoJoin);
+            packet.Write((int)raid.DropType);
+            packet.Write(raid.Members.IndexOf(raid.Leader));
+            packet.Write(raid.Members.IndexOf(raid.SubLeader));
             client.SendPacket(packet);
         }
     }

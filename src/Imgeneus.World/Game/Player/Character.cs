@@ -747,12 +747,12 @@ namespace Imgeneus.World.Game.Player
         /// </summary>
         public event Action<Character> OnPartyChanged;
 
-        private Party _party;
+        private IParty _party;
 
         /// <summary>
-        /// Party, in which player is currently.
+        /// Party or raid, in which player is currently.
         /// </summary>
-        public Party Party
+        public IParty Party
         {
             get => _party;
             set
@@ -774,7 +774,8 @@ namespace Imgeneus.World.Game.Player
                     if (value.EnterParty(this))
                     {
                         _party = value;
-                        _packetsHelper.SendPartyInfo(Client, Party.Members.Where(m => m != this), (byte)Party.Members.IndexOf(Party.Leader));
+                        if (_party is Party) // Send party info only if it's party, not raid.
+                            _packetsHelper.SendPartyInfo(Client, Party.Members.Where(m => m != this), (byte)Party.Members.IndexOf(Party.Leader));
                         _party.OnLeaderChanged += Party_OnLeaderChanged;
                         _party.OnMembersChanged += Party_OnMembersChanged;
                     }

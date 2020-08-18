@@ -140,6 +140,11 @@
         PARTY_ADDED_BUFF = 0x0C04, // 3076
         MAP_PARTY_SET = 0x0520, // 1312
 
+        // Raid
+        RAID_LEAVE = 0x0B0D, // 2829
+        RAID_CREATE = 0x0B0E, // 2830
+        RAID_DISMANTLE = 0x0B16, // 2838
+
         // Chat
         CHAT_NORMAL_ADMIN = 0xF101, // 61697, -3837
         CHAT_WHISPER_ADMIN = 0xF102, // 61698, -3838

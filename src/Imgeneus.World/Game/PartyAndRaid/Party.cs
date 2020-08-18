@@ -3,67 +3,36 @@ using Imgeneus.Network.Packets;
 using Imgeneus.World.Game.Player;
 using Imgeneus.World.Serialization;
 using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 
 namespace Imgeneus.World.Game.PartyAndRaid
 {
-    public class Party
+    public class Party : BaseParty
     {
         public const byte MAX_PARTY_MEMBERS_COUNT = 7;
 
-        /// <summary>
-        /// Party members.
-        /// </summary>
-        private List<Character> _members = new List<Character>();
+        public override event Action OnMembersChanged;
 
-        private ReadOnlyCollection<Character> _readonlyMembers;
         /// <summary>
-        /// Party members. Max value is 7.
+        /// Second leader.
         /// </summary>
-        public ReadOnlyCollection<Character> Members
+        public override Character SubLeader
         {
             get
             {
-                if (_readonlyMembers is null)
-                {
-                    _readonlyMembers = new ReadOnlyCollection<Character>(_members);
-                }
-
-                return _readonlyMembers;
+                return Leader;
             }
-        }
-
-        /// <summary>
-        /// Event, that is fired, when party member added/removed.
-        /// </summary>
-        public event Action OnMembersChanged;
-
-        private Character _leader;
-
-        /// <summary>
-        /// Party leader.
-        /// </summary>
-        public Character Leader
-        {
-            get => _leader; private set
+            protected set
             {
-                _leader = value;
-                OnLeaderChanged?.Invoke(_leader);
+                new NotImplementedException();
             }
         }
-
-        /// <summary>
-        /// Event, that is fired, when party leader is changed.
-        /// </summary>
-        public event Action<Character> OnLeaderChanged;
 
         /// <summary>
         /// Tries to enter party, if it's enough place.
         /// </summary>
         /// <returns>true if player could enter party, otherwise false</returns>
-        public bool EnterParty(Character newPartyMember)
+        public override bool EnterParty(Character newPartyMember)
         {
             // Check if party is not full.
             if (_members.Count == MAX_PARTY_MEMBERS_COUNT)
@@ -160,7 +129,7 @@ namespace Imgeneus.World.Game.PartyAndRaid
         /// <summary>
         /// Leaves party.
         /// </summary>
-        public void LeaveParty(Character leftPartyMember)
+        public override void LeaveParty(Character leftPartyMember)
         {
             foreach (var member in Members)
                 SendPlayerLeftParty(member.Client, leftPartyMember);
@@ -178,7 +147,7 @@ namespace Imgeneus.World.Game.PartyAndRaid
         /// <summary>
         /// Only party leader can kick member.
         /// </summary>
-        public void KickMember(Character playerToKick)
+        public override void KickMember(Character playerToKick)
         {
             foreach (var member in Members)
             {
@@ -211,16 +180,11 @@ namespace Imgeneus.World.Game.PartyAndRaid
             }
         }
 
-        /// <summary>
-        /// Sets new leader.
-        /// </summary>
-        public void SetLeader(Character newLeader)
+        protected override void LeaderChanged()
         {
-            Leader = newLeader;
-
-            foreach (var member in Members)
+            foreach (var member in Members.ToList())
             {
-                SendNewLeader(member.Client, newLeader);
+                SendNewLeader(member.Client, Leader);
             }
         }
 

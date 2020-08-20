@@ -54,7 +54,7 @@ namespace Imgeneus.World.Game.Player
         public override void Dispose()
         {
             if (Party != null)
-                Party.LeaveParty(this);
+                Party = null;
 
             InventoryItems.CollectionChanged -= InventoryItems_CollectionChanged;
             _castTimer.Elapsed -= CastTimer_Elapsed;
@@ -766,6 +766,8 @@ namespace Imgeneus.World.Game.Player
                 // Leave party.
                 if (_party != null && value is null)
                 {
+                    if (_party.Members.Contains(this)) // When the player is kicked of the party, the party doesn't contain him.
+                        _party.LeaveParty(this);
                     _party = value;
                 }
                 // Enter party

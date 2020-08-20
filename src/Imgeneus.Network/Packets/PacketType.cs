@@ -143,6 +143,8 @@
         // Raid
         RAID_LEAVE = 0x0B0D, // 2829
         RAID_CREATE = 0x0B0E, // 2830
+        RAID_CHANGE_LOOT = 0x0B0F, // 2831
+        RAID_CHANGE_AUTOINVITE = 0x0B10, // 2832
         RAID_DISMANTLE = 0x0B16, // 2838
 
         // Chat

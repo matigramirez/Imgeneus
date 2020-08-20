@@ -134,13 +134,6 @@ namespace Imgeneus.World.Game.PartyAndRaid
             foreach (var member in Members)
                 SendPlayerLeftParty(member.Client, leftPartyMember);
 
-            leftPartyMember.OnBuffAdded -= Member_OnAddedBuff;
-            leftPartyMember.HP_Changed -= Member_HP_Changed;
-            leftPartyMember.MP_Changed -= Member_MP_Changed;
-            leftPartyMember.SP_Changed -= Member_SP_Changed;
-            leftPartyMember.OnMaxHPChanged -= Member_MaxHP_Changed;
-            leftPartyMember.OnMaxMPChanged -= Member_MaxMP_Changed;
-            leftPartyMember.OnMaxSPChanged -= Member_MaxSP_Changed;
             RemoveMember(leftPartyMember);
         }
 
@@ -150,9 +143,7 @@ namespace Imgeneus.World.Game.PartyAndRaid
         public override void KickMember(Character playerToKick)
         {
             foreach (var member in Members)
-            {
                 SendKickMember(member.Client, playerToKick);
-            }
 
             RemoveMember(playerToKick);
         }
@@ -160,19 +151,27 @@ namespace Imgeneus.World.Game.PartyAndRaid
         /// <summary>
         /// Removes character from party, checks if he was leader or if it's the last member.
         /// </summary>
-        /// <param name="character"></param>
         private void RemoveMember(Character character)
         {
+            // Unsubscribe.
+            character.OnBuffAdded -= Member_OnAddedBuff;
+            character.HP_Changed -= Member_HP_Changed;
+            character.MP_Changed -= Member_MP_Changed;
+            character.SP_Changed -= Member_SP_Changed;
+            character.OnMaxHPChanged -= Member_MaxHP_Changed;
+            character.OnMaxMPChanged -= Member_MaxMP_Changed;
+            character.OnMaxSPChanged -= Member_MaxSP_Changed;
+
             _members.Remove(character);
-            character.Party = null;
             OnMembersChanged?.Invoke();
 
             // If it was the last member.
             if (Members.Count == 1)
             {
-                Members[0].Party = null;
-                SendPlayerLeftParty(Members[0].Client, Members[0]);
+                var lastMember = Members[0];
                 _members.Clear();
+                lastMember.Party = null;
+                SendPlayerLeftParty(lastMember.Client, lastMember);
             }
             else if (character == Leader)
             {
@@ -243,6 +242,11 @@ namespace Imgeneus.World.Game.PartyAndRaid
             packet.Write(type);
             packet.Write(value);
             client.SendPacket(packet);
+        }
+
+        public override void Dismantle()
+        {
+            throw new NotImplementedException();
         }
 
         #endregion

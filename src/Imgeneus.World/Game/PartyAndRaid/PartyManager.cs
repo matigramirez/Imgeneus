@@ -74,7 +74,7 @@ namespace Imgeneus.World.Game.PartyAndRaid
                     break;
 
                 case PartyLeavePacket partyLeavePacket:
-                    _player.Party.LeaveParty(_player);
+                    _player.Party = null;
                     break;
 
                 case PartyKickPacket partyKickPacket:
@@ -83,7 +83,10 @@ namespace Imgeneus.World.Game.PartyAndRaid
 
                     var playerToKick = _player.Party.Members.FirstOrDefault(m => m.Id == partyKickPacket.CharacterId);
                     if (playerToKick != null)
+                    {
                         _player.Party.KickMember(playerToKick);
+                        playerToKick.Party = null;
+                    }
                     break;
 
                 case PartyChangeLeaderPacket changeLeaderPacket:
@@ -108,8 +111,30 @@ namespace Imgeneus.World.Game.PartyAndRaid
                     {
                         SendRaidCreated(m.Client, raid);
                     }
-
                     break;
+
+                case RaidDismantlePacket raidDismantlePacket:
+                    if (!_player.IsPartyLead || !(_player.Party is Raid))
+                        return;
+                    _player.Party.Dismantle();
+                    break;
+
+                case RaidLeavePacket raidLeavePacket:
+                    _player.Party = null;
+                    break;
+
+                case RaidChangeAutoInvitePacket raidChangeAutoInvitePacket:
+                    if (!_player.IsPartyLead || !(_player.Party is Raid))
+                        return;
+                    (_player.Party as Raid).ChangeAutoJoin(raidChangeAutoInvitePacket.IsAutoInvite);
+                    break;
+
+                case RaidChangeLootPacket raidChangeLootPacket:
+                    if (!_player.IsPartyLead || !(_player.Party is Raid))
+                        return;
+                    (_player.Party as Raid).ChangeDropType((RaidDropType)raidChangeLootPacket.LootType);
+                    break;
+
             }
         }
 

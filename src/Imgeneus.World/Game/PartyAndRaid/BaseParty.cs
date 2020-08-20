@@ -92,6 +92,8 @@ namespace Imgeneus.World.Game.PartyAndRaid
 
         public abstract void LeaveParty(Character player);
 
+        public abstract void Dismantle();
+
         #endregion
     }
 }

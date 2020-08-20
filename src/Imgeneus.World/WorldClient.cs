@@ -151,7 +151,11 @@ namespace Imgeneus.World
             { PacketType.DUEL_CANCEL, (s) => new DuelDefeatPacket(s) },
             { PacketType.ADD_ITEM, (s) => new MapPickUpItemPacket(s) },
             { PacketType.REMOVE_ITEM, (s) => new RemoveItemPacket(s) },
-            { PacketType.RAID_CREATE, (s) => new RaidCreatePacket(s) }
+            { PacketType.RAID_CREATE, (s) => new RaidCreatePacket(s) },
+            { PacketType.RAID_DISMANTLE, (s) => new RaidDismantlePacket(s) },
+            { PacketType.RAID_LEAVE, (s) => new RaidLeavePacket(s) },
+            { PacketType.RAID_CHANGE_AUTOINVITE, (s) => new RaidChangeAutoInvitePacket(s) },
+            { PacketType.RAID_CHANGE_LOOT, (s) => new RaidChangeLootPacket(s) }
         };
 
         /// <inheritdoc />

@@ -34,6 +34,11 @@ namespace Imgeneus.World.Game.PartyAndRaid
         public void KickMember(Character player);
 
         /// <summary>
+        /// Dismantles party. (available only for raid)
+        /// </summary>
+        public void Dismantle();
+
+        /// <summary>
         /// Sets leader.
         /// </summary>
         /// <param name="player">New party leader</param>

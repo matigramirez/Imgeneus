@@ -44,86 +44,13 @@ namespace Imgeneus.World.Game.PartyAndRaid
             if (Members.Count == 1)
                 Leader = newPartyMember;
 
-            newPartyMember.OnBuffAdded += Member_OnAddedBuff;
-            newPartyMember.HP_Changed += Member_HP_Changed;
-            newPartyMember.MP_Changed += Member_MP_Changed;
-            newPartyMember.SP_Changed += Member_SP_Changed;
-            newPartyMember.OnMaxHPChanged += Member_MaxHP_Changed;
-            newPartyMember.OnMaxMPChanged += Member_MaxMP_Changed;
-            newPartyMember.OnMaxSPChanged += Member_MaxSP_Changed;
+            SubcribeToCharacterChanges(newPartyMember);
 
             // Notify others, that new party member joined.
             foreach (var member in Members.Where(m => m != newPartyMember))
-            {
                 SendPlayerJoinedParty(member.Client, newPartyMember);
-            }
 
             return true;
-        }
-
-        /// <summary>
-        /// Notifies party member, that member got new buff.
-        /// </summary>
-        /// <param name="sender">buff sender</param>
-        /// <param name="buff">buff, that he got</param>
-        private void Member_OnAddedBuff(IKillable sender, ActiveBuff buff)
-        {
-            foreach (var member in Members.Where(m => m != sender))
-                SendAddBuff(member.Client, sender.Id, buff.SkillId, buff.SkillLevel);
-        }
-
-        /// <summary>
-        /// Notifies party member, that member has new hp value.
-        /// </summary>
-        private void Member_HP_Changed(IKillable sender, HitpointArgs args)
-        {
-            foreach (var member in Members)
-                Send_HP_SP_MP(member.Client, sender.Id, args.NewValue, 0);
-        }
-
-        /// <summary>
-        /// Notifies party member, that member has new sp value.
-        /// </summary>
-        private void Member_SP_Changed(IKillable sender, HitpointArgs args)
-        {
-            foreach (var member in Members.Where(m => m != sender))
-                Send_HP_SP_MP(member.Client, sender.Id, args.NewValue, 1);
-        }
-
-        /// <summary>
-        /// Notifies party member, that member has new mp value.
-        /// </summary>
-        private void Member_MP_Changed(IKillable sender, HitpointArgs args)
-        {
-            foreach (var member in Members.Where(m => m != sender))
-                Send_HP_SP_MP(member.Client, sender.Id, args.NewValue, 2);
-        }
-
-        /// <summary>
-        /// Notifies party member, that member has new max hp value.
-        /// </summary>
-        private void Member_MaxHP_Changed(IKillable sender, int newMaxHP)
-        {
-            foreach (var member in Members.Where(m => m != sender))
-                Send_Max_HP_SP_MP(member.Client, sender.Id, newMaxHP, 0);
-        }
-
-        /// <summary>
-        /// Notifies party member, that member has new max sp value.
-        /// </summary>
-        private void Member_MaxSP_Changed(IKillable sender, int newMaxSP)
-        {
-            foreach (var member in Members.Where(m => m != sender))
-                Send_Max_HP_SP_MP(member.Client, sender.Id, newMaxSP, 1);
-        }
-
-        /// <summary>
-        /// Notifies party member, that member has new max mp value.
-        /// </summary>
-        private void Member_MaxMP_Changed(IKillable sender, int newMaxMP)
-        {
-            foreach (var member in Members.Where(m => m != sender))
-                Send_Max_HP_SP_MP(member.Client, sender.Id, newMaxMP, 2);
         }
 
         /// <summary>
@@ -154,13 +81,7 @@ namespace Imgeneus.World.Game.PartyAndRaid
         private void RemoveMember(Character character)
         {
             // Unsubscribe.
-            character.OnBuffAdded -= Member_OnAddedBuff;
-            character.HP_Changed -= Member_HP_Changed;
-            character.MP_Changed -= Member_MP_Changed;
-            character.SP_Changed -= Member_SP_Changed;
-            character.OnMaxHPChanged -= Member_MaxHP_Changed;
-            character.OnMaxMPChanged -= Member_MaxMP_Changed;
-            character.OnMaxSPChanged -= Member_MaxSP_Changed;
+            UnsubcribeFromCharacterChanges(character);
 
             _members.Remove(character);
             OnMembersChanged?.Invoke();
@@ -217,7 +138,7 @@ namespace Imgeneus.World.Game.PartyAndRaid
             client.SendPacket(packet);
         }
 
-        private void SendAddBuff(WorldClient client, int senderId, ushort skillId, byte skillLevel)
+        protected override void SendAddBuff(WorldClient client, int senderId, ushort skillId, byte skillLevel)
         {
             using var packet = new Packet(PacketType.PARTY_ADDED_BUFF);
             packet.Write(senderId);
@@ -226,7 +147,7 @@ namespace Imgeneus.World.Game.PartyAndRaid
             client.SendPacket(packet);
         }
 
-        private void Send_HP_SP_MP(WorldClient client, int id, int value, byte type)
+        protected override void Send_HP_SP_MP(WorldClient client, int id, int value, byte type)
         {
             using var packet = new Packet(PacketType.PARTY_CHARACTER_SP_MP);
             packet.Write(id);
@@ -235,7 +156,7 @@ namespace Imgeneus.World.Game.PartyAndRaid
             client.SendPacket(packet);
         }
 
-        private void Send_Max_HP_SP_MP(WorldClient client, int id, int value, byte type)
+        protected override void Send_Max_HP_SP_MP(WorldClient client, int id, int value, byte type)
         {
             using var packet = new Packet(PacketType.PARTY_SET_MAX);
             packet.Write(id);

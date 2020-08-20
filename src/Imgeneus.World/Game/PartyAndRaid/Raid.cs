@@ -115,6 +115,8 @@ namespace Imgeneus.World.Game.PartyAndRaid
             if (Members.Count == 2)
                 SubLeader = newPartyMember;
 
+            SubcribeToCharacterChanges(newPartyMember);
+
             // TODO: Notify others, that new party member joined.
 
             return true;
@@ -198,6 +200,33 @@ namespace Imgeneus.World.Game.PartyAndRaid
         {
             using var packet = new Packet(PacketType.RAID_CHANGE_LOOT);
             packet.Write((int)DropType);
+            client.SendPacket(packet);
+        }
+
+        protected override void SendAddBuff(WorldClient client, int senderId, ushort skillId, byte skillLevel)
+        {
+            using var packet = new Packet(PacketType.RAID_ADDED_BUFF);
+            packet.Write(senderId);
+            packet.Write(skillId);
+            packet.Write(skillLevel);
+            client.SendPacket(packet);
+        }
+
+        protected override void Send_HP_SP_MP(WorldClient client, int id, int value, byte type)
+        {
+            using var packet = new Packet(PacketType.RAID_CHARACTER_SP_MP);
+            packet.Write(id);
+            packet.Write(type);
+            packet.Write(value);
+            client.SendPacket(packet);
+        }
+
+        protected override void Send_Max_HP_SP_MP(WorldClient client, int id, int value, byte type)
+        {
+            using var packet = new Packet(PacketType.RAID_SET_MAX);
+            packet.Write(id);
+            packet.Write(type);
+            packet.Write(value);
             client.SendPacket(packet);
         }
 

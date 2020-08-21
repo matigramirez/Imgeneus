@@ -30,6 +30,10 @@ namespace Imgeneus.World.Game.PartyAndRaid
             {
                 var oldLeader = _leader;
                 _leader = value;
+                if (SubLeader == _leader && Members.Count > 1) // Only for raids.
+                {
+                    SubLeader = oldLeader;
+                }
                 OnLeaderChanged?.Invoke(oldLeader, _leader);
                 foreach (var member in Members)
                     SendNewLeader(member.Client, Leader);
@@ -51,13 +55,9 @@ namespace Imgeneus.World.Game.PartyAndRaid
             }
             set
             {
-                if (value == Leader) // When leader and subleader change at once.
-                {
-                    Leader = _subLeader;
-                }
                 _subLeader = value;
                 foreach (var member in Members)
-                    SendNewSubLeader(member.Client, Leader);
+                    SendNewSubLeader(member.Client, SubLeader);
             }
         }
 

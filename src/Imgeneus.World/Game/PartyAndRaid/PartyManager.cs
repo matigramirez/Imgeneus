@@ -163,6 +163,25 @@ namespace Imgeneus.World.Game.PartyAndRaid
                     }
                     break;
 
+                case RaidChangeLeaderPacket raidChangeLeaderPacket:
+                    if (!_player.IsPartyLead || !(_player.Party is Raid))
+                        return;
+                    if (!_gameWorld.Players.TryGetValue(raidChangeLeaderPacket.CharacterId, out var newRaidLeader))
+                        return;
+                    if (newRaidLeader.Party != _player.Party)
+                        return;
+                    _player.Party.Leader = newRaidLeader;
+                    break;
+
+                case RaidChangeSubLeaderPacket raidChangeSubLeaderPacket:
+                    if (!_player.IsPartyLead || !(_player.Party is Raid))
+                        return;
+                    if (!_gameWorld.Players.TryGetValue(raidChangeSubLeaderPacket.CharacterId, out var newRaidSubLeader))
+                        return;
+                    if (newRaidSubLeader.Party != _player.Party)
+                        return;
+                    _player.Party.SubLeader = newRaidSubLeader;
+                    break;
             }
         }
 

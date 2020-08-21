@@ -148,7 +148,6 @@ namespace Imgeneus.World.Game.PartyAndRaid
 
         protected override void SendNewSubLeader(WorldClient client, Character leader)
         {
-            throw new NotImplementedException();
         }
 
         #endregion

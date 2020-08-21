@@ -216,12 +216,14 @@ namespace Imgeneus.World.Game.PartyAndRaid
             }
             else if (character == Leader)
             {
-                Leader = SubLeader;
-                SubLeader = Members.FirstOrDefault();
+                var newLeader = SubLeader;
+                var newSubLeader = Members.FirstOrDefault(m => m != Leader && m != SubLeader);
+                SubLeader = newSubLeader;
+                Leader = newLeader;
             }
             else if (character == SubLeader)
             {
-                SubLeader = Members.FirstOrDefault();
+                SubLeader = Members.FirstOrDefault(m => m != Leader && m != SubLeader);
             }
         }
 

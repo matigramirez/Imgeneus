@@ -3,6 +3,7 @@ using Imgeneus.Network.Packets;
 using Imgeneus.World.Game.Player;
 using Imgeneus.World.Serialization;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Imgeneus.World.Game.PartyAndRaid
@@ -12,6 +13,8 @@ namespace Imgeneus.World.Game.PartyAndRaid
         public const byte MAX_PARTY_MEMBERS_COUNT = 7;
 
         public override event Action OnMembersChanged;
+
+        protected override IList<Character> _members { get; set; } = new List<Character>();
 
         /// <summary>
         /// Second leader.
@@ -91,7 +94,7 @@ namespace Imgeneus.World.Game.PartyAndRaid
             {
                 var lastMember = Members[0];
                 _members.Clear();
-                lastMember.Party = null;
+                lastMember.SetParty(null);
                 SendPlayerLeftParty(lastMember.Client, lastMember);
             }
             else if (character == Leader)

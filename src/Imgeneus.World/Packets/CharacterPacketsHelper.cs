@@ -7,6 +7,7 @@ using Imgeneus.Network.Packets;
 using Imgeneus.Network.Serialization;
 using Imgeneus.World.Game;
 using Imgeneus.World.Game.Monster;
+using Imgeneus.World.Game.PartyAndRaid;
 using Imgeneus.World.Game.Player;
 using Imgeneus.World.Serialization;
 
@@ -149,6 +150,13 @@ namespace Imgeneus.World.Packets
         {
             using var packet = new Packet(PacketType.PARTY_LIST);
             packet.Write(new UsualParty(partyMembers, leaderIndex).Serialize());
+            client.SendPacket(packet);
+        }
+
+        internal void SendRaidInfo(WorldClient client, Raid raid)
+        {
+            using var packet = new Packet(PacketType.RAID_LIST);
+            packet.Write(new RaidParty(raid).Serialize());
             client.SendPacket(packet);
         }
 

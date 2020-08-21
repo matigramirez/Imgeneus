@@ -59,12 +59,12 @@ namespace Imgeneus.World.Game.PartyAndRaid
                                 if (partyRequester.Party is null)
                                 {
                                     var party = new Party();
-                                    partyRequester.Party = party;
-                                    partyResponser.Party = party;
+                                    partyRequester.SetParty(party);
+                                    partyResponser.SetParty(party);
                                 }
                                 else
                                 {
-                                    partyResponser.Party = partyRequester.Party;
+                                    partyResponser.SetParty(partyRequester.Party);
                                 }
                             }
                         }
@@ -74,7 +74,7 @@ namespace Imgeneus.World.Game.PartyAndRaid
                     break;
 
                 case PartyLeavePacket partyLeavePacket:
-                    _player.Party = null;
+                    _player.SetParty(null);
                     break;
 
                 case PartyKickPacket partyKickPacket:
@@ -85,7 +85,7 @@ namespace Imgeneus.World.Game.PartyAndRaid
                     if (playerToKick != null)
                     {
                         _player.Party.KickMember(playerToKick);
-                        playerToKick.Party = null;
+                        playerToKick.SetParty(null);
                     }
                     break;
 
@@ -102,12 +102,13 @@ namespace Imgeneus.World.Game.PartyAndRaid
                     if (!_player.IsPartyLead)
                         return;
                     var raid = new Raid(raidCreatePacket.AutoJoin, (RaidDropType)raidCreatePacket.DropType);
-                    foreach (var member in _player.Party.Members.ToList())
+                    var members = _player.Party.Members.ToList();
+                    foreach (var member in members)
                     {
-                        member.Party = raid;
+                        member.SetParty(raid, true);
                     }
                     raid.SetLeader(_player);
-                    foreach (var m in raid.Members)
+                    foreach (var m in members)
                     {
                         SendRaidCreated(m.Client, raid);
                     }
@@ -120,7 +121,7 @@ namespace Imgeneus.World.Game.PartyAndRaid
                     break;
 
                 case RaidLeavePacket raidLeavePacket:
-                    _player.Party = null;
+                    _player.SetParty(null);
                     break;
 
                 case RaidChangeAutoInvitePacket raidChangeAutoInvitePacket:
@@ -135,7 +136,42 @@ namespace Imgeneus.World.Game.PartyAndRaid
                     (_player.Party as Raid).ChangeDropType((RaidDropType)raidChangeLootPacket.LootType);
                     break;
 
+                case RaidJoinPacket raidJoinPacket:
+                    if (_player.Party != null) // Player is already in party.
+                    {
+                        SendPartyError(_player.Client, PartyErrorType.RaidNotFound);
+                        return;
+                    }
+
+                    var raidMember = _gameWorld.Players.Values.FirstOrDefault(m => m.Name == raidJoinPacket.CharacterName);
+                    if (raidMember is null || raidMember.Country != _player.Country || !(raidMember.Party is Raid))
+                        SendPartyError(_player.Client, PartyErrorType.RaidNotFound);
+                    else
+                    {
+                        if ((raidMember.Party as Raid).AutoJoin)
+                        {
+                            _player.SetParty(raidMember.Party);
+                            if (_player.Party is null)
+                            {
+                                SendPartyError(_player.Client, PartyErrorType.RaidNoFreePlace);
+                            }
+                        }
+                        else
+                        {
+                            SendPartyError(_player.Client, PartyErrorType.RaidNoAutoJoin);
+                        }
+                    }
+                    break;
+
             }
+        }
+
+        private void SendPartyError(WorldClient client, PartyErrorType partyError, int id = 0)
+        {
+            using var packet = new Packet(PacketType.RAID_PARTY_ERROR);
+            packet.Write((int)partyError);
+            packet.Write(id);
+            client.SendPacket(packet);
         }
 
         private void SendPartyRequest(WorldClient client, int requesterId)
@@ -159,8 +195,8 @@ namespace Imgeneus.World.Game.PartyAndRaid
             packet.Write(true); // raid type ?
             packet.Write(raid.AutoJoin);
             packet.Write((int)raid.DropType);
-            packet.Write(raid.Members.IndexOf(raid.Leader));
-            packet.Write(raid.Members.IndexOf(raid.SubLeader));
+            packet.Write(raid.GetIndex(raid.Leader));
+            packet.Write(raid.GetIndex(raid.SubLeader));
             client.SendPacket(packet);
         }
     }

@@ -54,7 +54,7 @@ namespace Imgeneus.World.Game.Player
         public override void Dispose()
         {
             if (Party != null)
-                Party = null;
+                SetParty(null);
 
             InventoryItems.CollectionChanged -= InventoryItems_CollectionChanged;
             _castTimer.Elapsed -= CastTimer_Elapsed;
@@ -755,36 +755,47 @@ namespace Imgeneus.World.Game.Player
         public IParty Party
         {
             get => _party;
-            set
+        }
+
+        /// <summary>
+        /// Enters player to party.
+        /// </summary>
+        /// <param name="silent">if set to true, notification is not sent to client</param>
+        public void SetParty(IParty value, bool silent = false)
+        {
+            if (_party != null)
             {
-                if (_party != null)
-                {
-                    _party.OnLeaderChanged -= Party_OnLeaderChanged;
-                    _party.OnMembersChanged -= Party_OnMembersChanged;
-                }
-
-                // Leave party.
-                if (_party != null && value is null)
-                {
-                    if (_party.Members.Contains(this)) // When the player is kicked of the party, the party doesn't contain him.
-                        _party.LeaveParty(this);
-                    _party = value;
-                }
-                // Enter party
-                else if (value != null)
-                {
-                    if (value.EnterParty(this))
-                    {
-                        _party = value;
-                        if (_party is Party) // Send party info only if it's party, not raid.
-                            _packetsHelper.SendPartyInfo(Client, Party.Members.Where(m => m != this), (byte)Party.Members.IndexOf(Party.Leader));
-                        _party.OnLeaderChanged += Party_OnLeaderChanged;
-                        _party.OnMembersChanged += Party_OnMembersChanged;
-                    }
-                }
-
-                OnPartyChanged?.Invoke(this);
+                _party.OnLeaderChanged -= Party_OnLeaderChanged;
+                _party.OnMembersChanged -= Party_OnMembersChanged;
             }
+
+            // Leave party.
+            if (_party != null && value is null)
+            {
+                if (_party.Members.Contains(this)) // When the player is kicked of the party, the party doesn't contain him.
+                    _party.LeaveParty(this);
+                _party = value;
+            }
+            // Enter party
+            else if (value != null)
+            {
+                if (value.EnterParty(this))
+                {
+                    _party = value;
+
+                    if (!silent)
+                    {
+                        if (_party is Party)
+                            _packetsHelper.SendPartyInfo(Client, Party.Members.Where(m => m != this), (byte)Party.Members.IndexOf(Party.Leader));
+                        if (_party is Raid)
+                            _packetsHelper.SendRaidInfo(Client, Party as Raid);
+                    }
+                    _party.OnLeaderChanged += Party_OnLeaderChanged;
+                    _party.OnMembersChanged += Party_OnMembersChanged;
+                }
+            }
+
+            OnPartyChanged?.Invoke(this);
         }
 
         private void Party_OnMembersChanged()

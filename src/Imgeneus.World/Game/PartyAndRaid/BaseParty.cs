@@ -64,9 +64,8 @@ namespace Imgeneus.World.Game.PartyAndRaid
         /// <summary>
         /// Party members.
         /// </summary>
-        protected List<Character> _members = new List<Character>();
+        protected abstract IList<Character> _members { get; set; }
 
-        private ReadOnlyCollection<Character> _readonlyMembers;
         /// <summary>
         /// Party members.
         /// </summary>
@@ -74,12 +73,7 @@ namespace Imgeneus.World.Game.PartyAndRaid
         {
             get
             {
-                if (_readonlyMembers is null)
-                {
-                    _readonlyMembers = new ReadOnlyCollection<Character>(_members);
-                }
-
-                return _readonlyMembers;
+                return new ReadOnlyCollection<Character>(_members);
             }
         }
 

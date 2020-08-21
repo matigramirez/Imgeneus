@@ -1,7 +1,10 @@
 ﻿using Imgeneus.Network.Data;
 using Imgeneus.Network.Packets;
 using Imgeneus.World.Game.Player;
+using Imgeneus.World.Serialization;
 using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Imgeneus.World.Game.PartyAndRaid
@@ -11,6 +14,9 @@ namespace Imgeneus.World.Game.PartyAndRaid
         public const byte MAX_RAID_MEMBERS_COUNT = 30;
 
         private bool _locked;
+
+        private readonly ConcurrentDictionary<Character, int> _membersDict = new ConcurrentDictionary<Character, int>();
+        protected override IList<Character> _members { get => _membersDict.Keys.ToList(); set => throw new NotImplementedException(); }
 
         public Raid(bool autoJoin, RaidDropType dropType)
         {
@@ -82,7 +88,24 @@ namespace Imgeneus.World.Game.PartyAndRaid
 
         #region Leaders
 
-        public override Character SubLeader { get; protected set; }
+        private Character _subLeader;
+
+        public override Character SubLeader
+        {
+            get
+            {
+                if (Members.Count == 1)
+                    return Leader;
+                return _subLeader;
+            }
+
+            protected set
+            {
+                _subLeader = value;
+
+                // TODO: notify about subleader change
+            }
+        }
 
         protected override void LeaderChanged()
         {
@@ -94,6 +117,59 @@ namespace Imgeneus.World.Game.PartyAndRaid
 
         public override event Action OnMembersChanged;
 
+        /// <summary>
+        /// Gets index of character in raid.
+        /// </summary>
+        public int GetIndex(Character character)
+        {
+            if (_membersDict.TryGetValue(character, out var index))
+                return index;
+            else
+                return -1;
+        }
+
+        /// <summary>
+        /// Tries to find free index.
+        /// </summary>
+        private int FindFreeIndex()
+        {
+            _locked = true;
+
+            if (_membersDict.Values.Count == MAX_RAID_MEMBERS_COUNT)
+            {
+                _locked = false;
+                return -1;
+            }
+
+            var occupiedIndexes = _membersDict.Values.OrderBy(v => v).ToList();
+            if (occupiedIndexes.Count == 0)
+            {
+                _locked = false;
+                return 0;
+            }
+
+            var freeIndex = -1;
+            for (var i = 0; i < occupiedIndexes.Count; i++)
+            {
+                if (occupiedIndexes[i] != i)
+                {
+                    freeIndex = i;
+                    break;
+                }
+            }
+
+            if (freeIndex != -1)
+            {
+                _locked = false;
+                return freeIndex;
+            }
+            else
+            {
+                _locked = false;
+                return occupiedIndexes.Count;
+            }
+        }
+
         #endregion
 
         public override bool EnterParty(Character newPartyMember)
@@ -103,21 +179,28 @@ namespace Imgeneus.World.Game.PartyAndRaid
                 return false;
 
             // Check if raid is not full.
-            if (_members.Count == MAX_RAID_MEMBERS_COUNT)
+            if (_membersDict.Keys.Count == MAX_RAID_MEMBERS_COUNT)
                 return false;
 
-            _members.Add(newPartyMember);
+            var index = FindFreeIndex();
+            if (index == -1)
+                return false;
+
+            if (!_membersDict.TryAdd(newPartyMember, index))
+                return false;
+
             OnMembersChanged?.Invoke();
 
             if (Members.Count == 1)
                 Leader = newPartyMember;
-
             if (Members.Count == 2)
                 SubLeader = newPartyMember;
 
             SubcribeToCharacterChanges(newPartyMember);
 
-            // TODO: Notify others, that new party member joined.
+            // Notify others, that new raid member joined.
+            foreach (var member in Members)
+                SendPlayerJoinedParty(member.Client, newPartyMember);
 
             return true;
         }
@@ -139,10 +222,10 @@ namespace Imgeneus.World.Game.PartyAndRaid
         {
             _locked = true;
             var members = Members.ToList();
-            _members.Clear();
+            _membersDict.Clear();
             foreach (var m in members)
             {
-                m.Party = null;
+                m.SetParty(null);
                 SendRaidDismantle(m.Client);
             }
         }
@@ -152,15 +235,15 @@ namespace Imgeneus.World.Game.PartyAndRaid
         /// </summary>
         private void RemoveMember(Character character)
         {
-            _members.Remove(character);
+            _membersDict.TryRemove(character, out var index);
             OnMembersChanged?.Invoke();
 
             // If it was the last member.
             if (Members.Count == 1)
             {
                 var lastMember = Members[0];
-                _members.Clear();
-                lastMember.Party = null;
+                _membersDict.Clear();
+                lastMember.SetParty(null);
                 SendPlayerLeftRaid(lastMember.Client, lastMember);
             }
             else if (character == Leader)
@@ -175,6 +258,13 @@ namespace Imgeneus.World.Game.PartyAndRaid
         }
 
         #region Senders
+
+        private void SendPlayerJoinedParty(WorldClient client, Character character)
+        {
+            using var packet = new Packet(PacketType.RAID_ENTER);
+            packet.Write(new RaidMember(character, (ushort)GetIndex(character)).Serialize());
+            client.SendPacket(packet);
+        }
 
         private void SendRaidDismantle(WorldClient client)
         {

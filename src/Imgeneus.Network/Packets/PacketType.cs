@@ -139,11 +139,15 @@
         MAP_PARTY_SET = 0x0520, // 1312
 
         // Raid
+        RAID_LIST = 0x0B0B, // 2827
+        RAID_ENTER = 0x0B0C, // 2828
         RAID_LEAVE = 0x0B0D, // 2829
         RAID_CREATE = 0x0B0E, // 2830
         RAID_CHANGE_LOOT = 0x0B0F, // 2831
         RAID_CHANGE_AUTOINVITE = 0x0B10, // 2832
+        RAID_JOIN = 0x0B11, // 2833
         RAID_DISMANTLE = 0x0B16, // 2838
+        RAID_PARTY_ERROR = 0x0B19, // 2841
         RAID_CHARACTER_SP_MP = 0x0C0A, // 3082
         RAID_SET_MAX = 0x0C0B, // 3083
         RAID_ADDED_BUFF = 0x0C0E, // 3086

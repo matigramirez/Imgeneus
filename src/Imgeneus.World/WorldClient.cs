@@ -155,7 +155,8 @@ namespace Imgeneus.World
             { PacketType.RAID_DISMANTLE, (s) => new RaidDismantlePacket(s) },
             { PacketType.RAID_LEAVE, (s) => new RaidLeavePacket(s) },
             { PacketType.RAID_CHANGE_AUTOINVITE, (s) => new RaidChangeAutoInvitePacket(s) },
-            { PacketType.RAID_CHANGE_LOOT, (s) => new RaidChangeLootPacket(s) }
+            { PacketType.RAID_CHANGE_LOOT, (s) => new RaidChangeLootPacket(s) },
+            { PacketType.RAID_JOIN, (s) => new RaidJoinPacket(s) }
         };
 
         /// <inheritdoc />

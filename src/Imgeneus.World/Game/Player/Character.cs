@@ -766,7 +766,6 @@ namespace Imgeneus.World.Game.Player
             if (_party != null)
             {
                 _party.OnLeaderChanged -= Party_OnLeaderChanged;
-                _party.OnMembersChanged -= Party_OnMembersChanged;
             }
 
             // Leave party.
@@ -791,21 +790,16 @@ namespace Imgeneus.World.Game.Player
                             _packetsHelper.SendRaidInfo(Client, Party as Raid);
                     }
                     _party.OnLeaderChanged += Party_OnLeaderChanged;
-                    _party.OnMembersChanged += Party_OnMembersChanged;
                 }
             }
 
             OnPartyChanged?.Invoke(this);
         }
 
-        private void Party_OnMembersChanged()
+        private void Party_OnLeaderChanged(Character oldLeader, Character newLeader)
         {
-            OnPartyChanged?.Invoke(this);
-        }
-
-        private void Party_OnLeaderChanged(Character obj)
-        {
-            OnPartyChanged?.Invoke(this);
+            if (this == oldLeader || this == newLeader)
+                OnPartyChanged?.Invoke(this);
         }
 
         /// <summary>

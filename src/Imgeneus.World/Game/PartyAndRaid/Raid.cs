@@ -86,36 +86,7 @@ namespace Imgeneus.World.Game.PartyAndRaid
 
         #endregion
 
-        #region Leaders
-
-        private Character _subLeader;
-
-        public override Character SubLeader
-        {
-            get
-            {
-                if (Members.Count == 1)
-                    return Leader;
-                return _subLeader;
-            }
-
-            protected set
-            {
-                _subLeader = value;
-
-                // TODO: notify about subleader change
-            }
-        }
-
-        protected override void LeaderChanged()
-        {
-        }
-
-        #endregion
-
         #region Members
-
-        public override event Action OnMembersChanged;
 
         /// <summary>
         /// Gets index of character in raid.
@@ -189,8 +160,6 @@ namespace Imgeneus.World.Game.PartyAndRaid
             if (!_membersDict.TryAdd(newPartyMember, index))
                 return false;
 
-            OnMembersChanged?.Invoke();
-
             if (Members.Count == 1)
                 Leader = newPartyMember;
             if (Members.Count == 2)
@@ -236,7 +205,6 @@ namespace Imgeneus.World.Game.PartyAndRaid
         private void RemoveMember(Character character)
         {
             _membersDict.TryRemove(character, out var index);
-            OnMembersChanged?.Invoke();
 
             // If it was the last member.
             if (Members.Count == 1)
@@ -317,6 +285,20 @@ namespace Imgeneus.World.Game.PartyAndRaid
             packet.Write(id);
             packet.Write(type);
             packet.Write(value);
+            client.SendPacket(packet);
+        }
+
+        protected override void SendNewLeader(WorldClient client, Character character)
+        {
+            using var packet = new Packet(PacketType.RAID_CHANGE_LEADER);
+            packet.Write(character.Id);
+            client.SendPacket(packet);
+        }
+
+        protected override void SendNewSubLeader(WorldClient client, Character character)
+        {
+            using var packet = new Packet(PacketType.RAID_CHANGE_SUBLEADER);
+            packet.Write(character.Id);
             client.SendPacket(packet);
         }
 

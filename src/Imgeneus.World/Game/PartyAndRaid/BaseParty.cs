@@ -18,7 +18,7 @@ namespace Imgeneus.World.Game.PartyAndRaid
         /// <summary>
         /// Event, that is fired, when party leader is changed.
         /// </summary>
-        public event Action<Character> OnLeaderChanged;
+        public event Action<Character, Character> OnLeaderChanged;
 
         /// <summary>
         /// Raid leader.
@@ -26,40 +26,44 @@ namespace Imgeneus.World.Game.PartyAndRaid
         public Character Leader
         {
             get => _leader;
-            protected set
+            set
             {
+                var oldLeader = _leader;
                 _leader = value;
-                OnLeaderChanged?.Invoke(_leader);
+                OnLeaderChanged?.Invoke(oldLeader, _leader);
+                foreach (var member in Members)
+                    SendNewLeader(member.Client, Leader);
             }
         }
+
+        protected Character _subLeader;
 
         /// <summary>
         /// Second raid leader.
         /// </summary>
-        public abstract Character SubLeader { get; protected set; }
-
-        /// <summary>
-        /// Sets new raid leader.
-        /// </summary>
-        public void SetLeader(Character newLeader)
+        public Character SubLeader
         {
-            Leader = newLeader;
-            LeaderChanged();
+            get
+            {
+                if (Members.Count == 1) // When raid is created, it has only 1 member.
+                    return Leader;
+                return _subLeader;
+            }
+            set
+            {
+                if (value == Leader) // When leader and subleader change at once.
+                {
+                    Leader = _subLeader;
+                }
+                _subLeader = value;
+                foreach (var member in Members)
+                    SendNewSubLeader(member.Client, Leader);
+            }
         }
-
-        /// <summary>
-        /// Send notification, that leader changed.
-        /// </summary>
-        protected abstract void LeaderChanged();
 
         #endregion
 
         #region Members
-
-        /// <summary>
-        /// Event, that is fired, when party member added/removed.
-        /// </summary>
-        public abstract event Action OnMembersChanged;
 
         /// <summary>
         /// Party members.
@@ -188,6 +192,10 @@ namespace Imgeneus.World.Game.PartyAndRaid
         protected abstract void Send_HP_SP_MP(WorldClient client, int id, int value, byte type);
 
         protected abstract void Send_Max_HP_SP_MP(WorldClient client, int id, int value, byte type);
+
+        protected abstract void SendNewLeader(WorldClient client, Character leader);
+
+        protected abstract void SendNewSubLeader(WorldClient client, Character leader);
 
         public abstract void Dismantle();
 

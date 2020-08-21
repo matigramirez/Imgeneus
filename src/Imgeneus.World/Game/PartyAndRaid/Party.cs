@@ -12,24 +12,7 @@ namespace Imgeneus.World.Game.PartyAndRaid
     {
         public const byte MAX_PARTY_MEMBERS_COUNT = 7;
 
-        public override event Action OnMembersChanged;
-
         protected override IList<Character> _members { get; set; } = new List<Character>();
-
-        /// <summary>
-        /// Second leader.
-        /// </summary>
-        public override Character SubLeader
-        {
-            get
-            {
-                return Leader;
-            }
-            protected set
-            {
-                new NotImplementedException();
-            }
-        }
 
         /// <summary>
         /// Tries to enter party, if it's enough place.
@@ -42,7 +25,6 @@ namespace Imgeneus.World.Game.PartyAndRaid
                 return false;
 
             _members.Add(newPartyMember);
-            OnMembersChanged?.Invoke();
 
             if (Members.Count == 1)
                 Leader = newPartyMember;
@@ -87,7 +69,6 @@ namespace Imgeneus.World.Game.PartyAndRaid
             UnsubcribeFromCharacterChanges(character);
 
             _members.Remove(character);
-            OnMembersChanged?.Invoke();
 
             // If it was the last member.
             if (Members.Count == 1)
@@ -100,14 +81,6 @@ namespace Imgeneus.World.Game.PartyAndRaid
             else if (character == Leader)
             {
                 Leader = Members[0];
-            }
-        }
-
-        protected override void LeaderChanged()
-        {
-            foreach (var member in Members.ToList())
-            {
-                SendNewLeader(member.Client, Leader);
             }
         }
 
@@ -134,7 +107,7 @@ namespace Imgeneus.World.Game.PartyAndRaid
             client.SendPacket(packet);
         }
 
-        private void SendNewLeader(WorldClient client, Character character)
+        protected override void SendNewLeader(WorldClient client, Character character)
         {
             using var packet = new Packet(PacketType.PARTY_CHANGE_LEADER);
             packet.Write(character.Id);
@@ -169,6 +142,11 @@ namespace Imgeneus.World.Game.PartyAndRaid
         }
 
         public override void Dismantle()
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override void SendNewSubLeader(WorldClient client, Character leader)
         {
             throw new NotImplementedException();
         }

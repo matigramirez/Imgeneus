@@ -39,29 +39,18 @@ namespace Imgeneus.World.Game.PartyAndRaid
         public void Dismantle();
 
         /// <summary>
-        /// Sets leader.
-        /// </summary>
-        /// <param name="player">New party leader</param>
-        public void SetLeader(Character player);
-
-        /// <summary>
         /// Party leader.
         /// </summary>
-        public Character Leader { get; }
+        public Character Leader { get; set; }
 
         /// <summary>
         /// Party second leader.
         /// </summary>
-        public Character SubLeader { get; }
+        public Character SubLeader { get; set; }
 
         /// <summary>
         /// Event, that is fired, when party leader is changed.
         /// </summary>
-        public event Action<Character> OnLeaderChanged;
-
-        /// <summary>
-        /// Event, that is fired, when party member added/removed.
-        /// </summary>
-        public event Action OnMembersChanged;
+        public event Action<Character, Character> OnLeaderChanged;
     }
 }

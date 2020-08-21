@@ -95,7 +95,7 @@ namespace Imgeneus.World.Game.PartyAndRaid
 
                     var newLeader = _player.Party.Members.FirstOrDefault(m => m.Id == changeLeaderPacket.CharacterId);
                     if (newLeader != null)
-                        _player.Party.SetLeader(newLeader);
+                        _player.Party.Leader = newLeader;
                     break;
 
                 case RaidCreatePacket raidCreatePacket:
@@ -107,7 +107,7 @@ namespace Imgeneus.World.Game.PartyAndRaid
                     {
                         member.SetParty(raid, true);
                     }
-                    raid.SetLeader(_player);
+                    raid.Leader = _player;
                     foreach (var m in members)
                     {
                         SendRaidCreated(m.Client, raid);

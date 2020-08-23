@@ -107,6 +107,7 @@
         // GM commands
         GM_COMMAND_GET_ITEM = 0xF702,
         GM_CREATE_MOB = 0xF704, // 63236
+        GM_MOVE = 0xFA0A, // 64010
 
         // Inventory
         INVENTORY_MOVE_ITEM = 0x204,
@@ -146,6 +147,7 @@
         RAID_CHANGE_LOOT = 0x0B0F, // 2831
         RAID_CHANGE_AUTOINVITE = 0x0B10, // 2832
         RAID_JOIN = 0x0B11, // 2833
+        RAID_MOVE_PLAYER = 0x0B12, // 2834
         RAID_CHANGE_SUBLEADER = 0x0B13, // 2835
         RAID_INVITE = 0x0B14, // 2836
         RAID_DISMANTLE = 0x0B16, // 2838
@@ -183,5 +185,6 @@
         DUEL_TRADE_REMOVE_ITEM = 0x240B, // 9227
         DUEL_TRADE_ADD_MONEY = 0x240C, // 9228
         DUEL_TRADE_OPPONENT_ADD_ITEM = 0x240D, // 9229
+
     }
 }

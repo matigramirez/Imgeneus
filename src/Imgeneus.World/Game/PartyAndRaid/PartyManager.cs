@@ -85,7 +85,7 @@ namespace Imgeneus.World.Game.PartyAndRaid
                     if (playerToKick != null)
                     {
                         _player.Party.KickMember(playerToKick);
-                        playerToKick.SetParty(null);
+                        playerToKick.SetParty(null, true);
                     }
                     break;
 
@@ -181,6 +181,23 @@ namespace Imgeneus.World.Game.PartyAndRaid
                     if (newRaidSubLeader.Party != _player.Party)
                         return;
                     _player.Party.SubLeader = newRaidSubLeader;
+                    break;
+
+                case RaidKickPacket raidKickPacket:
+                    if (!_player.IsPartyLead || !(_player.Party is Raid))
+                        return;
+                    if (!_gameWorld.Players.TryGetValue(raidKickPacket.CharacterId, out var kickMember))
+                        return;
+                    if (kickMember.Party != _player.Party)
+                        return;
+                    _player.Party.KickMember(kickMember);
+                    kickMember.SetParty(null, true);
+                    break;
+
+                case RaidMovePlayerPacket raidMovePlayerPacket:
+                    if (!(_player.Party is Raid) || (!_player.IsPartyLead && !_player.IsPartySubLeader))
+                        return;
+                    (_player.Party as Raid).MoveCharacter(raidMovePlayerPacket.SourceIndex, raidMovePlayerPacket.DestinationIndex);
                     break;
             }
         }

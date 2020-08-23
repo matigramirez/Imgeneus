@@ -817,6 +817,11 @@ namespace Imgeneus.World.Game.Player
         /// </summary>
         public bool IsPartyLead { get => Party != null && Party.Leader == this; }
 
+        /// <summary>
+        /// Bool indicator, shows if player is the raid subleader.
+        /// </summary>
+        public bool IsPartySubLeader { get => Party != null && Party.SubLeader == this; }
+
         #endregion
 
         #region Death

@@ -16,6 +16,8 @@ namespace Imgeneus.World.Game.PartyAndRaid
         private bool _locked;
 
         private readonly ConcurrentDictionary<Character, int> _membersDict = new ConcurrentDictionary<Character, int>();
+        private readonly ConcurrentDictionary<int, Character> _indexesDict = new ConcurrentDictionary<int, Character>();
+
         protected override IList<Character> _members { get => _membersDict.Keys.ToList(); set => throw new NotImplementedException(); }
 
         public Raid(bool autoJoin, RaidDropType dropType)
@@ -157,8 +159,12 @@ namespace Imgeneus.World.Game.PartyAndRaid
             if (index == -1)
                 return false;
 
-            if (!_membersDict.TryAdd(newPartyMember, index))
+            if (!_membersDict.TryAdd(newPartyMember, index) || !_indexesDict.TryAdd(index, newPartyMember))
+            {
+                _membersDict.TryRemove(newPartyMember, out index);
+                _indexesDict.TryRemove(index, out var member);
                 return false;
+            }
 
             if (Members.Count == 1)
                 Leader = newPartyMember;
@@ -184,7 +190,10 @@ namespace Imgeneus.World.Game.PartyAndRaid
 
         public override void KickMember(Character player)
         {
-            throw new System.NotImplementedException();
+            foreach (var member in Members)
+                SendKickMember(member.Client, player);
+
+            RemoveMember(player);
         }
 
         public override void Dismantle()
@@ -205,6 +214,7 @@ namespace Imgeneus.World.Game.PartyAndRaid
         private void RemoveMember(Character character)
         {
             _membersDict.TryRemove(character, out var index);
+            _indexesDict.TryRemove(index, out var member);
 
             // If it was the last member.
             if (Members.Count == 1)
@@ -225,6 +235,34 @@ namespace Imgeneus.World.Game.PartyAndRaid
             {
                 SubLeader = Members.FirstOrDefault(m => m != Leader && m != SubLeader);
             }
+        }
+
+        /// <summary>
+        /// Moves character inside raid.
+        /// </summary>
+        /// <param name="sourceIndex">old index</param>
+        /// <param name="destinationIndex">new index</param>
+        public void MoveCharacter(int sourceIndex, int destinationIndex)
+        {
+            if (_indexesDict.TryRemove(sourceIndex, out var sourceCharacter))
+            {
+                _indexesDict.TryRemove(destinationIndex, out var destinationCharacter);
+                if (destinationCharacter is null) // free space
+                {
+                    _indexesDict.TryAdd(destinationIndex, sourceCharacter);
+                    _membersDict[sourceCharacter] = destinationIndex;
+                }
+                else
+                {
+                    _indexesDict.TryAdd(destinationIndex, sourceCharacter);
+                    _indexesDict.TryAdd(sourceIndex, destinationCharacter);
+                    _membersDict[sourceCharacter] = destinationIndex;
+                    _membersDict[destinationCharacter] = sourceIndex;
+                }
+            }
+
+            foreach (var member in Members)
+                SendPlayerMove(member.Client, sourceIndex, destinationIndex, GetIndex(Leader), GetIndex(SubLeader));
         }
 
         #region Senders
@@ -301,6 +339,23 @@ namespace Imgeneus.World.Game.PartyAndRaid
         {
             using var packet = new Packet(PacketType.RAID_CHANGE_SUBLEADER);
             packet.Write(character.Id);
+            client.SendPacket(packet);
+        }
+
+        private void SendKickMember(WorldClient client, Character character)
+        {
+            using var packet = new Packet(PacketType.RAID_KICK);
+            packet.Write(character.Id);
+            client.SendPacket(packet);
+        }
+
+        private void SendPlayerMove(WorldClient client, int sourceIndex, int destinationIndex, int leaderIndex, int subLeaderIndex)
+        {
+            using var packet = new Packet(PacketType.RAID_MOVE_PLAYER);
+            packet.Write(sourceIndex);
+            packet.Write(destinationIndex);
+            packet.Write(leaderIndex);
+            packet.Write(subLeaderIndex);
             client.SendPacket(packet);
         }
 

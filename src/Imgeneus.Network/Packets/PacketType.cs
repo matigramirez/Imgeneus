@@ -42,8 +42,6 @@
         PING = 0xA303,
         CASH_POINT = 0x2605, // 9733
         CHANGE_ENCRYPTION = 0xB106, // I'm not really sure, that exactly this packet starts another encryption, but for now let's assume so.
-        CHARACTER_ENTERED_MAP = 0x0201, // 513
-        CHARACTER_LEFT_MAP = 0x0202,  // 514
         CHARACTER_SHAPE = 0x0303,
         MAP_ADD_ITEM = 0x0401, // 1025
         MAP_REMOVE_ITEM = 0x0402, // 1026
@@ -107,7 +105,13 @@
         // GM commands
         GM_COMMAND_GET_ITEM = 0xF702,
         GM_CREATE_MOB = 0xF704, // 63236
-        GM_MOVE = 0xFA0A, // 64010
+        GM_TELEPORT = 0xFA0A, // 64010
+        GM_CMD_ERROR = 0xF501, // -2815
+
+        // Map
+        CHARACTER_ENTERED_MAP = 0x0201, // 513
+        CHARACTER_LEFT_MAP = 0x0202,  // 514
+        CHARACTER_MAP_TELEPORT = 0x020B, // 523
 
         // Inventory
         INVENTORY_MOVE_ITEM = 0x204,
@@ -171,7 +175,7 @@
         CHAT_ANOUNCEMENT = 0x1108, // 4360
         CHAT_MAP = 0x1111, // 4369
 
-        // DUEL
+        // Duel
         DUEL_REQUEST = 0x2401, // 9217
         DUEL_RESPONSE = 0x2402, // 9218
         DUEL_READY = 0x2403, // 9219

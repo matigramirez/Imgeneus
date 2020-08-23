@@ -22,14 +22,16 @@ namespace Imgeneus.World.Game.Player
     public partial class Character : BaseKillable, IKiller, IDisposable
     {
         private readonly ILogger<Character> _logger;
+        private readonly IGameWorld _gameWorld;
         private readonly ICharacterConfiguration _characterConfig;
         private readonly IBackgroundTaskQueue _taskQueue;
         private readonly CharacterPacketsHelper _packetsHelper;
         private readonly IChatManager _chatManager;
 
-        public Character(ILogger<Character> logger, ICharacterConfiguration characterConfig, IBackgroundTaskQueue taskQueue, IDatabasePreloader databasePreloader, IChatManager chatManager) : base(databasePreloader)
+        public Character(ILogger<Character> logger, IGameWorld gameWorld, ICharacterConfiguration characterConfig, IBackgroundTaskQueue taskQueue, IDatabasePreloader databasePreloader, IChatManager chatManager) : base(databasePreloader)
         {
             _logger = logger;
+            _gameWorld = gameWorld;
             _characterConfig = characterConfig;
             _taskQueue = taskQueue;
             _chatManager = chatManager;
@@ -598,11 +600,13 @@ namespace Imgeneus.World.Game.Player
         /// <param name="y">new y</param>
         /// <param name="z">new z</param>
         /// <param name="saveChangesToDB">set it to true, if this change should be saved to database</param>
-        public void UpdatePosition(float x, float y, float z, ushort angle, bool saveChangesToDB)
+        /// <param name="silent">if set to true, no notification is sent</param>
+        public void UpdatePosition(float x, float y, float z, ushort angle, bool saveChangesToDB, bool silent = false)
         {
             if (ActiveBuffs.Any(b => b.StateType == StateType.Immobilize || b.StateType == StateType.Sleep || b.StateType == StateType.Stun))
             {
-                OnPositionChanged?.Invoke(this);
+                if (!silent)
+                    OnPositionChanged?.Invoke(this);
                 return;
             }
 
@@ -837,9 +841,9 @@ namespace Imgeneus.World.Game.Player
         /// <summary>
         /// Creates character from database information.
         /// </summary>
-        public static Character FromDbCharacter(DbCharacter dbCharacter, ILogger<Character> logger, CharacterConfiguration characterConfig, IBackgroundTaskQueue taskQueue, IDatabasePreloader databasePreloader, IChatManager chatManager)
+        public static Character FromDbCharacter(DbCharacter dbCharacter, ILogger<Character> logger, IGameWorld gameWorld, CharacterConfiguration characterConfig, IBackgroundTaskQueue taskQueue, IDatabasePreloader databasePreloader, IChatManager chatManager)
         {
-            var character = new Character(logger, characterConfig, taskQueue, databasePreloader, chatManager)
+            var character = new Character(logger, gameWorld, characterConfig, taskQueue, databasePreloader, chatManager)
             {
                 Id = dbCharacter.Id,
                 Name = dbCharacter.Name,

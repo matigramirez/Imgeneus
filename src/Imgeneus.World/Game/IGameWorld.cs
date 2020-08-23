@@ -2,6 +2,7 @@
 using Imgeneus.Network.Packets.Game;
 using Imgeneus.World.Game.Monster;
 using Imgeneus.World.Game.Player;
+using Imgeneus.World.Game.Zone;
 using System.Collections.Concurrent;
 using System.Threading.Tasks;
 
@@ -16,6 +17,8 @@ namespace Imgeneus.World.Game
         /// Connected players. Key is character id, value is character.
         /// </summary>
         ConcurrentDictionary<int, Character> Players { get; }
+
+        ConcurrentDictionary<ushort, Map> Maps { get; }
 
         /// <summary>
         /// Loads player into game world.

@@ -191,6 +191,17 @@ namespace Imgeneus.World.Packets
             client.SendPacket(packet);
         }
 
+        internal void SendCharacterTeleport(WorldClient client, Character player)
+        {
+            using var packet = new Packet(PacketType.CHARACTER_MAP_TELEPORT);
+            packet.Write(player.Id);
+            packet.Write(player.Map.Id);
+            packet.Write(player.PosX);
+            packet.Write(player.PosY);
+            packet.Write(player.PosZ);
+            client.SendPacket(packet);
+        }
+
         internal void SendRecoverCharacter(WorldClient client, IKillable sender, int hp, int mp, int sp)
         {
             // NB!!! In previous episodes and in china ep 8 with recover packet it's sent how much hitpoints recovered.

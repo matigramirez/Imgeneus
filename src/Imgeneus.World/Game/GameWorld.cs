@@ -78,6 +78,7 @@ namespace Imgeneus.World.Game
                                                .FirstOrDefault(c => c.Id == characterId);
             var newPlayer = Character.FromDbCharacter(dbCharacter,
                                                      DependencyContainer.Instance.Resolve<ILogger<Character>>(),
+                                                     this,
                                                      _characterConfig,
                                                      _taskQueue,
                                                      _databasePreloader,

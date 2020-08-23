@@ -160,7 +160,8 @@ namespace Imgeneus.World
             { PacketType.RAID_CHANGE_LEADER, (s) => new RaidChangeLeaderPacket(s) },
             { PacketType.RAID_CHANGE_SUBLEADER, (s) => new RaidChangeSubLeaderPacket(s) },
             { PacketType.RAID_KICK, (s) => new RaidKickPacket(s) },
-            { PacketType.RAID_MOVE_PLAYER, (s) => new RaidMovePlayerPacket(s) }
+            { PacketType.RAID_MOVE_PLAYER, (s) => new RaidMovePlayerPacket(s) },
+            { PacketType.GM_TELEPORT, (s) => new GMTeleportPacket(s) }
         };
 
         /// <inheritdoc />

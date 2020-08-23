@@ -214,6 +214,24 @@ namespace Imgeneus.World.Packets
             client.SendPacket(packet);
         }
 
+        internal void SendGmCommandSuccess(WorldClient client)
+        {
+            using var packet = new Packet(PacketType.GM_CMD_ERROR);
+            packet.Write<ushort>(0); // 0 == no error
+            client.SendPacket(packet);
+        }
+
+        internal void SendGmTeleport(WorldClient client, Character character)
+        {
+            using var packet = new Packet(PacketType.GM_TELEPORT);
+            packet.Write(character.Id);
+            packet.Write(character.Map.Id);
+            packet.Write(character.PosX);
+            packet.Write(character.PosY);
+            packet.Write(character.PosZ);
+            client.SendPacket(packet);
+        }
+
         internal void SendSkillWrongEquipment(WorldClient client, Character sender, IKillable target, Skill skill)
         {
             PacketType type = target is Character ? PacketType.USE_CHARACTER_TARGET_SKILL : PacketType.USE_MOB_TARGET_SKILL;

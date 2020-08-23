@@ -2,6 +2,7 @@
 using Imgeneus.Database.Entities;
 using Imgeneus.Database.Preload;
 using Imgeneus.DatabaseBackgroundService;
+using Imgeneus.World.Game;
 using Imgeneus.World.Game.Chat;
 using Imgeneus.World.Game.Monster;
 using Imgeneus.World.Game.Player;
@@ -15,6 +16,7 @@ namespace Imgeneus.World.Tests
     public abstract class BaseTest
     {
         protected Mock<ILogger<Character>> loggerMock = new Mock<ILogger<Character>>();
+        protected Mock<IGameWorld> gameWorldMock = new Mock<IGameWorld>();
         protected Mock<IBackgroundTaskQueue> taskQueuMock = new Mock<IBackgroundTaskQueue>();
         protected Mock<IDatabasePreloader> databasePreloader = new Mock<IDatabasePreloader>();
         protected Mock<ICharacterConfiguration> config = new Mock<ICharacterConfiguration>();

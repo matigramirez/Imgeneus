@@ -203,6 +203,19 @@ namespace Imgeneus.World.Game.Player
 
                     Map.AddMob(mob);
                     break;
+
+                case GMTeleportPacket gMMovePacket:
+                    if (!IsAdmin)
+                        return;
+                    if (Map.Id != gMMovePacket.MapId && _gameWorld.Maps.ContainsKey(gMMovePacket.MapId))
+                    {
+                        Map.UnloadPlayer(this);
+                        _gameWorld.LoadPlayerInMap(Id);
+                    }
+                    _packetsHelper.SendGmCommandSuccess(Client);
+                    Map.TeleportPlayer(Id, gMMovePacket.X, gMMovePacket.Y);
+                    _packetsHelper.SendGmTeleport(Client, this);
+                    break;
             }
         }
 

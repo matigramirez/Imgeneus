@@ -167,6 +167,25 @@ namespace Imgeneus.World.Game.Zone
         }
 
         /// <summary>
+        /// Teleports player to selected position on map.
+        /// </summary>
+        /// <param name="playerId">Id of player</param>
+        /// <param name="X">new X position</param>
+        /// <param name="Y">new Y position</param>
+        public void TeleportPlayer(int playerId, float X, float Y)
+        {
+            if (!Players.ContainsKey(playerId))
+            {
+                _logger.LogError("Trying to get player, that is not presented on the map.");
+            }
+
+            var player = Players[playerId];
+            player.UpdatePosition(X, Y, player.PosZ, player.Angle, true, true);
+            foreach (var p in Players)
+                _packetHelper.SendCharacterTeleport(p.Value.Client, player);
+        }
+
+        /// <summary>
         /// Notifies other players about position change.
         /// </summary>
         private void Character_OnPositionChanged(Character movedPlayer)

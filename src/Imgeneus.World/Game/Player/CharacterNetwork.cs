@@ -7,6 +7,7 @@ using Imgeneus.Network.Packets;
 using Imgeneus.Network.Packets.Game;
 using Imgeneus.Network.Server;
 using Imgeneus.World.Game.Monster;
+using Imgeneus.World.Game.Zone;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Specialized;
@@ -215,6 +216,21 @@ namespace Imgeneus.World.Game.Player
                     _packetsHelper.SendGmCommandSuccess(Client);
                     Map.TeleportPlayer(Id, gMMovePacket.X, gMMovePacket.Y);
                     _packetsHelper.SendGmTeleport(Client, this);
+                    break;
+
+                case GMCreateNpcPacket gMCreateNpcPacket:
+                    if (!IsAdmin)
+                        return;
+
+                    if (_databasePreloader.NPCs.TryGetValue((gMCreateNpcPacket.Type, gMCreateNpcPacket.TypeId), out var dbNpc))
+                    {
+                        Map.AddNPC(new Npc(dbNpc));
+                        _packetsHelper.SendGmCommandSuccess(Client);
+                    }
+                    else
+                    {
+                        _packetsHelper.SendGmCommandError(Client, PacketType.GM_CREATE_NPC);
+                    }
                     break;
             }
         }

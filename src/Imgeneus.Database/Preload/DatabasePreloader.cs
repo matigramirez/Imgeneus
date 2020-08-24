@@ -20,6 +20,9 @@ namespace Imgeneus.Database.Preload
         /// <inheritdoc />
         public Dictionary<ushort, DbMob> Mobs { get; private set; } = new Dictionary<ushort, DbMob>();
 
+        /// <inheritdoc />
+        public Dictionary<(byte Type, ushort TypeId), DbNpc> NPCs { get; private set; } = new Dictionary<(byte Type, ushort TypeId), DbNpc>();
+
         public DatabasePreloader(ILogger<DatabasePreloader> logger, IDatabase database)
         {
             _logger = logger;
@@ -34,6 +37,7 @@ namespace Imgeneus.Database.Preload
                 PreloadItems(_database);
                 PreloadSkills(_database);
                 PreloadMobs(_database);
+                PrealodNpcs(_database);
 
                 _logger.LogInformation("Database was successfully preloaded.");
             }
@@ -77,6 +81,18 @@ namespace Imgeneus.Database.Preload
             foreach (var mob in mobs)
             {
                 Mobs.Add(mob.Id, mob);
+            }
+        }
+
+        /// <summary>
+        /// Preloads all available npcs from database.
+        /// </summary>
+        private void PrealodNpcs(IDatabase database)
+        {
+            var npcs = database.Npcs;
+            foreach (var npc in npcs)
+            {
+                NPCs.Add((npc.Type, npc.TypeId), npc);
             }
         }
     }

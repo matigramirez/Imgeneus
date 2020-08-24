@@ -536,6 +536,24 @@ namespace Imgeneus.World.Game.Zone
         }
         #endregion
 
+        #region NPC
+
+        /// <summary>
+        /// Thread-safe dictionary of npcs. Key is npc id, value is npc.
+        /// </summary>
+        private readonly ConcurrentDictionary<int, Npc> NPCs = new ConcurrentDictionary<int, Npc>();
+
+        /// <summary>
+        /// Adds npc to the map.
+        /// </summary>
+        /// <param name="npc">new npc</param>
+        public void AddNPC(Npc npc)
+        {
+            // Add npc + send notification players.
+        }
+
+        #endregion
+
         #region Helpers
 
         /// <summary>

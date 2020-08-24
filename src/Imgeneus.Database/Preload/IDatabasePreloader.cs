@@ -25,6 +25,11 @@ namespace Imgeneus.Database.Preload
         Dictionary<ushort, DbMob> Mobs { get; }
 
         /// <summary>
+        /// Preloaded NPCs.
+        /// </summary>
+        Dictionary<(byte Type, ushort TypeId), DbNpc> NPCs { get; }
+
+        /// <summary>
         /// Preloads all needed info.
         /// </summary>
         void Preload();

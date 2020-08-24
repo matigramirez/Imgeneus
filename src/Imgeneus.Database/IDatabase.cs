@@ -59,6 +59,11 @@ namespace Imgeneus.Database
         public DbSet<DbQuickSkillBarItem> QuickItems { get; set; }
 
         /// <summary>
+        /// Available npcs. Taken from NPCQuest.Sdata.
+        /// </summary>
+        public DbSet<DbNpc> Npcs { get; set; }
+
+        /// <summary>
         /// Saves changes to database.
         /// </summary>
         public int SaveChanges();

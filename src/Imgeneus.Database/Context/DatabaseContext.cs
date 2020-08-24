@@ -57,6 +57,11 @@ namespace Imgeneus.Database.Context
         /// </summary>
         public DbSet<DbQuickSkillBarItem> QuickItems { get; set; }
 
+        /// <summary>
+        /// Available npcs. Taken from NPCQuest.Sdata.
+        /// </summary>
+        public DbSet<DbNpc> Npcs { get; set; }
+
         public DatabaseContext(DbContextOptions options) : base(options)
         {
         }

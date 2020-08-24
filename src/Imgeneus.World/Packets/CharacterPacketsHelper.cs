@@ -221,6 +221,13 @@ namespace Imgeneus.World.Packets
             client.SendPacket(packet);
         }
 
+        internal void SendGmCommandError(WorldClient client, PacketType error)
+        {
+            using var packet = new Packet(PacketType.GM_CMD_ERROR);
+            packet.Write((ushort)error);
+            client.SendPacket(packet);
+        }
+
         internal void SendGmTeleport(WorldClient client, Character character)
         {
             using var packet = new Packet(PacketType.GM_TELEPORT);

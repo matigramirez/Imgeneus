@@ -6,3 +6,4 @@ mysql -u %user_name% --password=%password% < InitItemData.sql
 mysql -u %user_name% --password=%password% < InitMobData.sql
 mysql -u %user_name% --password=%password% < InitMobItems.sql
 mysql -u %user_name% --password=%password% < InitNpcSkillData.sql
+mysql -u %user_name% --password=%password% < InitNpcData.sql

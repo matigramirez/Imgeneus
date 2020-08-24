@@ -48,6 +48,8 @@
     <Compile Remove="Migrations\20200423131043_AddQuickSkillBarItemRequired.Designer.cs" />
     <Compile Remove="Migrations\20200423132404_AddQuickSkillBarItem2.cs" />
     <Compile Remove="Migrations\20200423132404_AddQuickSkillBarItem2.Designer.cs" />
+    <Compile Remove="Migrations\20200824091733_AddNPCs.cs" />
+    <Compile Remove="Migrations\20200824091733_AddNPCs.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

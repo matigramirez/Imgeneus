@@ -806,6 +806,9 @@ namespace Imgeneus.World.Game
         /// <inheritdoc />
         public float PosZ { get; set; }
 
+        /// <inheritdoc />
+        public ushort Angle { get; protected set; }
+
         #endregion
 
         #region Total stats

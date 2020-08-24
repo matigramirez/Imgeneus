@@ -22,7 +22,7 @@ namespace Imgeneus.Database.Entities
         /// <summary>
         /// ?
         /// </summary>
-        public byte MerchantType { get; set; }
+        public MerchantType MerchantType { get; set; }
 
         /// <summary>
         /// 3D model, used only on client side.

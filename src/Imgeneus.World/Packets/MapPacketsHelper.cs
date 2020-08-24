@@ -6,6 +6,7 @@ using Imgeneus.World.Game;
 using Imgeneus.World.Game.Monster;
 using Imgeneus.World.Game.PartyAndRaid;
 using Imgeneus.World.Game.Player;
+using Imgeneus.World.Game.Zone;
 using Imgeneus.World.Serialization;
 
 namespace Imgeneus.World.Packets
@@ -312,6 +313,26 @@ namespace Imgeneus.World.Packets
         {
             using var packet = new Packet(PacketType.MAP_REMOVE_ITEM);
             packet.Write(item.Id);
+            client.SendPacket(packet);
+        }
+
+        internal void SendNpcEnter(WorldClient client, Npc npc)
+        {
+            using var packet = new Packet(PacketType.MAP_NPC_ENTER);
+            packet.Write(npc.Id);
+            packet.Write(npc.Type);
+            packet.Write(npc.TypeId);
+            packet.Write(npc.PosX);
+            packet.Write(npc.PosY);
+            packet.Write(npc.PosZ);
+            packet.Write(npc.Angle);
+            client.SendPacket(packet);
+        }
+
+        internal void SendNpcLeave(WorldClient client, Npc npc)
+        {
+            using var packet = new Packet(PacketType.MAP_NPC_LEAVE);
+            packet.Write(npc.Id);
             client.SendPacket(packet);
         }
     }

@@ -19,7 +19,7 @@ using System.Linq;
 
 namespace Imgeneus.World.Game.Player
 {
-    public partial class Character : BaseKillable, IKiller, IDisposable
+    public partial class Character : BaseKillable, IKiller, IMapMember, IDisposable
     {
         private readonly ILogger<Character> _logger;
         private readonly IGameWorld _gameWorld;
@@ -590,8 +590,6 @@ namespace Imgeneus.World.Game.Player
         /// Event, that is fired, when character changes his/her position.
         /// </summary>
         public event Action<Character> OnPositionChanged;
-
-        public ushort Angle { get; private set; }
 
         /// <summary>
         /// Updates player position. Saves change to database if needed.

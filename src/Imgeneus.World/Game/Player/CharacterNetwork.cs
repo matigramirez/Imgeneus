@@ -224,13 +224,20 @@ namespace Imgeneus.World.Game.Player
 
                     if (_databasePreloader.NPCs.TryGetValue((gMCreateNpcPacket.Type, gMCreateNpcPacket.TypeId), out var dbNpc))
                     {
-                        Map.AddNPC(new Npc(dbNpc));
+                        Map.AddNPC(new Npc(dbNpc, PosX, PosY, PosZ));
                         _packetsHelper.SendGmCommandSuccess(Client);
                     }
                     else
                     {
                         _packetsHelper.SendGmCommandError(Client, PacketType.GM_CREATE_NPC);
                     }
+                    break;
+
+                case GMRemoveNpcPacket gMRemoveNpcPacket:
+                    if (!IsAdmin)
+                        return;
+                    Map.RemoveNPC(gMRemoveNpcPacket.Type, gMRemoveNpcPacket.TypeId, gMRemoveNpcPacket.Count);
+                    _packetsHelper.SendGmCommandSuccess(Client);
                     break;
             }
         }

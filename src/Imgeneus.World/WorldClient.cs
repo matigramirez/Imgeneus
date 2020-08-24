@@ -162,7 +162,8 @@ namespace Imgeneus.World
             { PacketType.RAID_KICK, (s) => new RaidKickPacket(s) },
             { PacketType.RAID_MOVE_PLAYER, (s) => new RaidMovePlayerPacket(s) },
             { PacketType.GM_TELEPORT, (s) => new GMTeleportPacket(s) },
-            { PacketType.GM_CREATE_NPC, (s) => new GMCreateNpcPacket(s) }
+            { PacketType.GM_CREATE_NPC, (s) => new GMCreateNpcPacket(s) },
+            { PacketType.GM_REMOVE_NPC, (s) => new GMRemoveNpcPacket(s) }
         };
 
         /// <inheritdoc />

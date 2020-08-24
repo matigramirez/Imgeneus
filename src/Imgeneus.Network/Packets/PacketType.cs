@@ -108,12 +108,14 @@
         GM_TELEPORT = 0xFA0A, // 64010
         GM_CMD_ERROR = 0xF501, // -2815
         GM_CREATE_NPC = 0xF70C, // 63244, -2292
+        GM_REMOVE_NPC = 0xF70D, // 63245, -2291
 
         // Map
         CHARACTER_ENTERED_MAP = 0x0201, // 513
         CHARACTER_LEFT_MAP = 0x0202,  // 514
         CHARACTER_MAP_TELEPORT = 0x020B, // 523
-        MAP_ADD_NPC = 0x0E01, // 3585
+        MAP_NPC_ENTER = 0x0E01, // 3585
+        MAP_NPC_LEAVE = 0x0E02, // 3586
 
         // Inventory
         INVENTORY_MOVE_ITEM = 0x204,

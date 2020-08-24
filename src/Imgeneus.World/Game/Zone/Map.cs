@@ -6,10 +6,12 @@ using Imgeneus.World.Game.Monster;
 using Imgeneus.World.Game.PartyAndRaid;
 using Imgeneus.World.Game.Player;
 using Imgeneus.World.Packets;
+using Imgeneus.World.Serialization;
 using Microsoft.Extensions.Logging;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices.ComTypes;
 
 namespace Imgeneus.World.Game.Zone
 {
@@ -549,7 +551,28 @@ namespace Imgeneus.World.Game.Zone
         /// <param name="npc">new npc</param>
         public void AddNPC(Npc npc)
         {
-            // Add npc + send notification players.
+            npc.Id = GenerateId();
+            if (NPCs.TryAdd(npc.Id, npc))
+            {
+                foreach (var player in Players)
+                    _packetHelper.SendNpcEnter(player.Value.Client, npc);
+            }
+        }
+
+        /// <summary>
+        /// Removes NPC from the map.
+        /// </summary>
+        public void RemoveNPC(byte type, ushort typeId, byte count)
+        {
+            var npcs = NPCs.Values.Where(n => n.Type == type && n.TypeId == typeId).Take(count);
+            foreach (var npc in npcs)
+            {
+                if (NPCs.TryRemove(npc.Id, out var removedNpc))
+                {
+                    foreach (var player in Players)
+                        _packetHelper.SendNpcLeave(player.Value.Client, npc);
+                }
+            }
         }
 
         #endregion

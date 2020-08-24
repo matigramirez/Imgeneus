@@ -7,7 +7,7 @@ using System;
 
 namespace Imgeneus.World.Game.Monster
 {
-    public partial class Mob : BaseKillable, IKiller, IDisposable
+    public partial class Mob : BaseKillable, IKiller, IMapMember, IDisposable
     {
         private readonly ILogger<Mob> _logger;
         private readonly DbMob _dbMob;

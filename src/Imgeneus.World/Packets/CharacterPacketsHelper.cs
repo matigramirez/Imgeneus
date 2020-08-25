@@ -211,6 +211,19 @@ namespace Imgeneus.World.Packets
             client.SendPacket(packet);
         }
 
+        internal void SendSoldItem(WorldClient client, Item soldItem, uint gold)
+        {
+            using var packet = new Packet(PacketType.NPC_SELL_ITEM);
+            packet.WriteByte(0); // success
+            packet.Write(soldItem.Bag);
+            packet.Write(soldItem.Slot);
+            packet.Write(soldItem.Type);
+            packet.Write(soldItem.TypeId);
+            packet.Write(soldItem.Count);
+            packet.Write(gold);
+            client.SendPacket(packet);
+        }
+
         internal void SendBuyItemIssue(WorldClient client, byte issue)
         {
             using var packet = new Packet(PacketType.NPC_BUY_ITEM);

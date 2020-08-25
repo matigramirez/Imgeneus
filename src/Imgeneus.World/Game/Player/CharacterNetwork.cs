@@ -11,7 +11,6 @@ using Imgeneus.World.Game.NPCs;
 using Imgeneus.World.Game.Zone;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Specialized;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -165,9 +164,10 @@ namespace Imgeneus.World.Game.Player
                     if (item is null || item.AccountRestriction == ItemAccountRestrictionType.AccountRestricted || item.AccountRestriction == ItemAccountRestrictionType.CharacterRestricted)
                         return;
                     item.TradeQuantity = removeItemPacket.Count <= item.Count ? removeItemPacket.Count : item.Count;
-                    item = RemoveItemFromInventory(item);
-                    item.Owner = this;
-                    Map.AddItem(item, PosX, PosY, PosZ);
+                    var removedItem = RemoveItemFromInventory(item);
+                    _packetsHelper.SendRemoveItem(Client, item, removedItem.Count == item.Count);
+                    removedItem.Owner = this;
+                    Map.AddItem(removedItem, PosX, PosY, PosZ);
                     break;
 
                 case MapPickUpItemPacket mapPickUpItemPacket:
@@ -183,6 +183,10 @@ namespace Imgeneus.World.Game.Player
                         _packetsHelper.SendFullInventory(Client);
                         return;
                     }
+                    else
+                    {
+                        _packetsHelper.SendAddItem(Client, inventoryItem);
+                    }
                     Map.RemoveItem(mapItem.Id);
                     break;
 
@@ -192,10 +196,27 @@ namespace Imgeneus.World.Game.Player
                         return;
                     var buyItem = npc.Products[npcBuyItemPacket.ItemIndex];
                     var boughtItem = BuyItem(buyItem, npcBuyItemPacket.Count);
-                    // This code is excess, because inventory handle item add/remove and money change by default.
-                    // But I'll keep it for future.
-                    //if (boughtItem != null)
-                    //_packetsHelper.SendBoughtItem(Client, boughtItem, Gold);
+                    if (boughtItem != null)
+                        _packetsHelper.SendBoughtItem(Client, boughtItem, Gold);
+                    break;
+
+                case NpcSellItemPacket npcSellItemPacket:
+                    if (npcSellItemPacket.Bag == 0) // Worn item can not be sold, player should take it off first.
+                        return;
+
+                    var itemToSell = InventoryItems.FirstOrDefault(i => i.Bag == npcSellItemPacket.Bag && i.Slot == npcSellItemPacket.Slot);
+                    if (itemToSell is null) // Item for sale not found.
+                        return;
+
+                    var fullSold = itemToSell.Count <= npcSellItemPacket.Count;
+
+                    var soldItem = SellItem(itemToSell, npcSellItemPacket.Count);
+                    if (soldItem != null)
+                    {
+                        if (fullSold)
+                            itemToSell.Count = 0;
+                        _packetsHelper.SendSoldItem(Client, itemToSell, Gold);
+                    }
                     break;
 
                 case RebirthPacket rebirthPacket:
@@ -283,7 +304,9 @@ namespace Imgeneus.World.Game.Player
                 return;
             }
 
-            AddItemToInventory(new Item(_databasePreloader, gMGetItemPacket.Type, gMGetItemPacket.TypeId) { Count = gMGetItemPacket.Count });
+            var item = AddItemToInventory(new Item(_databasePreloader, gMGetItemPacket.Type, gMGetItemPacket.TypeId) { Count = gMGetItemPacket.Count });
+            if (item != null)
+                _packetsHelper.SendAddItem(Client, item);
         }
 
         private void HandlePlayerInTarget(PlayerInTargetPacket packet)
@@ -453,6 +476,10 @@ namespace Imgeneus.World.Game.Player
 
         private void SendTargetRemoveBuff(IKillable target, ActiveBuff buff) => _packetsHelper.SendTargetRemoveBuff(Client, target, buff);
 
+        public void SendAddItemToInventory(Item item) => _packetsHelper.SendAddItem(Client, item);
+
+        public void SendRemoveItemFromInventory(Item item, bool fullRemove) => _packetsHelper.SendRemoveItem(Client, item, fullRemove);
+
         private void TargetChanged(IKillable target)
         {
             if (target is Mob)
@@ -462,26 +489,6 @@ namespace Imgeneus.World.Game.Player
             else
             {
                 _packetsHelper.SetPlayerInTarget(Client, (Character)target);
-            }
-        }
-
-        private void InventoryItems_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            if (e.Action == NotifyCollectionChangedAction.Add)
-            {
-                // Case, when we are starting up and all invenroty items are added with AddRange call.
-                if (e.NewItems.Count != 1)
-                {
-                    return;
-                }
-
-                if (Client != null)
-                    _packetsHelper.SendAddItem(Client, (Item)e.NewItems[0]);
-            }
-            else if (e.Action == NotifyCollectionChangedAction.Remove)
-            {
-                if (Client != null)
-                    _packetsHelper.SendRemoveItem(Client, (Item)e.OldItems[0], true);
             }
         }
 

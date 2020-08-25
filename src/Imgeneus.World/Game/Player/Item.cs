@@ -1,6 +1,7 @@
 ﻿using Imgeneus.Database.Constants;
 using Imgeneus.Database.Entities;
 using Imgeneus.Database.Preload;
+using Imgeneus.Network.Packets.Game;
 using System.Timers;
 
 namespace Imgeneus.World.Game.Player
@@ -75,6 +76,7 @@ namespace Imgeneus.World.Game.Player
                 ConstElement = item.Element;
                 Special = item.Special;
                 AccountRestriction = item.ReqOg;
+                Sell = item.Sell;
             }
 
             _ownerClearTimer.Interval = 7000; // 7 seconds
@@ -106,6 +108,7 @@ namespace Imgeneus.World.Game.Player
         private readonly ushort ConstMinAttack;
         private readonly ushort ConstPlusAttack;
         private readonly Element ConstElement;
+        public readonly int Sell;
 
         /// <summary>
         /// Str contains yellow(default) stat + orange stat (take it from craft name later).

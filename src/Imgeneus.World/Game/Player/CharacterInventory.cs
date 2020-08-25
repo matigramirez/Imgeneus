@@ -514,8 +514,6 @@ namespace Imgeneus.World.Game.Player
                 _taskQueue.Enqueue(ActionType.UPDATE_ITEM_COUNT_IN_INVENTORY,
                                    Id, item.Bag, item.Slot, item.Count);
 
-                _packetsHelper.SendRemoveItem(Client, item, false);
-
                 return givenItem;
             }
 
@@ -939,6 +937,23 @@ namespace Imgeneus.World.Game.Player
             item.Count = count;
 
             return AddItemToInventory(item);
+        }
+
+        /// <summary>
+        /// Sells item.
+        /// </summary>
+        /// <param name="item">item to sell</param>
+        /// <param name="count">how many item player want to sell</param>
+        public Item SellItem(Item item, byte count)
+        {
+            if (!InventoryItems.Contains(item))
+            {
+                return null;
+            }
+
+            item.TradeQuantity = count > item.Count ? item.Count : count;
+            ChangeGold((uint)(Gold + item.Sell * item.TradeQuantity));
+            return RemoveItemFromInventory(item);
         }
 
         #endregion

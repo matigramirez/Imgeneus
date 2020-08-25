@@ -37,7 +37,6 @@ namespace Imgeneus.World.Game.Player
             _chatManager = chatManager;
             _packetsHelper = new CharacterPacketsHelper();
 
-            InventoryItems.CollectionChanged += InventoryItems_CollectionChanged;
             _castTimer.Elapsed += CastTimer_Elapsed;
 
             OnMaxHPChanged += Character_OnMaxHPChanged;
@@ -58,7 +57,6 @@ namespace Imgeneus.World.Game.Player
             if (Party != null)
                 SetParty(null);
 
-            InventoryItems.CollectionChanged -= InventoryItems_CollectionChanged;
             _castTimer.Elapsed -= CastTimer_Elapsed;
 
             OnMaxHPChanged -= Character_OnMaxHPChanged;

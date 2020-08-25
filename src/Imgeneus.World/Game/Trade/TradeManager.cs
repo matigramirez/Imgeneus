@@ -292,19 +292,35 @@ namespace Imgeneus.World.Game.Trade
         {
             foreach (var item in trader.TradeItems)
             {
-                var resultItm = trader.RemoveItemFromInventory(item.Value);
+                var tradeItem = item.Value;
+                var removedItem = tradeItem.Clone();
+                var resultItm = trader.RemoveItemFromInventory(tradeItem);
                 if (partner.AddItemToInventory(resultItm) is null) // No place for this item.
                 {
                     trader.AddItemToInventory(resultItm);
+                }
+                else
+                {
+                    removedItem.Count -= resultItm.Count;
+                    trader.SendRemoveItemFromInventory(removedItem, removedItem.Count == 0);
+                    partner.SendAddItemToInventory(resultItm);
                 }
             }
 
             foreach (var item in partner.TradeItems)
             {
-                var resultItm = partner.RemoveItemFromInventory(item.Value);
+                var tradeItem = item.Value;
+                var removedItem = tradeItem.Clone();
+                var resultItm = partner.RemoveItemFromInventory(tradeItem);
                 if (trader.AddItemToInventory(resultItm) is null) // No place for this item.
                 {
                     partner.AddItemToInventory(resultItm);
+                }
+                else
+                {
+                    removedItem.Count -= resultItm.Count;
+                    partner.SendRemoveItemFromInventory(removedItem, removedItem.Count == 0);
+                    trader.SendAddItemToInventory(resultItm);
                 }
             }
 

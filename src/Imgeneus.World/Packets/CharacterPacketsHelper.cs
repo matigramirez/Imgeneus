@@ -198,6 +198,33 @@ namespace Imgeneus.World.Packets
             client.SendPacket(packet);
         }
 
+        internal void SendBoughtItem(WorldClient client, Item boughtItem, uint gold)
+        {
+            using var packet = new Packet(PacketType.NPC_BUY_ITEM);
+            packet.WriteByte(0); // success
+            packet.Write(boughtItem.Bag);
+            packet.Write(boughtItem.Slot);
+            packet.Write(boughtItem.Type);
+            packet.Write(boughtItem.TypeId);
+            packet.Write(boughtItem.Count);
+            packet.Write(gold);
+            client.SendPacket(packet);
+        }
+
+        internal void SendBuyItemIssue(WorldClient client, byte issue)
+        {
+            using var packet = new Packet(PacketType.NPC_BUY_ITEM);
+            packet.Write(issue);
+            // empty fields about item, because it wasn't bought.
+            packet.WriteByte(0); // bag
+            packet.WriteByte(0); // slot
+            packet.WriteByte(0); // type
+            packet.WriteByte(0); // type id
+            packet.WriteByte(0); // count
+            packet.Write(0); // gold
+            client.SendPacket(packet);
+        }
+
         internal void SendSkillWrongTarget(WorldClient client, Character sender, Skill skill, IKillable target)
         {
             PacketType type = target is Character ? PacketType.USE_CHARACTER_TARGET_SKILL : PacketType.USE_MOB_TARGET_SKILL;

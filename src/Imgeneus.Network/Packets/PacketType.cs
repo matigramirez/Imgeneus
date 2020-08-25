@@ -194,5 +194,8 @@
         DUEL_TRADE_ADD_MONEY = 0x240C, // 9228
         DUEL_TRADE_OPPONENT_ADD_ITEM = 0x240D, // 9229
 
+        // NPC Shop
+        NPC_BUY_ITEM = 0x0702, // 1794
+        NPC_SELL_ITEM = 0x0703, // 1795
     }
 }

@@ -3,6 +3,7 @@ using Imgeneus.Database.Constants;
 using Imgeneus.Database.Entities;
 using Imgeneus.World.Game.Chat;
 using Imgeneus.World.Game.Monster;
+using Imgeneus.World.Game.NPCs;
 using Imgeneus.World.Game.PartyAndRaid;
 using Imgeneus.World.Game.Player;
 using Imgeneus.World.Packets;
@@ -573,6 +574,16 @@ namespace Imgeneus.World.Game.Zone
                         _packetHelper.SendNpcLeave(player.Value.Client, npc);
                 }
             }
+        }
+
+        /// <summary>
+        /// Gets npc by its' id.
+        /// </summary>
+        /// <returns></returns>
+        public Npc GetNPC(int id)
+        {
+            NPCs.TryGetValue(id, out var resultNpc);
+            return resultNpc;
         }
 
         #endregion

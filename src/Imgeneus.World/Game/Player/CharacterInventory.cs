@@ -1,5 +1,6 @@
 ﻿using Imgeneus.Database.Constants;
 using Imgeneus.DatabaseBackgroundService.Handlers;
+using Imgeneus.World.Game.NPCs;
 using Microsoft.Extensions.Logging;
 using MvvmHelpers;
 using System;
@@ -900,6 +901,44 @@ namespace Imgeneus.World.Game.Player
             // TODO: implement checks.
 
             return true;
+        }
+
+        #endregion
+
+        #region Buy/sell Item
+
+        /// <summary>
+        /// Buys item from npc store.
+        /// </summary>
+        /// <param name="product">product to buy</param>
+        /// <param name="count">how many items player want to buy</param>
+        public Item BuyItem(NpcProduct product, byte count)
+        {
+            _databasePreloader.Items.TryGetValue((product.Type, product.TypeId), out var dbItem);
+            if (dbItem is null)
+            {
+                _logger.LogError($"Trying to buy not presented item(type={product.Type},typeId={product.TypeId}).");
+                return null;
+            }
+
+            if (dbItem.Buy * count > Gold) // Not enough money.
+            {
+                _packetsHelper.SendBuyItemIssue(Client, 1);
+                return null;
+            }
+
+            var freeSlot = FindFreeSlotInInventory();
+            if (freeSlot.Slot == -1) // No free slot.
+            {
+                _packetsHelper.SendBuyItemIssue(Client, 2);
+                return null;
+            }
+
+            ChangeGold((uint)(Gold - dbItem.Buy * count));
+            var item = new Item(_databasePreloader, dbItem.Type, dbItem.TypeId);
+            item.Count = count;
+
+            return AddItemToInventory(item);
         }
 
         #endregion

@@ -180,13 +180,13 @@ namespace Imgeneus.Database.Entities
 
         #region Mobs to kill
 
-        public ushort MobId_1;
+        public ushort MobId_1 { get; set; }
 
-        public byte MobCount_1;
+        public byte MobCount_1 { get; set; }
 
-        public ushort MobId_2;
+        public ushort MobId_2 { get; set; }
 
-        public byte MobCount_2;
+        public byte MobCount_2 { get; set; }
 
         #endregion
 

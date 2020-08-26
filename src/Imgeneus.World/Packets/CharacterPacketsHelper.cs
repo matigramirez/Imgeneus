@@ -373,5 +373,12 @@ namespace Imgeneus.World.Packets
 
             client.SendPacket(packet);
         }
+
+        internal void SendQuests(WorldClient client, Character character)
+        {
+            using var packet = new Packet(PacketType.QUEST_LIST);
+            packet.Write(new CharacterQuests(character).Serialize());
+            client.SendPacket(packet);
+        }
     }
 }

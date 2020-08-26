@@ -881,6 +881,7 @@ namespace Imgeneus.World.Game.Player
 
             character.ActiveBuffs.AddRange(dbCharacter.ActiveBuffs.Select(b => ActiveBuff.FromDbCharacterActiveBuff(b)));
             character.InventoryItems.AddRange(dbCharacter.Items.Select(i => new Item(databasePreloader, i)));
+            character.Quests.AddRange(dbCharacter.Quests.Select(q => new Quest(databasePreloader, q)));
             character.QuickItems = dbCharacter.QuickItems;
 
             character.Init();

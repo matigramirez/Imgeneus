@@ -93,6 +93,9 @@ namespace Imgeneus.Database.Context
 
             // Items
             modelBuilder.Entity<DbCharacterItems>().HasOne(pt => pt.Character).WithMany(p => p.Items).HasForeignKey(pt => pt.CharacterId);
+
+            // Quests
+            modelBuilder.Entity<DbCharacterQuest>().HasOne(pt => pt.Character).WithMany(p => p.Quests).HasForeignKey(pt => pt.CharacterId);
             #endregion
         }
 

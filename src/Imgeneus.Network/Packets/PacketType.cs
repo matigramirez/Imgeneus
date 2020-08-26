@@ -197,5 +197,8 @@
         // NPC Shop
         NPC_BUY_ITEM = 0x0702, // 1794
         NPC_SELL_ITEM = 0x0703, // 1795
+
+        // Quests
+        QUEST_LIST = 0x0901, // 2305
     }
 }

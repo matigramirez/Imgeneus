@@ -288,6 +288,7 @@ namespace Imgeneus.World.Game.Player
             SendCurrentHitpoints();
             SendInventoryItems();
             SendLearnedSkills();
+            SendQuests();
             SendActiveBuffs();
             SendMoveAndAttackSpeed();
             SendBlessAmount();
@@ -427,6 +428,8 @@ namespace Imgeneus.World.Game.Player
         private void SendInventoryItems() => _packetsHelper.SendInventoryItems(Client, InventoryItems);
 
         private void SendLearnedSkills() => _packetsHelper.SendLearnedSkills(Client, this);
+
+        private void SendQuests() => _packetsHelper.SendQuests(Client, this);
 
         private void SendActiveBuffs() => _packetsHelper.SendActiveBuffs(Client, ActiveBuffs);
 

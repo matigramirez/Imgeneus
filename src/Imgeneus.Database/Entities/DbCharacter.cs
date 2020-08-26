@@ -245,6 +245,11 @@ namespace Imgeneus.Database.Entities
         /// </summary>
         public ICollection<DbQuickSkillBarItem> QuickItems { get; set; }
 
+        /// <summary>
+        /// Started and finished quests.
+        /// </summary>
+        public ICollection<DbCharacterQuest> Quests { get; set; }
+
         public DbCharacter()
         {
             Items = new HashSet<DbCharacterItems>();

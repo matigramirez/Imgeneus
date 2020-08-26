@@ -288,7 +288,8 @@ namespace Imgeneus.World.Game.Player
             SendCurrentHitpoints();
             SendInventoryItems();
             SendLearnedSkills();
-            SendQuests();
+            SendOpenQuests();
+            SendFinishedQuests();
             SendActiveBuffs();
             SendMoveAndAttackSpeed();
             SendBlessAmount();
@@ -429,7 +430,9 @@ namespace Imgeneus.World.Game.Player
 
         private void SendLearnedSkills() => _packetsHelper.SendLearnedSkills(Client, this);
 
-        private void SendQuests() => _packetsHelper.SendQuests(Client, this);
+        private void SendOpenQuests() => _packetsHelper.SendQuests(Client, Quests.Where(q => !q.IsFinished));
+
+        private void SendFinishedQuests() => _packetsHelper.SendFinishedQuests(Client, Quests.Where(q => q.IsFinished));
 
         private void SendActiveBuffs() => _packetsHelper.SendActiveBuffs(Client, ActiveBuffs);
 

@@ -200,5 +200,7 @@
 
         // Quests
         QUEST_LIST = 0x0901, // 2305
+        QUEST_START = 0x0902, // 2306
+        QUEST_FINISHED_LIST = 0x0906, // 2310
     }
 }

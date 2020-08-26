@@ -374,10 +374,17 @@ namespace Imgeneus.World.Packets
             client.SendPacket(packet);
         }
 
-        internal void SendQuests(WorldClient client, Character character)
+        internal void SendQuests(WorldClient client, IEnumerable<Quest> quests)
         {
             using var packet = new Packet(PacketType.QUEST_LIST);
-            packet.Write(new CharacterQuests(character).Serialize());
+            packet.Write(new CharacterQuests(quests).Serialize());
+            client.SendPacket(packet);
+        }
+
+        internal void SendFinishedQuests(WorldClient client, IEnumerable<Quest> quests)
+        {
+            using var packet = new Packet(PacketType.QUEST_FINISHED_LIST);
+            packet.Write(new CharacterFinishedQuests(quests).Serialize());
             client.SendPacket(packet);
         }
     }

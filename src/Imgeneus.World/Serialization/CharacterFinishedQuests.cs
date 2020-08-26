@@ -5,20 +5,20 @@ using System.Collections.Generic;
 
 namespace Imgeneus.World.Serialization
 {
-    public class CharacterQuests : BaseSerializable
+    public class CharacterFinishedQuests : BaseSerializable
     {
         [FieldOrder(0)]
         public byte Count;
 
         [FieldOrder(1)]
         [FieldCount(nameof(Count))]
-        public List<CharacterQuest> Quests { get; } = new List<CharacterQuest>();
+        public List<CharacterFinishedQuest> Quests { get; } = new List<CharacterFinishedQuest>();
 
-        public CharacterQuests(IEnumerable<Quest> quests)
+        public CharacterFinishedQuests(IEnumerable<Quest> quests)
         {
-            foreach (var q in quests)
+            foreach (var quest in quests)
             {
-                Quests.Add(new CharacterQuest(q));
+                Quests.Add(new CharacterFinishedQuest(quest));
             }
         }
     }

@@ -13,6 +13,8 @@ namespace Imgeneus.World.Game.Player
             RemainingTime = dbCharacterQuest.Delay;
             CountMob1 = dbCharacterQuest.Count1;
             CountMob2 = dbCharacterQuest.Count2;
+            IsFinished = dbCharacterQuest.Finish;
+            IsSuccessful = dbCharacterQuest.Success;
         }
 
         public Quest(IDatabasePreloader databasePreloader, ushort questId)
@@ -45,5 +47,15 @@ namespace Imgeneus.World.Game.Player
         /// TODO: unknown.
         /// </summary>
         public byte Count3 { get; set; }
+
+        /// <summary>
+        /// bool indicator, shows if the quest is completed or not.
+        /// </summary>
+        public bool IsFinished { get; set; }
+
+        /// <summary>
+        /// bool indicator, shows if the quest was completed successfully.
+        /// </summary>
+        public bool IsSuccessful { get; set; }
     }
 }

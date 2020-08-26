@@ -62,6 +62,11 @@ namespace Imgeneus.Database.Context
         /// </summary>
         public DbSet<DbNpc> Npcs { get; set; }
 
+        /// <summary>
+        /// Available quests. Taken from NPCQuest.Sdata.
+        /// </summary>
+        public DbSet<DbQuest> Quests { get; set; }
+
         public DatabaseContext(DbContextOptions options) : base(options)
         {
         }

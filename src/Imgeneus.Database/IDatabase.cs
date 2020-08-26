@@ -64,6 +64,11 @@ namespace Imgeneus.Database
         public DbSet<DbNpc> Npcs { get; set; }
 
         /// <summary>
+        /// Available quests. Taken from NPCQuest.Sdata.
+        /// </summary>
+        public DbSet<DbQuest> Quests { get; set; }
+
+        /// <summary>
         /// Saves changes to database.
         /// </summary>
         public int SaveChanges();

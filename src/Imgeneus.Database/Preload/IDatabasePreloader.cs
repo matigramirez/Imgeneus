@@ -30,6 +30,11 @@ namespace Imgeneus.Database.Preload
         Dictionary<(byte Type, ushort TypeId), DbNpc> NPCs { get; }
 
         /// <summary>
+        /// Preloaded quests.
+        /// </summary>
+        Dictionary<ushort, DbQuest> Quests { get; }
+
+        /// <summary>
         /// Preloads all needed info.
         /// </summary>
         void Preload();

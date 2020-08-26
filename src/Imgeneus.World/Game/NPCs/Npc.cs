@@ -19,19 +19,58 @@ namespace Imgeneus.World.Game.NPCs
             PosZ = z;
 
             // Set products.
-            var items = dbNpc.Products.Split(" | ");
-            foreach (var item in items)
+            var dbProductsString = dbNpc.Products;
+            if (!string.IsNullOrWhiteSpace(dbProductsString))
             {
-                try
+                var items = dbProductsString.Split(" | ");
+                foreach (var item in items)
                 {
-                    var itemTypeAndId = item.Split(".");
-                    byte itemType = byte.Parse(itemTypeAndId[0]);
-                    byte itemTypeId = byte.Parse(itemTypeAndId[1]);
-                    _products.Add(new NpcProduct(itemType, itemTypeId));
+                    try
+                    {
+                        var itemTypeAndId = item.Split(".");
+                        byte itemType = byte.Parse(itemTypeAndId[0]);
+                        byte itemTypeId = byte.Parse(itemTypeAndId[1]);
+                        _products.Add(new NpcProduct(itemType, itemTypeId));
+                    }
+                    catch
+                    {
+                        _logger.LogError($"Couldn't parse npc item definition, plase check this npc: {_dbNpc.Id}.");
+                    }
                 }
-                catch
+            }
+
+            // Set quests.
+            var dbStartQuestsString = dbNpc.QuestStart;
+            if (!string.IsNullOrWhiteSpace(dbStartQuestsString))
+            {
+                var startQuests = dbStartQuestsString.Split(" | ");
+                foreach (var quest in startQuests)
                 {
-                    _logger.LogError($"Couldn't parse npc item definition, plase check this npc: {_dbNpc.Id}.");
+                    try
+                    {
+                        _startQuestIds.Add(ushort.Parse(quest));
+                    }
+                    catch
+                    {
+                        _logger.LogError($"Couldn't parse npc start quest {quest}, plase check this npc: {_dbNpc.Id}.");
+                    }
+                }
+            }
+
+            var dbEndQuestsString = dbNpc.QuestEnd;
+            if (!string.IsNullOrWhiteSpace(dbEndQuestsString))
+            {
+                var endQuests = dbNpc.QuestEnd.Split(" | ");
+                foreach (var quest in endQuests)
+                {
+                    try
+                    {
+                        _endQuestIds.Add(ushort.Parse(quest));
+                    }
+                    catch
+                    {
+                        _logger.LogError($"Couldn't parse npc end quest {quest}, plase check this npc: {_dbNpc.Id}.");
+                    }
                 }
             }
         }
@@ -59,6 +98,8 @@ namespace Imgeneus.World.Game.NPCs
         /// Type id of NPC.
         /// </summary>
         public ushort TypeId { get => _dbNpc.TypeId; }
+
+        #region Products
 
         private readonly IList<NpcProduct> _products = new List<NpcProduct>();
         private IList<NpcProduct> _readonlyProducts;
@@ -91,5 +132,49 @@ namespace Imgeneus.World.Game.NPCs
 
             return true;
         }
+
+        #endregion
+
+        #region Start quests
+
+        private readonly IList<ushort> _startQuestIds = new List<ushort>();
+        private IList<ushort> _readonlyStartQuestIds;
+
+        /// <summary>
+        /// Collection of quests, that player can start at this npc.
+        /// </summary>
+        public IList<ushort> StartQuestIds
+        {
+            get
+            {
+                if (_readonlyStartQuestIds is null)
+                    _readonlyStartQuestIds = new ReadOnlyCollection<ushort>(_startQuestIds);
+
+                return _readonlyStartQuestIds;
+            }
+        }
+
+        #endregion
+
+        #region End quests
+
+        private readonly IList<ushort> _endQuestIds = new List<ushort>();
+        private IList<ushort> _readonlyEndQuestIds;
+
+        /// <summary>
+        /// Collection of quests, that player can start at this npc.
+        /// </summary>
+        public IList<ushort> EndQuestIds
+        {
+            get
+            {
+                if (_endQuestIds is null)
+                    _readonlyEndQuestIds = new ReadOnlyCollection<ushort>(_endQuestIds);
+
+                return _readonlyEndQuestIds;
+            }
+        }
+
+        #endregion
     }
 }

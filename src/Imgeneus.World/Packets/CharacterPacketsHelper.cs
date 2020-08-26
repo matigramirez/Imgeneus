@@ -387,5 +387,13 @@ namespace Imgeneus.World.Packets
             packet.Write(new CharacterFinishedQuests(quests).Serialize());
             client.SendPacket(packet);
         }
+
+        internal void SendQuestStarted(WorldClient client, ushort questId, int npcId)
+        {
+            using var packet = new Packet(PacketType.QUEST_START);
+            packet.Write(npcId);
+            packet.Write(questId);
+            client.SendPacket(packet);
+        }
     }
 }

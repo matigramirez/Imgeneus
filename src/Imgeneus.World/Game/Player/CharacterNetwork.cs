@@ -219,6 +219,20 @@ namespace Imgeneus.World.Game.Player
                     }
                     break;
 
+                case QuestStartPacket questStartPacket:
+                    var npcQuestGiver = Map.GetNPC(questStartPacket.NpcId);
+                    if (npcQuestGiver is null || !npcQuestGiver.StartQuestIds.Contains(questStartPacket.QuestId))
+                    {
+                        _logger.LogWarning($"Trying to start unknown quest {questStartPacket.QuestId} at npc {questStartPacket.NpcId}");
+                        return;
+                    }
+
+                    var quest = new Quest(_databasePreloader, questStartPacket.QuestId);
+                    // TODO: calculate quest delay; save quest to database.
+                    Quests.Add(quest);
+                    SendQuestStarted(quest, npcQuestGiver.Id);
+                    break;
+
                 case RebirthPacket rebirthPacket:
                     // TODO: rebirth to nearest town, get coordinates from map.
                     Rebirth(1, 1, 1);
@@ -433,6 +447,8 @@ namespace Imgeneus.World.Game.Player
         private void SendOpenQuests() => _packetsHelper.SendQuests(Client, Quests.Where(q => !q.IsFinished));
 
         private void SendFinishedQuests() => _packetsHelper.SendFinishedQuests(Client, Quests.Where(q => q.IsFinished));
+
+        private void SendQuestStarted(Quest quest, int npcId) => _packetsHelper.SendQuestStarted(Client, quest.Id, npcId);
 
         private void SendActiveBuffs() => _packetsHelper.SendActiveBuffs(Client, ActiveBuffs);
 

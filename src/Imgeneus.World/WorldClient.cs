@@ -165,7 +165,8 @@ namespace Imgeneus.World
             { PacketType.GM_CREATE_NPC, (s) => new GMCreateNpcPacket(s) },
             { PacketType.GM_REMOVE_NPC, (s) => new GMRemoveNpcPacket(s) },
             { PacketType.NPC_BUY_ITEM, (s) => new NpcBuyItemPacket(s) },
-            { PacketType.NPC_SELL_ITEM, (s) => new NpcSellItemPacket(s) }
+            { PacketType.NPC_SELL_ITEM, (s) => new NpcSellItemPacket(s) },
+            { PacketType.QUEST_START, (s) => new QuestStartPacket(s) }
         };
 
         /// <inheritdoc />

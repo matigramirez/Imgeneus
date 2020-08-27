@@ -205,5 +205,44 @@ namespace Imgeneus.DatabaseBackgroundService.Handlers
             dbCharacter.StaminaPoints = (ushort)sp;
             await database.SaveChangesAsync();
         }
+
+        [ActionHandler(ActionType.QUEST_START)]
+        internal static async Task StartQuest(object[] args)
+        {
+            int charId = (int)args[0];
+            ushort questId = (ushort)args[1];
+            ushort remainingTime = (ushort)args[2];
+
+            using var database = DependencyContainer.Instance.Resolve<IDatabase>();
+            var dbCharacterQuest = new DbCharacterQuest();
+            dbCharacterQuest.CharacterId = charId;
+            dbCharacterQuest.QuestId = questId;
+            dbCharacterQuest.Delay = remainingTime;
+            database.CharacterQuests.Add(dbCharacterQuest);
+            await database.SaveChangesAsync();
+        }
+
+        [ActionHandler(ActionType.QUEST_UPDATE)]
+        internal static async Task UpdateQuest(object[] args)
+        {
+            int charId = (int)args[0];
+            ushort questId = (ushort)args[1];
+            ushort remainingTime = (ushort)args[2];
+            byte count1 = (byte)args[3];
+            byte count2 = (byte)args[4];
+            byte count3 = (byte)args[5];
+            bool isFinished = (bool)args[6];
+            bool isSuccessful = (bool)args[7];
+
+            using var database = DependencyContainer.Instance.Resolve<IDatabase>();
+            var dbCharacterQuest = database.CharacterQuests.First(cq => cq.CharacterId == charId && cq.QuestId == questId);
+            dbCharacterQuest.Delay = remainingTime;
+            dbCharacterQuest.Count1 = count1;
+            dbCharacterQuest.Count2 = count2;
+            dbCharacterQuest.Count3 = count3;
+            dbCharacterQuest.Finish = isFinished;
+            dbCharacterQuest.Success = isSuccessful;
+            await database.SaveChangesAsync();
+        }
     }
 }

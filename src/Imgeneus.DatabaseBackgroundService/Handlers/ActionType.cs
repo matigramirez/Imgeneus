@@ -25,6 +25,10 @@
         REMOVE_BUFF_ALL,
         UPDATE_BUFF_RESET_TIME,
 
+        // Quests
+        QUEST_START,
+        QUEST_UPDATE,
+
         // Logs
         LOG_SAVE_CHAT_MESSAGE
     }

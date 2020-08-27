@@ -78,7 +78,7 @@ namespace Imgeneus.Database.Entities
         public ushort PrevQuestId_3 { get; set; }
 
         /// <summary>
-        /// How much time does a player get to complete the quest.
+        /// How much time (in minutes) does a player get to complete the quest.
         /// </summary>
         public ushort QuestTimer { get; set; }
 

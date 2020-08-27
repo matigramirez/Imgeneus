@@ -72,6 +72,12 @@ namespace Imgeneus.World.Game.Player
                 _taskQueue.Enqueue(ActionType.SAVE_BUFF, Id, buff.SkillId, buff.SkillLevel, buff.ResetTime);
             }
 
+            // Save current quests state to database.
+            foreach (var quest in Quests.Where(q => q.SaveUpdateToDatabase))
+            {
+                _taskQueue.Enqueue(ActionType.QUEST_UPDATE, Id, quest.Id, quest.RemainingTime, quest.CountMob1, quest.CountMob2, quest.Count3, quest.IsFinished, quest.IsSuccessful);
+            }
+
             // Save current HP, MP, SP to database.
             _taskQueue.Enqueue(ActionType.SAVE_CHARACTER_HP_MP_SP, Id, CurrentHP, CurrentMP, CurrentSP);
 

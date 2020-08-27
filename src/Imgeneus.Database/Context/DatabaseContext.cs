@@ -28,6 +28,11 @@ namespace Imgeneus.Database.Context
         public DbSet<DbCharacterSkill> CharacterSkills { get; set; }
 
         /// <summary>
+        /// Gets or sets chracter quests.
+        /// </summary>
+        public DbSet<DbCharacterQuest> CharacterQuests { get; set; }
+
+        /// <summary>
         /// Collection of skills. Taken from original db.
         /// </summary>
         public DbSet<DbSkill> Skills { get; set; }

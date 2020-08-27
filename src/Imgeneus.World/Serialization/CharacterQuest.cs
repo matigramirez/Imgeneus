@@ -24,10 +24,10 @@ namespace Imgeneus.World.Serialization
         public CharacterQuest(Quest quest)
         {
             QuestId = quest.Id;
-            RemainingTime = 5000;//quest.RemainingTime;
+            RemainingTime = quest.RemainingTime;
             Count1 = quest.CountMob1;
             Count2 = quest.CountMob2;
-            Count3 = 0;
+            Count3 = quest.Count3;
         }
     }
 }

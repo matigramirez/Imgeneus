@@ -2,6 +2,7 @@
 using Imgeneus.Database;
 using Imgeneus.Database.Constants;
 using Imgeneus.Database.Entities;
+using Imgeneus.DatabaseBackgroundService.Handlers;
 using Imgeneus.Network.Data;
 using Imgeneus.Network.Packets;
 using Imgeneus.Network.Packets.Game;
@@ -228,9 +229,7 @@ namespace Imgeneus.World.Game.Player
                     }
 
                     var quest = new Quest(_databasePreloader, questStartPacket.QuestId);
-                    // TODO: calculate quest delay; save quest to database.
-                    Quests.Add(quest);
-                    SendQuestStarted(quest, npcQuestGiver.Id);
+                    StartQuest(quest, npcQuestGiver.Id);
                     break;
 
                 case RebirthPacket rebirthPacket:

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
@@ -98,6 +99,9 @@ namespace Imgeneus.World.Game
                     IsDead = true;
                 }
 
+                if (_currentHP == MaxHP)
+                    DamageMakers.Clear();
+
                 HP_Changed?.Invoke(this, args);
             }
         }
@@ -154,7 +158,11 @@ namespace Imgeneus.World.Game
             if (hp == 0)
                 return;
 
-            MyKiller = damageMaker;
+            if (DamageMakers.ContainsKey(damageMaker))
+                DamageMakers[damageMaker] += hp;
+            else
+                DamageMakers.TryAdd(damageMaker, hp);
+
             CurrentHP -= hp;
         }
 
@@ -774,9 +782,10 @@ namespace Imgeneus.World.Game
         /// <inheritdoc />
         public event Action<IKillable, IKiller> OnDead;
 
-        /// <inheritdoc />
-        public IKiller MyKiller { get; protected set; }
-
+        /// <summary>
+        /// Collection of entities, that made damage to this killable.
+        /// </summary>
+        public ConcurrentDictionary<IKiller, int> DamageMakers { get; private set; } = new ConcurrentDictionary<IKiller, int>();
 
         protected bool _isDead;
 
@@ -789,7 +798,20 @@ namespace Imgeneus.World.Game
                 _isDead = value;
 
                 if (_isDead)
-                    OnDead?.Invoke(this, MyKiller);
+                {
+                    IKiller killer = DamageMakers.First().Key;
+                    int damage = DamageMakers.First().Value;
+                    foreach (var dmg in DamageMakers)
+                    {
+                        if (dmg.Value > damage)
+                        {
+                            damage = dmg.Value;
+                            killer = dmg.Key;
+                        }
+                    }
+                    OnDead?.Invoke(this, killer);
+                    DamageMakers.Clear();
+                }
             }
         }
 

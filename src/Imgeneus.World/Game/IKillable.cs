@@ -51,11 +51,6 @@ namespace Imgeneus.World.Game
         public Element AttackElement { get; }
 
         /// <summary>
-        /// Character or mob or npc, that killed this entity.
-        /// </summary>
-        public IKiller MyKiller { get; }
-
-        /// <summary>
         /// Indicator, that shows if entity is dead or not.
         /// </summary>
         public bool IsDead { get; }

@@ -59,6 +59,10 @@ namespace Imgeneus.World.Tests
                     { (17, 2), WaterArmor },
                     { (2, 92), FireSword }
                 });
+
+            databasePreloader
+                .SetupGet((preloader) => preloader.MobItems)
+                .Returns(new Dictionary<(ushort MobId, byte ItemOrder), DbMobItems>());
         }
 
         #region Test mobs

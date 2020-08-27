@@ -168,7 +168,7 @@ namespace Imgeneus.World.Game.NPCs
         {
             get
             {
-                if (_endQuestIds is null)
+                if (_readonlyEndQuestIds is null)
                     _readonlyEndQuestIds = new ReadOnlyCollection<ushort>(_endQuestIds);
 
                 return _readonlyEndQuestIds;

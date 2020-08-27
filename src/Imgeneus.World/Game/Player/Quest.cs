@@ -1,6 +1,9 @@
 ﻿using Imgeneus.Database.Entities;
 using Imgeneus.Database.Preload;
 using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using System.Timers;
 
 namespace Imgeneus.World.Game.Player
@@ -75,6 +78,91 @@ namespace Imgeneus.World.Game.Player
         /// bool indicator, shows if the quest was completed successfully.
         /// </summary>
         public bool IsSuccessful { get; private set; }
+
+        /// <summary>
+        /// Checks if all quest requirements fullfilled.
+        /// </summary>
+        public bool RequirementsFulfilled(IEnumerable<Item> inventoryItems)
+        {
+            return CountMob1 >= _dbQuest.MobCount_1 && CountMob2 >= _dbQuest.MobCount_2
+                  && inventoryItems.Count(itm => itm.Type == FarmItemType_1 && itm.TypeId == FarmItemTypeId_1) >= FarmItemCount_1
+                  && inventoryItems.Count(itm => itm.Type == FarmItemType_2 && itm.TypeId == FarmItemTypeId_2) >= FarmItemCount_2
+                  && inventoryItems.Count(itm => itm.Type == FarmItemType_3 && itm.TypeId == FarmItemTypeId_3) >= FarmItemCount_3;
+        }
+
+        /// <summary>
+        /// Finishes quest successfull.
+        /// </summary>
+        public void FinishSuccessful()
+        {
+            _endTimer.Stop();
+            _saveToDb = true;
+            IsFinished = true;
+            IsSuccessful = true;
+        }
+
+        #region Requirements
+
+        /// <summary>
+        /// Item type, that player must have in order to complite quest.
+        /// </summary>
+        public byte FarmItemType_1 { get => _dbQuest.FarmItemType_1; }
+
+        /// <summary>
+        /// Item type id, that player must have in order to complite quest.
+        /// </summary>
+        public byte FarmItemTypeId_1 { get => _dbQuest.FarmItemTypeId_1; }
+
+        /// <summary>
+        /// Number of items, that player must have in order to complite quest.
+        /// </summary>
+        public byte FarmItemCount_1 { get => _dbQuest.FarmItemCount_1; }
+
+        /// <summary>
+        /// Item type, that player must have in order to complite quest.
+        /// </summary>
+        public byte FarmItemType_2 { get => _dbQuest.FarmItemType_2; }
+
+        /// <summary>
+        /// Item type id, that player must have in order to complite quest.
+        /// </summary>
+        public byte FarmItemTypeId_2 { get => _dbQuest.FarmItemTypeId_2; }
+
+        /// <summary>
+        /// Number of items, that player must have in order to complite quest.
+        /// </summary>
+        public byte FarmItemCount_2 { get => _dbQuest.FarmItemCount_2; }
+
+        /// <summary>
+        /// Item type, that player must have in order to complite quest.
+        /// </summary>
+        public byte FarmItemType_3 { get => _dbQuest.FarmItemType_3; }
+
+        /// <summary>
+        /// Item type id, that player must have in order to complite quest.
+        /// </summary>
+        public byte FarmItemTypeId_3 { get => _dbQuest.FarmItemTypeId_3; }
+
+        /// <summary>
+        /// Number of items, that player must have in order to complite quest.
+        /// </summary>
+        public byte FarmItemCount_3 { get => _dbQuest.FarmItemCount_3; }
+
+        #endregion
+
+        #region Revards
+
+        /// <summary>
+        /// How much experience player gets from this quest.
+        /// </summary>
+        public uint XP { get => _dbQuest.XP; }
+
+        /// <summary>
+        /// How much money player gets from this quest.
+        /// </summary>
+        public uint Gold { get => _dbQuest.Gold; }
+
+        #endregion
 
         #region Quest timer
 

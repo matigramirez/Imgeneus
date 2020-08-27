@@ -395,5 +395,21 @@ namespace Imgeneus.World.Packets
             packet.Write(questId);
             client.SendPacket(packet);
         }
+
+        internal void SendQuestFinished(WorldClient client, Quest quest, int npcId)
+        {
+            using var packet = new Packet(PacketType.QUEST_END);
+            packet.Write(npcId);
+            packet.Write(quest.Id);
+            packet.Write(quest.IsSuccessful);
+            packet.WriteByte(0); // ResultType
+            packet.Write(quest.IsSuccessful ? quest.XP : 0);
+            packet.Write(quest.IsSuccessful ? quest.Gold : 0);
+            packet.WriteByte(0); // bag
+            packet.WriteByte(0); // slot
+            packet.WriteByte(0); // item type
+            packet.WriteByte(0); // item id
+            client.SendPacket(packet);
+        }
     }
 }

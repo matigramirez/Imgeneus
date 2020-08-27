@@ -50,6 +50,7 @@ namespace Imgeneus.World.Game.Player
         {
             InitEquipment();
             InitPassiveSkills();
+            InitQuests();
         }
 
         public override void Dispose()
@@ -76,6 +77,7 @@ namespace Imgeneus.World.Game.Player
             foreach (var quest in Quests.Where(q => q.SaveUpdateToDatabase))
             {
                 _taskQueue.Enqueue(ActionType.QUEST_UPDATE, Id, quest.Id, quest.RemainingTime, quest.CountMob1, quest.CountMob2, quest.Count3, quest.IsFinished, quest.IsSuccessful);
+                quest.QuestTimeElapsed -= Quest_QuestTimeElapsed;
             }
 
             // Save current HP, MP, SP to database.

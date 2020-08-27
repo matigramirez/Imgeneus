@@ -232,6 +232,16 @@ namespace Imgeneus.World.Game.Player
                     StartQuest(quest, npcQuestGiver.Id);
                     break;
 
+                case QuestEndPacket questEndPacket:
+                    var npcQuestReceiver = Map.GetNPC(questEndPacket.NpcId);
+                    if (npcQuestReceiver is null || !npcQuestReceiver.EndQuestIds.Contains(questEndPacket.QuestId))
+                    {
+                        _logger.LogWarning($"Trying to finish unknown quest {questEndPacket.QuestId} at npc {questEndPacket.NpcId}");
+                        return;
+                    }
+                    FinishQuest(questEndPacket.QuestId, npcQuestReceiver.Id);
+                    break;
+
                 case RebirthPacket rebirthPacket:
                     // TODO: rebirth to nearest town, get coordinates from map.
                     Rebirth(1, 1, 1);
@@ -447,7 +457,9 @@ namespace Imgeneus.World.Game.Player
 
         private void SendFinishedQuests() => _packetsHelper.SendFinishedQuests(Client, Quests.Where(q => q.IsFinished));
 
-        private void SendQuestStarted(Quest quest, int npcId) => _packetsHelper.SendQuestStarted(Client, quest.Id, npcId);
+        private void SendQuestStarted(Quest quest, int npcId = 0) => _packetsHelper.SendQuestStarted(Client, quest.Id, npcId);
+
+        private void SendQuestFinished(Quest quest, int npcId = 0) => _packetsHelper.SendQuestFinished(Client, quest, npcId);
 
         private void SendActiveBuffs() => _packetsHelper.SendActiveBuffs(Client, ActiveBuffs);
 

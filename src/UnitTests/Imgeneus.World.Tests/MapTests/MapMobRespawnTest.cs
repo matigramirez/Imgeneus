@@ -1,5 +1,6 @@
 ﻿using Imgeneus.Database.Entities;
 using Imgeneus.World.Game.Monster;
+using Imgeneus.World.Game.Player;
 using Imgeneus.World.Game.Zone;
 using Xunit;
 
@@ -13,11 +14,12 @@ namespace Imgeneus.World.Tests
         {
             var map = new Map(1, mapLoggerMock.Object);
             var mob = new Mob(mobLoggerMock.Object, databasePreloader.Object, 1, true, new MoveArea(0, 0, 0, 0, 0, 0), map);
+            var character = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object);
 
             map.AddMob(mob);
             Assert.NotNull(map.GetMob(1));
 
-            mob.DecreaseHP(mob.CurrentHP, null);
+            mob.DecreaseHP(mob.CurrentHP, character);
             Assert.Null(map.GetMob(1));
 
             map.RebirthMob(mob);

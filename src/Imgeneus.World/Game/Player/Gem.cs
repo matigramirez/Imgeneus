@@ -35,6 +35,14 @@ namespace Imgeneus.World.Game.Player
             Element = item.Element;
         }
 
+        /// <summary>
+        /// ONLY USED FOR MONEY GENERATION! DON'T USE IT UNLESS YOU GENERATE MONEY DROP.
+        /// </summary>
+        public Gem(int moneyAmount)
+        {
+            TypeId = moneyAmount;
+        }
+
         public ushort Str { get; }
 
         public ushort Dex { get; }

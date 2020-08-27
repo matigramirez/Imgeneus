@@ -822,10 +822,12 @@ namespace Imgeneus.World.Game
                         var dropOwner = killer as Character;
                         if (dropOwner.Party is null)
                         {
+                            byte i = 0;
                             foreach (var itm in dropItems)
                             {
                                 itm.Owner = dropOwner;
-                                Map.AddItem(itm, PosX, PosY, PosZ);
+                                Map.AddItem(itm, PosX + i, PosY, PosZ);
+                                i++;
                             }
                         }
                         else

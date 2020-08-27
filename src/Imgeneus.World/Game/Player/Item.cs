@@ -1,7 +1,6 @@
 ﻿using Imgeneus.Database.Constants;
 using Imgeneus.Database.Entities;
 using Imgeneus.Database.Preload;
-using Imgeneus.Network.Packets.Game;
 using System.Timers;
 
 namespace Imgeneus.World.Game.Player
@@ -9,6 +8,11 @@ namespace Imgeneus.World.Game.Player
     public class Item
     {
         private readonly IDatabasePreloader _databasePreloader;
+
+        /// <summary>
+        /// Unique type, used only for drop money on map.
+        /// </summary>
+        public const byte MONEY_ITEM_TYPE = 26;
 
         public int Id;
 
@@ -54,7 +58,7 @@ namespace Imgeneus.World.Game.Player
             TypeId = typeId;
             Count = count;
 
-            if (Type != 0 && TypeId != 0)
+            if (Type != 0 && TypeId != 0 && Type != MONEY_ITEM_TYPE)
             {
                 var item = _databasePreloader.Items[(Type, TypeId)];
                 ConstStr = item.ConstStr;

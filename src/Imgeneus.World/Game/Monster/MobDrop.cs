@@ -9,6 +9,8 @@ namespace Imgeneus.World.Game.Monster
 {
     public partial class Mob
     {
+        private Random _dropRandom = new Random();
+
         protected override IList<Item> GenerateDrop(IKiller killer)
         {
             if (killer is Npc)
@@ -33,6 +35,14 @@ namespace Imgeneus.World.Game.Monster
                 }
             }
 
+            if (_dbMob.MoneyMax > _dbMob.MoneyMin && _dropRandom.Next(1, 101) <= 40)
+            {
+                var money = _dropRandom.Next(_dbMob.MoneyMin, _dbMob.MoneyMax);
+                var item = new Item(_databasePreloader, Item.MONEY_ITEM_TYPE, 0);
+                item.Gem1 = new Gem(_databasePreloader, money);
+                items.Add(item);
+            }
+
             return items;
         }
 
@@ -42,8 +52,7 @@ namespace Imgeneus.World.Game.Monster
         /// <returns>item or null if drop rate was too small</returns>
         private Item GenerateDropItem(DbMobItems dropItem)
         {
-            var random = new Random();
-            if (random.Next(1, 101) <= dropItem.DropRate)
+            if (_dropRandom.Next(1, 101) <= dropItem.DropRate)
             {
                 if (!_databasePreloader.ItemsByGrade.ContainsKey(dropItem.Grade))
                 {
@@ -51,7 +60,7 @@ namespace Imgeneus.World.Game.Monster
                     return null;
                 }
                 var availableItems = _databasePreloader.ItemsByGrade[dropItem.Grade];
-                var randomItem = availableItems[random.Next(0, availableItems.Count - 1)];
+                var randomItem = availableItems[_dropRandom.Next(0, availableItems.Count - 1)];
                 return new Item(_databasePreloader, randomItem.Type, randomItem.TypeId);
             }
             else

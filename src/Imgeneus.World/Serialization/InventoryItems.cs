@@ -7,21 +7,16 @@ namespace Imgeneus.Network.Serialization
     public class InventoryItems : BaseSerializable
     {
         [FieldOrder(0)]
-        public byte ItemsCount { get; }
+        public byte Count { get; }
 
         [FieldOrder(1)]
-        public byte[] Items { get; }
+        [FieldCount(nameof(Count))]
+        public List<InventoryItem> Items { get; } = new List<InventoryItem>();
 
         public InventoryItems(IEnumerable<Item> items)
         {
-            var serializedItems = new List<byte>();
             foreach (var charItm in items)
-            {
-                var serialized = new InventoryItem(charItm).Serialize();
-                serializedItems.AddRange(serialized);
-                ItemsCount++;
-            }
-            Items = serializedItems.ToArray();
+                Items.Add(new InventoryItem(charItm));
         }
     }
 }

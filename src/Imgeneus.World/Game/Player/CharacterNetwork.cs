@@ -174,16 +174,24 @@ namespace Imgeneus.World.Game.Player
                         _packetsHelper.SendItemDoesNotBelong(Client);
                         return;
                     }
-                    var inventoryItem = AddItemToInventory(mapItem);
-                    if (inventoryItem is null)
+                    if (mapItem.Type == Item.MONEY_ITEM_TYPE)
                     {
-                        _packetsHelper.SendFullInventory(Client);
-                        return;
+                        mapItem.Bag = 1;
+                        ChangeGold(Gold + (uint)mapItem.Gem1.TypeId);
+                        _packetsHelper.SendAddItem(Client, mapItem);
                     }
                     else
                     {
-                        _packetsHelper.SendAddItem(Client, inventoryItem);
+                        var inventoryItem = AddItemToInventory(mapItem);
+                        if (inventoryItem is null)
+                        {
+                            _packetsHelper.SendFullInventory(Client);
+                            return;
+                        }
+                        else
+                            _packetsHelper.SendAddItem(Client, inventoryItem);
                     }
+
                     Map.RemoveItem(mapItem.Id);
                     break;
 
@@ -305,7 +313,7 @@ namespace Imgeneus.World.Game.Player
             SendDetails();
             SendAdditionalStats();
             SendCurrentHitpoints();
-            SendInventoryItems();
+            SendInventoryItems(); // TODO: game.exe crashes, when number of items >= 80. Investigate why?
             SendLearnedSkills();
             SendOpenQuests();
             SendFinishedQuests();

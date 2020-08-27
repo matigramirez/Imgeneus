@@ -2,7 +2,6 @@
 using Imgeneus.Database;
 using Imgeneus.Database.Constants;
 using Imgeneus.Database.Entities;
-using Imgeneus.DatabaseBackgroundService.Handlers;
 using Imgeneus.Network.Data;
 using Imgeneus.Network.Packets;
 using Imgeneus.Network.Packets.Game;
@@ -17,9 +16,6 @@ using System.Threading.Tasks;
 
 namespace Imgeneus.World.Game.Player
 {
-    /// <summary>
-    /// Handles only TCP communication with client.
-    /// </summary>
     public partial class Character
     {
         private WorldClient _client;
@@ -281,7 +277,7 @@ namespace Imgeneus.World.Game.Player
 
                     if (_databasePreloader.NPCs.TryGetValue((gMCreateNpcPacket.Type, gMCreateNpcPacket.TypeId), out var dbNpc))
                     {
-                        Map.AddNPC(new Npc(DependencyContainer.Instance.Resolve<ILogger<Npc>>(), dbNpc, PosX, PosY, PosZ));
+                        Map.AddNPC(new Npc(DependencyContainer.Instance.Resolve<ILogger<Npc>>(), dbNpc, PosX, PosY, PosZ, Map));
                         _packetsHelper.SendGmCommandSuccess(Client);
                     }
                     else
@@ -329,7 +325,7 @@ namespace Imgeneus.World.Game.Player
                 return;
             }
 
-            var item = AddItemToInventory(new Item(_databasePreloader, gMGetItemPacket.Type, gMGetItemPacket.TypeId) { Count = gMGetItemPacket.Count });
+            var item = AddItemToInventory(new Item(_databasePreloader, gMGetItemPacket.Type, gMGetItemPacket.TypeId, gMGetItemPacket.Count));
             if (item != null)
                 _packetsHelper.SendAddItem(Client, item);
         }

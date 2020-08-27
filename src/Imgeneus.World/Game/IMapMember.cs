@@ -1,4 +1,6 @@
-﻿namespace Imgeneus.World.Game
+﻿using Imgeneus.World.Game.Zone;
+
+namespace Imgeneus.World.Game
 {
     public interface IMapMember
     {
@@ -27,5 +29,10 @@
         /// Angle.
         /// </summary>
         public ushort Angle { get; }
+
+        /// <summary>
+        /// Current map.
+        /// </summary>
+        public Map Map { get; }
     }
 }

@@ -567,15 +567,6 @@ namespace Imgeneus.World.Game.Player
 
         #endregion
 
-        #region Map
-
-        /// <summary>
-        /// Map, where the player is currently.
-        /// </summary>
-        public Map Map { get; set; }
-
-        #endregion
-
         #region Motion
 
         /// <summary>

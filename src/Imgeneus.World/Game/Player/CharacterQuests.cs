@@ -4,9 +4,6 @@ using System.Linq;
 
 namespace Imgeneus.World.Game.Player
 {
-    /// <summary>
-    /// Handles quests.
-    /// </summary>
     public partial class Character
     {
         /// <summary>

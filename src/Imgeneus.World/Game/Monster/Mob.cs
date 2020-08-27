@@ -56,11 +56,6 @@ namespace Imgeneus.World.Game.Monster
         /// </summary>
         public bool ShouldRebirth { get; }
 
-        /// <summary>
-        /// Map, where mob was created.
-        /// </summary>
-        private readonly Map Map;
-
         #region Totel stats
 
         /// <inheritdoc />

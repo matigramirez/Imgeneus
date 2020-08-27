@@ -6,6 +6,7 @@ using System.Linq;
 using Imgeneus.Database.Constants;
 using Imgeneus.Database.Preload;
 using Imgeneus.World.Game.Player;
+using Imgeneus.World.Game.Zone;
 using MvvmHelpers;
 
 namespace Imgeneus.World.Game
@@ -13,7 +14,7 @@ namespace Imgeneus.World.Game
     /// <summary>
     /// Abstract entity, that can be killed. Implements common features for killable object.
     /// </summary>
-    public abstract class BaseKillable : IKillable, IDisposable
+    public abstract class BaseKillable : IKillable, IMapMember, IDisposable
     {
         protected readonly IDatabasePreloader _databasePreloader;
 
@@ -50,6 +51,12 @@ namespace Imgeneus.World.Game
 
         /// <inheritdoc />
         public ushort Level { get; protected set; }
+
+        #region Map
+
+        public Map Map { get; set; }
+
+        #endregion
 
         #region Current hitpoints
 
@@ -809,11 +816,33 @@ namespace Imgeneus.World.Game
                             killer = dmg.Key;
                         }
                     }
+                    var dropItems = GenerateDrop(killer);
+                    if (dropItems.Count > 0 && killer is Character)
+                    {
+                        var dropOwner = killer as Character;
+                        if (dropOwner.Party is null)
+                        {
+                            foreach (var itm in dropItems)
+                            {
+                                itm.Owner = dropOwner;
+                                Map.AddItem(itm, PosX, PosY, PosZ);
+                            }
+                        }
+                        else
+                        {
+                            // TODO: generate drop for party.
+                        }
+                    }
                     OnDead?.Invoke(this, killer);
                     DamageMakers.Clear();
                 }
             }
         }
+
+        /// <summary>
+        /// Generates drop for killer.
+        /// </summary>
+        protected abstract IList<Item> GenerateDrop(IKiller killer);
 
         #endregion
 

@@ -1,4 +1,5 @@
 ﻿using Imgeneus.Database.Entities;
+using Imgeneus.World.Game.Zone;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -10,13 +11,14 @@ namespace Imgeneus.World.Game.NPCs
         private readonly ILogger _logger;
         private readonly DbNpc _dbNpc;
 
-        public Npc(ILogger<Npc> logger, DbNpc dbNpc, float x, float y, float z)
+        public Npc(ILogger<Npc> logger, DbNpc dbNpc, float x, float y, float z, Map map)
         {
             _logger = logger;
             _dbNpc = dbNpc;
             PosX = x;
             PosY = y;
             PosZ = z;
+            Map = map;
 
             // Set products.
             var dbProductsString = dbNpc.Products;
@@ -88,6 +90,8 @@ namespace Imgeneus.World.Game.NPCs
 
         /// <inheritdoc />
         public ushort Angle { get; set; }
+
+        public Map Map { get; private set; }
 
         /// <summary>
         /// Type of NPC.

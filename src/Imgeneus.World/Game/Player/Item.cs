@@ -27,7 +27,7 @@ namespace Imgeneus.World.Game.Player
 
         public byte Count;
 
-        public Item(IDatabasePreloader databasePreloader, DbCharacterItems dbItem) : this(databasePreloader, dbItem.Type, dbItem.TypeId)
+        public Item(IDatabasePreloader databasePreloader, DbCharacterItems dbItem) : this(databasePreloader, dbItem.Type, dbItem.TypeId, dbItem.Count)
         {
             Bag = dbItem.Bag;
             Slot = dbItem.Slot;
@@ -45,14 +45,14 @@ namespace Imgeneus.World.Game.Player
                 Gem5 = new Gem(databasePreloader, dbItem.GemTypeId5);
             if (dbItem.GemTypeId6 != 0)
                 Gem6 = new Gem(databasePreloader, dbItem.GemTypeId6);
-            Count = dbItem.Count;
         }
 
-        public Item(IDatabasePreloader databasePreloader, byte type, byte typeId)
+        public Item(IDatabasePreloader databasePreloader, byte type, byte typeId, byte count = 1)
         {
             _databasePreloader = databasePreloader;
             Type = type;
             TypeId = typeId;
+            Count = count;
 
             if (Type != 0 && TypeId != 0)
             {

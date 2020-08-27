@@ -8,9 +8,6 @@ using System.Linq;
 
 namespace Imgeneus.World.Game.Player
 {
-    /// <summary>
-    /// Handles only changes in inventory.
-    /// </summary>
     public partial class Character
     {
         #region Equipment

@@ -15,6 +15,11 @@ namespace Imgeneus.Database.Preload
         Dictionary<(byte Type, byte TypeId), DbItem> Items { get; }
 
         /// <summary>
+        /// Preloaded items based by grade.
+        /// </summary>
+        Dictionary<ushort, List<DbItem>> ItemsByGrade { get; }
+
+        /// <summary>
         /// Preloaded skills.
         /// </summary>
         Dictionary<(ushort SkillId, byte SkillLevel), DbSkill> Skills { get; }
@@ -23,6 +28,11 @@ namespace Imgeneus.Database.Preload
         /// Preloaded mobs.
         /// </summary>
         Dictionary<ushort, DbMob> Mobs { get; }
+
+        /// <summary>
+        /// Preloaded mob items.
+        /// </summary>
+        Dictionary<(ushort MobId, byte ItemOrder), DbMobItems> MobItems { get; }
 
         /// <summary>
         /// Preloaded NPCs.

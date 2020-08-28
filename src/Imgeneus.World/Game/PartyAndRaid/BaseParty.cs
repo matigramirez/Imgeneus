@@ -187,15 +187,15 @@ namespace Imgeneus.World.Game.PartyAndRaid
 
         public abstract void LeaveParty(Character player);
 
-        protected abstract void SendAddBuff(WorldClient client, int senderId, ushort skillId, byte skillLevel);
+        protected abstract void SendAddBuff(IWorldClient client, int senderId, ushort skillId, byte skillLevel);
 
-        protected abstract void Send_HP_SP_MP(WorldClient client, int id, int value, byte type);
+        protected abstract void Send_HP_SP_MP(IWorldClient client, int id, int value, byte type);
 
-        protected abstract void Send_Max_HP_SP_MP(WorldClient client, int id, int value, byte type);
+        protected abstract void Send_Max_HP_SP_MP(IWorldClient client, int id, int value, byte type);
 
-        protected abstract void SendNewLeader(WorldClient client, Character leader);
+        protected abstract void SendNewLeader(IWorldClient client, Character leader);
 
-        protected abstract void SendNewSubLeader(WorldClient client, Character leader);
+        protected abstract void SendNewSubLeader(IWorldClient client, Character leader);
 
         public abstract void Dismantle();
 

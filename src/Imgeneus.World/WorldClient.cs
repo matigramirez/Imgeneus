@@ -11,7 +11,7 @@ using static Imgeneus.Network.Server.IServerClient;
 
 namespace Imgeneus.World
 {
-    public sealed class WorldClient : ServerClient
+    public sealed class WorldClient : ServerClient, IWorldClient
     {
         private readonly ILogger<WorldClient> logger;
 

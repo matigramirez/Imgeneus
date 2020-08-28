@@ -235,7 +235,7 @@ namespace Imgeneus.World.Game.Duel
         /// <summary>
         /// Send duel approval request.
         /// </summary>
-        private void SendWaitingDuel(WorldClient client, int duelStarterId, int duelOpponentId)
+        private void SendWaitingDuel(IWorldClient client, int duelStarterId, int duelOpponentId)
         {
             using var packet = new Packet(PacketType.DUEL_REQUEST);
             packet.Write(duelStarterId);
@@ -246,7 +246,7 @@ namespace Imgeneus.World.Game.Duel
         /// <summary>
         /// Sends duel response.
         /// </summary>
-        private void SendDuelResponse(WorldClient client, DuelResponse response, int characterId)
+        private void SendDuelResponse(IWorldClient client, DuelResponse response, int characterId)
         {
             using var packet = new Packet(PacketType.DUEL_RESPONSE);
             packet.Write((byte)response);
@@ -257,7 +257,7 @@ namespace Imgeneus.World.Game.Duel
         /// <summary>
         /// Adds item to trade window.
         /// </summary>
-        private void SendAddedItemToTrade(WorldClient client, Item tradeItem, byte quantity, byte slotInTradeWindow)
+        private void SendAddedItemToTrade(IWorldClient client, Item tradeItem, byte quantity, byte slotInTradeWindow)
         {
             using var packet = new Packet(PacketType.DUEL_TRADE_OPPONENT_ADD_ITEM);
             packet.Write(new TradeItem(slotInTradeWindow, quantity, tradeItem).Serialize());
@@ -267,7 +267,7 @@ namespace Imgeneus.World.Game.Duel
         /// <summary>
         /// Adds item to trade window.
         /// </summary>
-        private void SendAddedItemToTrade(WorldClient client, byte bag, byte slot, byte quantity, byte slotInTradeWindow)
+        private void SendAddedItemToTrade(IWorldClient client, byte bag, byte slot, byte quantity, byte slotInTradeWindow)
         {
             using var packet = new Packet(PacketType.DUEL_TRADE_ADD_ITEM);
             packet.Write(bag);
@@ -280,7 +280,7 @@ namespace Imgeneus.World.Game.Duel
         /// <summary>
         /// Removes item from trade.
         /// </summary>
-        private void SendRemovedItemFromTrade(WorldClient client, byte slotInTradeWindow, byte senderType)
+        private void SendRemovedItemFromTrade(IWorldClient client, byte slotInTradeWindow, byte senderType)
         {
             using var packet = new Packet(PacketType.DUEL_TRADE_REMOVE_ITEM);
             packet.Write(senderType);
@@ -292,7 +292,7 @@ namespace Imgeneus.World.Game.Duel
         /// Closes duel trade window.
         /// </summary>
         /// <param name="reason">reason why it should be closed.</param>
-        private void SendCloseDuelTrade(WorldClient client, DuelCloseWindowReason reason)
+        private void SendCloseDuelTrade(IWorldClient client, DuelCloseWindowReason reason)
         {
             using var packet = new Packet(PacketType.DUEL_CLOSE_TRADE);
             packet.Write((byte)reason);
@@ -302,7 +302,7 @@ namespace Imgeneus.World.Game.Duel
         /// <summary>
         /// "Ok" button change in trade window.
         /// </summary>
-        private void SendDuelApprove(WorldClient client, byte senderType, bool isDuelDeclined)
+        private void SendDuelApprove(IWorldClient client, byte senderType, bool isDuelDeclined)
         {
             using var packet = new Packet(PacketType.DUEL_TRADE_OK);
             packet.Write(senderType);
@@ -313,7 +313,7 @@ namespace Imgeneus.World.Game.Duel
         /// <summary>
         /// Sends duel result.
         /// </summary>
-        private void SendDuelFinish(WorldClient client, bool isWin)
+        private void SendDuelFinish(IWorldClient client, bool isWin)
         {
             using var packet = new Packet(PacketType.DUEL_WIN_LOSE);
             packet.WriteByte(isWin ? (byte)1 : (byte)2); // 1 - win, 2 - lose
@@ -324,7 +324,7 @@ namespace Imgeneus.World.Game.Duel
         /// Cancels duel.
         /// </summary>
         /// <param name="cancelReason">player is too far away; player was attacked etc.</param>
-        private void SendDuelCancel(WorldClient client, DuelCancelReason cancelReason, int playerId)
+        private void SendDuelCancel(IWorldClient client, DuelCancelReason cancelReason, int playerId)
         {
             using var packet = new Packet(PacketType.DUEL_CANCEL);
             packet.Write((byte)cancelReason);
@@ -345,7 +345,7 @@ namespace Imgeneus.World.Game.Duel
             SendStartTrade(Sender.DuelOpponent.Client, Sender.Id);
         }
 
-        private void SendStartTrade(WorldClient client, int characterId)
+        private void SendStartTrade(IWorldClient client, int characterId)
         {
             using var packet = new Packet(PacketType.DUEL_TRADE);
             packet.Write(characterId);
@@ -356,7 +356,7 @@ namespace Imgeneus.World.Game.Duel
         /// <summary>
         /// Adds money to trade.
         /// </summary>
-        private void SendAddedMoneyToTrade(WorldClient client, byte senderType, uint tradeMoney)
+        private void SendAddedMoneyToTrade(IWorldClient client, byte senderType, uint tradeMoney)
         {
             using var packet = new Packet(PacketType.DUEL_TRADE_ADD_MONEY);
             packet.Write(senderType);
@@ -367,7 +367,7 @@ namespace Imgeneus.World.Game.Duel
         /// <summary>
         /// Sends duel position, in 5 seconds duel will start.
         /// </summary>
-        private void SendReady(WorldClient client, float x, float z)
+        private void SendReady(IWorldClient client, float x, float z)
         {
             using var packet = new Packet(PacketType.DUEL_READY);
             packet.Write(x);
@@ -378,7 +378,7 @@ namespace Imgeneus.World.Game.Duel
         /// <summary>
         /// Start duel.
         /// </summary>
-        private void SendDuelStart(WorldClient client)
+        private void SendDuelStart(IWorldClient client)
         {
             using var packet = new Packet(PacketType.DUEL_START);
             client.SendPacket(packet);

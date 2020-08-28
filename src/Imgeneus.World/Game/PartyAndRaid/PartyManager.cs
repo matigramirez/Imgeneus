@@ -30,7 +30,7 @@ namespace Imgeneus.World.Game.PartyAndRaid
 
         private void Client_OnPacketArrived(ServerClient sender, IDeserializedPacket packet)
         {
-            var worldSender = (WorldClient)sender;
+            var worldSender = (IWorldClient)sender;
 
             switch (packet)
             {
@@ -202,7 +202,7 @@ namespace Imgeneus.World.Game.PartyAndRaid
             }
         }
 
-        private void SendPartyError(WorldClient client, PartyErrorType partyError, int id = 0)
+        private void SendPartyError(IWorldClient client, PartyErrorType partyError, int id = 0)
         {
             using var packet = new Packet(PacketType.RAID_PARTY_ERROR);
             packet.Write((int)partyError);
@@ -210,14 +210,14 @@ namespace Imgeneus.World.Game.PartyAndRaid
             client.SendPacket(packet);
         }
 
-        private void SendPartyRequest(WorldClient client, int requesterId)
+        private void SendPartyRequest(IWorldClient client, int requesterId)
         {
             using var packet = new Packet(PacketType.PARTY_REQUEST);
             packet.Write(requesterId);
             client.SendPacket(packet);
         }
 
-        private void SendDeclineParty(WorldClient client, int charID)
+        private void SendDeclineParty(IWorldClient client, int charID)
         {
             using var packet = new Packet(PacketType.PARTY_RESPONSE);
             packet.Write(false);
@@ -225,7 +225,7 @@ namespace Imgeneus.World.Game.PartyAndRaid
             client.SendPacket(packet);
         }
 
-        private void SendRaidCreated(WorldClient client, Raid raid)
+        private void SendRaidCreated(IWorldClient client, Raid raid)
         {
             using var packet = new Packet(PacketType.RAID_CREATE);
             packet.Write(true); // raid type ?

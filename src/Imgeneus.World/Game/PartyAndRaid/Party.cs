@@ -117,7 +117,7 @@ namespace Imgeneus.World.Game.PartyAndRaid
 
                         var dropReceiver = Members[_lastDropIndex];
 
-                        if (dropReceiver.Map.Id == dropCreator.Map.Id && MathExtensions.Distance(dropReceiver.PosX, dropReceiver.PosZ, dropCreator.PosX, dropCreator.PosZ) <= 100)
+                        if (dropReceiver.Map == dropCreator.Map && MathExtensions.Distance(dropReceiver.PosX, dropReceiver.PosZ, dropCreator.PosX, dropCreator.PosZ) <= 100)
                         {
                             if (item.Type != Item.MONEY_ITEM_TYPE)
                             {
@@ -154,35 +154,35 @@ namespace Imgeneus.World.Game.PartyAndRaid
 
         #region Senders
 
-        private void SendPlayerJoinedParty(WorldClient client, Character character)
+        private void SendPlayerJoinedParty(IWorldClient client, Character character)
         {
             using var packet = new Packet(PacketType.PARTY_ENTER);
             packet.Write(new PartyMember(character).Serialize());
             client.SendPacket(packet);
         }
 
-        private void SendPlayerLeftParty(WorldClient client, Character character)
+        private void SendPlayerLeftParty(IWorldClient client, Character character)
         {
             using var packet = new Packet(PacketType.PARTY_LEAVE);
             packet.Write(character.Id);
             client.SendPacket(packet);
         }
 
-        private void SendKickMember(WorldClient client, Character character)
+        private void SendKickMember(IWorldClient client, Character character)
         {
             using var packet = new Packet(PacketType.PARTY_KICK);
             packet.Write(character.Id);
             client.SendPacket(packet);
         }
 
-        protected override void SendNewLeader(WorldClient client, Character character)
+        protected override void SendNewLeader(IWorldClient client, Character character)
         {
             using var packet = new Packet(PacketType.PARTY_CHANGE_LEADER);
             packet.Write(character.Id);
             client.SendPacket(packet);
         }
 
-        protected override void SendAddBuff(WorldClient client, int senderId, ushort skillId, byte skillLevel)
+        protected override void SendAddBuff(IWorldClient client, int senderId, ushort skillId, byte skillLevel)
         {
             using var packet = new Packet(PacketType.PARTY_ADDED_BUFF);
             packet.Write(senderId);
@@ -191,7 +191,7 @@ namespace Imgeneus.World.Game.PartyAndRaid
             client.SendPacket(packet);
         }
 
-        protected override void Send_HP_SP_MP(WorldClient client, int id, int value, byte type)
+        protected override void Send_HP_SP_MP(IWorldClient client, int id, int value, byte type)
         {
             using var packet = new Packet(PacketType.PARTY_CHARACTER_SP_MP);
             packet.Write(id);
@@ -200,7 +200,7 @@ namespace Imgeneus.World.Game.PartyAndRaid
             client.SendPacket(packet);
         }
 
-        protected override void Send_Max_HP_SP_MP(WorldClient client, int id, int value, byte type)
+        protected override void Send_Max_HP_SP_MP(IWorldClient client, int id, int value, byte type)
         {
             using var packet = new Packet(PacketType.PARTY_SET_MAX);
             packet.Write(id);
@@ -214,11 +214,11 @@ namespace Imgeneus.World.Game.PartyAndRaid
             throw new NotImplementedException();
         }
 
-        protected override void SendNewSubLeader(WorldClient client, Character leader)
+        protected override void SendNewSubLeader(IWorldClient client, Character leader)
         {
         }
 
-        private void SendMemberGetItem(WorldClient client, int characterId, Item item)
+        private void SendMemberGetItem(IWorldClient client, int characterId, Item item)
         {
             using var packet = new Packet(PacketType.PARTY_MEMBER_GET_ITEM);
             packet.Write(characterId);

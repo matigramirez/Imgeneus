@@ -23,6 +23,7 @@ namespace Imgeneus.World.Tests
         protected Mock<ILogger<Map>> mapLoggerMock = new Mock<ILogger<Map>>();
         protected Mock<ILogger<Mob>> mobLoggerMock = new Mock<ILogger<Mob>>();
         protected Mock<IChatManager> chatMock = new Mock<IChatManager>();
+        protected Mock<IWorldClient> worldClientMock = new Mock<IWorldClient>();
 
         public BaseTest()
         {

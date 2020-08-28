@@ -18,12 +18,12 @@ namespace Imgeneus.World.Game.Player
 {
     public partial class Character
     {
-        private WorldClient _client;
+        private IWorldClient _client;
 
         /// <summary>
         /// TCP connection with client.
         /// </summary>
-        public WorldClient Client
+        public IWorldClient Client
         {
             get => _client;
 

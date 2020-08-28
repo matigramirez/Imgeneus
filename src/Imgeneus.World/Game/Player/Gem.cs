@@ -43,6 +43,14 @@ namespace Imgeneus.World.Game.Player
             TypeId = moneyAmount;
         }
 
+        /// <summary>
+        /// ONLY USED FOR MONEY GENERATION! DON'T USE IT UNLESS YOU GENERATE MONEY DROP.
+        /// </summary>
+        public void SetTypeId(int typeId)
+        {
+            TypeId = typeId;
+        }
+
         public ushort Str { get; }
 
         public ushort Dex { get; }

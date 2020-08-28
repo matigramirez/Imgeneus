@@ -179,6 +179,25 @@ namespace Imgeneus.World.Game.PartyAndRaid
 
         #endregion
 
+        #region Distribute money
+
+        /// <summary>
+        /// Equally distributes money among all party members.
+        /// </summary>
+        /// <param name="item">money, unique item with type 26</param>
+        protected void DistributeMoney(Item item)
+        {
+            var money = item.Gem1.TypeId / Members.Count;
+            item.Gem1.SetTypeId(money);
+            foreach (var member in Members)
+            {
+                member.ChangeGold((uint)(member.Gold + money));
+                member.SendAddItemToInventory(item);
+            }
+        }
+
+        #endregion
+
         #region Absctracts
 
         public abstract bool EnterParty(Character player);

@@ -156,7 +156,8 @@ namespace Imgeneus.World.Game.PartyAndRaid
                     }
                     else
                     {
-                        // TODO: distribute money.
+                        Leader.ChangeGold((uint)(Leader.Gold + item.Gem1.TypeId));
+                        Leader.SendAddItemToInventory(item);
                     }
                 }
             }
@@ -205,9 +206,9 @@ namespace Imgeneus.World.Game.PartyAndRaid
                                 _lastDropIndex = _indexesDict.Keys.Count - 1;
                             else
                                 _lastDropIndex--;
-                            // TODO: distribute money.
-                        }
 
+                            DistributeMoney(item);
+                        }
                     }
 
                     numberOfIterations++;
@@ -252,7 +253,7 @@ namespace Imgeneus.World.Game.PartyAndRaid
                         else
                         {
                             itemAdded = true;
-                            // TODO: distribute money.
+                            DistributeMoney(item);
                         }
                     }
 

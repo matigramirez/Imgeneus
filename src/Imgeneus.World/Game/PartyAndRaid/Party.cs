@@ -143,7 +143,8 @@ namespace Imgeneus.World.Game.PartyAndRaid
                                     _lastDropIndex = Members.Count - 1;
                                 else
                                     _lastDropIndex--;
-                                // TODO: distribute money.
+
+                                DistributeMoney(item);
                             }
                         }
 

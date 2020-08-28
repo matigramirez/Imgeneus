@@ -176,6 +176,40 @@ namespace Imgeneus.World.Tests.PartyTests
         }
 
         [Fact]
+        [Description("If drop type is RaidDropType.Group, money should be distributed equally.")]
+        public void Raid_DropToGroup_GoldDistribution()
+        {
+            var character1 = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object)
+            {
+                Name = "Character1"
+            };
+            character1.Client = worldClientMock.Object;
+            var character2 = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object)
+            {
+                Name = "Character2"
+            };
+            character2.Client = worldClientMock.Object;
+            var character3 = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object)
+            {
+                Name = "Character3"
+            };
+            character3.Client = worldClientMock.Object;
+
+            var raid = new Raid(true, RaidDropType.Group);
+            character1.SetParty(raid);
+            character2.SetParty(raid);
+            character3.SetParty(raid);
+
+            var money = new Item(databasePreloader.Object, Item.MONEY_ITEM_TYPE, 0);
+            money.Gem1 = new Gem(100);
+            raid.DistributeDrop(new List<Item>() { money }, character2);
+
+            Assert.Equal((uint)33, character1.Gold);
+            Assert.Equal((uint)33, character2.Gold);
+            Assert.Equal((uint)33, character3.Gold);
+        }
+
+        [Fact]
         [Description("If drop type is RaidDropType.Group, but members do not have place in inventory, items are not distributed.")]
         public void Raid_DropToGroup_NoPlaceInInventory()
         {

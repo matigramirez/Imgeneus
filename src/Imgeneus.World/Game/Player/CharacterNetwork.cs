@@ -468,6 +468,8 @@ namespace Imgeneus.World.Game.Player
 
         private void SendQuestFinished(Quest quest, int npcId = 0) => _packetsHelper.SendQuestFinished(Client, quest, npcId);
 
+        private void SendQuestCountUpdate(ushort questId, byte index, byte count) => _packetsHelper.SendQuestCountUpdate(Client, questId, index, count);
+
         private void SendActiveBuffs() => _packetsHelper.SendActiveBuffs(Client, ActiveBuffs);
 
         private void SendAddBuff(ActiveBuff buff) => _packetsHelper.SendAddBuff(Client, buff);

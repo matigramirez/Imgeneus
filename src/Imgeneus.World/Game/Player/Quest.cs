@@ -60,9 +60,33 @@ namespace Imgeneus.World.Game.Player
         public byte CountMob1 { get; private set; }
 
         /// <summary>
+        /// Sets new value for CountMob1.
+        /// </summary>
+        public void IncreaseCountMob1()
+        {
+            if (CountMob1 != byte.MaxValue)
+            {
+                CountMob1++;
+                _saveToDb = true;
+            }
+        }
+
+        /// <summary>
         /// Number of killed mobs of second type.
         /// </summary>
         public byte CountMob2 { get; private set; }
+
+        /// <summary>
+        /// Sets new value for CountMob2.
+        /// </summary>
+        public void IncreaseCountMob2()
+        {
+            if (CountMob2 != byte.MaxValue)
+            {
+                CountMob2++;
+                _saveToDb = true;
+            }
+        }
 
         /// <summary>
         /// TODO: unknown.
@@ -147,6 +171,26 @@ namespace Imgeneus.World.Game.Player
         /// Number of items, that player must have in order to complite quest.
         /// </summary>
         public byte FarmItemCount_3 { get => _dbQuest.FarmItemCount_3; }
+
+        /// <summary>
+        /// Mob 1, that should be killed.
+        /// </summary>
+        public ushort RequiredMobId_1 { get => _dbQuest.MobId_1; }
+
+        /// <summary>
+        /// Number of mobs 1, that should be killed.
+        /// </summary>
+        public byte RequiredMobCount_1 { get => _dbQuest.MobCount_1; }
+
+        /// <summary>
+        /// Mob 2, that should be killed.
+        /// </summary>
+        public ushort RequiredMobId_2 { get => _dbQuest.MobId_2; }
+
+        /// <summary>
+        /// Number of mobs 2, that should be killed.
+        /// </summary>
+        public byte RequiredMobCount_2 { get => _dbQuest.MobCount_2; }
 
         #endregion
 

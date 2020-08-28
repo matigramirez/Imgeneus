@@ -411,5 +411,14 @@ namespace Imgeneus.World.Packets
             packet.WriteByte(0); // item id
             client.SendPacket(packet);
         }
+
+        internal void SendQuestCountUpdate(IWorldClient client, ushort questId, byte index, byte count)
+        {
+            using var packet = new Packet(PacketType.QUEST_UPDATE_COUNT);
+            packet.Write(questId);
+            packet.Write(index);
+            packet.Write(count);
+            client.SendPacket(packet);
+        }
     }
 }

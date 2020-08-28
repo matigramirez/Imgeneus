@@ -5,6 +5,7 @@ using System.Collections.Specialized;
 using System.Linq;
 using Imgeneus.Database.Constants;
 using Imgeneus.Database.Preload;
+using Imgeneus.World.Game.Monster;
 using Imgeneus.World.Game.Player;
 using Imgeneus.World.Game.Zone;
 using MvvmHelpers;
@@ -833,6 +834,25 @@ namespace Imgeneus.World.Game
                             var notDistributedItems = dropOwner.Party.DistributeDrop(dropItems, dropOwner);
                             AddItemsDropOnMap(notDistributedItems, dropOwner);
 
+                        }
+                    }
+
+                    // Update quest.
+                    if (this is Mob && killer is Character)
+                    {
+                        var character = killer as Character;
+                        var mob = this as Mob;
+                        if (character.Party is null)
+                        {
+                            character.UpdateQuestMobCount(mob.MobId);
+                        }
+                        else
+                        {
+                            foreach (var m in character.Party.Members)
+                            {
+                                if (m.Map == character.Map)
+                                    m.UpdateQuestMobCount(mob.MobId);
+                            }
                         }
                     }
                 }

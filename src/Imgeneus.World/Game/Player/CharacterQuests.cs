@@ -38,6 +38,28 @@ namespace Imgeneus.World.Game.Player
         }
 
         /// <summary>
+        /// Changes number of killed mobs in quest.
+        /// </summary>
+        /// <param name="mobId">mob id</param>
+        public void UpdateQuestMobCount(ushort mobId)
+        {
+            var quests = Quests.Where(q => q.RequiredMobId_1 == mobId || q.RequiredMobId_2 == mobId);
+            foreach (var q in quests)
+            {
+                if (q.RequiredMobId_1 == mobId)
+                {
+                    q.IncreaseCountMob1();
+                    SendQuestCountUpdate(q.Id, 0, q.CountMob1);
+                }
+                if (q.RequiredMobId_2 == mobId)
+                {
+                    q.IncreaseCountMob2();
+                    SendQuestCountUpdate(q.Id, 1, q.CountMob2);
+                }
+            }
+        }
+
+        /// <summary>
         /// Finishes quest.
         /// </summary>
         public void FinishQuest(ushort questId, int npcId = 0)

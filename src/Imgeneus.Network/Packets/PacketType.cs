@@ -204,6 +204,7 @@
         QUEST_LIST = 0x0901, // 2305
         QUEST_START = 0x0902, // 2306
         QUEST_END = 0x0903, // 2307
+        QUEST_UPDATE_COUNT = 0x0905, // 2309
         QUEST_FINISHED_LIST = 0x0906, // 2310
         QUEST_QUIT = 0x0908, // 2312
     }

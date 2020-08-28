@@ -52,5 +52,20 @@ namespace Imgeneus.World.Game.PartyAndRaid
         /// Event, that is fired, when party leader is changed.
         /// </summary>
         public event Action<Character, Character> OnLeaderChanged;
+
+        /// <summary>
+        /// Distributes items between party members.
+        /// </summary>
+        /// <param name="items">drop items</param>
+        /// <param name="dropCreator">player, that killed mob and made this drop</param>
+        /// <returns>list of items, that could not be distributed</returns>
+        public IList<Item> DistributeDrop(IList<Item> items, Character dropCreator);
+
+        /// <summary>
+        /// Notifies other members, that this player got item.
+        /// </summary>
+        /// <param name="player">player, that got item</param>
+        /// <param name="item">new item, that player got</param>
+        public void MemberGetItem(Character player, Item item);
     }
 }

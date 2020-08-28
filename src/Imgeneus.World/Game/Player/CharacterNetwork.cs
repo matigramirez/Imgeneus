@@ -176,6 +176,7 @@ namespace Imgeneus.World.Game.Player
                     }
                     if (mapItem.Type == Item.MONEY_ITEM_TYPE)
                     {
+                        Map.RemoveItem(mapItem.Id);
                         mapItem.Bag = 1;
                         ChangeGold(Gold + (uint)mapItem.Gem1.TypeId);
                         _packetsHelper.SendAddItem(Client, mapItem);
@@ -186,13 +187,15 @@ namespace Imgeneus.World.Game.Player
                         if (inventoryItem is null)
                         {
                             _packetsHelper.SendFullInventory(Client);
-                            return;
                         }
                         else
+                        {
+                            Map.RemoveItem(mapItem.Id);
                             _packetsHelper.SendAddItem(Client, inventoryItem);
+                            if (Party != null)
+                                Party.MemberGetItem(this, inventoryItem);
+                        }
                     }
-
-                    Map.RemoveItem(mapItem.Id);
                     break;
 
                 case NpcBuyItemPacket npcBuyItemPacket:

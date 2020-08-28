@@ -807,6 +807,7 @@ namespace Imgeneus.World.Game
                 if (_isDead)
                 {
                     IKiller killer = DamageMakers.First().Key;
+                    OnDead?.Invoke(this, killer);
                     int damage = DamageMakers.First().Value;
                     foreach (var dmg in DamageMakers)
                     {
@@ -822,22 +823,32 @@ namespace Imgeneus.World.Game
                         var dropOwner = killer as Character;
                         if (dropOwner.Party is null)
                         {
-                            byte i = 0;
-                            foreach (var itm in dropItems)
-                            {
-                                itm.Owner = dropOwner;
-                                Map.AddItem(itm, PosX + i, PosY, PosZ);
-                                i++;
-                            }
+                            AddItemsDropOnMap(dropItems, dropOwner);
                         }
                         else
                         {
-                            // TODO: generate drop for party.
+                            var notDistributedItems = dropOwner.Party.DistributeDrop(dropItems, dropOwner);
+                            AddItemsDropOnMap(notDistributedItems, dropOwner);
+
                         }
                     }
-                    OnDead?.Invoke(this, killer);
+
                     DamageMakers.Clear();
                 }
+            }
+        }
+
+        /// <summary>
+        /// Add items on map.
+        /// </summary>
+        private void AddItemsDropOnMap(IList<Item> dropItems, Character owner)
+        {
+            byte i = 0;
+            foreach (var itm in dropItems)
+            {
+                itm.Owner = owner;
+                Map.AddItem(itm, PosX + i, PosY, PosZ);
+                i++;
             }
         }
 

@@ -199,6 +199,10 @@ namespace Imgeneus.World.Game.PartyAndRaid
 
         public abstract void Dismantle();
 
+        public abstract IList<Item> DistributeDrop(IList<Item> items, Character dropCreator);
+
+        public abstract void MemberGetItem(Character player, Item item);
+
         #endregion
     }
 }

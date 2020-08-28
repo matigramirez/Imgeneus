@@ -88,6 +88,22 @@ namespace Imgeneus.World.Game.PartyAndRaid
 
         #endregion
 
+        #region Distribute drop
+
+        public override IList<Item> DistributeDrop(IList<Item> items, Character dropCreator)
+        {
+            // TODO: implement.
+            return new List<Item>();
+        }
+
+        public override void MemberGetItem(Character player, Item item)
+        {
+            foreach (var member in Members.Where(m => m != player))
+                SendMemberGetItem(member.Client, player.Id, item);
+        }
+
+        #endregion
+
         #region Members
 
         /// <summary>
@@ -356,6 +372,15 @@ namespace Imgeneus.World.Game.PartyAndRaid
             packet.Write(destinationIndex);
             packet.Write(leaderIndex);
             packet.Write(subLeaderIndex);
+            client.SendPacket(packet);
+        }
+
+        private void SendMemberGetItem(WorldClient client, int characterId, Item item)
+        {
+            using var packet = new Packet(PacketType.RAID_MEMBER_GET_ITEM);
+            packet.Write(characterId);
+            packet.Write(item.Type);
+            packet.Write(item.TypeId);
             client.SendPacket(packet);
         }
 

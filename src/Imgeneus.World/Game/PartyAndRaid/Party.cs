@@ -1,4 +1,5 @@
-﻿using Imgeneus.Network.Data;
+﻿using Imgeneus.Core.Extensions;
+using Imgeneus.Network.Data;
 using Imgeneus.Network.Packets;
 using Imgeneus.World.Game.Player;
 using Imgeneus.World.Serialization;
@@ -14,28 +15,33 @@ namespace Imgeneus.World.Game.PartyAndRaid
 
         protected override IList<Character> _members { get; set; } = new List<Character>();
 
+        private object _syncObject = new object();
+
         /// <summary>
         /// Tries to enter party, if it's enough place.
         /// </summary>
         /// <returns>true if player could enter party, otherwise false</returns>
         public override bool EnterParty(Character newPartyMember)
         {
-            // Check if party is not full.
-            if (_members.Count == MAX_PARTY_MEMBERS_COUNT)
-                return false;
+            lock (_syncObject)
+            {
+                // Check if party is not full.
+                if (_members.Count == MAX_PARTY_MEMBERS_COUNT)
+                    return false;
 
-            _members.Add(newPartyMember);
+                _members.Add(newPartyMember);
 
-            if (Members.Count == 1)
-                Leader = newPartyMember;
+                if (Members.Count == 1)
+                    Leader = newPartyMember;
 
-            SubcribeToCharacterChanges(newPartyMember);
+                SubcribeToCharacterChanges(newPartyMember);
 
-            // Notify others, that new party member joined.
-            foreach (var member in Members.Where(m => m != newPartyMember))
-                SendPlayerJoinedParty(member.Client, newPartyMember);
+                // Notify others, that new party member joined.
+                foreach (var member in Members.Where(m => m != newPartyMember))
+                    SendPlayerJoinedParty(member.Client, newPartyMember);
 
-            return true;
+                return true;
+            }
         }
 
         /// <summary>
@@ -43,10 +49,13 @@ namespace Imgeneus.World.Game.PartyAndRaid
         /// </summary>
         public override void LeaveParty(Character leftPartyMember)
         {
-            foreach (var member in Members)
-                SendPlayerLeftParty(member.Client, leftPartyMember);
+            lock (_syncObject)
+            {
+                foreach (var member in Members)
+                    SendPlayerLeftParty(member.Client, leftPartyMember);
 
-            RemoveMember(leftPartyMember);
+                RemoveMember(leftPartyMember);
+            }
         }
 
         /// <summary>
@@ -54,10 +63,13 @@ namespace Imgeneus.World.Game.PartyAndRaid
         /// </summary>
         public override void KickMember(Character playerToKick)
         {
-            foreach (var member in Members)
-                SendKickMember(member.Client, playerToKick);
+            lock (_syncObject)
+            {
+                foreach (var member in Members)
+                    SendKickMember(member.Client, playerToKick);
 
-            RemoveMember(playerToKick);
+                RemoveMember(playerToKick);
+            }
         }
 
         /// <summary>
@@ -83,6 +95,62 @@ namespace Imgeneus.World.Game.PartyAndRaid
                 Leader = Members[0];
             }
         }
+
+        #region Distribute drop
+
+        private int _lastDropIndex = -1;
+
+        public override IList<Item> DistributeDrop(IList<Item> items, Character dropCreator)
+        {
+            lock (_syncObject)
+            {
+                var notDistibutedItems = new List<Item>();
+                foreach (var item in items)
+                {
+                    bool itemAdded = false;
+                    int numberOfIterations = 0;
+                    do
+                    {
+                        _lastDropIndex++;
+                        if (_lastDropIndex == Members.Count)
+                            _lastDropIndex = 0;
+
+                        var dropReceiver = Members[_lastDropIndex];
+
+                        if (dropReceiver.Map.Id == dropCreator.Map.Id && MathExtensions.Distance(dropReceiver.PosX, dropReceiver.PosZ, dropCreator.PosX, dropCreator.PosZ) <= 100)
+                        {
+                            if (item.Type != Item.MONEY_ITEM_TYPE)
+                            {
+                                var inventoryItem = dropReceiver.AddItemToInventory(item);
+                                if (inventoryItem != null)
+                                {
+                                    itemAdded = true;
+                                    dropReceiver.SendAddItemToInventory(inventoryItem);
+                                    foreach (var member in Members.Where(m => m != dropReceiver))
+                                        SendMemberGetItem(member.Client, dropReceiver.Id, inventoryItem);
+                                }
+                            }
+                        }
+
+                        numberOfIterations++;
+                    }
+                    while (!itemAdded && numberOfIterations < 20);
+
+                    if (!itemAdded)
+                        notDistibutedItems.Add(item);
+                }
+
+                return notDistibutedItems;
+            }
+        }
+
+        public override void MemberGetItem(Character player, Item item)
+        {
+            foreach (var member in Members.Where(m => m != player))
+                SendMemberGetItem(member.Client, player.Id, item);
+        }
+
+        #endregion
 
         #region Senders
 
@@ -148,6 +216,15 @@ namespace Imgeneus.World.Game.PartyAndRaid
 
         protected override void SendNewSubLeader(WorldClient client, Character leader)
         {
+        }
+
+        private void SendMemberGetItem(WorldClient client, int characterId, Item item)
+        {
+            using var packet = new Packet(PacketType.PARTY_MEMBER_GET_ITEM);
+            packet.Write(characterId);
+            packet.Write(item.Type);
+            packet.Write(item.TypeId);
+            client.SendPacket(packet);
         }
 
         #endregion

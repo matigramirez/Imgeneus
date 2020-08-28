@@ -224,16 +224,18 @@ namespace Imgeneus.World.Game.Player
 
                     var attackResult = ((IKiller)this).CalculateAttackResult(skill, t, AttackElement, MinAttack, MaxAttack, MinMagicAttack, MaxMagicAttack);
 
-                    if (attackResult.Damage.HP > 0)
-                        t.DecreaseHP(attackResult.Damage.HP, this);
-                    if (attackResult.Damage.SP > 0)
-                        t.CurrentSP -= attackResult.Damage.SP;
-                    if (attackResult.Damage.MP > 0)
-                        t.CurrentMP -= attackResult.Damage.MP;
-
                     try
                     {
+                        // First apply skill.
                         ((IKiller)this).PerformSkill(skill, target, t, attackResult, n);
+
+                        // Second decrease hp.
+                        if (attackResult.Damage.HP > 0)
+                            t.DecreaseHP(attackResult.Damage.HP, this);
+                        if (attackResult.Damage.SP > 0)
+                            t.CurrentSP -= attackResult.Damage.SP;
+                        if (attackResult.Damage.MP > 0)
+                            t.CurrentMP -= attackResult.Damage.MP;
                     }
                     catch (NotImplementedException)
                     {

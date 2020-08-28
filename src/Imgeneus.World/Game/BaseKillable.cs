@@ -807,7 +807,6 @@ namespace Imgeneus.World.Game
                 if (_isDead)
                 {
                     IKiller killer = DamageMakers.First().Key;
-                    OnDead?.Invoke(this, killer);
                     int damage = DamageMakers.First().Value;
                     foreach (var dmg in DamageMakers)
                     {
@@ -817,6 +816,10 @@ namespace Imgeneus.World.Game
                             killer = dmg.Key;
                         }
                     }
+                    OnDead?.Invoke(this, killer);
+                    DamageMakers.Clear();
+
+                    // Generate drop.
                     var dropItems = GenerateDrop(killer);
                     if (dropItems.Count > 0 && killer is Character)
                     {
@@ -832,8 +835,6 @@ namespace Imgeneus.World.Game
 
                         }
                     }
-
-                    DamageMakers.Clear();
                 }
             }
         }

@@ -100,6 +100,12 @@ namespace Imgeneus.World.Game.PartyAndRaid
 
         private int _lastDropIndex = -1;
 
+        /// <summary>
+        /// Tries to distribute drop 1 by 1.
+        /// </summary>
+        /// <param name="items">drop items</param>
+        /// <param name="dropCreator">player, that killed mob and generated drop</param>
+        /// <returns>items, that we couldn't assign to any party member (i.e. members have full inventory)</returns>
         public override IList<Item> DistributeDrop(IList<Item> items, Character dropCreator)
         {
             lock (_syncObject)
@@ -116,8 +122,7 @@ namespace Imgeneus.World.Game.PartyAndRaid
                             _lastDropIndex = 0;
 
                         var dropReceiver = Members[_lastDropIndex];
-
-                        if (dropReceiver.Map == dropCreator.Map && MathExtensions.Distance(dropReceiver.PosX, dropReceiver.PosZ, dropCreator.PosX, dropCreator.PosZ) <= 100)
+                        if (dropReceiver.Map == dropCreator.Map && MathExtensions.Distance(dropReceiver.PosX, dropCreator.PosX, dropReceiver.PosZ, dropCreator.PosZ) <= 100)
                         {
                             if (item.Type != Item.MONEY_ITEM_TYPE)
                             {
@@ -130,11 +135,21 @@ namespace Imgeneus.World.Game.PartyAndRaid
                                         SendMemberGetItem(member.Client, dropReceiver.Id, inventoryItem);
                                 }
                             }
+                            else
+                            {
+                                itemAdded = true;
+                                // Money is not counted as item. That's why return index to prev value.
+                                if (_lastDropIndex == 0)
+                                    _lastDropIndex = Members.Count - 1;
+                                else
+                                    _lastDropIndex--;
+                                // TODO: distribute money.
+                            }
                         }
 
                         numberOfIterations++;
                     }
-                    while (!itemAdded && numberOfIterations < 20);
+                    while (!itemAdded && numberOfIterations < MAX_PARTY_MEMBERS_COUNT);
 
                     if (!itemAdded)
                         notDistibutedItems.Add(item);

@@ -1,4 +1,5 @@
-﻿using Imgeneus.Network.Data;
+﻿using Imgeneus.Core.Extensions;
+using Imgeneus.Network.Data;
 using Imgeneus.Network.Packets;
 using Imgeneus.World.Game.Player;
 using Imgeneus.World.Serialization;
@@ -13,7 +14,7 @@ namespace Imgeneus.World.Game.PartyAndRaid
     {
         public const byte MAX_RAID_MEMBERS_COUNT = 30;
 
-        private bool _locked;
+        private object _syncObject = new object();
 
         private readonly ConcurrentDictionary<Character, int> _membersDict = new ConcurrentDictionary<Character, int>();
         private readonly ConcurrentDictionary<int, Character> _indexesDict = new ConcurrentDictionary<int, Character>();
@@ -24,7 +25,6 @@ namespace Imgeneus.World.Game.PartyAndRaid
         {
             _autoJoin = autoJoin;
             _dropType = dropType;
-            _locked = false;
         }
 
         #region Auto join
@@ -90,10 +90,181 @@ namespace Imgeneus.World.Game.PartyAndRaid
 
         #region Distribute drop
 
+        /// <summary>
+        /// Tries to distribute drop based on drop type.
+        /// </summary>
+        /// <param name="items">drop items</param>
+        /// <param name="dropCreator">player, that killed mob and generated drop</param>
+        /// <returns>items, that we couldn't assign to any party member (i.e. members have full inventory)</returns>
         public override IList<Item> DistributeDrop(IList<Item> items, Character dropCreator)
         {
-            // TODO: implement.
-            return new List<Item>();
+            lock (_syncObject)
+            {
+                List<Item> notDistibutedItems;
+                switch (DropType)
+                {
+                    case RaidDropType.Leader:
+                        notDistibutedItems = DropToLeader(items, dropCreator);
+                        break;
+
+                    case RaidDropType.Group:
+                        notDistibutedItems = DropToGroup(items, dropCreator);
+                        break;
+
+                    case RaidDropType.Random:
+                        notDistibutedItems = DropToRandom(items, dropCreator);
+                        break;
+
+                    default:
+                        notDistibutedItems = DropToLeader(items, dropCreator);
+                        break;
+                }
+                return notDistibutedItems;
+            }
+        }
+
+        /// <summary>
+        /// All drop goes to the leader if he is near drop creator and has a place in inventory,
+        /// otherwise drop is not assigned and created on the map.
+        /// </summary>
+        private List<Item> DropToLeader(IList<Item> items, Character dropCreator)
+        {
+            List<Item> notDistibutedItems = new List<Item>();
+            if (Leader.Map != dropCreator.Map || MathExtensions.Distance(Leader.PosX, dropCreator.PosX, Leader.PosZ, dropCreator.PosZ) > 100)
+            {
+                // Leader is too far away.
+                notDistibutedItems.AddRange(items);
+            }
+            else
+            {
+                foreach (var item in items)
+                {
+                    if (item.Type != Item.MONEY_ITEM_TYPE)
+                    {
+                        var inventoryItem = Leader.AddItemToInventory(item);
+                        if (inventoryItem != null)
+                        {
+                            Leader.SendAddItemToInventory(inventoryItem);
+                            foreach (var member in Members.Where(m => m != Leader))
+                                SendMemberGetItem(member.Client, Leader.Id, inventoryItem);
+                        }
+                        else
+                        {
+                            // Leader inventory is full.
+                            notDistibutedItems.Add(item);
+                        }
+                    }
+                    else
+                    {
+                        // TODO: distribute money.
+                    }
+                }
+            }
+            return notDistibutedItems;
+        }
+
+        private int _lastDropIndex = -1;
+
+        /// <summary>
+        /// Drop is distributed among players 1 by 1.
+        /// </summary>
+        private List<Item> DropToGroup(IList<Item> items, Character dropCreator)
+        {
+            List<Item> notDistibutedItems = new List<Item>();
+
+            foreach (var item in items)
+            {
+                bool itemAdded = false;
+                int numberOfIterations = 0;
+
+                do
+                {
+                    _lastDropIndex++;
+                    if (_lastDropIndex == _indexesDict.Keys.Count)
+                        _lastDropIndex = 0;
+
+                    var dropReceiver = _indexesDict[_indexesDict.Keys.ElementAt(_lastDropIndex)];
+                    if (dropReceiver.Map == dropCreator.Map && MathExtensions.Distance(dropReceiver.PosX, dropCreator.PosX, dropReceiver.PosZ, dropCreator.PosZ) <= 100)
+                    {
+                        if (item.Type != Item.MONEY_ITEM_TYPE)
+                        {
+                            var inventoryItem = dropReceiver.AddItemToInventory(item);
+                            if (inventoryItem != null)
+                            {
+                                itemAdded = true;
+                                dropReceiver.SendAddItemToInventory(inventoryItem);
+                                foreach (var member in Members.Where(m => m != dropReceiver))
+                                    SendMemberGetItem(member.Client, dropReceiver.Id, inventoryItem);
+                            }
+                        }
+                        else
+                        {
+                            itemAdded = true;
+                            // Money is not counted as item. That's why return index to prev value.
+                            if (_lastDropIndex == 0)
+                                _lastDropIndex = _indexesDict.Keys.Count - 1;
+                            else
+                                _lastDropIndex--;
+                            // TODO: distribute money.
+                        }
+
+                    }
+
+                    numberOfIterations++;
+                }
+                while (!itemAdded && numberOfIterations < MAX_RAID_MEMBERS_COUNT);
+
+                if (!itemAdded)
+                    notDistibutedItems.Add(item);
+            }
+
+            return notDistibutedItems;
+        }
+
+        /// <summary>
+        /// Drop is assigned to random characters.
+        /// </summary>
+        private List<Item> DropToRandom(IList<Item> items, Character dropCreator)
+        {
+            List<Item> notDistibutedItems = new List<Item>();
+            foreach (var item in items)
+            {
+                bool itemAdded = false;
+                int numberOfIterations = 0;
+
+                do
+                {
+                    var randomIndex = new Random().Next(0, _indexesDict.Keys.Count);
+                    var dropReceiver = _indexesDict[_indexesDict.Keys.ElementAt(randomIndex)];
+                    if (dropReceiver.Map == dropCreator.Map && MathExtensions.Distance(dropReceiver.PosX, dropCreator.PosX, dropReceiver.PosZ, dropCreator.PosZ) <= 100)
+                    {
+                        if (item.Type != Item.MONEY_ITEM_TYPE)
+                        {
+                            var inventoryItem = dropReceiver.AddItemToInventory(item);
+                            if (inventoryItem != null)
+                            {
+                                itemAdded = true;
+                                dropReceiver.SendAddItemToInventory(inventoryItem);
+                                foreach (var member in Members.Where(m => m != dropReceiver))
+                                    SendMemberGetItem(member.Client, dropReceiver.Id, inventoryItem);
+                            }
+                        }
+                        else
+                        {
+                            itemAdded = true;
+                            // TODO: distribute money.
+                        }
+                    }
+
+                    numberOfIterations++;
+                }
+                while (!itemAdded && numberOfIterations < MAX_RAID_MEMBERS_COUNT);
+
+                if (!itemAdded)
+                    notDistibutedItems.Add(item);
+            }
+
+            return notDistibutedItems;
         }
 
         public override void MemberGetItem(Character player, Item item)
@@ -122,40 +293,37 @@ namespace Imgeneus.World.Game.PartyAndRaid
         /// </summary>
         private int FindFreeIndex()
         {
-            _locked = true;
-
-            if (_membersDict.Values.Count == MAX_RAID_MEMBERS_COUNT)
+            lock (_syncObject)
             {
-                _locked = false;
-                return -1;
-            }
-
-            var occupiedIndexes = _membersDict.Values.OrderBy(v => v).ToList();
-            if (occupiedIndexes.Count == 0)
-            {
-                _locked = false;
-                return 0;
-            }
-
-            var freeIndex = -1;
-            for (var i = 0; i < occupiedIndexes.Count; i++)
-            {
-                if (occupiedIndexes[i] != i)
+                if (_membersDict.Values.Count == MAX_RAID_MEMBERS_COUNT)
                 {
-                    freeIndex = i;
-                    break;
+                    return -1;
                 }
-            }
 
-            if (freeIndex != -1)
-            {
-                _locked = false;
-                return freeIndex;
-            }
-            else
-            {
-                _locked = false;
-                return occupiedIndexes.Count;
+                var occupiedIndexes = _membersDict.Values.OrderBy(v => v).ToList();
+                if (occupiedIndexes.Count == 0)
+                {
+                    return 0;
+                }
+
+                var freeIndex = -1;
+                for (var i = 0; i < occupiedIndexes.Count; i++)
+                {
+                    if (occupiedIndexes[i] != i)
+                    {
+                        freeIndex = i;
+                        break;
+                    }
+                }
+
+                if (freeIndex != -1)
+                {
+                    return freeIndex;
+                }
+                else
+                {
+                    return occupiedIndexes.Count;
+                }
             }
         }
 
@@ -163,64 +331,71 @@ namespace Imgeneus.World.Game.PartyAndRaid
 
         public override bool EnterParty(Character newPartyMember)
         {
-            // Raid is going to be deleted.
-            if (_locked)
-                return false;
-
-            // Check if raid is not full.
-            if (_membersDict.Keys.Count == MAX_RAID_MEMBERS_COUNT)
-                return false;
-
-            var index = FindFreeIndex();
-            if (index == -1)
-                return false;
-
-            if (!_membersDict.TryAdd(newPartyMember, index) || !_indexesDict.TryAdd(index, newPartyMember))
+            lock (_syncObject)
             {
-                _membersDict.TryRemove(newPartyMember, out index);
-                _indexesDict.TryRemove(index, out var member);
-                return false;
+                // Check if raid is not full.
+                if (_membersDict.Keys.Count == MAX_RAID_MEMBERS_COUNT)
+                    return false;
+
+                var index = FindFreeIndex();
+                if (index == -1)
+                    return false;
+
+                if (!_membersDict.TryAdd(newPartyMember, index) || !_indexesDict.TryAdd(index, newPartyMember))
+                {
+                    _membersDict.TryRemove(newPartyMember, out index);
+                    _indexesDict.TryRemove(index, out var member);
+                    return false;
+                }
+
+                if (Members.Count == 1)
+                    Leader = newPartyMember;
+                if (Members.Count == 2)
+                    SubLeader = newPartyMember;
+
+                SubcribeToCharacterChanges(newPartyMember);
+
+                // Notify others, that new raid member joined.
+                foreach (var member in Members)
+                    SendPlayerJoinedParty(member.Client, newPartyMember);
+
+                return true;
             }
-
-            if (Members.Count == 1)
-                Leader = newPartyMember;
-            if (Members.Count == 2)
-                SubLeader = newPartyMember;
-
-            SubcribeToCharacterChanges(newPartyMember);
-
-            // Notify others, that new raid member joined.
-            foreach (var member in Members)
-                SendPlayerJoinedParty(member.Client, newPartyMember);
-
-            return true;
         }
 
         public override void LeaveParty(Character leftPartyMember)
         {
-            foreach (var member in Members)
-                SendPlayerLeftRaid(member.Client, leftPartyMember);
+            lock (_syncObject)
+            {
+                foreach (var member in Members)
+                    SendPlayerLeftRaid(member.Client, leftPartyMember);
 
-            RemoveMember(leftPartyMember);
+                RemoveMember(leftPartyMember);
+            }
         }
 
         public override void KickMember(Character player)
         {
-            foreach (var member in Members)
-                SendKickMember(member.Client, player);
+            lock (_syncObject)
+            {
+                foreach (var member in Members)
+                    SendKickMember(member.Client, player);
 
-            RemoveMember(player);
+                RemoveMember(player);
+            }
         }
 
         public override void Dismantle()
         {
-            _locked = true;
-            var members = Members.ToList();
-            _membersDict.Clear();
-            foreach (var m in members)
+            lock (_syncObject)
             {
-                m.SetParty(null);
-                SendRaidDismantle(m.Client);
+                var members = Members.ToList();
+                _membersDict.Clear();
+                foreach (var m in members)
+                {
+                    m.SetParty(null);
+                    SendRaidDismantle(m.Client);
+                }
             }
         }
 
@@ -260,25 +435,28 @@ namespace Imgeneus.World.Game.PartyAndRaid
         /// <param name="destinationIndex">new index</param>
         public void MoveCharacter(int sourceIndex, int destinationIndex)
         {
-            if (_indexesDict.TryRemove(sourceIndex, out var sourceCharacter))
+            lock (_syncObject)
             {
-                _indexesDict.TryRemove(destinationIndex, out var destinationCharacter);
-                if (destinationCharacter is null) // free space
+                if (_indexesDict.TryRemove(sourceIndex, out var sourceCharacter))
                 {
-                    _indexesDict.TryAdd(destinationIndex, sourceCharacter);
-                    _membersDict[sourceCharacter] = destinationIndex;
+                    _indexesDict.TryRemove(destinationIndex, out var destinationCharacter);
+                    if (destinationCharacter is null) // free space
+                    {
+                        _indexesDict.TryAdd(destinationIndex, sourceCharacter);
+                        _membersDict[sourceCharacter] = destinationIndex;
+                    }
+                    else
+                    {
+                        _indexesDict.TryAdd(destinationIndex, sourceCharacter);
+                        _indexesDict.TryAdd(sourceIndex, destinationCharacter);
+                        _membersDict[sourceCharacter] = destinationIndex;
+                        _membersDict[destinationCharacter] = sourceIndex;
+                    }
                 }
-                else
-                {
-                    _indexesDict.TryAdd(destinationIndex, sourceCharacter);
-                    _indexesDict.TryAdd(sourceIndex, destinationCharacter);
-                    _membersDict[sourceCharacter] = destinationIndex;
-                    _membersDict[destinationCharacter] = sourceIndex;
-                }
-            }
 
-            foreach (var member in Members)
-                SendPlayerMove(member.Client, sourceIndex, destinationIndex, GetIndex(Leader), GetIndex(SubLeader));
+                foreach (var member in Members)
+                    SendPlayerMove(member.Client, sourceIndex, destinationIndex, GetIndex(Leader), GetIndex(SubLeader));
+            }
         }
 
         #region Senders

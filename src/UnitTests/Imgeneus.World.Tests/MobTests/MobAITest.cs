@@ -1,6 +1,7 @@
 ﻿using Imgeneus.World.Game.Monster;
 using Imgeneus.World.Game.Player;
 using Imgeneus.World.Game.Zone;
+using Imgeneus.World.Game.Zone.MapConfig;
 using Xunit;
 
 namespace Imgeneus.World.Tests.MobTests
@@ -10,7 +11,7 @@ namespace Imgeneus.World.Tests.MobTests
         [Fact]
         public void MobCanFindPlayerOnMap()
         {
-            var map = new Map(Map.TEST_MAP_ID, mapLoggerMock.Object);
+            var map = new Map(new MapConfiguration() { Id = Map.TEST_MAP_ID }, mapLoggerMock.Object);
             var mob = new Mob(mobLoggerMock.Object, databasePreloader.Object, Wolf.Id, true, new MoveArea(0, 0, 0, 0, 0, 0), map);
 
             var character = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object);
@@ -23,7 +24,7 @@ namespace Imgeneus.World.Tests.MobTests
         [Fact]
         public void MobCanKillPlayer()
         {
-            var map = new Map(Map.TEST_MAP_ID, mapLoggerMock.Object);
+            var map = new Map(new MapConfiguration() { Id = Map.TEST_MAP_ID }, mapLoggerMock.Object);
             var mob = new Mob(mobLoggerMock.Object, databasePreloader.Object, CrypticImmortal.Id, true, new MoveArea(0, 0, 0, 0, 0, 0), map);
 
             var character = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object)

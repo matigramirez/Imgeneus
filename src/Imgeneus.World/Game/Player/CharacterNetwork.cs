@@ -164,8 +164,7 @@ namespace Imgeneus.World.Game.Player
                     item.TradeQuantity = removeItemPacket.Count <= item.Count ? removeItemPacket.Count : item.Count;
                     var removedItem = RemoveItemFromInventory(item);
                     _packetsHelper.SendRemoveItem(Client, item, removedItem.Count == item.Count);
-                    removedItem.Owner = this;
-                    Map.AddItem(removedItem, PosX, PosY, PosZ);
+                    Map.AddItem(new MapItem(removedItem, this, PosX, PosY, PosZ));
                     break;
 
                 case MapPickUpItemPacket mapPickUpItemPacket:
@@ -175,16 +174,16 @@ namespace Imgeneus.World.Game.Player
                         _packetsHelper.SendItemDoesNotBelong(Client);
                         return;
                     }
-                    if (mapItem.Type == Item.MONEY_ITEM_TYPE)
+                    if (mapItem.Item.Type == Item.MONEY_ITEM_TYPE)
                     {
                         Map.RemoveItem(mapItem.Id);
-                        mapItem.Bag = 1;
-                        ChangeGold(Gold + (uint)mapItem.Gem1.TypeId);
-                        _packetsHelper.SendAddItem(Client, mapItem);
+                        mapItem.Item.Bag = 1;
+                        ChangeGold(Gold + (uint)mapItem.Item.Gem1.TypeId);
+                        _packetsHelper.SendAddItem(Client, mapItem.Item);
                     }
                     else
                     {
-                        var inventoryItem = AddItemToInventory(mapItem);
+                        var inventoryItem = AddItemToInventory(mapItem.Item);
                         if (inventoryItem is null)
                         {
                             _packetsHelper.SendFullInventory(Client);

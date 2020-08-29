@@ -1,6 +1,4 @@
-﻿using Imgeneus.World.Game.Zone;
-
-namespace Imgeneus.World.Game
+﻿namespace Imgeneus.World.Game.Zone
 {
     public interface IMapMember
     {
@@ -19,7 +17,6 @@ namespace Imgeneus.World.Game
         /// </summary>
         public float PosY { get; }
 
-
         /// <summary>
         /// Z coordinate.
         /// </summary>
@@ -34,5 +31,10 @@ namespace Imgeneus.World.Game
         /// Current map.
         /// </summary>
         public Map Map { get; }
+
+        /// <summary>
+        /// For performance improvement each map member stores cell id to which it belongs to.
+        /// </summary>
+        public int CellId { get; set; }
     }
 }

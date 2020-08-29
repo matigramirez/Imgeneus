@@ -62,6 +62,58 @@ namespace Imgeneus.World.Game.Zone
                     AddNPC(new Npc(DependencyContainer.Instance.Resolve<ILogger<Npc>>(), dbNpc, moveCoordinates, this));
                 }
             }
+
+            CalculateCells(_config.Size);
+        }
+
+        #endregion
+
+        #region Cells
+
+        /// <summary>
+        /// Minimum cell size.
+        /// </summary>
+        public const int MIN_CELL_SIZE = 100;
+
+        /// <summary>
+        /// Map size.
+        /// </summary>
+        public int Size { get; private set; }
+
+        /// <summary>
+        /// Number of cells rows.
+        /// </summary>
+        public int Rows { get; private set; }
+
+        /// <summary>
+        /// Number of cells columns.
+        /// </summary>
+        public int Columns { get; private set; }
+
+        /// <summary>
+        /// For better performance map sends updates not about the whole map,
+        /// but based on cells. Each map is responsible for its cells update.
+        /// </summary>
+        /// <param name="size">map size</param>
+        public void CalculateCells(int size)
+        {
+            Size = size;
+
+            var mod = Size / MIN_CELL_SIZE;
+            var div = Size % MIN_CELL_SIZE;
+
+            Rows = div == 0 ? mod : mod + 1;
+            Columns = Rows;
+        }
+
+        /// <summary>
+        /// Each map member is assigned cell id as soon as he enters into map or moves.
+        /// </summary>
+        /// <param name="member">map mamber</param>
+        /// <returns>cell id of this map member</returns>
+        public int GetCellId(IMapMember member)
+        {
+            throw new NotImplementedException();
         }
 
         #endregion
@@ -510,20 +562,20 @@ namespace Imgeneus.World.Game.Zone
         /// <summary>
         /// Dropped items.
         /// </summary>
-        private readonly ConcurrentDictionary<int, (Item Item, float X, float Y, float Z)> Items = new ConcurrentDictionary<int, (Item, float, float, float)>();
+        private readonly ConcurrentDictionary<int, MapItem> Items = new ConcurrentDictionary<int, MapItem>();
 
         /// <summary>
         /// Adds item on map.
         /// </summary>
         /// <param name="item">new added item</param>
-        public void AddItem(Item item, float x, float y, float z)
+        public void AddItem(MapItem item)
         {
             item.Id = GenerateId();
-            if (Items.TryAdd(item.Id, (item, x, y, z)))
+            if (Items.TryAdd(item.Id, item))
             {
                 foreach (var player in Players)
                 {
-                    _packetHelper.SendAddItem(player.Value.Client, item, x, y, z);
+                    _packetHelper.SendAddItem(player.Value.Client, item);
                 }
             }
         }
@@ -532,13 +584,13 @@ namespace Imgeneus.World.Game.Zone
         /// Tries to get item from map.
         /// </summary>
         /// <returns>if item is null, means that item doen't belong to player yet</returns>
-        public Item GetItem(int itemId, Character requester)
+        public MapItem GetItem(int itemId, Character requester)
         {
-            if (Items.TryGetValue(itemId, out var tuple))
+            if (Items.TryGetValue(itemId, out var mapItem))
             {
-                if (tuple.Item.Owner == null || tuple.Item.Owner == requester)
+                if (mapItem.Owner == null || mapItem.Owner == requester)
                 {
-                    return tuple.Item;
+                    return mapItem;
                 }
                 else
                 {
@@ -556,11 +608,11 @@ namespace Imgeneus.World.Game.Zone
         /// </summary>
         public void RemoveItem(int itemId)
         {
-            if (Items.TryRemove(itemId, out var tuple))
+            if (Items.TryRemove(itemId, out var mapItem))
             {
                 foreach (var player in Players)
                 {
-                    _packetHelper.SendRemoveItem(player.Value.Client, tuple.Item);
+                    _packetHelper.SendRemoveItem(player.Value.Client, mapItem);
                 }
             }
         }

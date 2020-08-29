@@ -57,6 +57,8 @@ namespace Imgeneus.World.Game
 
         public Map Map { get; set; }
 
+        public int CellId { get; set; }
+
         #endregion
 
         #region Current hitpoints
@@ -867,8 +869,7 @@ namespace Imgeneus.World.Game
             byte i = 0;
             foreach (var itm in dropItems)
             {
-                itm.Owner = owner;
-                Map.AddItem(itm, PosX + i, PosY, PosZ);
+                Map.AddItem(new MapItem(itm, owner, PosX + i, PosY, PosZ));
                 i++;
             }
         }

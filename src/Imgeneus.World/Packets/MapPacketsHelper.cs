@@ -296,24 +296,24 @@ namespace Imgeneus.World.Packets
             client.SendPacket(packet);
         }
 
-        internal void SendAddItem(IWorldClient client, Item item, float x, float y, float z)
+        internal void SendAddItem(IWorldClient client, MapItem mapItem)
         {
             using var packet = new Packet(PacketType.MAP_ADD_ITEM);
-            packet.Write(item.Id);
+            packet.Write(mapItem.Id);
             packet.WriteByte(1); // kind of item
-            packet.Write(item.Type);
-            packet.Write(item.TypeId);
-            packet.Write(item.Count);
-            packet.Write(x);
-            packet.Write(y);
-            packet.Write(z);
+            packet.Write(mapItem.Item.Type);
+            packet.Write(mapItem.Item.TypeId);
+            packet.Write(mapItem.Item.Count);
+            packet.Write(mapItem.PosX);
+            packet.Write(mapItem.PosY);
+            packet.Write(mapItem.PosZ);
             client.SendPacket(packet);
         }
 
-        internal void SendRemoveItem(IWorldClient client, Item item)
+        internal void SendRemoveItem(IWorldClient client, MapItem mapItem)
         {
             using var packet = new Packet(PacketType.MAP_REMOVE_ITEM);
-            packet.Write(item.Id);
+            packet.Write(mapItem.Id);
             client.SendPacket(packet);
         }
 

@@ -483,7 +483,6 @@ namespace Imgeneus.World.Game.Player
 
             item.Bag = free.Bag;
             item.Slot = (byte)free.Slot;
-            item.Owner = null; // Clear owner, when player picks up item.
 
             _taskQueue.Enqueue(ActionType.SAVE_ITEM_IN_INVENTORY,
                                Id, item.Type, item.TypeId, item.Count, item.Bag, item.Slot);

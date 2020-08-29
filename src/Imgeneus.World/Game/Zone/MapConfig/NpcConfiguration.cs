@@ -11,6 +11,7 @@ namespace Imgeneus.World.Game.Zone.MapConfig
         [JsonPropertyName("typeId")]
         public ushort TypeId { get; set; }
 
+        [JsonPropertyName("coordinates")]
         public List<NpcCoordinate> Coordinates { get; set; }
     }
 }

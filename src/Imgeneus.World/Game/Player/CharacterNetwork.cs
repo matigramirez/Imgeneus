@@ -11,6 +11,7 @@ using Imgeneus.World.Game.NPCs;
 using Imgeneus.World.Game.Zone;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -278,7 +279,7 @@ namespace Imgeneus.World.Game.Player
                         _gameWorld.LoadPlayerInMap(Id);
                     }
                     _packetsHelper.SendGmCommandSuccess(Client);
-                    Map.TeleportPlayer(Id, gMMovePacket.X, gMMovePacket.Y);
+                    Map.TeleportPlayer(Id, gMMovePacket.X, gMMovePacket.Z);
                     _packetsHelper.SendGmTeleport(Client, this);
                     break;
 
@@ -288,7 +289,11 @@ namespace Imgeneus.World.Game.Player
 
                     if (_databasePreloader.NPCs.TryGetValue((gMCreateNpcPacket.Type, gMCreateNpcPacket.TypeId), out var dbNpc))
                     {
-                        Map.AddNPC(new Npc(DependencyContainer.Instance.Resolve<ILogger<Npc>>(), dbNpc, PosX, PosY, PosZ, Map));
+                        var moveCoordinates = new List<(float, float, float, ushort)>()
+                        {
+                            (PosX, PosY, PosZ, Angle)
+                        };
+                        Map.AddNPC(new Npc(DependencyContainer.Instance.Resolve<ILogger<Npc>>(), dbNpc, moveCoordinates, Map));
                         _packetsHelper.SendGmCommandSuccess(Client);
                     }
                     else

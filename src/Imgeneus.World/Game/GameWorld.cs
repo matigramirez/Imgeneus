@@ -55,7 +55,7 @@ namespace Imgeneus.World.Game
             var mapConfigs = _mapsLoader.LoadMaps();
             foreach (var config in mapConfigs)
             {
-                var map = new Map(config, DependencyContainer.Instance.Resolve<ILogger<Map>>());
+                var map = new Map(config, DependencyContainer.Instance.Resolve<ILogger<Map>>(), _databasePreloader);
                 if (Maps.TryAdd(config.Id, map))
                     _logger.LogInformation($"Loaded map {map.Id}.");
 

@@ -14,6 +14,6 @@ namespace Imgeneus.World.Game.Zone.MapConfig
         public float Z { get; set; }
 
         [JsonPropertyName("angle")]
-        public ushort Angle { get; set; }
+        public float Angle { get; set; }
     }
 }

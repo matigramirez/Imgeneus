@@ -43,10 +43,5 @@ namespace Imgeneus.Database.Preload
         /// Preloaded quests.
         /// </summary>
         Dictionary<ushort, DbQuest> Quests { get; }
-
-        /// <summary>
-        /// Preloads all needed info.
-        /// </summary>
-        void Preload();
     }
 }

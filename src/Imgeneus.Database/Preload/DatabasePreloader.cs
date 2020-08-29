@@ -36,10 +36,14 @@ namespace Imgeneus.Database.Preload
         {
             _logger = logger;
             _database = database;
+
+            Preload();
         }
 
-        /// <inheritdoc />
-        public void Preload()
+        /// <summary>
+        /// Preloads all needed game definitions from database.
+        /// </summary>
+        private void Preload()
         {
             try
             {

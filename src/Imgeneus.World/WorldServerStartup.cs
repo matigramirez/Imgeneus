@@ -78,8 +78,6 @@ namespace Imgeneus.World
             logsDb.Migrate();
             var dbWorker = DependencyContainer.Instance.Resolve<DatabaseWorker>();
             dbWorker.StartAsync(new System.Threading.CancellationToken());
-            var dbPreloader = DependencyContainer.Instance.Resolve<IDatabasePreloader>();
-            dbPreloader.Preload();
 
             try
             {

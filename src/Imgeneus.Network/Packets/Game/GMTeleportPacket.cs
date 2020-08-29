@@ -6,14 +6,14 @@ namespace Imgeneus.Network.Packets.Game
     {
         public float X;
 
-        public float Y;
+        public float Z;
 
         public ushort MapId;
 
         public GMTeleportPacket(IPacketStream packet)
         {
             X = packet.Read<float>();
-            Y = packet.Read<float>();
+            Z = packet.Read<float>();
             MapId = packet.Read<ushort>();
         }
     }

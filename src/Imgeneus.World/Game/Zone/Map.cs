@@ -1,6 +1,8 @@
-﻿using Imgeneus.Core.Extensions;
+﻿using Imgeneus.Core.DependencyInjection;
+using Imgeneus.Core.Extensions;
 using Imgeneus.Database.Constants;
 using Imgeneus.Database.Entities;
+using Imgeneus.Database.Preload;
 using Imgeneus.World.Game.Monster;
 using Imgeneus.World.Game.NPCs;
 using Imgeneus.World.Game.PartyAndRaid;
@@ -8,6 +10,7 @@ using Imgeneus.World.Game.Player;
 using Imgeneus.World.Game.Zone.MapConfig;
 using Imgeneus.World.Packets;
 using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,6 +26,7 @@ namespace Imgeneus.World.Game.Zone
 
         private readonly MapConfiguration _config;
         private readonly ILogger<Map> _logger;
+        private readonly IDatabasePreloader _databasePreloader;
         private readonly MapPacketsHelper _packetHelper;
 
         /// <summary>
@@ -32,10 +36,11 @@ namespace Imgeneus.World.Game.Zone
 
         public static readonly ushort TEST_MAP_ID = 9999;
 
-        public Map(MapConfiguration config, ILogger<Map> logger)
+        public Map(MapConfiguration config, ILogger<Map> logger, IDatabasePreloader databasePreloader)
         {
             _config = config;
             _logger = logger;
+            _databasePreloader = databasePreloader;
             _packetHelper = new MapPacketsHelper();
 
             Init();
@@ -47,6 +52,16 @@ namespace Imgeneus.World.Game.Zone
         private void Init()
         {
             // TODO: init map.
+
+            // Create npcs.
+            foreach (var conf in _config.NPCs)
+            {
+                if (_databasePreloader.NPCs.TryGetValue((conf.Type, conf.TypeId), out var dbNpc))
+                {
+                    var moveCoordinates = conf.Coordinates.Select(c => (c.X, c.Y, c.Z, Convert.ToUInt16(c.Angle))).ToList();
+                    AddNPC(new Npc(DependencyContainer.Instance.Resolve<ILogger<Npc>>(), dbNpc, moveCoordinates, this));
+                }
+            }
         }
 
         #endregion
@@ -95,6 +110,9 @@ namespace Imgeneus.World.Game.Zone
                         _packetHelper.SendCharacterConnectedToMap(character.Client, loadedPlayer.Value);
                     }
                 }
+
+                foreach (var npc in NPCs)
+                    _packetHelper.SendNpcEnter(character.Client, npc.Value);
             }
 
             return success;
@@ -183,8 +201,8 @@ namespace Imgeneus.World.Game.Zone
         /// </summary>
         /// <param name="playerId">Id of player</param>
         /// <param name="X">new X position</param>
-        /// <param name="Y">new Y position</param>
-        public void TeleportPlayer(int playerId, float X, float Y)
+        /// <param name="Z">new Z position</param>
+        public void TeleportPlayer(int playerId, float X, float Z)
         {
             if (!Players.ContainsKey(playerId))
             {
@@ -192,7 +210,7 @@ namespace Imgeneus.World.Game.Zone
             }
 
             var player = Players[playerId];
-            player.UpdatePosition(X, Y, player.PosZ, player.Angle, true, true);
+            player.UpdatePosition(X, player.PosY, Z, player.Angle, true, true);
             foreach (var p in Players)
                 _packetHelper.SendCharacterTeleport(p.Value.Client, player);
         }

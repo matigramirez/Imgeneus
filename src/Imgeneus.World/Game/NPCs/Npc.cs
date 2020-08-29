@@ -11,13 +11,14 @@ namespace Imgeneus.World.Game.NPCs
         private readonly ILogger _logger;
         private readonly DbNpc _dbNpc;
 
-        public Npc(ILogger<Npc> logger, DbNpc dbNpc, float x, float y, float z, Map map)
+        public Npc(ILogger<Npc> logger, DbNpc dbNpc, List<(float X, float Y, float Z, ushort Angle)> moveCoordinates, Map map)
         {
             _logger = logger;
             _dbNpc = dbNpc;
-            PosX = x;
-            PosY = y;
-            PosZ = z;
+            PosX = moveCoordinates[0].X;
+            PosY = moveCoordinates[0].Y;
+            PosZ = moveCoordinates[0].Z;
+            Angle = moveCoordinates[0].Angle;
             Map = map;
 
             // Set products.

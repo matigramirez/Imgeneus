@@ -10,6 +10,7 @@ using Imgeneus.World.Game.PartyAndRaid;
 using Imgeneus.World.Game.Player;
 using Imgeneus.World.Game.Trade;
 using Imgeneus.World.Game.Zone;
+using Imgeneus.World.Game.Zone.MapConfig;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System.Collections.Concurrent;
@@ -25,13 +26,15 @@ namespace Imgeneus.World.Game
         private readonly ILogger<GameWorld> _logger;
         private readonly IBackgroundTaskQueue _taskQueue;
         private readonly IDatabasePreloader _databasePreloader;
+        private readonly IMapsLoader _mapsLoader;
         private readonly CharacterConfiguration _characterConfig;
 
-        public GameWorld(ILogger<GameWorld> logger, IBackgroundTaskQueue taskQueue, IDatabasePreloader databasePreloader, CharacterConfiguration characterConfig)
+        public GameWorld(ILogger<GameWorld> logger, IBackgroundTaskQueue taskQueue, IDatabasePreloader databasePreloader, IMapsLoader mapsLoader, CharacterConfiguration characterConfig)
         {
             _logger = logger;
             _taskQueue = taskQueue;
             _databasePreloader = databasePreloader;
+            _mapsLoader = mapsLoader;
             _characterConfig = characterConfig;
 
             InitMaps();
@@ -49,8 +52,14 @@ namespace Imgeneus.World.Game
         /// </summary>
         private void InitMaps()
         {
-            // TODO: init maps here. For now create 0-map(DWaterBorderland, Lvl 40-80)
-            Maps.TryAdd(0, new Map(0, DependencyContainer.Instance.Resolve<ILogger<Map>>()));
+            var mapConfigs = _mapsLoader.LoadMaps();
+            foreach (var config in mapConfigs)
+            {
+                var map = new Map(config, DependencyContainer.Instance.Resolve<ILogger<Map>>());
+                if (Maps.TryAdd(config.Id, map))
+                    _logger.LogInformation($"Loaded map {map.Id}.");
+
+            }
         }
 
         #endregion

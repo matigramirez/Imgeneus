@@ -5,6 +5,7 @@ using Imgeneus.World.Game.Monster;
 using Imgeneus.World.Game.NPCs;
 using Imgeneus.World.Game.PartyAndRaid;
 using Imgeneus.World.Game.Player;
+using Imgeneus.World.Game.Zone.MapConfig;
 using Imgeneus.World.Packets;
 using Microsoft.Extensions.Logging;
 using System.Collections.Concurrent;
@@ -20,21 +21,32 @@ namespace Imgeneus.World.Game.Zone
     {
         #region Constructor
 
+        private readonly MapConfiguration _config;
         private readonly ILogger<Map> _logger;
         private readonly MapPacketsHelper _packetHelper;
 
         /// <summary>
         /// Map id.
         /// </summary>
-        public ushort Id { get; private set; }
+        public ushort Id { get => _config.Id; }
 
         public static readonly ushort TEST_MAP_ID = 9999;
 
-        public Map(ushort id, ILogger<Map> logger)
+        public Map(MapConfiguration config, ILogger<Map> logger)
         {
-            Id = id;
+            _config = config;
             _logger = logger;
             _packetHelper = new MapPacketsHelper();
+
+            Init();
+        }
+
+        /// <summary>
+        /// Inits mobs, npcs, portals etc. based on map configuration.
+        /// </summary>
+        private void Init()
+        {
+            // TODO: init map.
         }
 
         #endregion

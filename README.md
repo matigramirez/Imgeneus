@@ -1,11 +1,12 @@
 # Imgeneus
 
-Imgeneus is a simple and elegant Shaiya EP3 socket server over the TCP/IP protocol, built with C# 8 and .NET Core Framework 3.0.
+Imgeneus is a simple and elegant Shaiya EP8 socket server over the TCP/IP protocol, built with C# 8 and .NET Core Framework 3.0.
 
 This project has been created for learning purposes about the network and game logic problematics on the server-side.
 We choose [Shaiya](https://shaiya.fandom.com/wiki/Main_Page) because  it is a simple game, but enough complex to learn the basic functions of an MMO game architecture.
+It's not about playing a game or competing with any services provided by Aeriagames or its partners, and we don't endorse such actions.
 
-This repo also uses the best parts of these repos: [Drakkus/ShaiyaGenesis](https://github.com/Drakkus/ShaiyaGenesis), [Origin](https://github.com/aosyatnik/Origin) and [Imgeneus](https://github.com/Mun1z/Imgeneus).
+This repo also uses the best parts of these repos: [Drakkus/ShaiyaGenesis](https://github.com/Drakkus/ShaiyaGenesis), [Origin](https://github.com/aosyatnik/Origin) and original Imgeneus (removed by creator).
 
 ## Build and run
 1. Build the project.
@@ -21,10 +22,6 @@ This repo also uses the best parts of these repos: [Drakkus/ShaiyaGenesis](https
 - Application type:  `Console`
 - Database type:  `MySQL`
 - Configuration files type:  `JSON`
-- External libraries used:
-	- [Entity Framework Core](https://github.com/aspnet/EntityFrameworkCore)
-	- [NLog](https://github.com/NLog/NLog)
-	- [BinarySerializer](https://github.com/jefffhaynes/BinarySerializer)
 - Environment: `Visual Studio 2019`
 
 ## Results

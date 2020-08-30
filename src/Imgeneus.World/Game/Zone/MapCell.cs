@@ -88,6 +88,19 @@ namespace Imgeneus.World.Game.Zone
                 _packetHelper.SendNpcLeave(character.Client, npc);
             foreach (var npc in npcToEnter)
                 _packetHelper.SendNpcEnter(character.Client, npc);
+
+            // Send update mobs.
+            var oldCellMobs = Map.Cells[character.OldCellId].GetAllMobs(true);
+            var newCellMobs = GetAllMobs(true);
+
+            var mobToLeave = oldCellMobs.Where(m => !newCellMobs.Contains(m));
+            var mobToEnter = newCellMobs.Where(m => !oldCellMobs.Contains(m));
+
+            foreach (var mob in mobToLeave)
+                _packetHelper.SendMobLeave(character.Client, mob);
+
+            foreach (var mob in mobToEnter)
+                _packetHelper.SendMobEnter(character.Client, mob, false);
         }
 
         /// <summary>
@@ -385,7 +398,7 @@ namespace Imgeneus.World.Game.Zone
             AddListeners(mob);
 
             foreach (var player in GetAllPlayers(true))
-                _packetHelper.SendMobEntered(player.Client, mob, true);
+                _packetHelper.SendMobEnter(player.Client, mob, true);
         }
 
         /// <summary>

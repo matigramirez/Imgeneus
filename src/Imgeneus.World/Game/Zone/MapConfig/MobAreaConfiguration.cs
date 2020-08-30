@@ -23,6 +23,7 @@ namespace Imgeneus.World.Game.Zone.MapConfig
         [JsonPropertyName("z2")]
         public float Z2 { get; set; }
 
+        [JsonPropertyName("mobs")]
         public List<MobConfiguration> Mobs { get; set; }
     }
 }

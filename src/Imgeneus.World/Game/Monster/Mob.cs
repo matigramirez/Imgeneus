@@ -1,4 +1,5 @@
-﻿using Imgeneus.Database.Constants;
+﻿using Imgeneus.Core.Extensions;
+using Imgeneus.Database.Constants;
 using Imgeneus.Database.Entities;
 using Imgeneus.Database.Preload;
 using Imgeneus.World.Game.Zone;
@@ -26,8 +27,13 @@ namespace Imgeneus.World.Game.Monster
             Level = _dbMob.Level;
             AI = _dbMob.AI;
             ShouldRebirth = shouldRebirth;
+
             MoveArea = moveArea;
             Map = map;
+            PosX = new Random().NextFloat(MoveArea.X1, MoveArea.X2);
+            PosY = new Random().NextFloat(MoveArea.Y1, MoveArea.Y2);
+            PosZ = new Random().NextFloat(MoveArea.Z1, MoveArea.Z2);
+
             IsAttack1Enabled = _dbMob.AttackOk1 != 0;
             IsAttack2Enabled = _dbMob.AttackOk2 != 0;
             IsAttack3Enabled = _dbMob.AttackOk3 != 0;

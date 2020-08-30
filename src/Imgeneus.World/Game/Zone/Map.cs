@@ -25,7 +25,6 @@ namespace Imgeneus.World.Game.Zone
         private readonly MapConfiguration _config;
         private readonly ILogger<Map> _logger;
         private readonly IDatabasePreloader _databasePreloader;
-        private readonly MapPacketsHelper _packetHelper;
 
         /// <summary>
         /// Map id.
@@ -39,7 +38,6 @@ namespace Imgeneus.World.Game.Zone
             _config = config;
             _logger = logger;
             _databasePreloader = databasePreloader;
-            _packetHelper = new MapPacketsHelper();
 
             Init();
         }
@@ -62,6 +60,26 @@ namespace Imgeneus.World.Game.Zone
                     var npc = new Npc(DependencyContainer.Instance.Resolve<ILogger<Npc>>(), dbNpc, moveCoordinates, this);
                     var cellIndex = GetCellIndex(npc);
                     AddNPC(cellIndex, npc);
+                }
+            }
+
+            // Create mobs.
+            foreach (var mobArea in _config.MobAreas)
+            {
+                foreach (var mobConf in mobArea.Mobs)
+                {
+                    if (_databasePreloader.Mobs.ContainsKey(mobConf.MobId))
+                        for (var i = 0; i < mobConf.MobCount; i++)
+                        {
+                            var mob = new Mob(
+                                DependencyContainer.Instance.Resolve<ILogger<Mob>>(),
+                                _databasePreloader,
+                                mobConf.MobId,
+                                true,
+                                new MoveArea(mobArea.X1, mobArea.X2, mobArea.Y1, mobArea.Y2, mobArea.Z1, mobArea.Z2),
+                                this);
+                            AddMob(mob);
+                        }
                 }
             }
         }

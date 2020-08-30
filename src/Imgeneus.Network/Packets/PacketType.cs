@@ -59,7 +59,7 @@
 
         // Mobs
         MOB_ENTER = 0x0601, // 1537
-        MOB_OUT_OF_RADAR = 0x0602, // 1538
+        MOB_LEAVE = 0x0602, // 1538
         MOB_MOVE = 0x0603, // 1539
         MOB_ATTACK = 0x0605, // 1541
         MOB_DEATH = 0x0606, // 1542

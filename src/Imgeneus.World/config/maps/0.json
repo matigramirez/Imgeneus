@@ -2186,7 +2186,7 @@
       "mobs": [
         {
           "mobId": 1,
-          "mobCount": 1
+          "mobCount": 2
         },
         {
           "mobId": 2,
@@ -2204,7 +2204,7 @@
       "mobs": [
         {
           "mobId": 1,
-          "mobCount": 1
+          "mobCount": 2
         },
         {
           "mobId": 2,
@@ -2222,7 +2222,7 @@
       "mobs": [
         {
           "mobId": 1,
-          "mobCount": 1
+          "mobCount": 2
         },
         {
           "mobId": 2,
@@ -2240,7 +2240,7 @@
       "mobs": [
         {
           "mobId": 1,
-          "mobCount": 1
+          "mobCount": 2
         },
         {
           "mobId": 2,
@@ -2262,7 +2262,7 @@
         },
         {
           "mobId": 2,
-          "mobCount": 2
+          "mobCount": 1
         }
       ],
       "x1": 1485.541015625,
@@ -2290,7 +2290,7 @@
       "mobs": [
         {
           "mobId": 2,
-          "mobCount": 2
+          "mobCount": 1
         }
       ],
       "x1": 1481.0040283203125,
@@ -2308,7 +2308,7 @@
         },
         {
           "mobId": 2,
-          "mobCount": 2
+          "mobCount": 1
         }
       ],
       "x1": 1455.8270263671875,
@@ -2322,7 +2322,7 @@
       "mobs": [
         {
           "mobId": 2,
-          "mobCount": 2
+          "mobCount": 1
         }
       ],
       "x1": 1432.614013671875,
@@ -2340,7 +2340,7 @@
         },
         {
           "mobId": 3,
-          "mobCount": 3
+          "mobCount": 2
         }
       ],
       "x1": 1410.4119873046875,
@@ -2358,7 +2358,7 @@
         },
         {
           "mobId": 3,
-          "mobCount": 3
+          "mobCount": 2
         }
       ],
       "x1": 1443.7249755859375,
@@ -2376,7 +2376,7 @@
         },
         {
           "mobId": 3,
-          "mobCount": 3
+          "mobCount": 2
         }
       ],
       "x1": 1410.844970703125,
@@ -2394,7 +2394,7 @@
         },
         {
           "mobId": 3,
-          "mobCount": 3
+          "mobCount": 2
         }
       ],
       "x1": 1404.2919921875,
@@ -2408,7 +2408,7 @@
       "mobs": [
         {
           "mobId": 2,
-          "mobCount": 2
+          "mobCount": 3
         },
         {
           "mobId": 3,
@@ -2426,7 +2426,7 @@
       "mobs": [
         {
           "mobId": 1,
-          "mobCount": 1
+          "mobCount": 2
         }
       ],
       "x1": 1526.1400146484375,
@@ -2440,7 +2440,7 @@
       "mobs": [
         {
           "mobId": 1,
-          "mobCount": 1
+          "mobCount": 2
         }
       ],
       "x1": 1545.802001953125,
@@ -2454,7 +2454,7 @@
       "mobs": [
         {
           "mobId": 1,
-          "mobCount": 1
+          "mobCount": 2
         }
       ],
       "x1": 1543.198974609375,
@@ -2468,7 +2468,7 @@
       "mobs": [
         {
           "mobId": 1,
-          "mobCount": 1
+          "mobCount": 2
         }
       ],
       "x1": 1525.5269775390625,
@@ -2496,11 +2496,11 @@
       "mobs": [
         {
           "mobId": 2002,
-          "mobCount": 2002
+          "mobCount": 2
         },
         {
           "mobId": 2003,
-          "mobCount": 2003
+          "mobCount": 1
         }
       ],
       "x1": 1532.385986328125,
@@ -2514,11 +2514,11 @@
       "mobs": [
         {
           "mobId": 2002,
-          "mobCount": 2002
+          "mobCount": 2
         },
         {
           "mobId": 2005,
-          "mobCount": 2005
+          "mobCount": 1
         }
       ],
       "x1": 1495.5400390625,
@@ -2532,11 +2532,11 @@
       "mobs": [
         {
           "mobId": 2002,
-          "mobCount": 2002
+          "mobCount": 2
         },
         {
           "mobId": 2005,
-          "mobCount": 2005
+          "mobCount": 1
         }
       ],
       "x1": 1505.0799560546875,
@@ -2550,11 +2550,11 @@
       "mobs": [
         {
           "mobId": 2002,
-          "mobCount": 2002
+          "mobCount": 2
         },
         {
           "mobId": 2003,
-          "mobCount": 2003
+          "mobCount": 1
         }
       ],
       "x1": 1497.7723388671875,
@@ -2568,11 +2568,11 @@
       "mobs": [
         {
           "mobId": 2002,
-          "mobCount": 2002
+          "mobCount": 2
         },
         {
           "mobId": 2003,
-          "mobCount": 2003
+          "mobCount": 1
         }
       ],
       "x1": 1496.1553955078125,
@@ -2586,11 +2586,11 @@
       "mobs": [
         {
           "mobId": 2002,
-          "mobCount": 2002
+          "mobCount": 1
         },
         {
           "mobId": 2003,
-          "mobCount": 2003
+          "mobCount": 1
         }
       ],
       "x1": 1536.4849853515625,
@@ -2604,11 +2604,11 @@
       "mobs": [
         {
           "mobId": 2002,
-          "mobCount": 2002
+          "mobCount": 2
         },
         {
           "mobId": 2005,
-          "mobCount": 2005
+          "mobCount": 1
         }
       ],
       "x1": 1471.8446044921875,
@@ -2622,11 +2622,11 @@
       "mobs": [
         {
           "mobId": 2002,
-          "mobCount": 2002
+          "mobCount": 3
         },
         {
           "mobId": 2003,
-          "mobCount": 2003
+          "mobCount": 2
         }
       ],
       "x1": 1455.72998046875,
@@ -2640,11 +2640,11 @@
       "mobs": [
         {
           "mobId": 2002,
-          "mobCount": 2002
+          "mobCount": 2
         },
         {
           "mobId": 2003,
-          "mobCount": 2003
+          "mobCount": 1
         }
       ],
       "x1": 1483.8038330078125,
@@ -2658,11 +2658,11 @@
       "mobs": [
         {
           "mobId": 2002,
-          "mobCount": 2002
+          "mobCount": 1
         },
         {
           "mobId": 2005,
-          "mobCount": 2005
+          "mobCount": 1
         }
       ],
       "x1": 1532.804931640625,
@@ -2676,7 +2676,7 @@
       "mobs": [
         {
           "mobId": 6,
-          "mobCount": 6
+          "mobCount": 4
         }
       ],
       "x1": 1477.85498046875,
@@ -2690,7 +2690,7 @@
       "mobs": [
         {
           "mobId": 6,
-          "mobCount": 6
+          "mobCount": 4
         }
       ],
       "x1": 1482.35400390625,
@@ -2704,7 +2704,7 @@
       "mobs": [
         {
           "mobId": 3,
-          "mobCount": 3
+          "mobCount": 1
         }
       ],
       "x1": 1462.5009765625,
@@ -2718,11 +2718,11 @@
       "mobs": [
         {
           "mobId": 5,
-          "mobCount": 5
+          "mobCount": 2
         },
         {
           "mobId": 6,
-          "mobCount": 6
+          "mobCount": 2
         }
       ],
       "x1": 1346.2550048828125,
@@ -2736,11 +2736,11 @@
       "mobs": [
         {
           "mobId": 5,
-          "mobCount": 5
+          "mobCount": 2
         },
         {
           "mobId": 6,
-          "mobCount": 6
+          "mobCount": 2
         }
       ],
       "x1": 1302.718994140625,
@@ -2754,7 +2754,7 @@
       "mobs": [
         {
           "mobId": 5,
-          "mobCount": 5
+          "mobCount": 2
         }
       ],
       "x1": 1256.9100341796875,
@@ -2768,11 +2768,11 @@
       "mobs": [
         {
           "mobId": 5,
-          "mobCount": 5
+          "mobCount": 2
         },
         {
           "mobId": 6,
-          "mobCount": 6
+          "mobCount": 2
         }
       ],
       "x1": 1136.5760498046875,
@@ -2786,11 +2786,11 @@
       "mobs": [
         {
           "mobId": 5,
-          "mobCount": 5
+          "mobCount": 2
         },
         {
           "mobId": 6,
-          "mobCount": 6
+          "mobCount": 2
         }
       ],
       "x1": 1118.08642578125,
@@ -2804,11 +2804,11 @@
       "mobs": [
         {
           "mobId": 5,
-          "mobCount": 5
+          "mobCount": 2
         },
         {
           "mobId": 6,
-          "mobCount": 6
+          "mobCount": 2
         }
       ],
       "x1": 1223.5899658203125,
@@ -2822,11 +2822,11 @@
       "mobs": [
         {
           "mobId": 5,
-          "mobCount": 5
+          "mobCount": 1
         },
         {
           "mobId": 6,
-          "mobCount": 6
+          "mobCount": 1
         }
       ],
       "x1": 1151.9530029296875,
@@ -2840,11 +2840,11 @@
       "mobs": [
         {
           "mobId": 5,
-          "mobCount": 5
+          "mobCount": 2
         },
         {
           "mobId": 6,
-          "mobCount": 6
+          "mobCount": 2
         }
       ],
       "x1": 1168.2779541015625,
@@ -2858,7 +2858,7 @@
       "mobs": [
         {
           "mobId": 6,
-          "mobCount": 6
+          "mobCount": 2
         }
       ],
       "x1": 1248.0240478515625,
@@ -2872,7 +2872,7 @@
       "mobs": [
         {
           "mobId": 6,
-          "mobCount": 6
+          "mobCount": 2
         }
       ],
       "x1": 1249.85400390625,
@@ -2886,11 +2886,11 @@
       "mobs": [
         {
           "mobId": 5,
-          "mobCount": 5
+          "mobCount": 2
         },
         {
           "mobId": 6,
-          "mobCount": 6
+          "mobCount": 2
         }
       ],
       "x1": 1376.23095703125,
@@ -2904,11 +2904,11 @@
       "mobs": [
         {
           "mobId": 5,
-          "mobCount": 5
+          "mobCount": 2
         },
         {
           "mobId": 6,
-          "mobCount": 6
+          "mobCount": 2
         }
       ],
       "x1": 1383.8599853515625,
@@ -2922,11 +2922,11 @@
       "mobs": [
         {
           "mobId": 6,
-          "mobCount": 6
+          "mobCount": 2
         },
         {
           "mobId": 5,
-          "mobCount": 5
+          "mobCount": 2
         }
       ],
       "x1": 1359.983154296875,
@@ -2940,11 +2940,11 @@
       "mobs": [
         {
           "mobId": 5,
-          "mobCount": 5
+          "mobCount": 2
         },
         {
           "mobId": 6,
-          "mobCount": 6
+          "mobCount": 2
         }
       ],
       "x1": 1366.032958984375,
@@ -2958,11 +2958,11 @@
       "mobs": [
         {
           "mobId": 5,
-          "mobCount": 5
+          "mobCount": 2
         },
         {
           "mobId": 6,
-          "mobCount": 6
+          "mobCount": 2
         }
       ],
       "x1": 1379.8310546875,
@@ -2976,7 +2976,7 @@
       "mobs": [
         {
           "mobId": 10,
-          "mobCount": 10
+          "mobCount": 2
         }
       ],
       "x1": 1262.3819580078125,
@@ -2990,11 +2990,11 @@
       "mobs": [
         {
           "mobId": 10,
-          "mobCount": 10
+          "mobCount": 3
         },
         {
           "mobId": 12,
-          "mobCount": 12
+          "mobCount": 3
         }
       ],
       "x1": 1270.31005859375,
@@ -3008,11 +3008,11 @@
       "mobs": [
         {
           "mobId": 10,
-          "mobCount": 10
+          "mobCount": 2
         },
         {
           "mobId": 12,
-          "mobCount": 12
+          "mobCount": 2
         }
       ],
       "x1": 1276.60400390625,
@@ -3026,11 +3026,11 @@
       "mobs": [
         {
           "mobId": 10,
-          "mobCount": 10
+          "mobCount": 1
         },
         {
           "mobId": 12,
-          "mobCount": 12
+          "mobCount": 1
         }
       ],
       "x1": 1220.6650390625,
@@ -3044,11 +3044,11 @@
       "mobs": [
         {
           "mobId": 10,
-          "mobCount": 10
+          "mobCount": 1
         },
         {
           "mobId": 12,
-          "mobCount": 12
+          "mobCount": 1
         }
       ],
       "x1": 1188.5870361328125,
@@ -3062,11 +3062,11 @@
       "mobs": [
         {
           "mobId": 10,
-          "mobCount": 10
+          "mobCount": 2
         },
         {
           "mobId": 12,
-          "mobCount": 12
+          "mobCount": 2
         }
       ],
       "x1": 1344.1910400390625,
@@ -3080,7 +3080,7 @@
       "mobs": [
         {
           "mobId": 12,
-          "mobCount": 12
+          "mobCount": 2
         }
       ],
       "x1": 1340.531005859375,
@@ -3094,11 +3094,11 @@
       "mobs": [
         {
           "mobId": 10,
-          "mobCount": 10
+          "mobCount": 2
         },
         {
           "mobId": 12,
-          "mobCount": 12
+          "mobCount": 2
         }
       ],
       "x1": 1383.0030517578125,
@@ -3112,7 +3112,7 @@
       "mobs": [
         {
           "mobId": 12,
-          "mobCount": 12
+          "mobCount": 2
         }
       ],
       "x1": 1308.7650146484375,
@@ -3126,7 +3126,7 @@
       "mobs": [
         {
           "mobId": 13,
-          "mobCount": 13
+          "mobCount": 2
         }
       ],
       "x1": 1257.47900390625,
@@ -3140,7 +3140,7 @@
       "mobs": [
         {
           "mobId": 13,
-          "mobCount": 13
+          "mobCount": 2
         }
       ],
       "x1": 1201.0389404296875,
@@ -3154,11 +3154,11 @@
       "mobs": [
         {
           "mobId": 13,
-          "mobCount": 13
+          "mobCount": 2
         },
         {
           "mobId": 20,
-          "mobCount": 20
+          "mobCount": 2
         }
       ],
       "x1": 1220.81103515625,
@@ -3172,11 +3172,11 @@
       "mobs": [
         {
           "mobId": 13,
-          "mobCount": 13
+          "mobCount": 1
         },
         {
           "mobId": 20,
-          "mobCount": 20
+          "mobCount": 1
         }
       ],
       "x1": 1310.4659423828125,
@@ -3190,11 +3190,11 @@
       "mobs": [
         {
           "mobId": 13,
-          "mobCount": 13
+          "mobCount": 2
         },
         {
           "mobId": 20,
-          "mobCount": 20
+          "mobCount": 2
         }
       ],
       "x1": 1300.501953125,
@@ -3208,11 +3208,11 @@
       "mobs": [
         {
           "mobId": 13,
-          "mobCount": 13
+          "mobCount": 2
         },
         {
           "mobId": 20,
-          "mobCount": 20
+          "mobCount": 2
         }
       ],
       "x1": 1265.68701171875,
@@ -3226,11 +3226,11 @@
       "mobs": [
         {
           "mobId": 13,
-          "mobCount": 13
+          "mobCount": 2
         },
         {
           "mobId": 20,
-          "mobCount": 20
+          "mobCount": 2
         }
       ],
       "x1": 1262.1510009765625,
@@ -3244,7 +3244,7 @@
       "mobs": [
         {
           "mobId": 20,
-          "mobCount": 20
+          "mobCount": 2
         }
       ],
       "x1": 1271.345947265625,
@@ -3258,11 +3258,11 @@
       "mobs": [
         {
           "mobId": 13,
-          "mobCount": 13
+          "mobCount": 2
         },
         {
           "mobId": 20,
-          "mobCount": 20
+          "mobCount": 2
         }
       ],
       "x1": 1263.1409912109375,
@@ -3276,11 +3276,11 @@
       "mobs": [
         {
           "mobId": 13,
-          "mobCount": 13
+          "mobCount": 2
         },
         {
           "mobId": 20,
-          "mobCount": 20
+          "mobCount": 2
         }
       ],
       "x1": 1280.740966796875,
@@ -3294,11 +3294,11 @@
       "mobs": [
         {
           "mobId": 13,
-          "mobCount": 13
+          "mobCount": 1
         },
         {
           "mobId": 20,
-          "mobCount": 20
+          "mobCount": 1
         }
       ],
       "x1": 1251.6280517578125,
@@ -3312,7 +3312,7 @@
       "mobs": [
         {
           "mobId": 25,
-          "mobCount": 25
+          "mobCount": 1
         }
       ],
       "x1": 1224.0340576171875,
@@ -3326,7 +3326,7 @@
       "mobs": [
         {
           "mobId": 25,
-          "mobCount": 25
+          "mobCount": 3
         }
       ],
       "x1": 1171.990966796875,
@@ -3340,7 +3340,7 @@
       "mobs": [
         {
           "mobId": 31,
-          "mobCount": 31
+          "mobCount": 2
         }
       ],
       "x1": 1219.4630126953125,
@@ -3354,11 +3354,11 @@
       "mobs": [
         {
           "mobId": 25,
-          "mobCount": 25
+          "mobCount": 2
         },
         {
           "mobId": 31,
-          "mobCount": 31
+          "mobCount": 2
         }
       ],
       "x1": 1261.2130126953125,
@@ -3372,11 +3372,11 @@
       "mobs": [
         {
           "mobId": 25,
-          "mobCount": 25
+          "mobCount": 2
         },
         {
           "mobId": 31,
-          "mobCount": 31
+          "mobCount": 2
         }
       ],
       "x1": 1282.22900390625,
@@ -3390,11 +3390,11 @@
       "mobs": [
         {
           "mobId": 25,
-          "mobCount": 25
+          "mobCount": 2
         },
         {
           "mobId": 31,
-          "mobCount": 31
+          "mobCount": 2
         }
       ],
       "x1": 1326.7449951171875,
@@ -3408,11 +3408,11 @@
       "mobs": [
         {
           "mobId": 25,
-          "mobCount": 25
+          "mobCount": 2
         },
         {
           "mobId": 31,
-          "mobCount": 31
+          "mobCount": 2
         }
       ],
       "x1": 1357.39599609375,
@@ -3426,7 +3426,7 @@
       "mobs": [
         {
           "mobId": 25,
-          "mobCount": 25
+          "mobCount": 2
         }
       ],
       "x1": 1159.8590087890625,
@@ -3440,7 +3440,7 @@
       "mobs": [
         {
           "mobId": 31,
-          "mobCount": 31
+          "mobCount": 1
         }
       ],
       "x1": 1120.6510009765625,
@@ -3454,7 +3454,7 @@
       "mobs": [
         {
           "mobId": 25,
-          "mobCount": 25
+          "mobCount": 2
         }
       ],
       "x1": 1123.72705078125,
@@ -3468,7 +3468,7 @@
       "mobs": [
         {
           "mobId": 32,
-          "mobCount": 32
+          "mobCount": 2
         }
       ],
       "x1": 1074.219970703125,
@@ -3482,7 +3482,7 @@
       "mobs": [
         {
           "mobId": 32,
-          "mobCount": 32
+          "mobCount": 2
         }
       ],
       "x1": 1074.0799560546875,
@@ -3496,7 +3496,7 @@
       "mobs": [
         {
           "mobId": 32,
-          "mobCount": 32
+          "mobCount": 2
         }
       ],
       "x1": 1063.9429931640625,
@@ -3510,7 +3510,7 @@
       "mobs": [
         {
           "mobId": 32,
-          "mobCount": 32
+          "mobCount": 1
         }
       ],
       "x1": 1086.363037109375,
@@ -3524,7 +3524,7 @@
       "mobs": [
         {
           "mobId": 32,
-          "mobCount": 32
+          "mobCount": 3
         }
       ],
       "x1": 1079.0560302734375,
@@ -3538,7 +3538,7 @@
       "mobs": [
         {
           "mobId": 8,
-          "mobCount": 8
+          "mobCount": 1
         }
       ],
       "x1": 939.4847412109375,
@@ -3552,7 +3552,7 @@
       "mobs": [
         {
           "mobId": 8,
-          "mobCount": 8
+          "mobCount": 2
         }
       ],
       "x1": 900.5545043945312,
@@ -3566,7 +3566,7 @@
       "mobs": [
         {
           "mobId": 8,
-          "mobCount": 8
+          "mobCount": 3
         }
       ],
       "x1": 924.259033203125,
@@ -3580,11 +3580,11 @@
       "mobs": [
         {
           "mobId": 11,
-          "mobCount": 11
+          "mobCount": 2
         },
         {
           "mobId": 17,
-          "mobCount": 17
+          "mobCount": 2
         }
       ],
       "x1": 962.9390258789062,
@@ -3598,11 +3598,11 @@
       "mobs": [
         {
           "mobId": 11,
-          "mobCount": 11
+          "mobCount": 2
         },
         {
           "mobId": 17,
-          "mobCount": 17
+          "mobCount": 2
         }
       ],
       "x1": 938.1509399414062,
@@ -3616,7 +3616,7 @@
       "mobs": [
         {
           "mobId": 18,
-          "mobCount": 18
+          "mobCount": 3
         }
       ],
       "x1": 882.7360229492188,
@@ -3630,7 +3630,7 @@
       "mobs": [
         {
           "mobId": 18,
-          "mobCount": 18
+          "mobCount": 2
         }
       ],
       "x1": 841.031005859375,
@@ -3644,7 +3644,7 @@
       "mobs": [
         {
           "mobId": 18,
-          "mobCount": 18
+          "mobCount": 2
         }
       ],
       "x1": 796.9920043945312,
@@ -3658,7 +3658,7 @@
       "mobs": [
         {
           "mobId": 18,
-          "mobCount": 18
+          "mobCount": 2
         }
       ],
       "x1": 793.52001953125,
@@ -3672,11 +3672,11 @@
       "mobs": [
         {
           "mobId": 29,
-          "mobCount": 29
+          "mobCount": 2
         },
         {
           "mobId": 30,
-          "mobCount": 30
+          "mobCount": 2
         }
       ],
       "x1": 762.6580200195312,
@@ -3690,11 +3690,11 @@
       "mobs": [
         {
           "mobId": 29,
-          "mobCount": 29
+          "mobCount": 1
         },
         {
           "mobId": 30,
-          "mobCount": 30
+          "mobCount": 1
         }
       ],
       "x1": 785.64501953125,
@@ -3708,11 +3708,11 @@
       "mobs": [
         {
           "mobId": 29,
-          "mobCount": 29
+          "mobCount": 2
         },
         {
           "mobId": 30,
-          "mobCount": 30
+          "mobCount": 2
         }
       ],
       "x1": 763.4669799804688,
@@ -3726,11 +3726,11 @@
       "mobs": [
         {
           "mobId": 29,
-          "mobCount": 29
+          "mobCount": 2
         },
         {
           "mobId": 30,
-          "mobCount": 30
+          "mobCount": 2
         }
       ],
       "x1": 726.2670288085938,
@@ -3744,7 +3744,7 @@
       "mobs": [
         {
           "mobId": 1,
-          "mobCount": 1
+          "mobCount": 2
         },
         {
           "mobId": 2,
@@ -3762,11 +3762,11 @@
       "mobs": [
         {
           "mobId": 2,
-          "mobCount": 2
+          "mobCount": 1
         },
         {
           "mobId": 3,
-          "mobCount": 3
+          "mobCount": 1
         }
       ],
       "x1": 328.68798828125,
@@ -3780,7 +3780,7 @@
       "mobs": [
         {
           "mobId": 1,
-          "mobCount": 1
+          "mobCount": 2
         }
       ],
       "x1": 369.1199951171875,
@@ -3794,11 +3794,11 @@
       "mobs": [
         {
           "mobId": 2,
-          "mobCount": 2
+          "mobCount": 1
         },
         {
           "mobId": 3,
-          "mobCount": 3
+          "mobCount": 1
         }
       ],
       "x1": 400.27899169921875,
@@ -3816,7 +3816,7 @@
         },
         {
           "mobId": 3,
-          "mobCount": 3
+          "mobCount": 2
         }
       ],
       "x1": 185.9550018310547,
@@ -3830,7 +3830,7 @@
       "mobs": [
         {
           "mobId": 3,
-          "mobCount": 3
+          "mobCount": 2
         },
         {
           "mobId": 2,
@@ -3852,7 +3852,7 @@
         },
         {
           "mobId": 3,
-          "mobCount": 3
+          "mobCount": 2
         }
       ],
       "x1": 179.71400451660156,
@@ -3866,11 +3866,11 @@
       "mobs": [
         {
           "mobId": 3,
-          "mobCount": 3
+          "mobCount": 2
         },
         {
           "mobId": 2,
-          "mobCount": 2
+          "mobCount": 1
         }
       ],
       "x1": 137.6479949951172,
@@ -3888,7 +3888,7 @@
         },
         {
           "mobId": 3,
-          "mobCount": 3
+          "mobCount": 1
         }
       ],
       "x1": 138.53700256347656,
@@ -3902,7 +3902,7 @@
       "mobs": [
         {
           "mobId": 3,
-          "mobCount": 3
+          "mobCount": 2
         }
       ],
       "x1": 186.1510009765625,
@@ -3930,7 +3930,7 @@
       "mobs": [
         {
           "mobId": 1,
-          "mobCount": 1
+          "mobCount": 4
         }
       ],
       "x1": 127.03900146484375,
@@ -3944,11 +3944,11 @@
       "mobs": [
         {
           "mobId": 5,
-          "mobCount": 5
+          "mobCount": 2
         },
         {
           "mobId": 6,
-          "mobCount": 6
+          "mobCount": 2
         }
       ],
       "x1": 408.8949890136719,
@@ -3962,11 +3962,11 @@
       "mobs": [
         {
           "mobId": 5,
-          "mobCount": 5
+          "mobCount": 1
         },
         {
           "mobId": 6,
-          "mobCount": 6
+          "mobCount": 1
         }
       ],
       "x1": 375.5509948730469,
@@ -3980,11 +3980,11 @@
       "mobs": [
         {
           "mobId": 5,
-          "mobCount": 5
+          "mobCount": 1
         },
         {
           "mobId": 6,
-          "mobCount": 6
+          "mobCount": 1
         }
       ],
       "x1": 405.7080078125,
@@ -3998,11 +3998,11 @@
       "mobs": [
         {
           "mobId": 5,
-          "mobCount": 5
+          "mobCount": 1
         },
         {
           "mobId": 6,
-          "mobCount": 6
+          "mobCount": 1
         }
       ],
       "x1": 394.9570007324219,
@@ -4016,11 +4016,11 @@
       "mobs": [
         {
           "mobId": 5,
-          "mobCount": 5
+          "mobCount": 2
         },
         {
           "mobId": 6,
-          "mobCount": 6
+          "mobCount": 2
         }
       ],
       "x1": 408.5690002441406,
@@ -4034,11 +4034,11 @@
       "mobs": [
         {
           "mobId": 5,
-          "mobCount": 5
+          "mobCount": 1
         },
         {
           "mobId": 6,
-          "mobCount": 6
+          "mobCount": 1
         }
       ],
       "x1": 331.6239929199219,
@@ -4052,11 +4052,11 @@
       "mobs": [
         {
           "mobId": 5,
-          "mobCount": 5
+          "mobCount": 2
         },
         {
           "mobId": 6,
-          "mobCount": 6
+          "mobCount": 2
         }
       ],
       "x1": 320.4670104980469,
@@ -4070,11 +4070,11 @@
       "mobs": [
         {
           "mobId": 5,
-          "mobCount": 5
+          "mobCount": 2
         },
         {
           "mobId": 6,
-          "mobCount": 6
+          "mobCount": 2
         }
       ],
       "x1": 368.3380126953125,
@@ -4088,11 +4088,11 @@
       "mobs": [
         {
           "mobId": 5,
-          "mobCount": 5
+          "mobCount": 1
         },
         {
           "mobId": 6,
-          "mobCount": 6
+          "mobCount": 1
         }
       ],
       "x1": 400.7030029296875,
@@ -4106,11 +4106,11 @@
       "mobs": [
         {
           "mobId": 5,
-          "mobCount": 5
+          "mobCount": 2
         },
         {
           "mobId": 6,
-          "mobCount": 6
+          "mobCount": 2
         }
       ],
       "x1": 448.9949951171875,
@@ -4124,11 +4124,11 @@
       "mobs": [
         {
           "mobId": 5,
-          "mobCount": 5
+          "mobCount": 2
         },
         {
           "mobId": 6,
-          "mobCount": 6
+          "mobCount": 2
         }
       ],
       "x1": 444.6090087890625,
@@ -4142,7 +4142,7 @@
       "mobs": [
         {
           "mobId": 2,
-          "mobCount": 2
+          "mobCount": 1
         }
       ],
       "x1": 400.8219909667969,
@@ -4156,11 +4156,11 @@
       "mobs": [
         {
           "mobId": 5,
-          "mobCount": 5
+          "mobCount": 1
         },
         {
           "mobId": 6,
-          "mobCount": 6
+          "mobCount": 1
         }
       ],
       "x1": 503.77801513671875,
@@ -4174,11 +4174,11 @@
       "mobs": [
         {
           "mobId": 5,
-          "mobCount": 5
+          "mobCount": 2
         },
         {
           "mobId": 6,
-          "mobCount": 6
+          "mobCount": 2
         }
       ],
       "x1": 506.2669982910156,
@@ -4192,11 +4192,11 @@
       "mobs": [
         {
           "mobId": 5,
-          "mobCount": 5
+          "mobCount": 2
         },
         {
           "mobId": 6,
-          "mobCount": 6
+          "mobCount": 2
         }
       ],
       "x1": 511.1629943847656,
@@ -4210,11 +4210,11 @@
       "mobs": [
         {
           "mobId": 2001,
-          "mobCount": 2001
+          "mobCount": 2
         },
         {
           "mobId": 7,
-          "mobCount": 7
+          "mobCount": 2
         }
       ],
       "x1": 587.6129760742188,
@@ -4228,11 +4228,11 @@
       "mobs": [
         {
           "mobId": 2001,
-          "mobCount": 2001
+          "mobCount": 2
         },
         {
           "mobId": 7,
-          "mobCount": 7
+          "mobCount": 2
         }
       ],
       "x1": 541.0130004882812,
@@ -4246,11 +4246,11 @@
       "mobs": [
         {
           "mobId": 2001,
-          "mobCount": 2001
+          "mobCount": 2
         },
         {
           "mobId": 7,
-          "mobCount": 7
+          "mobCount": 2
         }
       ],
       "x1": 547.6640014648438,
@@ -4264,11 +4264,11 @@
       "mobs": [
         {
           "mobId": 2004,
-          "mobCount": 2004
+          "mobCount": 2
         },
         {
           "mobId": 2006,
-          "mobCount": 2006
+          "mobCount": 2
         }
       ],
       "x1": 647.2329711914062,
@@ -4282,11 +4282,11 @@
       "mobs": [
         {
           "mobId": 2004,
-          "mobCount": 2004
+          "mobCount": 2
         },
         {
           "mobId": 2006,
-          "mobCount": 2006
+          "mobCount": 2
         }
       ],
       "x1": 716.093017578125,
@@ -4300,7 +4300,7 @@
       "mobs": [
         {
           "mobId": 2001,
-          "mobCount": 2001
+          "mobCount": 1
         }
       ],
       "x1": 600.5449829101562,
@@ -4314,11 +4314,11 @@
       "mobs": [
         {
           "mobId": 2001,
-          "mobCount": 2001
+          "mobCount": 2
         },
         {
           "mobId": 7,
-          "mobCount": 7
+          "mobCount": 2
         }
       ],
       "x1": 579.4539794921875,
@@ -4332,11 +4332,11 @@
       "mobs": [
         {
           "mobId": 2001,
-          "mobCount": 2001
+          "mobCount": 1
         },
         {
           "mobId": 7,
-          "mobCount": 7
+          "mobCount": 1
         }
       ],
       "x1": 553.8599853515625,
@@ -4350,11 +4350,11 @@
       "mobs": [
         {
           "mobId": 2004,
-          "mobCount": 2004
+          "mobCount": 2
         },
         {
           "mobId": 2006,
-          "mobCount": 2006
+          "mobCount": 2
         }
       ],
       "x1": 725.7429809570312,
@@ -4368,11 +4368,11 @@
       "mobs": [
         {
           "mobId": 2004,
-          "mobCount": 2004
+          "mobCount": 2
         },
         {
           "mobId": 2006,
-          "mobCount": 2006
+          "mobCount": 1
         }
       ],
       "x1": 673.7990112304688,
@@ -4386,11 +4386,11 @@
       "mobs": [
         {
           "mobId": 2004,
-          "mobCount": 2004
+          "mobCount": 2
         },
         {
           "mobId": 2006,
-          "mobCount": 2006
+          "mobCount": 2
         }
       ],
       "x1": 731.7839965820312,
@@ -4404,11 +4404,11 @@
       "mobs": [
         {
           "mobId": 2004,
-          "mobCount": 2004
+          "mobCount": 2
         },
         {
           "mobId": 2006,
-          "mobCount": 2006
+          "mobCount": 2
         }
       ],
       "x1": 731.5700073242188,
@@ -4422,11 +4422,11 @@
       "mobs": [
         {
           "mobId": 2006,
-          "mobCount": 2006
+          "mobCount": 2
         },
         {
           "mobId": 2004,
-          "mobCount": 2004
+          "mobCount": 1
         }
       ],
       "x1": 673.5479736328125,
@@ -4440,11 +4440,11 @@
       "mobs": [
         {
           "mobId": 2001,
-          "mobCount": 2001
+          "mobCount": 2
         },
         {
           "mobId": 7,
-          "mobCount": 7
+          "mobCount": 1
         }
       ],
       "x1": 592.68701171875,
@@ -4458,11 +4458,11 @@
       "mobs": [
         {
           "mobId": 2001,
-          "mobCount": 2001
+          "mobCount": 2
         },
         {
           "mobId": 7,
-          "mobCount": 7
+          "mobCount": 2
         }
       ],
       "x1": 558.5275268554688,
@@ -4476,11 +4476,11 @@
       "mobs": [
         {
           "mobId": 2001,
-          "mobCount": 2001
+          "mobCount": 2
         },
         {
           "mobId": 7,
-          "mobCount": 7
+          "mobCount": 1
         }
       ],
       "x1": 601.7880249023438,
@@ -4494,11 +4494,11 @@
       "mobs": [
         {
           "mobId": 2001,
-          "mobCount": 2001
+          "mobCount": 2
         },
         {
           "mobId": 7,
-          "mobCount": 7
+          "mobCount": 2
         }
       ],
       "x1": 635.9229736328125,
@@ -4512,11 +4512,11 @@
       "mobs": [
         {
           "mobId": 9,
-          "mobCount": 9
+          "mobCount": 1
         },
         {
           "mobId": 12,
-          "mobCount": 12
+          "mobCount": 1
         }
       ],
       "x1": 466.4620056152344,
@@ -4530,11 +4530,11 @@
       "mobs": [
         {
           "mobId": 9,
-          "mobCount": 9
+          "mobCount": 2
         },
         {
           "mobId": 12,
-          "mobCount": 12
+          "mobCount": 2
         }
       ],
       "x1": 575.208984375,
@@ -4548,11 +4548,11 @@
       "mobs": [
         {
           "mobId": 9,
-          "mobCount": 9
+          "mobCount": 2
         },
         {
           "mobId": 12,
-          "mobCount": 12
+          "mobCount": 2
         }
       ],
       "x1": 588.572021484375,
@@ -4566,11 +4566,11 @@
       "mobs": [
         {
           "mobId": 9,
-          "mobCount": 9
+          "mobCount": 2
         },
         {
           "mobId": 12,
-          "mobCount": 12
+          "mobCount": 2
         }
       ],
       "x1": 526.3779907226562,
@@ -4584,11 +4584,11 @@
       "mobs": [
         {
           "mobId": 12,
-          "mobCount": 12
+          "mobCount": 2
         },
         {
           "mobId": 9,
-          "mobCount": 9
+          "mobCount": 2
         }
       ],
       "x1": 573.5579833984375,
@@ -4602,11 +4602,11 @@
       "mobs": [
         {
           "mobId": 9,
-          "mobCount": 9
+          "mobCount": 1
         },
         {
           "mobId": 12,
-          "mobCount": 12
+          "mobCount": 1
         }
       ],
       "x1": 729.5380249023438,
@@ -4620,11 +4620,11 @@
       "mobs": [
         {
           "mobId": 9,
-          "mobCount": 9
+          "mobCount": 2
         },
         {
           "mobId": 12,
-          "mobCount": 12
+          "mobCount": 2
         }
       ],
       "x1": 697.2940063476562,
@@ -4638,11 +4638,11 @@
       "mobs": [
         {
           "mobId": 9,
-          "mobCount": 9
+          "mobCount": 2
         },
         {
           "mobId": 12,
-          "mobCount": 12
+          "mobCount": 2
         }
       ],
       "x1": 738.0980224609375,
@@ -4656,11 +4656,11 @@
       "mobs": [
         {
           "mobId": 9,
-          "mobCount": 9
+          "mobCount": 2
         },
         {
           "mobId": 12,
-          "mobCount": 12
+          "mobCount": 2
         }
       ],
       "x1": 636.7730102539062,
@@ -4674,11 +4674,11 @@
       "mobs": [
         {
           "mobId": 9,
-          "mobCount": 9
+          "mobCount": 2
         },
         {
           "mobId": 12,
-          "mobCount": 12
+          "mobCount": 2
         }
       ],
       "x1": 687.6300048828125,
@@ -4692,11 +4692,11 @@
       "mobs": [
         {
           "mobId": 5,
-          "mobCount": 5
+          "mobCount": 1
         },
         {
           "mobId": 6,
-          "mobCount": 6
+          "mobCount": 1
         }
       ],
       "x1": 492.4049987792969,
@@ -4710,7 +4710,7 @@
       "mobs": [
         {
           "mobId": 15,
-          "mobCount": 15
+          "mobCount": 2
         }
       ],
       "x1": 558.8319702148438,
@@ -4724,7 +4724,7 @@
       "mobs": [
         {
           "mobId": 15,
-          "mobCount": 15
+          "mobCount": 2
         }
       ],
       "x1": 526.010986328125,
@@ -4738,7 +4738,7 @@
       "mobs": [
         {
           "mobId": 15,
-          "mobCount": 15
+          "mobCount": 2
         }
       ],
       "x1": 604.6669921875,
@@ -4752,7 +4752,7 @@
       "mobs": [
         {
           "mobId": 15,
-          "mobCount": 15
+          "mobCount": 2
         }
       ],
       "x1": 624.8920288085938,
@@ -4766,7 +4766,7 @@
       "mobs": [
         {
           "mobId": 15,
-          "mobCount": 15
+          "mobCount": 2
         }
       ],
       "x1": 633.125,
@@ -4780,7 +4780,7 @@
       "mobs": [
         {
           "mobId": 15,
-          "mobCount": 15
+          "mobCount": 2
         }
       ],
       "x1": 665.9320068359375,
@@ -4794,11 +4794,11 @@
       "mobs": [
         {
           "mobId": 22,
-          "mobCount": 22
+          "mobCount": 2
         },
         {
           "mobId": 23,
-          "mobCount": 23
+          "mobCount": 2
         }
       ],
       "x1": 521.8319702148438,
@@ -4812,11 +4812,11 @@
       "mobs": [
         {
           "mobId": 22,
-          "mobCount": 22
+          "mobCount": 2
         },
         {
           "mobId": 23,
-          "mobCount": 23
+          "mobCount": 2
         }
       ],
       "x1": 564.7890014648438,
@@ -4830,11 +4830,11 @@
       "mobs": [
         {
           "mobId": 22,
-          "mobCount": 22
+          "mobCount": 1
         },
         {
           "mobId": 23,
-          "mobCount": 23
+          "mobCount": 1
         }
       ],
       "x1": 597.6740112304688,
@@ -4848,11 +4848,11 @@
       "mobs": [
         {
           "mobId": 22,
-          "mobCount": 22
+          "mobCount": 1
         },
         {
           "mobId": 23,
-          "mobCount": 23
+          "mobCount": 1
         }
       ],
       "x1": 560.948974609375,
@@ -4866,11 +4866,11 @@
       "mobs": [
         {
           "mobId": 22,
-          "mobCount": 22
+          "mobCount": 1
         },
         {
           "mobId": 23,
-          "mobCount": 23
+          "mobCount": 1
         }
       ],
       "x1": 537.7670288085938,
@@ -4884,11 +4884,11 @@
       "mobs": [
         {
           "mobId": 15,
-          "mobCount": 15
+          "mobCount": 1
         },
         {
           "mobId": 22,
-          "mobCount": 22
+          "mobCount": 1
         }
       ],
       "x1": 504.2090148925781,
@@ -4902,11 +4902,11 @@
       "mobs": [
         {
           "mobId": 15,
-          "mobCount": 15
+          "mobCount": 1
         },
         {
           "mobId": 22,
-          "mobCount": 22
+          "mobCount": 1
         }
       ],
       "x1": 509.4289855957031,
@@ -4920,11 +4920,11 @@
       "mobs": [
         {
           "mobId": 22,
-          "mobCount": 22
+          "mobCount": 1
         },
         {
           "mobId": 23,
-          "mobCount": 23
+          "mobCount": 1
         }
       ],
       "x1": 641.7979736328125,
@@ -4938,11 +4938,11 @@
       "mobs": [
         {
           "mobId": 23,
-          "mobCount": 23
+          "mobCount": 1
         },
         {
           "mobId": 26,
-          "mobCount": 26
+          "mobCount": 1
         }
       ],
       "x1": 593.6190185546875,
@@ -4956,11 +4956,11 @@
       "mobs": [
         {
           "mobId": 23,
-          "mobCount": 23
+          "mobCount": 1
         },
         {
           "mobId": 26,
-          "mobCount": 26
+          "mobCount": 1
         }
       ],
       "x1": 525.676025390625,
@@ -4974,11 +4974,11 @@
       "mobs": [
         {
           "mobId": 23,
-          "mobCount": 23
+          "mobCount": 1
         },
         {
           "mobId": 26,
-          "mobCount": 26
+          "mobCount": 1
         }
       ],
       "x1": 544.64599609375,
@@ -4992,11 +4992,11 @@
       "mobs": [
         {
           "mobId": 23,
-          "mobCount": 23
+          "mobCount": 2
         },
         {
           "mobId": 26,
-          "mobCount": 26
+          "mobCount": 2
         }
       ],
       "x1": 543.9010009765625,
@@ -5010,11 +5010,11 @@
       "mobs": [
         {
           "mobId": 23,
-          "mobCount": 23
+          "mobCount": 1
         },
         {
           "mobId": 26,
-          "mobCount": 26
+          "mobCount": 1
         }
       ],
       "x1": 563.7540283203125,
@@ -5028,11 +5028,11 @@
       "mobs": [
         {
           "mobId": 23,
-          "mobCount": 23
+          "mobCount": 2
         },
         {
           "mobId": 26,
-          "mobCount": 26
+          "mobCount": 2
         }
       ],
       "x1": 639.6740112304688,
@@ -5046,11 +5046,11 @@
       "mobs": [
         {
           "mobId": 23,
-          "mobCount": 23
+          "mobCount": 2
         },
         {
           "mobId": 26,
-          "mobCount": 26
+          "mobCount": 2
         }
       ],
       "x1": 610.3569946289062,
@@ -5064,11 +5064,11 @@
       "mobs": [
         {
           "mobId": 23,
-          "mobCount": 23
+          "mobCount": 1
         },
         {
           "mobId": 26,
-          "mobCount": 26
+          "mobCount": 1
         }
       ],
       "x1": 614.969970703125,
@@ -5082,11 +5082,11 @@
       "mobs": [
         {
           "mobId": 23,
-          "mobCount": 23
+          "mobCount": 1
         },
         {
           "mobId": 26,
-          "mobCount": 26
+          "mobCount": 1
         }
       ],
       "x1": 658.5999755859375,
@@ -5100,11 +5100,11 @@
       "mobs": [
         {
           "mobId": 23,
-          "mobCount": 23
+          "mobCount": 1
         },
         {
           "mobId": 26,
-          "mobCount": 26
+          "mobCount": 1
         }
       ],
       "x1": 637.5059814453125,
@@ -5118,11 +5118,11 @@
       "mobs": [
         {
           "mobId": 23,
-          "mobCount": 23
+          "mobCount": 1
         },
         {
           "mobId": 26,
-          "mobCount": 26
+          "mobCount": 1
         }
       ],
       "x1": 685.0460205078125,
@@ -5136,11 +5136,11 @@
       "mobs": [
         {
           "mobId": 23,
-          "mobCount": 23
+          "mobCount": 1
         },
         {
           "mobId": 26,
-          "mobCount": 26
+          "mobCount": 1
         }
       ],
       "x1": 716.4840087890625,
@@ -5154,11 +5154,11 @@
       "mobs": [
         {
           "mobId": 9,
-          "mobCount": 9
+          "mobCount": 1
         },
         {
           "mobId": 12,
-          "mobCount": 12
+          "mobCount": 1
         }
       ],
       "x1": 547.7550048828125,
@@ -5172,11 +5172,11 @@
       "mobs": [
         {
           "mobId": 9,
-          "mobCount": 9
+          "mobCount": 1
         },
         {
           "mobId": 12,
-          "mobCount": 12
+          "mobCount": 1
         }
       ],
       "x1": 590.4929809570312,
@@ -5190,11 +5190,11 @@
       "mobs": [
         {
           "mobId": 9,
-          "mobCount": 9
+          "mobCount": 1
         },
         {
           "mobId": 12,
-          "mobCount": 12
+          "mobCount": 1
         }
       ],
       "x1": 761.3150024414062,
@@ -5208,7 +5208,7 @@
       "mobs": [
         {
           "mobId": 19,
-          "mobCount": 19
+          "mobCount": 1
         }
       ],
       "x1": 820.4869995117188,
@@ -5222,7 +5222,7 @@
       "mobs": [
         {
           "mobId": 19,
-          "mobCount": 19
+          "mobCount": 2
         }
       ],
       "x1": 853.6300048828125,
@@ -5236,7 +5236,7 @@
       "mobs": [
         {
           "mobId": 19,
-          "mobCount": 19
+          "mobCount": 2
         }
       ],
       "x1": 883.7739868164062,
@@ -5250,7 +5250,7 @@
       "mobs": [
         {
           "mobId": 19,
-          "mobCount": 19
+          "mobCount": 1
         }
       ],
       "x1": 786.4219970703125,
@@ -5264,7 +5264,7 @@
       "mobs": [
         {
           "mobId": 19,
-          "mobCount": 19
+          "mobCount": 2
         }
       ],
       "x1": 748.8829956054688,
@@ -5278,7 +5278,7 @@
       "mobs": [
         {
           "mobId": 19,
-          "mobCount": 19
+          "mobCount": 1
         }
       ],
       "x1": 773.4099731445312,
@@ -5292,7 +5292,7 @@
       "mobs": [
         {
           "mobId": 19,
-          "mobCount": 19
+          "mobCount": 1
         }
       ],
       "x1": 853.5700073242188,
@@ -5306,7 +5306,7 @@
       "mobs": [
         {
           "mobId": 19,
-          "mobCount": 19
+          "mobCount": 1
         }
       ],
       "x1": 886.468994140625,
@@ -5320,7 +5320,7 @@
       "mobs": [
         {
           "mobId": 19,
-          "mobCount": 19
+          "mobCount": 4
         }
       ],
       "x1": 894.9340209960938,
@@ -5334,7 +5334,7 @@
       "mobs": [
         {
           "mobId": 19,
-          "mobCount": 19
+          "mobCount": 2
         }
       ],
       "x1": 874.7739868164062,
@@ -5348,7 +5348,7 @@
       "mobs": [
         {
           "mobId": 19,
-          "mobCount": 19
+          "mobCount": 1
         }
       ],
       "x1": 860.1859741210938,
@@ -5362,7 +5362,7 @@
       "mobs": [
         {
           "mobId": 19,
-          "mobCount": 19
+          "mobCount": 1
         }
       ],
       "x1": 883.801025390625,
@@ -5376,7 +5376,7 @@
       "mobs": [
         {
           "mobId": 19,
-          "mobCount": 19
+          "mobCount": 1
         }
       ],
       "x1": 862.56298828125,
@@ -5390,7 +5390,7 @@
       "mobs": [
         {
           "mobId": 19,
-          "mobCount": 19
+          "mobCount": 1
         }
       ],
       "x1": 865.10498046875,
@@ -5404,11 +5404,11 @@
       "mobs": [
         {
           "mobId": 24,
-          "mobCount": 24
+          "mobCount": 1
         },
         {
           "mobId": 2007,
-          "mobCount": 2007
+          "mobCount": 1
         }
       ],
       "x1": 902.900634765625,
@@ -5422,11 +5422,11 @@
       "mobs": [
         {
           "mobId": 24,
-          "mobCount": 24
+          "mobCount": 2
         },
         {
           "mobId": 2007,
-          "mobCount": 2007
+          "mobCount": 2
         }
       ],
       "x1": 873.9450073242188,
@@ -5440,11 +5440,11 @@
       "mobs": [
         {
           "mobId": 2007,
-          "mobCount": 2007
+          "mobCount": 2
         },
         {
           "mobId": 24,
-          "mobCount": 24
+          "mobCount": 2
         }
       ],
       "x1": 864.39697265625,
@@ -5458,11 +5458,11 @@
       "mobs": [
         {
           "mobId": 24,
-          "mobCount": 24
+          "mobCount": 2
         },
         {
           "mobId": 2007,
-          "mobCount": 2007
+          "mobCount": 2
         }
       ],
       "x1": 834.666015625,
@@ -5476,11 +5476,11 @@
       "mobs": [
         {
           "mobId": 24,
-          "mobCount": 24
+          "mobCount": 2
         },
         {
           "mobId": 2007,
-          "mobCount": 2007
+          "mobCount": 2
         }
       ],
       "x1": 821.5170288085938,
@@ -5494,11 +5494,11 @@
       "mobs": [
         {
           "mobId": 24,
-          "mobCount": 24
+          "mobCount": 1
         },
         {
           "mobId": 2007,
-          "mobCount": 2007
+          "mobCount": 1
         }
       ],
       "x1": 827.0070190429688,
@@ -5512,7 +5512,7 @@
       "mobs": [
         {
           "mobId": 2007,
-          "mobCount": 2007
+          "mobCount": 2
         }
       ],
       "x1": 857.5239868164062,
@@ -5526,7 +5526,7 @@
       "mobs": [
         {
           "mobId": 2007,
-          "mobCount": 2007
+          "mobCount": 2
         }
       ],
       "x1": 850.7739868164062,
@@ -5540,11 +5540,11 @@
       "mobs": [
         {
           "mobId": 33,
-          "mobCount": 33
+          "mobCount": 1
         },
         {
           "mobId": 34,
-          "mobCount": 34
+          "mobCount": 1
         }
       ],
       "x1": 984.4299926757812,
@@ -5558,11 +5558,11 @@
       "mobs": [
         {
           "mobId": 33,
-          "mobCount": 33
+          "mobCount": 1
         },
         {
           "mobId": 34,
-          "mobCount": 34
+          "mobCount": 1
         }
       ],
       "x1": 960.2310180664062,
@@ -5576,11 +5576,11 @@
       "mobs": [
         {
           "mobId": 33,
-          "mobCount": 33
+          "mobCount": 1
         },
         {
           "mobId": 34,
-          "mobCount": 34
+          "mobCount": 1
         }
       ],
       "x1": 968.2999877929688,
@@ -5594,11 +5594,11 @@
       "mobs": [
         {
           "mobId": 33,
-          "mobCount": 33
+          "mobCount": 1
         },
         {
           "mobId": 34,
-          "mobCount": 34
+          "mobCount": 1
         }
       ],
       "x1": 1003.8889770507812,
@@ -5612,11 +5612,11 @@
       "mobs": [
         {
           "mobId": 33,
-          "mobCount": 33
+          "mobCount": 1
         },
         {
           "mobId": 34,
-          "mobCount": 34
+          "mobCount": 1
         }
       ],
       "x1": 1025.6190185546875,
@@ -5630,11 +5630,11 @@
       "mobs": [
         {
           "mobId": 33,
-          "mobCount": 33
+          "mobCount": 2
         },
         {
           "mobId": 34,
-          "mobCount": 34
+          "mobCount": 2
         }
       ],
       "x1": 1029.4420166015625,
@@ -5648,11 +5648,11 @@
       "mobs": [
         {
           "mobId": 33,
-          "mobCount": 33
+          "mobCount": 2
         },
         {
           "mobId": 34,
-          "mobCount": 34
+          "mobCount": 2
         }
       ],
       "x1": 1038.27001953125,
@@ -5666,11 +5666,11 @@
       "mobs": [
         {
           "mobId": 33,
-          "mobCount": 33
+          "mobCount": 2
         },
         {
           "mobId": 34,
-          "mobCount": 34
+          "mobCount": 2
         }
       ],
       "x1": 992.823974609375,
@@ -5684,11 +5684,11 @@
       "mobs": [
         {
           "mobId": 33,
-          "mobCount": 33
+          "mobCount": 2
         },
         {
           "mobId": 34,
-          "mobCount": 34
+          "mobCount": 2
         }
       ],
       "x1": 982.5,
@@ -5702,11 +5702,11 @@
       "mobs": [
         {
           "mobId": 33,
-          "mobCount": 33
+          "mobCount": 2
         },
         {
           "mobId": 34,
-          "mobCount": 34
+          "mobCount": 2
         }
       ],
       "x1": 1015.3510131835938,
@@ -5720,11 +5720,11 @@
       "mobs": [
         {
           "mobId": 35,
-          "mobCount": 35
+          "mobCount": 1
         },
         {
           "mobId": 36,
-          "mobCount": 36
+          "mobCount": 1
         }
       ],
       "x1": 959.7816162109375,
@@ -5738,11 +5738,11 @@
       "mobs": [
         {
           "mobId": 35,
-          "mobCount": 35
+          "mobCount": 1
         },
         {
           "mobId": 36,
-          "mobCount": 36
+          "mobCount": 1
         }
       ],
       "x1": 934.0009155273438,
@@ -5756,11 +5756,11 @@
       "mobs": [
         {
           "mobId": 35,
-          "mobCount": 35
+          "mobCount": 1
         },
         {
           "mobId": 36,
-          "mobCount": 36
+          "mobCount": 1
         }
       ],
       "x1": 939.6846313476562,
@@ -5774,11 +5774,11 @@
       "mobs": [
         {
           "mobId": 35,
-          "mobCount": 35
+          "mobCount": 1
         },
         {
           "mobId": 36,
-          "mobCount": 36
+          "mobCount": 1
         }
       ],
       "x1": 950.5001831054688,
@@ -5792,11 +5792,11 @@
       "mobs": [
         {
           "mobId": 35,
-          "mobCount": 35
+          "mobCount": 1
         },
         {
           "mobId": 36,
-          "mobCount": 36
+          "mobCount": 1
         }
       ],
       "x1": 972.471923828125,
@@ -5810,11 +5810,11 @@
       "mobs": [
         {
           "mobId": 35,
-          "mobCount": 35
+          "mobCount": 1
         },
         {
           "mobId": 36,
-          "mobCount": 36
+          "mobCount": 1
         }
       ],
       "x1": 926.3975219726562,
@@ -5828,11 +5828,11 @@
       "mobs": [
         {
           "mobId": 35,
-          "mobCount": 35
+          "mobCount": 1
         },
         {
           "mobId": 36,
-          "mobCount": 36
+          "mobCount": 1
         }
       ],
       "x1": 974.78955078125,
@@ -5846,11 +5846,11 @@
       "mobs": [
         {
           "mobId": 35,
-          "mobCount": 35
+          "mobCount": 1
         },
         {
           "mobId": 36,
-          "mobCount": 36
+          "mobCount": 1
         }
       ],
       "x1": 1003.15185546875,
@@ -5864,11 +5864,11 @@
       "mobs": [
         {
           "mobId": 35,
-          "mobCount": 35
+          "mobCount": 1
         },
         {
           "mobId": 36,
-          "mobCount": 36
+          "mobCount": 2
         }
       ],
       "x1": 1040.66357421875,
@@ -5882,11 +5882,11 @@
       "mobs": [
         {
           "mobId": 35,
-          "mobCount": 35
+          "mobCount": 1
         },
         {
           "mobId": 36,
-          "mobCount": 36
+          "mobCount": 1
         }
       ],
       "x1": 1049.114501953125,
@@ -5900,7 +5900,7 @@
       "mobs": [
         {
           "mobId": 35,
-          "mobCount": 35
+          "mobCount": 3
         }
       ],
       "x1": 986.625244140625,
@@ -5914,11 +5914,11 @@
       "mobs": [
         {
           "mobId": 35,
-          "mobCount": 35
+          "mobCount": 1
         },
         {
           "mobId": 36,
-          "mobCount": 36
+          "mobCount": 2
         }
       ],
       "x1": 1022.07177734375,
@@ -5932,7 +5932,7 @@
       "mobs": [
         {
           "mobId": 36,
-          "mobCount": 36
+          "mobCount": 3
         }
       ],
       "x1": 1111.136962890625,
@@ -5946,7 +5946,7 @@
       "mobs": [
         {
           "mobId": 36,
-          "mobCount": 36
+          "mobCount": 3
         }
       ],
       "x1": 1124.3050537109375,
@@ -5960,7 +5960,7 @@
       "mobs": [
         {
           "mobId": 36,
-          "mobCount": 36
+          "mobCount": 4
         }
       ],
       "x1": 1104.6920166015625,
@@ -5974,11 +5974,11 @@
       "mobs": [
         {
           "mobId": 9,
-          "mobCount": 9
+          "mobCount": 1
         },
         {
           "mobId": 16,
-          "mobCount": 16
+          "mobCount": 1
         }
       ],
       "x1": 981.3989868164062,
@@ -5992,11 +5992,11 @@
       "mobs": [
         {
           "mobId": 9,
-          "mobCount": 9
+          "mobCount": 2
         },
         {
           "mobId": 16,
-          "mobCount": 16
+          "mobCount": 2
         }
       ],
       "x1": 981.5679931640625,
@@ -6010,7 +6010,7 @@
       "mobs": [
         {
           "mobId": 16,
-          "mobCount": 16
+          "mobCount": 2
         }
       ],
       "x1": 962.7039794921875,
@@ -6024,7 +6024,7 @@
       "mobs": [
         {
           "mobId": 16,
-          "mobCount": 16
+          "mobCount": 2
         }
       ],
       "x1": 967.052978515625,
@@ -6038,11 +6038,11 @@
       "mobs": [
         {
           "mobId": 9,
-          "mobCount": 9
+          "mobCount": 2
         },
         {
           "mobId": 16,
-          "mobCount": 16
+          "mobCount": 2
         }
       ],
       "x1": 999.2039794921875,
@@ -6056,11 +6056,11 @@
       "mobs": [
         {
           "mobId": 9,
-          "mobCount": 9
+          "mobCount": 2
         },
         {
           "mobId": 16,
-          "mobCount": 16
+          "mobCount": 2
         }
       ],
       "x1": 994.0469970703125,
@@ -6074,11 +6074,11 @@
       "mobs": [
         {
           "mobId": 9,
-          "mobCount": 9
+          "mobCount": 2
         },
         {
           "mobId": 16,
-          "mobCount": 16
+          "mobCount": 2
         }
       ],
       "x1": 991.8889770507812,
@@ -6092,11 +6092,11 @@
       "mobs": [
         {
           "mobId": 9,
-          "mobCount": 9
+          "mobCount": 2
         },
         {
           "mobId": 16,
-          "mobCount": 16
+          "mobCount": 2
         }
       ],
       "x1": 1003.7839965820312,
@@ -6110,11 +6110,11 @@
       "mobs": [
         {
           "mobId": 10,
-          "mobCount": 10
+          "mobCount": 2
         },
         {
           "mobId": 16,
-          "mobCount": 16
+          "mobCount": 2
         }
       ],
       "x1": 1033.5780029296875,
@@ -6128,11 +6128,11 @@
       "mobs": [
         {
           "mobId": 27,
-          "mobCount": 27
+          "mobCount": 2
         },
         {
           "mobId": 28,
-          "mobCount": 28
+          "mobCount": 2
         }
       ],
       "x1": 935.0769653320312,
@@ -6146,7 +6146,7 @@
       "mobs": [
         {
           "mobId": 36,
-          "mobCount": 36
+          "mobCount": 2
         }
       ],
       "x1": 1007.6468505859375,
@@ -6160,11 +6160,11 @@
       "mobs": [
         {
           "mobId": 27,
-          "mobCount": 27
+          "mobCount": 2
         },
         {
           "mobId": 28,
-          "mobCount": 28
+          "mobCount": 2
         }
       ],
       "x1": 967.0298461914062,
@@ -6178,11 +6178,11 @@
       "mobs": [
         {
           "mobId": 27,
-          "mobCount": 27
+          "mobCount": 2
         },
         {
           "mobId": 28,
-          "mobCount": 28
+          "mobCount": 2
         }
       ],
       "x1": 1003.57861328125,
@@ -6196,11 +6196,11 @@
       "mobs": [
         {
           "mobId": 27,
-          "mobCount": 27
+          "mobCount": 2
         },
         {
           "mobId": 28,
-          "mobCount": 28
+          "mobCount": 2
         }
       ],
       "x1": 1058.0450439453125,
@@ -6214,11 +6214,11 @@
       "mobs": [
         {
           "mobId": 27,
-          "mobCount": 27
+          "mobCount": 2
         },
         {
           "mobId": 28,
-          "mobCount": 28
+          "mobCount": 2
         }
       ],
       "x1": 1097.031982421875,
@@ -6232,11 +6232,11 @@
       "mobs": [
         {
           "mobId": 27,
-          "mobCount": 27
+          "mobCount": 2
         },
         {
           "mobId": 28,
-          "mobCount": 28
+          "mobCount": 2
         }
       ],
       "x1": 1135.7449951171875,
@@ -6250,11 +6250,11 @@
       "mobs": [
         {
           "mobId": 14,
-          "mobCount": 14
+          "mobCount": 2
         },
         {
           "mobId": 21,
-          "mobCount": 21
+          "mobCount": 2
         }
       ],
       "x1": 962.2410278320312,
@@ -6268,11 +6268,11 @@
       "mobs": [
         {
           "mobId": 14,
-          "mobCount": 14
+          "mobCount": 2
         },
         {
           "mobId": 21,
-          "mobCount": 21
+          "mobCount": 2
         }
       ],
       "x1": 1047.39501953125,
@@ -6286,11 +6286,11 @@
       "mobs": [
         {
           "mobId": 14,
-          "mobCount": 14
+          "mobCount": 2
         },
         {
           "mobId": 21,
-          "mobCount": 21
+          "mobCount": 2
         }
       ],
       "x1": 1024.01904296875,
@@ -6304,11 +6304,11 @@
       "mobs": [
         {
           "mobId": 14,
-          "mobCount": 14
+          "mobCount": 2
         },
         {
           "mobId": 21,
-          "mobCount": 21
+          "mobCount": 2
         }
       ],
       "x1": 994.8829956054688,
@@ -6322,11 +6322,11 @@
       "mobs": [
         {
           "mobId": 14,
-          "mobCount": 14
+          "mobCount": 2
         },
         {
           "mobId": 21,
-          "mobCount": 21
+          "mobCount": 2
         }
       ],
       "x1": 964.5859985351562,
@@ -6340,11 +6340,11 @@
       "mobs": [
         {
           "mobId": 14,
-          "mobCount": 14
+          "mobCount": 1
         },
         {
           "mobId": 21,
-          "mobCount": 21
+          "mobCount": 1
         }
       ],
       "x1": 937.697021484375,
@@ -6358,7 +6358,7 @@
       "mobs": [
         {
           "mobId": 43,
-          "mobCount": 43
+          "mobCount": 2
         }
       ],
       "x1": 1808.2220458984375,
@@ -6372,7 +6372,7 @@
       "mobs": [
         {
           "mobId": 42,
-          "mobCount": 42
+          "mobCount": 2
         }
       ],
       "x1": 1802.0389404296875,
@@ -6386,7 +6386,7 @@
       "mobs": [
         {
           "mobId": 45,
-          "mobCount": 45
+          "mobCount": 3
         }
       ],
       "x1": 1799.4139404296875,
@@ -6400,7 +6400,7 @@
       "mobs": [
         {
           "mobId": 45,
-          "mobCount": 45
+          "mobCount": 3
         }
       ],
       "x1": 1783.6929931640625,
@@ -6414,7 +6414,7 @@
       "mobs": [
         {
           "mobId": 45,
-          "mobCount": 45
+          "mobCount": 3
         }
       ],
       "x1": 1769.6199951171875,
@@ -6428,7 +6428,7 @@
       "mobs": [
         {
           "mobId": 45,
-          "mobCount": 45
+          "mobCount": 3
         }
       ],
       "x1": 1811.123046875,
@@ -6442,11 +6442,11 @@
       "mobs": [
         {
           "mobId": 42,
-          "mobCount": 42
+          "mobCount": 2
         },
         {
           "mobId": 43,
-          "mobCount": 43
+          "mobCount": 2
         }
       ],
       "x1": 1683.0660400390625,
@@ -6460,11 +6460,11 @@
       "mobs": [
         {
           "mobId": 42,
-          "mobCount": 42
+          "mobCount": 2
         },
         {
           "mobId": 43,
-          "mobCount": 43
+          "mobCount": 2
         }
       ],
       "x1": 1707.9599609375,
@@ -6478,11 +6478,11 @@
       "mobs": [
         {
           "mobId": 42,
-          "mobCount": 42
+          "mobCount": 2
         },
         {
           "mobId": 43,
-          "mobCount": 43
+          "mobCount": 2
         }
       ],
       "x1": 1681.43603515625,
@@ -6496,11 +6496,11 @@
       "mobs": [
         {
           "mobId": 42,
-          "mobCount": 42
+          "mobCount": 2
         },
         {
           "mobId": 43,
-          "mobCount": 43
+          "mobCount": 2
         }
       ],
       "x1": 1753.9510498046875,
@@ -6514,11 +6514,11 @@
       "mobs": [
         {
           "mobId": 42,
-          "mobCount": 42
+          "mobCount": 2
         },
         {
           "mobId": 43,
-          "mobCount": 43
+          "mobCount": 2
         }
       ],
       "x1": 1716.2459716796875,
@@ -6532,11 +6532,11 @@
       "mobs": [
         {
           "mobId": 42,
-          "mobCount": 42
+          "mobCount": 2
         },
         {
           "mobId": 43,
-          "mobCount": 43
+          "mobCount": 2
         }
       ],
       "x1": 1693.780029296875,
@@ -6550,11 +6550,11 @@
       "mobs": [
         {
           "mobId": 42,
-          "mobCount": 42
+          "mobCount": 2
         },
         {
           "mobId": 43,
-          "mobCount": 43
+          "mobCount": 2
         }
       ],
       "x1": 1706.552001953125,
@@ -6568,11 +6568,11 @@
       "mobs": [
         {
           "mobId": 42,
-          "mobCount": 42
+          "mobCount": 2
         },
         {
           "mobId": 43,
-          "mobCount": 43
+          "mobCount": 2
         }
       ],
       "x1": 1715.322021484375,
@@ -6586,11 +6586,11 @@
       "mobs": [
         {
           "mobId": 42,
-          "mobCount": 42
+          "mobCount": 2
         },
         {
           "mobId": 43,
-          "mobCount": 43
+          "mobCount": 2
         }
       ],
       "x1": 1730.010009765625,
@@ -6604,11 +6604,11 @@
       "mobs": [
         {
           "mobId": 42,
-          "mobCount": 42
+          "mobCount": 2
         },
         {
           "mobId": 43,
-          "mobCount": 43
+          "mobCount": 2
         }
       ],
       "x1": 1616.2679443359375,
@@ -6622,11 +6622,11 @@
       "mobs": [
         {
           "mobId": 42,
-          "mobCount": 42
+          "mobCount": 2
         },
         {
           "mobId": 43,
-          "mobCount": 43
+          "mobCount": 2
         }
       ],
       "x1": 1621.18798828125,
@@ -6640,11 +6640,11 @@
       "mobs": [
         {
           "mobId": 42,
-          "mobCount": 42
+          "mobCount": 2
         },
         {
           "mobId": 43,
-          "mobCount": 43
+          "mobCount": 2
         }
       ],
       "x1": 1591.864990234375,
@@ -6658,11 +6658,11 @@
       "mobs": [
         {
           "mobId": 42,
-          "mobCount": 42
+          "mobCount": 2
         },
         {
           "mobId": 43,
-          "mobCount": 43
+          "mobCount": 2
         }
       ],
       "x1": 1596.5999755859375,
@@ -6676,7 +6676,7 @@
       "mobs": [
         {
           "mobId": 45,
-          "mobCount": 45
+          "mobCount": 3
         }
       ],
       "x1": 1824.6390380859375,
@@ -6690,7 +6690,7 @@
       "mobs": [
         {
           "mobId": 45,
-          "mobCount": 45
+          "mobCount": 3
         }
       ],
       "x1": 1838.27001953125,
@@ -6704,7 +6704,7 @@
       "mobs": [
         {
           "mobId": 45,
-          "mobCount": 45
+          "mobCount": 3
         }
       ],
       "x1": 1807.6009521484375,
@@ -6718,7 +6718,7 @@
       "mobs": [
         {
           "mobId": 45,
-          "mobCount": 45
+          "mobCount": 3
         }
       ],
       "x1": 1941.906005859375,
@@ -6732,11 +6732,11 @@
       "mobs": [
         {
           "mobId": 42,
-          "mobCount": 42
+          "mobCount": 2
         },
         {
           "mobId": 43,
-          "mobCount": 43
+          "mobCount": 2
         }
       ],
       "x1": 1956.116943359375,
@@ -6750,11 +6750,11 @@
       "mobs": [
         {
           "mobId": 40,
-          "mobCount": 40
+          "mobCount": 2
         },
         {
           "mobId": 41,
-          "mobCount": 41
+          "mobCount": 2
         }
       ],
       "x1": 474.3599853515625,
@@ -6768,11 +6768,11 @@
       "mobs": [
         {
           "mobId": 40,
-          "mobCount": 40
+          "mobCount": 2
         },
         {
           "mobId": 41,
-          "mobCount": 41
+          "mobCount": 2
         }
       ],
       "x1": 457.23199462890625,
@@ -6786,11 +6786,11 @@
       "mobs": [
         {
           "mobId": 40,
-          "mobCount": 40
+          "mobCount": 2
         },
         {
           "mobId": 41,
-          "mobCount": 41
+          "mobCount": 2
         }
       ],
       "x1": 440.072998046875,
@@ -6804,11 +6804,11 @@
       "mobs": [
         {
           "mobId": 40,
-          "mobCount": 40
+          "mobCount": 2
         },
         {
           "mobId": 41,
-          "mobCount": 41
+          "mobCount": 2
         }
       ],
       "x1": 385.9169921875,
@@ -6822,11 +6822,11 @@
       "mobs": [
         {
           "mobId": 40,
-          "mobCount": 40
+          "mobCount": 2
         },
         {
           "mobId": 41,
-          "mobCount": 41
+          "mobCount": 2
         }
       ],
       "x1": 393.0589904785156,
@@ -6840,11 +6840,11 @@
       "mobs": [
         {
           "mobId": 40,
-          "mobCount": 40
+          "mobCount": 2
         },
         {
           "mobId": 41,
-          "mobCount": 41
+          "mobCount": 2
         }
       ],
       "x1": 374.28900146484375,
@@ -6858,11 +6858,11 @@
       "mobs": [
         {
           "mobId": 40,
-          "mobCount": 40
+          "mobCount": 2
         },
         {
           "mobId": 41,
-          "mobCount": 41
+          "mobCount": 2
         }
       ],
       "x1": 323.1929931640625,
@@ -6876,11 +6876,11 @@
       "mobs": [
         {
           "mobId": 40,
-          "mobCount": 40
+          "mobCount": 2
         },
         {
           "mobId": 41,
-          "mobCount": 41
+          "mobCount": 2
         }
       ],
       "x1": 336.9729919433594,
@@ -6894,11 +6894,11 @@
       "mobs": [
         {
           "mobId": 40,
-          "mobCount": 40
+          "mobCount": 2
         },
         {
           "mobId": 41,
-          "mobCount": 41
+          "mobCount": 2
         }
       ],
       "x1": 315.0559997558594,
@@ -6912,11 +6912,11 @@
       "mobs": [
         {
           "mobId": 40,
-          "mobCount": 40
+          "mobCount": 2
         },
         {
           "mobId": 41,
-          "mobCount": 41
+          "mobCount": 2
         }
       ],
       "x1": 343.7349853515625,
@@ -6930,11 +6930,11 @@
       "mobs": [
         {
           "mobId": 40,
-          "mobCount": 40
+          "mobCount": 2
         },
         {
           "mobId": 41,
-          "mobCount": 41
+          "mobCount": 2
         }
       ],
       "x1": 307.9840087890625,
@@ -6948,11 +6948,11 @@
       "mobs": [
         {
           "mobId": 40,
-          "mobCount": 40
+          "mobCount": 2
         },
         {
           "mobId": 41,
-          "mobCount": 41
+          "mobCount": 2
         }
       ],
       "x1": 319.177001953125,
@@ -6966,11 +6966,11 @@
       "mobs": [
         {
           "mobId": 40,
-          "mobCount": 40
+          "mobCount": 2
         },
         {
           "mobId": 41,
-          "mobCount": 41
+          "mobCount": 2
         }
       ],
       "x1": 322.7179870605469,
@@ -6984,7 +6984,7 @@
       "mobs": [
         {
           "mobId": 41,
-          "mobCount": 41
+          "mobCount": 2
         }
       ],
       "x1": 261.74700927734375,
@@ -6998,11 +6998,11 @@
       "mobs": [
         {
           "mobId": 40,
-          "mobCount": 40
+          "mobCount": 2
         },
         {
           "mobId": 41,
-          "mobCount": 41
+          "mobCount": 2
         }
       ],
       "x1": 196.17999267578125,
@@ -7016,11 +7016,11 @@
       "mobs": [
         {
           "mobId": 40,
-          "mobCount": 40
+          "mobCount": 2
         },
         {
           "mobId": 41,
-          "mobCount": 41
+          "mobCount": 2
         }
       ],
       "x1": 217.78599548339844,
@@ -7034,11 +7034,11 @@
       "mobs": [
         {
           "mobId": 40,
-          "mobCount": 40
+          "mobCount": 2
         },
         {
           "mobId": 41,
-          "mobCount": 41
+          "mobCount": 2
         }
       ],
       "x1": 228.03599548339844,
@@ -7052,7 +7052,7 @@
       "mobs": [
         {
           "mobId": 2000,
-          "mobCount": 2000
+          "mobCount": 2
         }
       ],
       "x1": 434.2450256347656,
@@ -7066,11 +7066,11 @@
       "mobs": [
         {
           "mobId": 2000,
-          "mobCount": 2000
+          "mobCount": 1
         },
         {
           "mobId": 4,
-          "mobCount": 4
+          "mobCount": 1
         }
       ],
       "x1": 456.64239501953125,
@@ -7084,7 +7084,7 @@
       "mobs": [
         {
           "mobId": 2000,
-          "mobCount": 2000
+          "mobCount": 2
         }
       ],
       "x1": 476.46856689453125,
@@ -7098,11 +7098,11 @@
       "mobs": [
         {
           "mobId": 4,
-          "mobCount": 4
+          "mobCount": 1
         },
         {
           "mobId": 2000,
-          "mobCount": 2000
+          "mobCount": 1
         }
       ],
       "x1": 491.6705017089844,
@@ -7116,7 +7116,7 @@
       "mobs": [
         {
           "mobId": 2000,
-          "mobCount": 2000
+          "mobCount": 2
         }
       ],
       "x1": 512.1675415039062,
@@ -7130,7 +7130,7 @@
       "mobs": [
         {
           "mobId": 2000,
-          "mobCount": 2000
+          "mobCount": 2
         }
       ],
       "x1": 513.3116455078125,
@@ -7144,11 +7144,11 @@
       "mobs": [
         {
           "mobId": 4,
-          "mobCount": 4
+          "mobCount": 1
         },
         {
           "mobId": 2000,
-          "mobCount": 2000
+          "mobCount": 1
         }
       ],
       "x1": 534.7586669921875,
@@ -7162,7 +7162,7 @@
       "mobs": [
         {
           "mobId": 2000,
-          "mobCount": 2000
+          "mobCount": 2
         }
       ],
       "x1": 548.271240234375,
@@ -7176,7 +7176,7 @@
       "mobs": [
         {
           "mobId": 2000,
-          "mobCount": 2000
+          "mobCount": 2
         }
       ],
       "x1": 564.1329956054688,
@@ -7190,7 +7190,7 @@
       "mobs": [
         {
           "mobId": 4,
-          "mobCount": 4
+          "mobCount": 2
         }
       ],
       "x1": 786.082275390625,
@@ -7204,7 +7204,7 @@
       "mobs": [
         {
           "mobId": 4,
-          "mobCount": 4
+          "mobCount": 2
         }
       ],
       "x1": 780.6275024414062,
@@ -7218,7 +7218,7 @@
       "mobs": [
         {
           "mobId": 4,
-          "mobCount": 4
+          "mobCount": 2
         }
       ],
       "x1": 810.1852416992188,
@@ -7232,7 +7232,7 @@
       "mobs": [
         {
           "mobId": 4,
-          "mobCount": 4
+          "mobCount": 2
         }
       ],
       "x1": 811.6488647460938,
@@ -7246,7 +7246,7 @@
       "mobs": [
         {
           "mobId": 4,
-          "mobCount": 4
+          "mobCount": 2
         }
       ],
       "x1": 837.4326782226562,
@@ -7260,7 +7260,7 @@
       "mobs": [
         {
           "mobId": 4,
-          "mobCount": 4
+          "mobCount": 2
         }
       ],
       "x1": 843.6982421875,
@@ -7274,7 +7274,7 @@
       "mobs": [
         {
           "mobId": 4,
-          "mobCount": 4
+          "mobCount": 2
         }
       ],
       "x1": 867.9450073242188,
@@ -7288,7 +7288,7 @@
       "mobs": [
         {
           "mobId": 4,
-          "mobCount": 4
+          "mobCount": 2
         }
       ],
       "x1": 870.5576171875,
@@ -7302,7 +7302,7 @@
       "mobs": [
         {
           "mobId": 4,
-          "mobCount": 4
+          "mobCount": 2
         }
       ],
       "x1": 904.4677734375,
@@ -7316,7 +7316,7 @@
       "mobs": [
         {
           "mobId": 4,
-          "mobCount": 4
+          "mobCount": 2
         }
       ],
       "x1": 897.5890502929688,

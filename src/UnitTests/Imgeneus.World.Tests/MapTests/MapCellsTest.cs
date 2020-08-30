@@ -42,6 +42,19 @@ namespace Imgeneus.World.Tests.MapTests
             Assert.Equal(21, map.Columns);
         }
 
+        [Fact]
+        [Description("There can be only 1 cell for the whole map")]
+        public void MapCells_OneCell()
+        {
+            var mapConfig = new MapConfiguration()
+            {
+                Size = 100,
+                CellSize = 100
+            };
+            var map = new Map(mapConfig, mapLoggerMock.Object, databasePreloader.Object);
+            Assert.Single(map.Cells);
+        }
+
         [Theory]
         [Description("It should be possible to get by coordinates in what cell map member is situated.")]
         [InlineData(0, 0, 0)]

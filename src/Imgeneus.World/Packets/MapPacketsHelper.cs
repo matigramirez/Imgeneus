@@ -73,10 +73,17 @@ namespace Imgeneus.World.Packets
             client.SendPacket(packet1);
         }
 
-        internal void SendMobEntered(IWorldClient client, Mob mob, bool isNew)
+        internal void SendMobEnter(IWorldClient client, Mob mob, bool isNew)
         {
             using var packet = new Packet(PacketType.MOB_ENTER);
             packet.Write(new MobEnter(mob, isNew).Serialize());
+            client.SendPacket(packet);
+        }
+
+        internal void SendMobLeave(IWorldClient client, Mob mob)
+        {
+            using var packet = new Packet(PacketType.MOB_LEAVE);
+            packet.Write(mob.Id);
             client.SendPacket(packet);
         }
 

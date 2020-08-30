@@ -45,7 +45,7 @@ namespace Imgeneus.World.Game.Monster
             private set
             {
                 _state = value;
-                _logger.LogDebug($"Mob {Id} changed state to {_state}.");
+                //_logger.LogDebug($"Mob {Id} changed state to {_state}.");
 
                 switch (_state)
                 {
@@ -227,7 +227,7 @@ namespace Imgeneus.World.Game.Monster
             PosX = new Random().NextFloat(x1, x2);
             PosZ = new Random().NextFloat(z1, z2);
 
-            _logger.LogDebug($"Mob {Id} walks to new position x={PosX} y={PosY} z={PosZ}.");
+            //_logger.LogDebug($"Mob {Id} walks to new position x={PosX} y={PosY} z={PosZ}.");
 
             OnMove?.Invoke(this);
         }
@@ -778,7 +778,7 @@ namespace Imgeneus.World.Game.Monster
             if (!((IKiller)this).AttackSuccessRate(target, TypeAttack.PhysicalAttack))
             {
                 // Send missed attack.
-                OnAttack?.Invoke(this, Target, new AttackResult(AttackSuccess.Miss, new Damage(0, 0, 0)));
+                OnAttack?.Invoke(this, target, new AttackResult(AttackSuccess.Miss, new Damage(0, 0, 0)));
                 _logger.LogDebug($"Mob {Id} missed attack on character {target.Id}");
                 return;
             }
@@ -792,11 +792,11 @@ namespace Imgeneus.World.Game.Monster
                                                       minAttack + additionalDamage);
             _logger.LogDebug($"Mob {Id} deals damage to player {target.Id}: {res.Damage.HP} HP; {res.Damage.MP} MP; {res.Damage.SP} SP ");
 
-            Target.CurrentMP -= res.Damage.MP;
-            Target.CurrentSP -= res.Damage.SP;
-            Target.DecreaseHP(res.Damage.HP, this);
+            target.CurrentMP -= res.Damage.MP;
+            target.CurrentSP -= res.Damage.SP;
+            target.DecreaseHP(res.Damage.HP, this);
 
-            OnAttack?.Invoke(this, Target, res);
+            OnAttack?.Invoke(this, target, res);
         }
 
         #endregion

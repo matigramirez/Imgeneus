@@ -24,7 +24,7 @@ namespace Imgeneus.World.Serialization
         public MobEnter(Mob mob, bool isNew)
         {
             GlobalId = mob.Id;
-            IsNew = isNew; // TODO: find out when it can be false;
+            IsNew = isNew;
             MobId = mob.MobId;
             PosX = mob.PosX;
             PosZ = mob.PosZ;

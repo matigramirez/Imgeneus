@@ -27,7 +27,7 @@ namespace Imgeneus.World.Game.Chat
             switch (messageType)
             {
                 case MessageType.Normal:
-                    var players = sender.Map.GetPlayers(sender.PosX, sender.PosZ, 50, Fraction.NotSelected, true);
+                    var players = sender.Map.GetPlayers(sender.CellId, sender.PosX, sender.PosZ, 50, Fraction.NotSelected, true);
                     foreach (var player in players)
                     {
                         SendNormal((Character)player, sender.Id, message);
@@ -57,7 +57,7 @@ namespace Imgeneus.World.Game.Chat
                     break;
 
                 case MessageType.Map:
-                    var mapPlayers = sender.Map.GetPlayers(sender.PosX, sender.PosZ, 0, sender.Country, true);
+                    var mapPlayers = sender.Map.GetPlayers(sender.CellId, sender.PosX, sender.PosZ, 0, sender.Country, true);
                     foreach (var player in mapPlayers)
                     {
                         SendMap((Character)player, sender.Name, message);

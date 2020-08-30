@@ -1,11 +1,9 @@
 ﻿using Imgeneus.Core.DependencyInjection;
 using Imgeneus.Core.Extensions;
-using Imgeneus.Database.Constants;
 using Imgeneus.Database.Entities;
 using Imgeneus.Database.Preload;
 using Imgeneus.World.Game.Monster;
 using Imgeneus.World.Game.NPCs;
-using Imgeneus.World.Game.PartyAndRaid;
 using Imgeneus.World.Game.Player;
 using Imgeneus.World.Game.Zone.MapConfig;
 using Imgeneus.World.Packets;
@@ -51,6 +49,8 @@ namespace Imgeneus.World.Game.Zone
         /// </summary>
         private void Init()
         {
+            CalculateCells(_config.Size, _config.CellSize);
+
             // TODO: init map.
 
             // Create npcs.
@@ -59,11 +59,11 @@ namespace Imgeneus.World.Game.Zone
                 if (_databasePreloader.NPCs.TryGetValue((conf.Type, conf.TypeId), out var dbNpc))
                 {
                     var moveCoordinates = conf.Coordinates.Select(c => (c.X, c.Y, c.Z, Convert.ToUInt16(c.Angle))).ToList();
-                    AddNPC(new Npc(DependencyContainer.Instance.Resolve<ILogger<Npc>>(), dbNpc, moveCoordinates, this));
+                    var npc = new Npc(DependencyContainer.Instance.Resolve<ILogger<Npc>>(), dbNpc, moveCoordinates, this);
+                    var cellIndex = GetCellIndex(npc);
+                    AddNPC(cellIndex, npc);
                 }
             }
-
-            CalculateCells(_config.Size);
         }
 
         #endregion
@@ -71,14 +71,14 @@ namespace Imgeneus.World.Game.Zone
         #region Cells
 
         /// <summary>
-        /// Minimum cell size.
-        /// </summary>
-        public const int MIN_CELL_SIZE = 100;
-
-        /// <summary>
         /// Map size.
         /// </summary>
         public int Size { get; private set; }
+
+        /// <summary>
+        /// Minimum cell size.
+        /// </summary>
+        public int MinCellSize { get; private set; }
 
         /// <summary>
         /// Number of cells rows.
@@ -91,29 +91,98 @@ namespace Imgeneus.World.Game.Zone
         public int Columns { get; private set; }
 
         /// <summary>
+        /// For better performance updates are sent through map cells.
+        /// </summary>
+        public List<MapCell> Cells { get; private set; } = new List<MapCell>();
+
+        /// <summary>
         /// For better performance map sends updates not about the whole map,
         /// but based on cells. Each map is responsible for its cells update.
         /// </summary>
         /// <param name="size">map size</param>
-        public void CalculateCells(int size)
+        public void CalculateCells(int size, int cellSize)
         {
             Size = size;
+            MinCellSize = cellSize;
 
-            var mod = Size / MIN_CELL_SIZE;
-            var div = Size % MIN_CELL_SIZE;
+            var mod = Size / MinCellSize;
+            var div = Size % MinCellSize;
 
             Rows = div == 0 ? mod : mod + 1;
             Columns = Rows;
+
+            for (var i = 0; i < Rows * Columns; i++)
+            {
+                Cells.Add(new MapCell(i, GetNeighborCellIndexes(i), this));
+            }
         }
 
         /// <summary>
-        /// Each map member is assigned cell id as soon as he enters into map or moves.
+        /// Each map member is assigned cell index as soon as he enters into map or moves.
         /// </summary>
-        /// <param name="member">map mamber</param>
-        /// <returns>cell id of this map member</returns>
-        public int GetCellId(IMapMember member)
+        /// <param name="member">map member</param>
+        /// <returns>cell index of this map member</returns>
+        public int GetCellIndex(IMapMember member)
         {
-            throw new NotImplementedException();
+            if (member.PosX == 0 || member.PosZ == 0)
+                return 0;
+
+            int row = ((int)Math.Round(member.PosX, 0)) / MinCellSize;
+            int column = ((int)Math.Round(member.PosZ, 0)) / MinCellSize;
+
+            return row + (column * Rows);
+        }
+
+        /// <summary>
+        /// Gets indexes of neighbor cells.
+        /// </summary>
+        /// <param name="cellIndex">main cell index</param>
+        /// <returns>list of neighbor cell indexes</returns>
+        public IEnumerable<int> GetNeighborCellIndexes(int cellIndex)
+        {
+            var neighbors = new List<int>();
+            var myRow = cellIndex % Rows;
+            var myColumn = (cellIndex - myRow) / Columns;
+
+            var left = cellIndex - 1;
+            if (left >= 0 && (left / Columns) == myColumn)
+                neighbors.Add(left);
+
+            var right = cellIndex + 1;
+            if (right < Rows * Columns && (right / Columns) == myColumn)
+                neighbors.Add(right);
+
+            var top = cellIndex - Rows;
+            if (top >= 0)
+                neighbors.Add(top);
+
+            var bottom = cellIndex + Rows;
+            if (bottom < Rows * Columns)
+                neighbors.Add(bottom);
+
+            var column = 0;
+
+            var topleft = cellIndex - Rows - 1;
+            column = (topleft - (topleft % Rows)) / Columns;
+            if (topleft >= 0 && topleft < Rows * Columns && column == myColumn - 1)
+                neighbors.Add(topleft);
+
+            var topright = cellIndex - Rows + 1;
+            column = (topright - (topright % Rows)) / Columns;
+            if (topright >= 0 && topright < Rows * Columns && column == myColumn - 1)
+                neighbors.Add(topright);
+
+            var bottomleft = cellIndex + Rows - 1;
+            column = (bottomleft - (bottomleft % Rows)) / Columns;
+            if (bottomleft >= 0 && bottomleft < Rows * Columns && column == myColumn + 1)
+                neighbors.Add(bottomleft);
+
+            var bottomright = cellIndex + Rows + 1;
+            column = (bottomright - (bottomright % Rows)) / Columns;
+            if (bottomright >= 0 && bottomright < Rows * Columns && column == myColumn + 1)
+                neighbors.Add(bottomright);
+
+            return neighbors.OrderBy(i => i);
         }
 
         #endregion
@@ -128,7 +197,7 @@ namespace Imgeneus.World.Game.Zone
         /// <summary>
         /// Tries to get player from map.
         /// </summary>
-        /// <param name="mobId">id of player, that you are trying to get.</param>
+        /// <param name="playerId">id of player, that you are trying to get.</param>
         /// <returns>either player or null if player is not presented</returns>
         public Character GetPlayer(int playerId)
         {
@@ -147,24 +216,10 @@ namespace Imgeneus.World.Game.Zone
 
             if (success)
             {
-                _logger.LogDebug($"Player {character.Id} connected to map {Id}");
                 character.Map = this;
-                AddListeners(character);
-
-                foreach (var loadedPlayer in Players)
-                {
-                    if (loadedPlayer.Key != character.Id)
-                    {
-                        // Notify players in this map, that new player arrived.
-                        _packetHelper.SendCharacterConnectedToMap(loadedPlayer.Value.Client, character);
-
-                        // Notify new player, about already loaded player.
-                        _packetHelper.SendCharacterConnectedToMap(character.Client, loadedPlayer.Value);
-                    }
-                }
-
-                foreach (var npc in NPCs)
-                    _packetHelper.SendNpcEnter(character.Client, npc.Value);
+                Cells[GetCellIndex(character)].AddPlayer(character);
+                character.OnPositionChanged += Character_OnPositionChanged;
+                _logger.LogDebug($"Player {character.Id} connected to map {Id}, cell index {character.CellId}.");
             }
 
             return success;
@@ -181,71 +236,12 @@ namespace Imgeneus.World.Game.Zone
 
             if (success)
             {
+                Cells[GetCellIndex(character)].RemovePlayer(character);
+                character.OnPositionChanged -= Character_OnPositionChanged;
                 _logger.LogDebug($"Player {character.Id} left map {Id}");
-                character.Map = null;
-                // Send other clients notification, that user has left the map.
-                foreach (var player in Players)
-                {
-                    _packetHelper.SendCharacterLeftMap(player.Value.Client, removedCharacter);
-                }
-                RemoveListeners(character);
-
-                foreach (var mob in Mobs.Values.Where(m => m.Target == character))
-                {
-                    mob.ClearTarget();
-                };
             }
 
             return success;
-        }
-
-        /// <summary>
-        /// Subscribes to character events.
-        /// </summary>
-        private void AddListeners(Character character)
-        {
-            // Map with id is test map.
-            if (Id == TEST_MAP_ID)
-                return;
-            character.OnPositionChanged += Character_OnPositionChanged;
-            character.OnMotion += Character_OnMotion;
-            character.OnEquipmentChanged += Character_OnEquipmentChanged;
-            character.OnPartyChanged += Character_OnPartyChanged;
-            character.OnAttackOrMoveChanged += Character_OnAttackOrMoveChanged;
-            character.OnUsedSkill += Character_OnUsedSkill;
-            character.OnAttack += Character_OnAttack;
-            character.OnDead += Character_OnDead;
-            character.OnSkillCastStarted += Character_OnSkillCastStarted;
-            character.OnUsedItem += Character_OnUsedItem;
-            character.OnMaxHPChanged += Character_OnMaxHPChanged;
-            character.OnRecover += Character_OnRecover;
-            character.OnSkillKeep += Character_OnSkillKeep;
-            character.OnShapeChange += Character_OnShapeChange;
-            character.OnUsedRangeSkill += Character_OnUsedRangeSkill;
-            character.OnRebirthed += Character_OnRebirthed;
-        }
-
-        /// <summary>
-        /// Unsubscribes from character events.
-        /// </summary>
-        private void RemoveListeners(Character character)
-        {
-            character.OnPositionChanged -= Character_OnPositionChanged;
-            character.OnMotion -= Character_OnMotion;
-            character.OnEquipmentChanged -= Character_OnEquipmentChanged;
-            character.OnPartyChanged -= Character_OnPartyChanged;
-            character.OnAttackOrMoveChanged -= Character_OnAttackOrMoveChanged;
-            character.OnUsedSkill -= Character_OnUsedSkill;
-            character.OnAttack -= Character_OnAttack;
-            character.OnDead -= Character_OnDead;
-            character.OnSkillCastStarted -= Character_OnSkillCastStarted;
-            character.OnUsedItem -= Character_OnUsedItem;
-            character.OnMaxHPChanged -= Character_OnMaxHPChanged;
-            character.OnRecover -= Character_OnRecover;
-            character.OnSkillKeep -= Character_OnSkillKeep;
-            character.OnShapeChange -= Character_OnShapeChange;
-            character.OnUsedRangeSkill -= Character_OnUsedRangeSkill;
-            character.OnRebirthed -= Character_OnRebirthed;
         }
 
         /// <summary>
@@ -262,155 +258,23 @@ namespace Imgeneus.World.Game.Zone
             }
 
             var player = Players[playerId];
-            player.UpdatePosition(X, player.PosY, Z, player.Angle, true, true);
-            foreach (var p in Players)
-                _packetHelper.SendCharacterTeleport(p.Value.Client, player);
+            Cells[GetCellIndex(player)].TeleportPlayer(player, X, Z);
         }
 
         /// <summary>
-        /// Notifies other players about position change.
+        /// When player's position changes, we are checking if player's map cell should be changed.
         /// </summary>
-        private void Character_OnPositionChanged(Character movedPlayer)
+        private void Character_OnPositionChanged(Character sender)
         {
-            // Send other clients notification, that user is moving.
-            foreach (var player in Players)
-            {
-                if (player.Key != movedPlayer.Id)
-                    _packetHelper.SendCharacterMoves(player.Value.Client, movedPlayer);
-            }
-        }
+            var newCellId = GetCellIndex(sender);
+            var oldCellId = sender.CellId;
+            if (oldCellId == newCellId) // All is fine, character is in the right cell
+                return;
 
-        /// <summary>
-        /// When player sends motion, we should resend this motion to all other players on this map.
-        /// </summary>
-        private void Character_OnMotion(Character playerWithMotion, Motion motion)
-        {
-            foreach (var player in Players)
-                _packetHelper.SendCharacterMotion(player.Value.Client, playerWithMotion.Id, motion);
-        }
-
-        /// <summary>
-        /// Notifies other players, that this player changed equipment.
-        /// </summary>
-        /// <param name="sender">player, that changed equipment</param>
-        /// <param name="equipmentItem">item, that was worn</param>
-        /// <param name="slot">item slot</param>
-        private void Character_OnEquipmentChanged(Character sender, Item equipmentItem, byte slot)
-        {
-            foreach (var player in Players)
-                _packetHelper.SendCharacterChangedEquipment(player.Value.Client, sender.Id, equipmentItem, slot);
-        }
-
-        /// <summary>
-        ///  Notifies other players, that player entered/left party or got/removed leader.
-        /// </summary>
-        private void Character_OnPartyChanged(Character sender)
-        {
-            foreach (var player in Players)
-            {
-                PartyMemberType type = PartyMemberType.NoParty;
-
-                if (sender.IsPartyLead)
-                    type = PartyMemberType.Leader;
-                else if (sender.HasParty)
-                    type = PartyMemberType.Member;
-
-                _packetHelper.SendCharacterPartyChanged(player.Value.Client, sender.Id, type);
-            }
-        }
-
-        /// <summary>
-        /// Notifies other players, that player changed attack/move speed.
-        /// </summary>
-        private void Character_OnAttackOrMoveChanged(IKillable sender)
-        {
-            foreach (var player in Players)
-                _packetHelper.SendAttackAndMovementSpeed(player.Value.Client, sender);
-        }
-
-        /// <summary>
-        /// Notifies other players, that player used skill.
-        /// </summary>
-        private void Character_OnUsedSkill(IKiller sender, IKillable target, Skill skill, AttackResult attackResult)
-        {
-            foreach (var player in Players)
-                _packetHelper.SendCharacterUsedSkill(player.Value.Client, (Character)sender, target, skill, attackResult);
-        }
-
-        /// <summary>
-        /// Notifies other players, that player used auto attack.
-        /// </summary>
-        private void Character_OnAttack(IKiller sender, IKillable target, AttackResult attackResult)
-        {
-            foreach (var player in Players)
-                _packetHelper.SendCharacterUsualAttack(player.Value.Client, sender, target, attackResult);
-        }
-
-        /// <summary>
-        /// Notifies other players, that player is dead.
-        /// </summary>
-        private void Character_OnDead(IKillable sender, IKiller killer)
-        {
-            foreach (var player in Players)
-                _packetHelper.SendCharacterKilled(player.Value.Client, (Character)sender, killer);
-        }
-
-        /// <summary>
-        /// Notifies other players, that player starts casting.
-        /// </summary>
-        private void Character_OnSkillCastStarted(Character sender, IKillable target, Skill skill)
-        {
-            foreach (var player in Players)
-                _packetHelper.SendSkillCastStarted(player.Value.Client, sender, target, skill);
-        }
-
-        /// <summary>
-        /// Notifies other players, that player used some item.
-        /// </summary>
-        private void Character_OnUsedItem(Character sender, Item item)
-        {
-            foreach (var player in Players)
-                _packetHelper.SendUsedItem(player.Value.Client, sender, item);
-        }
-
-        private void Character_OnRecover(IKillable sender, int hp, int mp, int sp)
-        {
-            foreach (var player in Players)
-                _packetHelper.SendRecoverCharacter(player.Value.Client, sender, hp, mp, sp);
-        }
-
-        private void Character_OnMaxHPChanged(IKillable sender, int maxHP)
-        {
-            foreach (var player in Players)
-                _packetHelper.Send_Max_HP(player.Value.Client, sender.Id, maxHP);
-        }
-
-        private void Character_OnSkillKeep(IKillable sender, ActiveBuff buff, AttackResult result)
-        {
-            foreach (var player in Players)
-                _packetHelper.SendSkillKeep(player.Value.Client, sender.Id, buff.SkillId, buff.SkillLevel, result);
-        }
-
-        private void Character_OnShapeChange(Character sender)
-        {
-            foreach (var player in Players)
-                _packetHelper.SendShapeUpdate(player.Value.Client, sender);
-        }
-
-        private void Character_OnUsedRangeSkill(IKiller sender, IKillable target, Skill skill, AttackResult attackResult)
-        {
-            foreach (var player in Players)
-                _packetHelper.SendUsedRangeSkill(player.Value.Client, (Character)sender, target, skill, attackResult);
-        }
-
-        private void Character_OnRebirthed(IKillable sender)
-        {
-            foreach (var player in Players)
-            {
-                _packetHelper.SendCharacterRebirth(player.Value.Client, sender);
-                _packetHelper.SendDeadRebirth(player.Value.Client, (Character)sender);
-                _packetHelper.SendRecoverCharacter(player.Value.Client, sender, sender.CurrentHP, sender.CurrentMP, sender.CurrentSP);
-            }
+            // Need to calculate new cell...
+            _logger.LogDebug($"Character {sender.Id} change map cell from {oldCellId} to {newCellId}.");
+            Cells[newCellId].AddPlayer(sender);
+            Cells[oldCellId].RemovePlayer(sender);
         }
 
         #endregion
@@ -434,97 +298,39 @@ namespace Imgeneus.World.Game.Zone
         }
 
         /// <summary>
-        /// Thread-safe dictionary of monsters loaded to this map. Where key id mob id.
-        /// </summary>
-        private readonly ConcurrentDictionary<int, Mob> Mobs = new ConcurrentDictionary<int, Mob>();
-
-        /// <summary>
         /// Tries to add mob to map and notifies other players, that mob arrived.
         /// </summary>
         /// <returns>turue if mob was added, otherwise false</returns>
-        public bool AddMob(Mob mob)
+        public void AddMob(Mob mob)
         {
-            var id = GenerateId();
-            var success = Mobs.TryAdd(id, mob);
-            if (success)
-            {
-                mob.Id = id;
-                AddListeners(mob);
+            mob.Id = GenerateId();
+            Cells[GetCellIndex(mob)].AddMob(mob);
+            _logger.LogDebug($"Mob {mob.MobId} with global id {mob.Id} entered map {Id}");
 
-                _logger.LogDebug($"Mob {mob.MobId} with global id {mob.Id} entered map {Id}");
-
-                foreach (var player in Players)
-                    _packetHelper.SendMobEntered(player.Value.Client, mob, true);
-            }
-
-            return success;
-        }
-
-        /// <summary>
-        /// Adds listeners to mob events.
-        /// </summary>
-        /// <param name="mob">mob, that we listen</param>
-        private void AddListeners(Mob mob)
-        {
             mob.OnDead += Mob_OnDead;
-            mob.OnMove += Mob_OnMove;
-            mob.OnAttack += Mob_OnAttack;
-            mob.OnUsedSkill += Mob_OnUsedSkill;
-            mob.OnFullRecover += Mob_OnRecover;
         }
 
         /// <summary>
-        /// Removes listeners from mob.
+        /// Tries to get mob from map.
         /// </summary>
-        /// <param name="mob">mob, that we listen</param>
-        private void RemoveListeners(Mob mob)
+        /// <param name="cellId">map cell index</param>
+        /// <param name="mobId">id of mob, that you are trying to get.</param>
+        /// <returns>either mob or null if mob is not presented</returns>
+        public Mob GetMob(int cellId, int mobId)
         {
-            mob.OnDead -= Mob_OnDead;
-            mob.OnMove -= Mob_OnMove;
-            mob.OnAttack -= Mob_OnAttack;
-            mob.OnUsedSkill -= Mob_OnUsedSkill;
-            mob.OnFullRecover -= Mob_OnRecover;
+            return Cells[cellId].GetMob(mobId);
         }
 
+        /// <summary>
+        /// Rebirth mob if needed.
+        /// </summary>
+        /// <param name="sender">mob</param>
+        /// <param name="killer">mob's killer</param>
         private void Mob_OnDead(IKillable sender, IKiller killer)
         {
             var mob = (Mob)sender;
-            RemoveListeners(mob);
             if (mob.ShouldRebirth)
                 mob.TimeToRebirth += RebirthMob;
-
-            mob.Dispose();
-            if (!Mobs.TryRemove(mob.Id, out var removedMob))
-            {
-                _logger.LogError($"Could not remove mob {mob.Id} from map.");
-            }
-
-            foreach (var player in Players)
-                _packetHelper.SendMobDead(player.Value.Client, sender, killer);
-        }
-
-        private void Mob_OnMove(Mob sender)
-        {
-            foreach (var player in Players)
-                _packetHelper.SendMobMove(player.Value.Client, sender);
-        }
-
-        private void Mob_OnAttack(IKiller sender, IKillable target, AttackResult attackResult)
-        {
-            foreach (var player in Players)
-                _packetHelper.SendMobAttack(player.Value.Client, (Mob)sender, target.Id, attackResult);
-        }
-
-        private void Mob_OnUsedSkill(IKiller sender, IKillable target, Skill skill, AttackResult attackResult)
-        {
-            foreach (var player in Players)
-                _packetHelper.SendMobUsedSkill(player.Value.Client, (Mob)sender, target.Id, skill, attackResult);
-        }
-
-        private void Mob_OnRecover(IKillable sender)
-        {
-            foreach (var player in Players)
-                _packetHelper.SendMobRecover(player.Value.Client, sender);
         }
 
         /// <summary>
@@ -544,25 +350,9 @@ namespace Imgeneus.World.Game.Zone
             AddMob(mob);
         }
 
-        /// <summary>
-        /// Tries to get mob from map.
-        /// </summary>
-        /// <param name="mobId">id of mob, that you are trying to get.</param>
-        /// <returns>either mob or null if mob is not presented</returns>
-        public Mob GetMob(int mobId)
-        {
-            Mobs.TryGetValue(mobId, out var mob);
-            return mob;
-        }
-
         #endregion
 
         #region Items
-
-        /// <summary>
-        /// Dropped items.
-        /// </summary>
-        private readonly ConcurrentDictionary<int, MapItem> Items = new ConcurrentDictionary<int, MapItem>();
 
         /// <summary>
         /// Adds item on map.
@@ -571,13 +361,7 @@ namespace Imgeneus.World.Game.Zone
         public void AddItem(MapItem item)
         {
             item.Id = GenerateId();
-            if (Items.TryAdd(item.Id, item))
-            {
-                foreach (var player in Players)
-                {
-                    _packetHelper.SendAddItem(player.Value.Client, item);
-                }
-            }
+            Cells[GetCellIndex(item)].AddItem(item);
         }
 
         /// <summary>
@@ -586,83 +370,46 @@ namespace Imgeneus.World.Game.Zone
         /// <returns>if item is null, means that item doen't belong to player yet</returns>
         public MapItem GetItem(int itemId, Character requester)
         {
-            if (Items.TryGetValue(itemId, out var mapItem))
-            {
-                if (mapItem.Owner == null || mapItem.Owner == requester)
-                {
-                    return mapItem;
-                }
-                else
-                {
-                    return null;
-                }
-            }
-            else
-            {
-                return null;
-            }
+            return Cells[requester.CellId].GetItem(itemId, requester);
         }
 
         /// <summary>
         /// Removes item from map.
         /// </summary>
-        public void RemoveItem(int itemId)
+        public void RemoveItem(int cellId, int itemId)
         {
-            if (Items.TryRemove(itemId, out var mapItem))
-            {
-                foreach (var player in Players)
-                {
-                    _packetHelper.SendRemoveItem(player.Value.Client, mapItem);
-                }
-            }
+            Cells[cellId].RemoveItem(itemId);
         }
+
         #endregion
 
         #region NPC
 
         /// <summary>
-        /// Thread-safe dictionary of npcs. Key is npc id, value is npc.
-        /// </summary>
-        private readonly ConcurrentDictionary<int, Npc> NPCs = new ConcurrentDictionary<int, Npc>();
-
-        /// <summary>
         /// Adds npc to the map.
         /// </summary>
+        /// <param name="cellIndex">cell index</param>
         /// <param name="npc">new npc</param>
-        public void AddNPC(Npc npc)
+        public void AddNPC(int cellIndex, Npc npc)
         {
             npc.Id = GenerateId();
-            if (NPCs.TryAdd(npc.Id, npc))
-            {
-                foreach (var player in Players)
-                    _packetHelper.SendNpcEnter(player.Value.Client, npc);
-            }
+            Cells[cellIndex].AddNPC(npc);
         }
 
         /// <summary>
         /// Removes NPC from the map.
         /// </summary>
-        public void RemoveNPC(byte type, ushort typeId, byte count)
+        public void RemoveNPC(int cellIndex, byte type, ushort typeId, byte count)
         {
-            var npcs = NPCs.Values.Where(n => n.Type == type && n.TypeId == typeId).Take(count);
-            foreach (var npc in npcs)
-            {
-                if (NPCs.TryRemove(npc.Id, out var removedNpc))
-                {
-                    foreach (var player in Players)
-                        _packetHelper.SendNpcLeave(player.Value.Client, npc);
-                }
-            }
+            Cells[cellIndex].RemoveNPC(type, typeId, count);
         }
 
         /// <summary>
         /// Gets npc by its' id.
         /// </summary>
-        /// <returns></returns>
-        public Npc GetNPC(int id)
+        public Npc GetNPC(int cellIndex, int id)
         {
-            NPCs.TryGetValue(id, out var resultNpc);
-            return resultNpc;
+            return Cells[cellIndex].GetNPC(id);
         }
 
         #endregion
@@ -674,8 +421,9 @@ namespace Imgeneus.World.Game.Zone
         /// </summary>
         public IEnumerable<IKillable> GetEnemies(Character sender, IKillable target, byte range)
         {
-            IEnumerable<IKillable> mobs = Mobs.Values.Where(m => !m.IsDead && MathExtensions.Distance(target.PosX, m.PosX, target.PosZ, m.PosZ) <= range);
-            IEnumerable<IKillable> chars = Players.Values.Where(p => !p.IsDead && p.Country != sender.Country && MathExtensions.Distance(target.PosX, p.PosX, target.PosZ, p.PosZ) <= range);
+            var cell = Cells[sender.CellId];
+            IEnumerable<IKillable> mobs = cell.GetAllMobs().Where(m => !m.IsDead && MathExtensions.Distance(target.PosX, m.PosX, target.PosZ, m.PosZ) <= range);
+            IEnumerable<IKillable> chars = cell.GetAllPlayers().Where(p => !p.IsDead && p.Country != sender.Country && MathExtensions.Distance(target.PosX, p.PosX, target.PosZ, p.PosZ) <= range);
 
             return mobs.Concat(chars);
         }
@@ -683,12 +431,13 @@ namespace Imgeneus.World.Game.Zone
         /// <summary>
         /// Gets player near point.
         /// </summary>
+        /// <param name="cellId">cell index</param>
         /// <param name="x">x coordinate</param>
         /// <param name="z">z coordinate</param>
         /// <param name="range">minimum range to target, if set to 0 is not calculated</param>
         /// <param name="fraction">light, dark or both</param>
         /// <param name="includeDead">include dead players or not</param>
-        public IEnumerable<IKillable> GetPlayers(float x, float z, byte range, Fraction fraction = Fraction.NotSelected, bool includeDead = false)
+        public IEnumerable<IKillable> GetPlayers(int cellId, float x, float z, byte range, Fraction fraction = Fraction.NotSelected, bool includeDead = false)
         {
             return Players.Values.Where(
                 p => (includeDead || !p.IsDead) && // filter by death

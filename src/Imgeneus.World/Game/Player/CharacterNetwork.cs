@@ -176,7 +176,7 @@ namespace Imgeneus.World.Game.Player
                     }
                     if (mapItem.Item.Type == Item.MONEY_ITEM_TYPE)
                     {
-                        Map.RemoveItem(mapItem.Id);
+                        Map.RemoveItem(CellId, mapItem.Id);
                         mapItem.Item.Bag = 1;
                         ChangeGold(Gold + (uint)mapItem.Item.Gem1.TypeId);
                         _packetsHelper.SendAddItem(Client, mapItem.Item);
@@ -190,7 +190,7 @@ namespace Imgeneus.World.Game.Player
                         }
                         else
                         {
-                            Map.RemoveItem(mapItem.Id);
+                            Map.RemoveItem(CellId, mapItem.Id);
                             _packetsHelper.SendAddItem(Client, inventoryItem);
                             if (Party != null)
                                 Party.MemberGetItem(this, inventoryItem);
@@ -199,7 +199,7 @@ namespace Imgeneus.World.Game.Player
                     break;
 
                 case NpcBuyItemPacket npcBuyItemPacket:
-                    var npc = Map.GetNPC(npcBuyItemPacket.NpcId);
+                    var npc = Map.GetNPC(CellId, npcBuyItemPacket.NpcId);
                     if (npc is null || !npc.ContainsProduct(npcBuyItemPacket.ItemIndex))
                         return;
                     var buyItem = npc.Products[npcBuyItemPacket.ItemIndex];
@@ -228,7 +228,7 @@ namespace Imgeneus.World.Game.Player
                     break;
 
                 case QuestStartPacket questStartPacket:
-                    var npcQuestGiver = Map.GetNPC(questStartPacket.NpcId);
+                    var npcQuestGiver = Map.GetNPC(CellId, questStartPacket.NpcId);
                     if (npcQuestGiver is null || !npcQuestGiver.StartQuestIds.Contains(questStartPacket.QuestId))
                     {
                         _logger.LogWarning($"Trying to start unknown quest {questStartPacket.QuestId} at npc {questStartPacket.NpcId}");
@@ -240,7 +240,7 @@ namespace Imgeneus.World.Game.Player
                     break;
 
                 case QuestEndPacket questEndPacket:
-                    var npcQuestReceiver = Map.GetNPC(questEndPacket.NpcId);
+                    var npcQuestReceiver = Map.GetNPC(CellId, questEndPacket.NpcId);
                     if (npcQuestReceiver is null || !npcQuestReceiver.EndQuestIds.Contains(questEndPacket.QuestId))
                     {
                         _logger.LogWarning($"Trying to finish unknown quest {questEndPacket.QuestId} at npc {questEndPacket.NpcId}");
@@ -292,7 +292,7 @@ namespace Imgeneus.World.Game.Player
                         {
                             (PosX, PosY, PosZ, Angle)
                         };
-                        Map.AddNPC(new Npc(DependencyContainer.Instance.Resolve<ILogger<Npc>>(), dbNpc, moveCoordinates, Map));
+                        Map.AddNPC(CellId, new Npc(DependencyContainer.Instance.Resolve<ILogger<Npc>>(), dbNpc, moveCoordinates, Map));
                         _packetsHelper.SendGmCommandSuccess(Client);
                     }
                     else
@@ -304,7 +304,7 @@ namespace Imgeneus.World.Game.Player
                 case GMRemoveNpcPacket gMRemoveNpcPacket:
                     if (!IsAdmin)
                         return;
-                    Map.RemoveNPC(gMRemoveNpcPacket.Type, gMRemoveNpcPacket.TypeId, gMRemoveNpcPacket.Count);
+                    Map.RemoveNPC(CellId, gMRemoveNpcPacket.Type, gMRemoveNpcPacket.TypeId, gMRemoveNpcPacket.Count);
                     _packetsHelper.SendGmCommandSuccess(Client);
                     break;
             }
@@ -352,7 +352,7 @@ namespace Imgeneus.World.Game.Player
 
         private void HandleMobInTarget(MobInTargetPacket packet)
         {
-            Target = Map.GetMob(packet.TargetId);
+            Target = Map.GetMob(CellId, packet.TargetId);
         }
 
         private void HandleMotion(MotionPacket packet)
@@ -410,7 +410,7 @@ namespace Imgeneus.World.Game.Player
 
         private void HandleAutoAttackOnMob(int targetId)
         {
-            var target = Map.GetMob(targetId);
+            var target = Map.GetMob(CellId, targetId);
             Attack(255, target);
         }
 
@@ -422,7 +422,7 @@ namespace Imgeneus.World.Game.Player
 
         private void HandleUseSkillOnMob(byte number, int targetId)
         {
-            var target = Map.GetMob(targetId);
+            var target = Map.GetMob(CellId, targetId);
             Attack(number, target);
         }
 
@@ -441,7 +441,7 @@ namespace Imgeneus.World.Game.Player
 
         private void HandleGetMobBuffs(int targetId)
         {
-            var target = Map.GetMob(targetId);
+            var target = Map.GetMob(CellId, targetId);
             if (target != null)
                 _packetsHelper.SendCurrentBuffs(Client, target);
         }

@@ -36,5 +36,10 @@
         /// For performance improvement each map member stores cell id to which it belongs to.
         /// </summary>
         public int CellId { get; set; }
+
+        /// <summary>
+        /// Previous cell id.
+        /// </summary>
+        public int OldCellId { get; set; }
     }
 }

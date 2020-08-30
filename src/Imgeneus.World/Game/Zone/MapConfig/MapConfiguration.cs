@@ -17,6 +17,12 @@ namespace Imgeneus.World.Game.Zone.MapConfig
         public int Size { get; set; }
 
         /// <summary>
+        /// Minimum cell size.
+        /// </summary>
+        [JsonPropertyName("cell_size")]
+        public int CellSize { get; set; }
+
+        /// <summary>
         /// Mob areas.
         /// </summary>
         [JsonPropertyName("mob_areas")]

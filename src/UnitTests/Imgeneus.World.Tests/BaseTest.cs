@@ -7,6 +7,7 @@ using Imgeneus.World.Game.Chat;
 using Imgeneus.World.Game.Monster;
 using Imgeneus.World.Game.Player;
 using Imgeneus.World.Game.Zone;
+using Imgeneus.World.Game.Zone.MapConfig;
 using Microsoft.Extensions.Logging;
 using Moq;
 using System.Collections.Generic;
@@ -24,6 +25,11 @@ namespace Imgeneus.World.Tests
         protected Mock<ILogger<Mob>> mobLoggerMock = new Mock<ILogger<Mob>>();
         protected Mock<IChatManager> chatMock = new Mock<IChatManager>();
         protected Mock<IWorldClient> worldClientMock = new Mock<IWorldClient>();
+
+        protected Map testMap => new Map(
+                    new MapConfiguration() { Id = Map.TEST_MAP_ID, Size = 100, CellSize = 100 },
+                    mapLoggerMock.Object,
+                    databasePreloader.Object);
 
         public BaseTest()
         {

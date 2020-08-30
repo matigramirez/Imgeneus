@@ -59,6 +59,8 @@ namespace Imgeneus.World.Game
 
         public int CellId { get; set; }
 
+        public int OldCellId { get; set; }
+
         #endregion
 
         #region Current hitpoints

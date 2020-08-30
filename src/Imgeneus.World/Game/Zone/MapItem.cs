@@ -22,6 +22,8 @@ namespace Imgeneus.World.Game.Zone
 
         public int CellId { get; set; }
 
+        public int OldCellId { get; set; }
+
         /// <summary>
         /// Thrown item.
         /// </summary>

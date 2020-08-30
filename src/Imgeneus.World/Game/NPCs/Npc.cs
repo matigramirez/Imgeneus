@@ -96,6 +96,8 @@ namespace Imgeneus.World.Game.NPCs
 
         public int CellId { get; set; }
 
+        public int OldCellId { get; set; }
+
         /// <summary>
         /// Type of NPC.
         /// </summary>

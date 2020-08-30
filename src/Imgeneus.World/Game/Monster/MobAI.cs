@@ -334,7 +334,7 @@ namespace Imgeneus.World.Game.Monster
         /// </summary>
         public bool TryGetPlayer()
         {
-            var players = Map.GetPlayers(PosX, PosZ, _dbMob.ChaseRange, EnemyPlayersFraction);
+            var players = Map.GetPlayers(CellId, PosX, PosZ, _dbMob.ChaseRange, EnemyPlayersFraction);
 
             // No players, keep watching.
             if (!players.Any())
@@ -724,11 +724,11 @@ namespace Imgeneus.World.Game.Monster
                         break;
 
                     case TargetType.EnemiesNearCaster:
-                        targets.AddRange(Map.GetPlayers(PosX, PosZ, skill.ApplyRange, EnemyPlayersFraction));
+                        targets.AddRange(Map.GetPlayers(CellId, PosX, PosZ, skill.ApplyRange, EnemyPlayersFraction));
                         break;
 
                     case TargetType.EnemiesNearTarget:
-                        targets.AddRange(Map.GetPlayers(target.PosX, target.PosZ, skill.ApplyRange, EnemyPlayersFraction));
+                        targets.AddRange(Map.GetPlayers(CellId, target.PosX, target.PosZ, skill.ApplyRange, EnemyPlayersFraction));
                         break;
 
                     default:

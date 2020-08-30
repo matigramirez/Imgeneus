@@ -147,13 +147,17 @@ namespace Imgeneus.World.Game.Zone
         /// <summary>
         /// Removes player from map cell.
         /// </summary>
-        public void RemovePlayer(Character character)
+        public void RemovePlayer(Character character, bool notifyPlayers)
         {
             RemoveListeners(character);
             Players.TryRemove(character.Id, out var removedCharacter);
 
             foreach (var mob in GetAllMobs(true).Where(m => m.Target == character))
                 mob.ClearTarget();
+
+            if (notifyPlayers)
+                foreach (var player in GetAllPlayers(true))
+                    _packetHelper.SendCharacterLeftMap(player.Client, character);
         }
 
         /// <summary>
@@ -224,10 +228,7 @@ namespace Imgeneus.World.Game.Zone
         {
             // Send other clients notification, that user is moving.
             foreach (var player in GetAllPlayers(true))
-            {
-                //if (player.Id != movedPlayer.Id)
                 _packetHelper.SendCharacterMoves(player.Client, movedPlayer);
-            }
         }
 
         /// <summary>

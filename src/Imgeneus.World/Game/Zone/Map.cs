@@ -236,7 +236,7 @@ namespace Imgeneus.World.Game.Zone
 
             if (success)
             {
-                Cells[GetCellIndex(character)].RemovePlayer(character);
+                Cells[GetCellIndex(character)].RemovePlayer(character, true);
                 character.OnPositionChanged -= Character_OnPositionChanged;
                 _logger.LogDebug($"Player {character.Id} left map {Id}");
             }
@@ -273,8 +273,8 @@ namespace Imgeneus.World.Game.Zone
 
             // Need to calculate new cell...
             _logger.LogDebug($"Character {sender.Id} change map cell from {oldCellId} to {newCellId}.");
+            Cells[oldCellId].RemovePlayer(sender, false);
             Cells[newCellId].AddPlayer(sender);
-            Cells[oldCellId].RemovePlayer(sender);
         }
 
         #endregion

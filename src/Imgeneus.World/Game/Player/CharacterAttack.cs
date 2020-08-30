@@ -197,7 +197,7 @@ namespace Imgeneus.World.Game.Player
                         break;
 
                     case TargetType.EnemiesNearTarget:
-                        var enemies = Map.GetEnemies(this, target, skill.ApplyRange);
+                        var enemies = Map.Cells[CellId].GetEnemies(this, target, skill.ApplyRange);
                         foreach (var e in enemies)
                             targets.Add(e);
                         break;

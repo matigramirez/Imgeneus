@@ -331,13 +331,16 @@ namespace Imgeneus.World.Game.Player
         private void HandleGMGetItemPacket(GMGetItemPacket gMGetItemPacket)
         {
             if (!IsAdmin)
-            {
                 return;
-            }
 
             var item = AddItemToInventory(new Item(_databasePreloader, gMGetItemPacket.Type, gMGetItemPacket.TypeId, gMGetItemPacket.Count));
             if (item != null)
+            {
                 _packetsHelper.SendAddItem(Client, item);
+                _packetsHelper.SendGmCommandSuccess(Client);
+            }
+            else
+                _packetsHelper.SendGmCommandError(Client, PacketType.GM_COMMAND_GET_ITEM);
         }
 
         private void HandlePlayerInTarget(PlayerInTargetPacket packet)

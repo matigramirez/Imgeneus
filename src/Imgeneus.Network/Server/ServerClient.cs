@@ -22,7 +22,7 @@ namespace Imgeneus.Network.Server
         /// <summary>
         /// Crypto manager is responsible for the whole cryptography.
         /// </summary>
-        public CryptoManager CryptoManager { get; private set; }
+        public CryptoManager CryptoManager { get; private set; } = new CryptoManager();
 
         /// <summary>
         /// Event, that is fired, when new packet arrives.
@@ -38,7 +38,6 @@ namespace Imgeneus.Network.Server
         {
             Server = server;
             RemoteEndPoint = acceptedSocket.RemoteEndPoint;
-            CryptoManager = new CryptoManager(this);
         }
 
         /// <inheritdoc />

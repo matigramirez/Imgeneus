@@ -1,10 +1,6 @@
-﻿using Imgeneus.Database.Constants;
-using Imgeneus.Network.Packets.Game;
-using Imgeneus.World.Game.Monster;
-using Imgeneus.World.Game.Player;
+﻿using Imgeneus.World.Game.Player;
 using Imgeneus.World.Game.Zone;
 using System.Collections.Concurrent;
-using System.Threading.Tasks;
 
 namespace Imgeneus.World.Game
 {
@@ -18,6 +14,9 @@ namespace Imgeneus.World.Game
         /// </summary>
         ConcurrentDictionary<int, Character> Players { get; }
 
+        /// <summary>
+        /// Loaded maps. Key is map id, value is map.
+        /// </summary>
         ConcurrentDictionary<ushort, Map> Maps { get; }
 
         /// <summary>

@@ -1,5 +1,7 @@
 ﻿using Imgeneus.Database.Constants;
+using Imgeneus.Database.Entities;
 using Imgeneus.DatabaseBackgroundService.Handlers;
+using Imgeneus.World.Game.Blessing;
 using Imgeneus.World.Game.NPCs;
 using Microsoft.Extensions.Logging;
 using MvvmHelpers;
@@ -856,6 +858,10 @@ namespace Imgeneus.World.Game.Player
                     // ?
                     break;
 
+                case SpecialEffect.GoddessBlessing:
+                    UseBlessItem();
+                    break;
+
                 case SpecialEffect.None:
                     // Some herbs do not have HealingPotion effect, but still they heal.
                     UseHealingPotion(item);
@@ -885,6 +891,17 @@ namespace Imgeneus.World.Game.Player
             {
                 d.CancelBuff();
             }
+        }
+
+        /// <summary>
+        /// GM item ,that increases bless amount of player's fraction.
+        /// </summary>
+        private void UseBlessItem()
+        {
+            if (Country == Fraction.Light)
+                Bless.Instance.LightAmount += 500;
+            else
+                Bless.Instance.DarkAmount += 500;
         }
 
         /// <summary>

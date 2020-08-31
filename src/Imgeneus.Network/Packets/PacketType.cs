@@ -51,7 +51,6 @@
         CHARACTER_ABSORPTION_DAMAGE = 0x0525, // 1317
 
         RUN_MODE = 0x0210, // 528
-        BLESS_AMOUNT = 0x0211, // 529
 
         // Attack
         ATTACK_START = 0x0212, // 530
@@ -207,5 +206,9 @@
         QUEST_UPDATE_COUNT = 0x0905, // 2309
         QUEST_FINISHED_LIST = 0x0906, // 2310
         QUEST_QUIT = 0x0908, // 2312
+
+        // Bless
+        BLESS_UPDATE = 0x020F, // 527
+        BLESS_INIT = 0x0211, // 529
     }
 }

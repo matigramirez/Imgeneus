@@ -6,6 +6,7 @@ using Imgeneus.Database.Entities;
 using Imgeneus.Database.Preload;
 using Imgeneus.DatabaseBackgroundService;
 using Imgeneus.DatabaseBackgroundService.Handlers;
+using Imgeneus.World.Game.Blessing;
 using Imgeneus.World.Game.Chat;
 using Imgeneus.World.Game.Duel;
 using Imgeneus.World.Game.PartyAndRaid;
@@ -44,6 +45,9 @@ namespace Imgeneus.World.Game.Player
             OnMaxSPChanged += Character_OnMaxSPChanged;
 
             OnDead += Character_OnDead;
+
+            Bless.Instance.OnDarkBlessChanged += OnDarkBlessChanged;
+            Bless.Instance.OnLightBlessChanged += OnLightBlessChanged;
         }
 
         private void Init()
@@ -65,6 +69,9 @@ namespace Imgeneus.World.Game.Player
             OnMaxSPChanged -= Character_OnMaxSPChanged;
 
             OnDead -= Character_OnDead;
+
+            Bless.Instance.OnDarkBlessChanged -= OnDarkBlessChanged;
+            Bless.Instance.OnLightBlessChanged -= OnLightBlessChanged;
 
             // Save current buffs to database.
             _taskQueue.Enqueue(ActionType.REMOVE_BUFF_ALL, Id);
@@ -147,7 +154,10 @@ namespace Imgeneus.World.Game.Player
                 SendMaxSP();
         }
 
-        public override int MaxHP
+        /// <summary>
+        /// HP based on level.
+        /// </summary>
+        private int ConstHP
         {
             get
             {
@@ -155,11 +165,22 @@ namespace Imgeneus.World.Game.Player
                 var index = (level - 1) * 6 + (byte)Class;
                 var constHP = _characterConfig.GetConfig(index).HP;
 
-                return constHP + ExtraHP;
+                return constHP;
             }
         }
 
-        public override int MaxMP
+        public override int MaxHP
+        {
+            get
+            {
+                return ConstHP + ExtraHP;
+            }
+        }
+
+        /// <summary>
+        /// MP based on level.
+        /// </summary>
+        private int ConstMP
         {
             get
             {
@@ -167,11 +188,22 @@ namespace Imgeneus.World.Game.Player
                 var index = (level - 1) * 6 + (byte)Class;
                 var constMP = _characterConfig.GetConfig(index).MP;
 
-                return constMP + ExtraMP;
+                return constMP;
             }
         }
 
-        public override int MaxSP
+        public override int MaxMP
+        {
+            get
+            {
+                return ConstMP + ExtraMP;
+            }
+        }
+
+        /// <summary>
+        /// SP based on level.
+        /// </summary>
+        private int ConstSP
         {
             get
             {
@@ -179,7 +211,15 @@ namespace Imgeneus.World.Game.Player
                 var index = (level - 1) * 6 + (byte)Class;
                 var constSP = _characterConfig.GetConfig(index).SP;
 
-                return constSP + ExtraSP;
+                return constSP;
+            }
+        }
+
+        public override int MaxSP
+        {
+            get
+            {
+                return ConstSP + ExtraSP;
             }
         }
 

@@ -537,49 +537,5 @@ namespace Imgeneus.World.Game.Player
         }
 
         #endregion
-
-        /// <summary>
-        /// NOT READY! ONLY FOR TESTING!
-        /// </summary>
-        private void SendBlessAmount()
-        {
-            using var packet = new Packet(PacketType.BLESS_AMOUNT);
-            packet.Write((byte)Fraction.Light);
-
-            // Set bless amount to anu of these values.
-            // 150  + sp, mp during break
-            // 300  + xp during break
-            // 1200 + link and extrack lapis 
-            // 1350 + cast time of dispoable items
-            // 1500 + exp loss
-            // 2100 + shooting/magic defence power
-            // 2250 + physical defence power
-            // 2700 + repair cost
-            // 8400 + sp, mp during battle
-            // 10200 + max sp, mp
-            // 12000 + increase in all stats (str, dex rec etc.)
-            // 12288 + full bless: increase in critical hit rate, evasion of all attacks (shooting/magic/physical)
-
-            var blessAmount = 12288;
-            packet.Write(blessAmount);
-
-            if (blessAmount >= 12288)
-            {
-                // Bless duration is 10 minutes.
-                var fullBlessDuration = TimeSpan.FromMinutes(10);
-                var timeElapsed = TimeSpan.FromMinutes(5);
-
-                // Remaning time in milliseconds.
-                uint remainingTime = (uint)(fullBlessDuration - timeElapsed).TotalMilliseconds;
-                packet.Write(remainingTime);
-            }
-            else
-            {
-                // Write no remaing time if it's not full bless.
-                packet.Write(0);
-            }
-
-            Client.SendPacket(packet);
-        }
     }
 }

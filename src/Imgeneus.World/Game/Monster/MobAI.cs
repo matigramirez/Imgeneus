@@ -159,6 +159,7 @@ namespace Imgeneus.World.Game.Monster
             switch (AI)
             {
                 case MobAI.Combative:
+                case MobAI.Peaceful:
                     State = MobState.Chase;
                     break;
 
@@ -182,7 +183,13 @@ namespace Imgeneus.World.Game.Monster
         private void Mob_HP_Changed(IKillable mob, HitpointArgs hitpoints)
         {
             if (hitpoints.NewValue < hitpoints.OldValue)
+            {
                 SelectActionBasedOnAI();
+
+                // TODO: calculate not only max damage, but also amount or rec and argo skills.
+                if (MaxDamageMaker is IKillable)
+                    Target = (MaxDamageMaker as IKillable);
+            }
         }
 
         #endregion
@@ -363,8 +370,11 @@ namespace Imgeneus.World.Game.Monster
         private void StartChasing()
         {
             _chaseTimer.Start();
-            StartPosX = PosX;
-            StartPosZ = PosZ;
+
+            if (StartPosX == -1)
+                StartPosX = PosX;
+            if (StartPosZ == -1)
+                StartPosZ = PosZ;
         }
 
         /// <summary>
@@ -411,12 +421,12 @@ namespace Imgeneus.World.Game.Monster
         /// <summary>
         /// Position x, where mob started chasing.
         /// </summary>
-        private float StartPosX;
+        private float StartPosX = -1;
 
         /// <summary>
         /// Position z, where mob started chasing.
         /// </summary>
-        private float StartPosZ;
+        private float StartPosZ = -1;
 
         /// <summary>
         /// Back to birth position timer.
@@ -430,10 +440,7 @@ namespace Imgeneus.World.Game.Monster
         {
             get
             {
-                return (PosX < MoveArea.X1 && MathExtensions.Distance(PosX, MoveArea.X1, PosZ, MoveArea.Z1) > _dbMob.ChaseRange) ||
-                       (PosZ < MoveArea.Z1 && MathExtensions.Distance(PosX, MoveArea.X1, PosZ, MoveArea.Z1) > _dbMob.ChaseRange) ||
-                       (PosX > MoveArea.X2 && MathExtensions.Distance(PosX, MoveArea.X2, PosZ, MoveArea.Z2) > _dbMob.ChaseRange) ||
-                       (PosZ > MoveArea.Z2 && MathExtensions.Distance(PosX, MoveArea.X2, PosZ, MoveArea.Z2) > _dbMob.ChaseRange);
+                return MathExtensions.Distance(PosX, StartPosX, PosZ, StartPosZ) > _dbMob.ChaseRange * 4;
             }
         }
 
@@ -458,6 +465,8 @@ namespace Imgeneus.World.Game.Monster
             else
             {
                 _logger.LogDebug($"Mob {Id} reached birth position, back to idle state.");
+                StartPosX = -1;
+                StartPosZ = -1;
                 FullRecover();
                 State = MobState.Idle;
             }

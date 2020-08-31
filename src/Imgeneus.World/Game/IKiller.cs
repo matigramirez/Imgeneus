@@ -158,6 +158,9 @@ namespace Imgeneus.World.Game
         {
             // Uncomment this code, if you want to always hit target.
             // return true;
+            if (target is Mob && (target as Mob).State == MobState.BackToBirthPosition)
+                return false;
+
             if (skill != null && (skill.StateType == StateType.FlatDamage || skill.StateType == StateType.DeathTouch))
                 return true;
 

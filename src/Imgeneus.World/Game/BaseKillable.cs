@@ -799,6 +799,28 @@ namespace Imgeneus.World.Game
         /// </summary>
         public ConcurrentDictionary<IKiller, int> DamageMakers { get; private set; } = new ConcurrentDictionary<IKiller, int>();
 
+        /// <summary>
+        /// IKiller, that made max damage.
+        /// </summary>
+        protected IKiller MaxDamageMaker
+        {
+            get
+            {
+                IKiller maxDamageMaker = DamageMakers.First().Key;
+                int damage = DamageMakers.First().Value;
+                foreach (var dmg in DamageMakers)
+                {
+                    if (dmg.Value > damage)
+                    {
+                        damage = dmg.Value;
+                        maxDamageMaker = dmg.Key;
+                    }
+                }
+
+                return maxDamageMaker;
+            }
+        }
+
         protected bool _isDead;
 
         /// <inheritdoc />
@@ -811,16 +833,7 @@ namespace Imgeneus.World.Game
 
                 if (_isDead)
                 {
-                    IKiller killer = DamageMakers.First().Key;
-                    int damage = DamageMakers.First().Value;
-                    foreach (var dmg in DamageMakers)
-                    {
-                        if (dmg.Value > damage)
-                        {
-                            damage = dmg.Value;
-                            killer = dmg.Key;
-                        }
-                    }
+                    var killer = MaxDamageMaker;
                     OnDead?.Invoke(this, killer);
                     DamageMakers.Clear();
 

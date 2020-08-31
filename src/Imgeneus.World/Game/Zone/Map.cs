@@ -374,7 +374,7 @@ namespace Imgeneus.World.Game.Zone
         /// <returns>either mob or null if mob is not presented</returns>
         public Mob GetMob(int cellId, int mobId)
         {
-            return Cells[cellId].GetMob(mobId);
+            return Cells[cellId].GetMob(mobId, true);
         }
 
         /// <summary>
@@ -426,7 +426,7 @@ namespace Imgeneus.World.Game.Zone
         /// <returns>if item is null, means that item doen't belong to player yet</returns>
         public MapItem GetItem(int itemId, Character requester)
         {
-            return Cells[requester.CellId].GetItem(itemId, requester);
+            return Cells[requester.CellId].GetItem(itemId, requester, true);
         }
 
         /// <summary>
@@ -465,7 +465,7 @@ namespace Imgeneus.World.Game.Zone
         /// </summary>
         public Npc GetNPC(int cellIndex, int id)
         {
-            return Cells[cellIndex].GetNPC(id);
+            return Cells[cellIndex].GetNPC(id, true);
         }
 
         #endregion

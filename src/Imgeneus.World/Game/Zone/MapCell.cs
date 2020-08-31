@@ -405,10 +405,21 @@ namespace Imgeneus.World.Game.Zone
         /// Tries to get mob from map.
         /// </summary>
         /// <param name="mobId">id of mob, that you are trying to get.</param>
+        /// <param name="includeNeighborCells">search also in neighbor cells</param>
         /// <returns>either mob or null if mob is not presented</returns>
-        public Mob GetMob(int mobId)
+        public Mob GetMob(int mobId, bool includeNeighborCells)
         {
-            Mobs.TryGetValue(mobId, out var mob);
+            Mob mob;
+            Mobs.TryGetValue(mobId, out mob);
+
+            if (mob is null && includeNeighborCells) // Maybe mob in neighbor cell?
+                foreach (var cellId in NeighborCells)
+                {
+                    mob = Map.Cells[cellId].GetMob(mobId, false);
+                    if (mob != null)
+                        break;
+                }
+
             return mob;
         }
 
@@ -527,10 +538,21 @@ namespace Imgeneus.World.Game.Zone
         /// <summary>
         /// Gets NPC by id.
         /// </summary>
-        public Npc GetNPC(int id)
+        /// <param name="includeNeighborCells">search also in neighbor cells</param>
+        public Npc GetNPC(int id, bool includeNeighborCells)
         {
-            NPCs.TryGetValue(id, out var resultNpc);
-            return resultNpc;
+            Npc npc;
+            NPCs.TryGetValue(id, out npc);
+
+            if (npc is null && includeNeighborCells) // Maybe npc in neigbor cell?
+                foreach (var cellId in NeighborCells)
+                {
+                    npc = Map.Cells[cellId].GetNPC(id, false);
+                    if (npc != null)
+                        break;
+                }
+
+            return npc;
         }
 
         /// <summary>
@@ -572,9 +594,10 @@ namespace Imgeneus.World.Game.Zone
         /// Tries to get item from map cell.
         /// </summary>
         /// <returns>if item is null, means that item doen't belong to player yet</returns>
-        public MapItem GetItem(int itemId, Character requester)
+        public MapItem GetItem(int itemId, Character requester, bool includeNeighborCells)
         {
-            if (Items.TryGetValue(itemId, out var mapItem))
+            MapItem mapItem;
+            if (Items.TryGetValue(itemId, out mapItem))
             {
                 if (mapItem.Owner == null || mapItem.Owner == requester)
                 {
@@ -585,9 +608,17 @@ namespace Imgeneus.World.Game.Zone
                     return null;
                 }
             }
-            else
+            else // Maybe item is in neighbor cell?
             {
-                return null;
+                if (includeNeighborCells)
+                    foreach (var cellId in NeighborCells)
+                    {
+                        mapItem = Map.Cells[cellId].GetItem(itemId, requester, false);
+                        if (mapItem != null)
+                            break;
+                    }
+
+                return mapItem;
             }
         }
 

@@ -74,8 +74,22 @@ namespace Imgeneus.World.Game.Player
 
             // TODO: add revard to player.
 
-            quest.FinishSuccessful();
+            quest.Finish(true);
             SendQuestFinished(quest, npcId);
+        }
+
+        /// <summary>
+        /// Finished quest without success.
+        /// </summary>
+        /// <param name="questId"></param>
+        public void QuitQuest(ushort questId)
+        {
+            var quest = Quests.FirstOrDefault(q => q.Id == questId && !q.IsFinished);
+            if (quest is null)
+                return;
+
+            quest.Finish(false);
+            SendQuestFinished(quest);
         }
     }
 }

@@ -115,14 +115,14 @@ namespace Imgeneus.World.Game.Player
         }
 
         /// <summary>
-        /// Finishes quest successfull.
+        /// Finishes quest.
         /// </summary>
-        public void FinishSuccessful()
+        public void Finish(bool successful)
         {
             _endTimer.Stop();
             _saveToDb = true;
             IsFinished = true;
-            IsSuccessful = true;
+            IsSuccessful = successful;
         }
 
         #region Requirements

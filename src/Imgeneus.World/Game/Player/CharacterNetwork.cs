@@ -253,6 +253,10 @@ namespace Imgeneus.World.Game.Player
                     FinishQuest(questEndPacket.QuestId, npcQuestReceiver.Id);
                     break;
 
+                case QuestQuitPacket questQuitPacket:
+                    QuitQuest(questQuitPacket.QuestId);
+                    break;
+
                 case RebirthPacket rebirthPacket:
                     var spawnCoordinate = Map.GetNearestSpawn(PosX, PosY, PosZ, Country);
                     Rebirth(spawnCoordinate.X, spawnCoordinate.Y, spawnCoordinate.Z);

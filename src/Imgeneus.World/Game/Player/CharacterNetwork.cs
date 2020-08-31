@@ -250,8 +250,8 @@ namespace Imgeneus.World.Game.Player
                     break;
 
                 case RebirthPacket rebirthPacket:
-                    // TODO: rebirth to nearest town, get coordinates from map.
-                    Rebirth(1, 1, 1);
+                    var spawnCoordinate = Map.GetNearestSpawn(PosX, PosY, PosZ, Country);
+                    Rebirth(spawnCoordinate.X, spawnCoordinate.Y, spawnCoordinate.Z);
                     break;
 
                 case GMCreateMobPacket gMCreateMobPacket:

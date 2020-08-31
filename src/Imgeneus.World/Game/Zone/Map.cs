@@ -295,6 +295,44 @@ namespace Imgeneus.World.Game.Zone
             Cells[newCellId].AddPlayer(sender);
         }
 
+        /// <summary>
+        /// Finds the nearest spawn for the player.
+        /// </summary>
+        /// <param name="currentX">current player x coordinate</param>
+        /// <param name="currentY">current player y coordinate</param>
+        /// <param name="currentZ">current player z coordinate</param>
+        /// <param name="fraction">player's faction</param>
+        /// <returns>coordinate, where player shoud spawn</returns>
+        public (float X, float Y, float Z) GetNearestSpawn(float currentX, float currentY, float currentZ, Fraction fraction)
+        {
+            SpawnConfiguration nearestSpawn = null;
+            foreach (var spawn in _config.Spawns)
+            {
+                if (spawn.Faction == 1 && fraction == Fraction.Light || spawn.Faction == 2 && fraction == Fraction.Dark)
+                {
+                    if (nearestSpawn is null)
+                    {
+                        nearestSpawn = spawn;
+                        continue;
+                    }
+
+                    if (MathExtensions.Distance(currentX, spawn.X1, currentZ, spawn.Z1) < MathExtensions.Distance(currentX, nearestSpawn.X1, currentZ, nearestSpawn.Z1))
+                        nearestSpawn = spawn;
+                }
+            }
+
+            if (nearestSpawn is null)
+            {
+                // TODO: spawn on another map.
+            }
+
+            var random = new Random();
+            var x = random.NextFloat(nearestSpawn.X1, nearestSpawn.X2);
+            var y = random.NextFloat(nearestSpawn.Y1, nearestSpawn.Y2);
+            var z = random.NextFloat(nearestSpawn.Z1, nearestSpawn.Z2);
+            return (x, y, z);
+        }
+
         #endregion
 
         #region Mobs

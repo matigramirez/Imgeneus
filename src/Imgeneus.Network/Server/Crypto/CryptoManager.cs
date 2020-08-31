@@ -2,12 +2,12 @@
 using Org.BouncyCastle.Crypto.Generators;
 using Org.BouncyCastle.Crypto.Parameters;
 using Org.BouncyCastle.Crypto.Prng;
+using Org.BouncyCastle.OpenSsl;
 using Org.BouncyCastle.Security;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using System.Net;
 using System.Numerics;
 using System.Security.Cryptography;
 
@@ -15,9 +15,10 @@ namespace Imgeneus.Network.Server.Crypto
 {
     public class CryptoManager
     {
-        public CryptoManager(ServerClient serverClient)
+        public CryptoManager()
         {
-            GeneratePrivateKey(serverClient);
+            // GeneratePrivateKey();
+            GeneratePrivateKeyFromFile();
         }
 
         #region RSA
@@ -85,7 +86,7 @@ namespace Imgeneus.Network.Server.Crypto
         /// Generates rsa keys.
         /// </summary>
         /// <returns>public key, that will be sent to client</returns>
-        private void GeneratePrivateKey(ServerClient serverClient)
+        private void GeneratePrivateKey()
         {
             var randomGenerator = new CryptoApiRandomGenerator();
             var secureRandom = new SecureRandom(randomGenerator);
@@ -94,6 +95,18 @@ namespace Imgeneus.Network.Server.Crypto
             var keyPairGenerator = new RsaKeyPairGenerator();
             keyPairGenerator.Init(keyGenerationParameters);
             var keyPair = keyPairGenerator.GenerateKeyPair();
+
+            PrivateKey = (RsaPrivateCrtKeyParameters)keyPair.Private;
+        }
+
+        /// <summary>
+        /// Generates rsa key from file.
+        /// </summary>
+        private void GeneratePrivateKeyFromFile()
+        {
+            AsymmetricCipherKeyPair keyPair;
+            using (var reader = File.OpenText("./config/private_key.txt"))
+                keyPair = (AsymmetricCipherKeyPair)new PemReader(reader).ReadObject();
 
             PrivateKey = (RsaPrivateCrtKeyParameters)keyPair.Private;
         }

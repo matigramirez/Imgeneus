@@ -102,7 +102,8 @@ namespace Imgeneus.Network.Server.Internal
         private void DispatchPacket(ServerClient client, byte[] packetData)
         {
             using IPacketStream packet = new PacketStream(packetData);
-            if (packet.PacketType != PacketType.LOGIN_HANDSHAKE && packet.PacketType != PacketType.GAME_HANDSHAKE &&
+            if (client.CryptoManager.UseExpandedKey ||
+                packet.PacketType != PacketType.LOGIN_HANDSHAKE && packet.PacketType != PacketType.GAME_HANDSHAKE &&
                 // TODO: this internal packets should be also encrypted somehow.
                 packet.PacketType != PacketType.AUTH_SERVER && packet.PacketType != PacketType.AES_KEY_REQUEST)
             {

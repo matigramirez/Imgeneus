@@ -125,6 +125,10 @@ namespace Imgeneus.World.Game.Player
                     HandleGetMobBuffs(targetMobGetBuffsPacket.TargetId);
                     break;
 
+                case TargetGetMobStatePacket targetGetMobStatePacket:
+                    HandleGetMobState(targetGetMobStatePacket.MobId);
+                    break;
+
                 case CharacterShapePacket characterShapePacket:
                     HandleCharacterShape(characterShapePacket.CharacterId);
                     break;
@@ -262,6 +266,7 @@ namespace Imgeneus.World.Game.Player
                     var mob = new Mob(DependencyContainer.Instance.Resolve<ILogger<Mob>>(), _databasePreloader, gMCreateMobPacket.MobId, false, moveArea, Map);
 
                     Map.AddMob(mob);
+                    _packetsHelper.SendGmCommandSuccess(Client);
                     break;
 
                 case GMTeleportPacket gMMovePacket:
@@ -442,6 +447,18 @@ namespace Imgeneus.World.Game.Player
             var target = Map.GetMob(CellId, targetId);
             if (target != null)
                 _packetsHelper.SendCurrentBuffs(Client, target);
+        }
+
+        private void HandleGetMobState(int targetId)
+        {
+            var target = Map.GetMob(CellId, targetId);
+            if (target != null)
+            {
+                _packetsHelper.SendMobPosition(Client, target);
+                _packetsHelper.SendMobState(Client, target);
+            }
+            else
+                _logger.LogWarning($"Coudn't find mob {targetId} state.");
         }
 
         private void HandleCharacterShape(int characterId)

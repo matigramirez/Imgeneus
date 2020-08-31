@@ -374,6 +374,23 @@ namespace Imgeneus.World.Packets
             client.SendPacket(packet);
         }
 
+        internal void SendMobPosition(IWorldClient client, Mob mob)
+        {
+            using var packet = new Packet(PacketType.MOB_MOVE);
+            packet.Write(new MobMove(mob).Serialize());
+            client.SendPacket(packet);
+        }
+
+        internal void SendMobState(IWorldClient client, Mob target)
+        {
+            using var packet = new Packet(PacketType.TARGET_MOB_GET_STATE);
+            packet.Write(target.Id);
+            packet.Write(target.CurrentHP);
+            packet.Write((byte)target.AttackSpeed);
+            packet.Write((byte)target.MoveSpeed);
+            client.SendPacket(packet);
+        }
+
         internal void SendQuests(IWorldClient client, IEnumerable<Quest> quests)
         {
             using var packet = new Packet(PacketType.QUEST_LIST);

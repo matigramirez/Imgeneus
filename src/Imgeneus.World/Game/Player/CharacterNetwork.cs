@@ -161,6 +161,10 @@ namespace Imgeneus.World.Game.Player
                     FinishDuel(Duel.DuelCancelReason.AdmitDefeat);
                     break;
 
+                case ChangeAppearancePacket changeAppearancePacket:
+                    HandleChangeAppearance(changeAppearancePacket);
+                    break;
+
                 case RemoveItemPacket removeItemPacket:
                     var item = InventoryItems.FirstOrDefault(itm => itm.Slot == removeItemPacket.Slot && itm.Bag == removeItemPacket.Bag);
                     if (item is null || item.AccountRestriction == ItemAccountRestrictionType.AccountRestricted || item.AccountRestriction == ItemAccountRestrictionType.CharacterRestricted)
@@ -469,6 +473,16 @@ namespace Imgeneus.World.Game.Player
         {
             var character = Map.GetPlayer(characterId);
             _packetsHelper.SendCharacterShape(Client, character);
+        }
+
+        private void HandleChangeAppearance(ChangeAppearancePacket changeAppearancePacket)
+        {
+            var item = InventoryItems.FirstOrDefault(itm => itm.Slot == changeAppearancePacket.Slot && itm.Bag == changeAppearancePacket.Bag);
+            if (item is null || (item.Special != SpecialEffect.AppearanceChange && item.Special != SpecialEffect.SexChange))
+                return;
+
+            UseItem(changeAppearancePacket.Bag, changeAppearancePacket.Slot);
+            ChangeAppearance(changeAppearancePacket.Face, changeAppearancePacket.Hair, changeAppearancePacket.Size, changeAppearancePacket.Sex);
         }
 
         #endregion

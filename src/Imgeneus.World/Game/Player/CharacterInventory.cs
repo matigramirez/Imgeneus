@@ -862,6 +862,11 @@ namespace Imgeneus.World.Game.Player
                     UseBlessItem();
                     break;
 
+                case SpecialEffect.AppearanceChange:
+                case SpecialEffect.SexChange:
+                    // Used in ChangeAppearance call.
+                    break;
+
                 case SpecialEffect.None:
                     // Some herbs do not have HealingPotion effect, but still they heal.
                     UseHealingPotion(item);
@@ -870,6 +875,30 @@ namespace Imgeneus.World.Game.Player
                     _logger.LogError($"Uninplemented item effect {item.Special}.");
                     break;
             }
+        }
+
+        /// <summary>
+        /// Event, that is fired, when player changes appearance.
+        /// </summary>
+        public event Action<Character> OnAppearanceChanged;
+
+        /// <summary>
+        /// Changes player's appearance.
+        /// </summary>
+        /// <param name="face">new face</param>
+        /// <param name="hair">new hair</param>
+        /// <param name="size">new size</param>
+        /// <param name="sex">new sex</param>
+        private void ChangeAppearance(byte face, byte hair, byte size, byte sex)
+        {
+            Face = face;
+            Hair = hair;
+            Height = size;
+            Gender = (Gender)sex;
+
+            _taskQueue.Enqueue(ActionType.SAVE_APPEARANCE, Id, Face, Hair, Height, Gender);
+
+            OnAppearanceChanged?.Invoke(this);
         }
 
         /// <summary>

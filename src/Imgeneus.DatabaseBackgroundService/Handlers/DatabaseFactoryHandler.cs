@@ -244,5 +244,27 @@ namespace Imgeneus.DatabaseBackgroundService.Handlers
             dbCharacterQuest.Success = isSuccessful;
             await database.SaveChangesAsync();
         }
+
+        [ActionHandler(ActionType.SAVE_APPEARANCE)]
+        internal static async Task UpdateAppearance(object[] args)
+        {
+            int charId = (int)args[0];
+            byte face = (byte)args[1];
+            byte hair = (byte)args[2];
+            byte height = (byte)args[3];
+            Gender gender = (Gender)args[4];
+
+            using var database = DependencyContainer.Instance.Resolve<IDatabase>();
+            var character = database.Characters.Find(charId);
+            if (character != null)
+            {
+                character.Face = face;
+                character.Hair = hair;
+                character.Height = height;
+                character.Gender = gender;
+
+                await database.SaveChangesAsync();
+            }
+        }
     }
 }

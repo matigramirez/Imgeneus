@@ -343,5 +343,16 @@ namespace Imgeneus.World.Packets
             packet.Write(npc.Id);
             client.SendPacket(packet);
         }
+
+        internal void SendAppearanceChanged(IWorldClient client, Character character)
+        {
+            using var packet = new Packet(PacketType.CHANGE_APPEARANCE);
+            packet.Write(character.Id);
+            packet.Write(character.Hair);
+            packet.Write(character.Face);
+            packet.Write(character.Height);
+            packet.Write((byte)character.Gender);
+            client.SendPacket(packet);
+        }
     }
 }

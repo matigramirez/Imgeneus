@@ -56,6 +56,8 @@
         ATTACK_START = 0x0212, // 530
         SAVEPOS_RESULT = 0x0222, // 546
 
+        CHANGE_APPEARANCE = 0x0226, // 550
+
         // Mobs
         MOB_ENTER = 0x0601, // 1537
         MOB_LEAVE = 0x0602, // 1538

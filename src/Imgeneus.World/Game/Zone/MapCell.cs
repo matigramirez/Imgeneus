@@ -207,6 +207,7 @@ namespace Imgeneus.World.Game.Zone
             character.OnShapeChange += Character_OnShapeChange;
             character.OnUsedRangeSkill += Character_OnUsedRangeSkill;
             character.OnRebirthed += Character_OnRebirthed;
+            character.OnAppearanceChanged += Character_OnAppearanceChanged;
         }
 
         /// <summary>
@@ -230,6 +231,7 @@ namespace Imgeneus.World.Game.Zone
             character.OnShapeChange -= Character_OnShapeChange;
             character.OnUsedRangeSkill -= Character_OnUsedRangeSkill;
             character.OnRebirthed -= Character_OnRebirthed;
+            character.OnAppearanceChanged -= Character_OnAppearanceChanged;
         }
 
         #region Character listeners
@@ -375,6 +377,12 @@ namespace Imgeneus.World.Game.Zone
                 _packetHelper.SendDeadRebirth(player.Client, (Character)sender);
                 _packetHelper.SendRecoverCharacter(player.Client, sender, sender.CurrentHP, sender.CurrentMP, sender.CurrentSP);
             }
+        }
+
+        private void Character_OnAppearanceChanged(Character sender)
+        {
+            foreach (var player in GetAllPlayers(true))
+                _packetHelper.SendAppearanceChanged(player.Client, sender);
         }
 
         #endregion

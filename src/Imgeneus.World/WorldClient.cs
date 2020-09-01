@@ -169,7 +169,8 @@ namespace Imgeneus.World
             { PacketType.NPC_SELL_ITEM, (s) => new NpcSellItemPacket(s) },
             { PacketType.QUEST_START, (s) => new QuestStartPacket(s) },
             { PacketType.QUEST_END, (s) => new QuestEndPacket(s) },
-            { PacketType.QUEST_QUIT, (s) => new QuestQuitPacket(s) }
+            { PacketType.QUEST_QUIT, (s) => new QuestQuitPacket(s) },
+            { PacketType.CHANGE_APPEARANCE, (s) => new ChangeAppearancePacket(s) }
         };
 
         /// <inheritdoc />

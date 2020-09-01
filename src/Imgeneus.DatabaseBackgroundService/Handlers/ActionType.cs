@@ -29,6 +29,9 @@
         QUEST_START,
         QUEST_UPDATE,
 
+        // Appearance
+        SAVE_APPEARANCE,
+
         // Logs
         LOG_SAVE_CHAT_MESSAGE
     }

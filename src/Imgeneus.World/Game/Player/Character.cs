@@ -55,6 +55,15 @@ namespace Imgeneus.World.Game.Player
             InitEquipment();
             InitPassiveSkills();
             InitQuests();
+
+            // Send notification to friends.
+            foreach (var friend in Friends.Values)
+            {
+                _gameWorld.Players.TryGetValue(friend.Id, out var player);
+
+                if (player != null)
+                    player.FriendOnline(this);
+            }
         }
 
         public override void Dispose()
@@ -72,6 +81,14 @@ namespace Imgeneus.World.Game.Player
 
             Bless.Instance.OnDarkBlessChanged -= OnDarkBlessChanged;
             Bless.Instance.OnLightBlessChanged -= OnLightBlessChanged;
+
+            // Notify friends, that player is offline.
+            foreach (var friend in Friends.Values)
+            {
+                _gameWorld.Players.TryGetValue(friend.Id, out var friendPlayer);
+                if (friendPlayer != null)
+                    friendPlayer.FriendOffline(this);
+            }
 
             // Save current buffs to database.
             _taskQueue.Enqueue(ActionType.REMOVE_BUFF_ALL, Id);
@@ -922,6 +939,9 @@ namespace Imgeneus.World.Game.Player
             character.InventoryItems.AddRange(dbCharacter.Items.Select(i => new Item(databasePreloader, i)));
             character.Quests.AddRange(dbCharacter.Quests.Select(q => new Quest(databasePreloader, q)));
             character.QuickItems = dbCharacter.QuickItems;
+
+            foreach (var friend in dbCharacter.Friends.Select(f => f.Friend))
+                character.Friends.TryAdd(friend.Id, new Friend(friend.Id, friend.Name, friend.Class, gameWorld.Players.ContainsKey(friend.Id)));
 
             character.Init();
 

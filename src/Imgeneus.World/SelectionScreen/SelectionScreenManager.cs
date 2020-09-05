@@ -198,10 +198,10 @@ namespace Imgeneus.World.SelectionScreen
         /// Selects character and loads it into game world.
         /// </summary>
         /// <param name="packet"></param>
-        private void HandleSelectCharacter(SelectCharacterPacket selectCharacterPacket)
+        private async void HandleSelectCharacter(SelectCharacterPacket selectCharacterPacket)
         {
             var gameWorld = DependencyContainer.Instance.Resolve<IGameWorld>();
-            var character = gameWorld.LoadPlayer(selectCharacterPacket.CharacterId, _client);
+            var character = await gameWorld.LoadPlayer(selectCharacterPacket.CharacterId, _client);
 
             if (character != null)
             {

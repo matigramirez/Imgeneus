@@ -61,6 +61,8 @@
     <Compile Remove="Migrations\20200826083934_AddQuests.Designer.cs" />
     <Compile Remove="Migrations\20200826085724_AddQuests.cs" />
     <Compile Remove="Migrations\20200826085724_AddQuests.Designer.cs" />
+    <Compile Remove="Migrations\20200903190435_AddCharacterFriends.cs" />
+    <Compile Remove="Migrations\20200903190435_AddCharacterFriends.Designer.cs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.0" />

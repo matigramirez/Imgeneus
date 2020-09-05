@@ -33,6 +33,11 @@ namespace Imgeneus.Database.Context
         public DbSet<DbCharacterQuest> CharacterQuests { get; set; }
 
         /// <summary>
+        /// Collection of friend pairs.
+        /// </summary>
+        public DbSet<DbCharacterFriend> Friends { get; set; }
+
+        /// <summary>
         /// Collection of skills. Taken from original db.
         /// </summary>
         public DbSet<DbSkill> Skills { get; set; }
@@ -87,6 +92,9 @@ namespace Imgeneus.Database.Context
             modelBuilder.Entity<DbMobItems>().HasKey(x => new { x.MobId, x.ItemOrder });
 
             modelBuilder.Entity<DbCharacter>().HasMany(x => x.QuickItems).WithOne(x => x.Character).IsRequired();
+            modelBuilder.Entity<DbCharacter>().HasMany(x => x.Friends).WithOne(x => x.Character);
+
+            modelBuilder.Entity<DbCharacterFriend>().HasKey(x => new { x.CharacterId, x.FriendId });
 
             #region Many to many relations
             // Skills.

@@ -16,6 +16,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System.Collections.Concurrent;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Imgeneus.World.Game
 {
@@ -77,16 +78,17 @@ namespace Imgeneus.World.Game
         public ConcurrentDictionary<int, DuelManager> DuelManagers { get; private set; } = new ConcurrentDictionary<int, DuelManager>();
 
         /// <inheritdoc />
-        public Character LoadPlayer(int characterId, WorldClient client)
+        public async Task<Character> LoadPlayer(int characterId, WorldClient client)
         {
             using var database = DependencyContainer.Instance.Resolve<IDatabase>();
-            var dbCharacter = database.Characters.Include(c => c.Skills).ThenInclude(cs => cs.Skill)
-                                               .Include(c => c.Items).ThenInclude(ci => ci.Item)
-                                               .Include(c => c.ActiveBuffs).ThenInclude(cb => cb.Skill)
-                                               .Include(c => c.Quests)
-                                               .Include(c => c.QuickItems)
-                                               .Include(c => c.User)
-                                               .FirstOrDefault(c => c.Id == characterId);
+            var dbCharacter = await database.Characters.Include(c => c.Skills).ThenInclude(cs => cs.Skill)
+                                                       .Include(c => c.Items).ThenInclude(ci => ci.Item)
+                                                       .Include(c => c.ActiveBuffs).ThenInclude(cb => cb.Skill)
+                                                       .Include(c => c.Friends).ThenInclude(cf => cf.Friend)
+                                                       .Include(c => c.Quests)
+                                                       .Include(c => c.QuickItems)
+                                                       .Include(c => c.User)
+                                                       .FirstOrDefaultAsync(c => c.Id == characterId);
             var newPlayer = Character.FromDbCharacter(dbCharacter,
                                                      DependencyContainer.Instance.Resolve<ILogger<Character>>(),
                                                      this,

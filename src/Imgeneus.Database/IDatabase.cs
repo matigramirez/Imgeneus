@@ -34,6 +34,11 @@ namespace Imgeneus.Database
         public DbSet<DbCharacterQuest> CharacterQuests { get; set; }
 
         /// <summary>
+        /// Collection of friend pairs.
+        /// </summary>
+        public DbSet<DbCharacterFriend> Friends { get; set; }
+
+        /// <summary>
         /// Gets the skills.
         /// </summary>
         public DbSet<DbSkill> Skills { get; set; }

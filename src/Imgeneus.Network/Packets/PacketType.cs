@@ -212,5 +212,15 @@
         // Bless
         BLESS_UPDATE = 0x020F, // 527
         BLESS_INIT = 0x0211, // 529
+
+        // Friends
+        FRIEND_LIST = 0x2201, // 8705
+        FRIEND_REQUEST = 0x2202, // 8706
+        FRIEND_RESPONSE = 0x2203, // 8707
+        FRIEND_ADD = 0x2204, // 8708
+        FRIEND_DELETE = 0x2205, // 8709
+        FRIEND_ONLINE = 0x2207, // 8711
+
+        PARTY_SEARCH = 0x220C, // 8716
     }
 }

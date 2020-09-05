@@ -1,6 +1,7 @@
 ﻿using Imgeneus.World.Game.Player;
 using Imgeneus.World.Game.Zone;
 using System.Collections.Concurrent;
+using System.Threading.Tasks;
 
 namespace Imgeneus.World.Game
 {
@@ -25,7 +26,7 @@ namespace Imgeneus.World.Game
         /// <param name="characterId">id of character in databse</param>
         /// <param name="client">TCP connection with client</param>
         /// <returns>character, that is loaded into game world</returns>
-        Character LoadPlayer(int characterId, WorldClient client);
+        Task<Character> LoadPlayer(int characterId, WorldClient client);
 
         /// <summary>
         /// Loads player into map and send notification other players.

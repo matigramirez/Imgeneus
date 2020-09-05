@@ -266,5 +266,32 @@ namespace Imgeneus.DatabaseBackgroundService.Handlers
                 await database.SaveChangesAsync();
             }
         }
+
+        [ActionHandler(ActionType.SAVE_FRIENDS)]
+        internal static async Task SaveFriends(object[] args)
+        {
+            int charId = (int)args[0];
+            int friendId = (int)args[1];
+
+            using var database = DependencyContainer.Instance.Resolve<IDatabase>();
+            database.Friends.Add(new DbCharacterFriend(charId, friendId));
+            database.Friends.Add(new DbCharacterFriend(friendId, charId));
+
+            await database.SaveChangesAsync();
+        }
+
+        [ActionHandler(ActionType.DELETE_FRIENDS)]
+        internal static async Task DeleteFriends(object[] args)
+        {
+            int charId = (int)args[0];
+            int friendId = (int)args[1];
+
+            using var database = DependencyContainer.Instance.Resolve<IDatabase>();
+            var removeFriends = database.Friends.Where(f => f.CharacterId == charId && f.FriendId == friendId ||
+                                                            f.FriendId == charId && f.FriendId == charId);
+            database.Friends.RemoveRange(removeFriends);
+            await database.SaveChangesAsync();
+        }
+
     }
 }

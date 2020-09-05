@@ -170,7 +170,10 @@ namespace Imgeneus.World
             { PacketType.QUEST_START, (s) => new QuestStartPacket(s) },
             { PacketType.QUEST_END, (s) => new QuestEndPacket(s) },
             { PacketType.QUEST_QUIT, (s) => new QuestQuitPacket(s) },
-            { PacketType.CHANGE_APPEARANCE, (s) => new ChangeAppearancePacket(s) }
+            { PacketType.CHANGE_APPEARANCE, (s) => new ChangeAppearancePacket(s) },
+            { PacketType.FRIEND_REQUEST, (s) => new FriendRequestPacket(s) },
+            { PacketType.FRIEND_RESPONSE, (s) => new FriendResponsePacket(s) },
+            { PacketType.FRIEND_DELETE, (s) => new FriendDeletePacket(s) }
         };
 
         /// <inheritdoc />

@@ -437,5 +437,50 @@ namespace Imgeneus.World.Packets
             packet.Write(count);
             client.SendPacket(packet);
         }
+
+        internal void SendFriendRequest(IWorldClient client, Character requester)
+        {
+            using var packet = new Packet(PacketType.FRIEND_REQUEST);
+            packet.WriteString(requester.Name, 21);
+            client.SendPacket(packet);
+        }
+
+        internal void SendFriendAdded(IWorldClient client, Character friend)
+        {
+            using var packet = new Packet(PacketType.FRIEND_ADD);
+            packet.Write(friend.Id);
+            packet.Write((byte)friend.Class);
+            packet.WriteString(friend.Name);
+            client.SendPacket(packet);
+        }
+
+        internal void SendFriendDelete(IWorldClient client, int id)
+        {
+            using var packet = new Packet(PacketType.FRIEND_DELETE);
+            packet.Write(id);
+            client.SendPacket(packet);
+        }
+
+        internal void SendFriends(IWorldClient client, IEnumerable<Friend> friends)
+        {
+            using var packet = new Packet(PacketType.FRIEND_LIST);
+            packet.Write(new FriendsList(friends).Serialize());
+            client.SendPacket(packet);
+        }
+
+        internal void SendFriendOnline(IWorldClient client, int id, bool isOnline)
+        {
+            using var packet = new Packet(PacketType.FRIEND_ONLINE);
+            packet.Write(id);
+            packet.Write(isOnline);
+            client.SendPacket(packet);
+        }
+
+        internal void SendFriendResponse(IWorldClient client, bool accepted)
+        {
+            using var packet = new Packet(PacketType.FRIEND_RESPONSE);
+            packet.Write(accepted);
+            client.SendPacket(packet);
+        }
     }
 }

@@ -165,6 +165,18 @@ namespace Imgeneus.World.Game.Player
                     HandleChangeAppearance(changeAppearancePacket);
                     break;
 
+                case FriendRequestPacket friendRequestPacket:
+                    HandleFriendRequest(friendRequestPacket.CharacterName);
+                    break;
+
+                case FriendResponsePacket friendResponsePacket:
+                    ClearFriend(friendResponsePacket.Accepted);
+                    break;
+
+                case FriendDeletePacket friendDeletePacket:
+                    DeleteFriend(friendDeletePacket.CharacterId);
+                    break;
+
                 case RemoveItemPacket removeItemPacket:
                     var item = InventoryItems.FirstOrDefault(itm => itm.Slot == removeItemPacket.Slot && itm.Bag == removeItemPacket.Bag);
                     if (item is null || item.AccountRestriction == ItemAccountRestrictionType.AccountRestricted || item.AccountRestriction == ItemAccountRestrictionType.CharacterRestricted)
@@ -334,6 +346,7 @@ namespace Imgeneus.World.Game.Player
             SendFinishedQuests();
             SendActiveBuffs();
             SendMoveAndAttackSpeed();
+            SendFriends();
             SendBlessAmount();
         }
 
@@ -485,6 +498,15 @@ namespace Imgeneus.World.Game.Player
             ChangeAppearance(changeAppearancePacket.Face, changeAppearancePacket.Hair, changeAppearancePacket.Size, changeAppearancePacket.Sex);
         }
 
+        private void HandleFriendRequest(string characterName)
+        {
+            var character = _gameWorld.Players.FirstOrDefault(p => p.Value.Name == characterName).Value;
+            if (character is null || character.Country != this.Country)
+                return;
+
+            character.RequestFriendship(this);
+        }
+
         #endregion
 
         #region Senders
@@ -504,6 +526,18 @@ namespace Imgeneus.World.Game.Player
         private void SendQuestStarted(Quest quest, int npcId = 0) => _packetsHelper.SendQuestStarted(Client, quest.Id, npcId);
 
         private void SendQuestFinished(Quest quest, int npcId = 0) => _packetsHelper.SendQuestFinished(Client, quest, npcId);
+
+        private void SendFriendRequest(Character requester) => _packetsHelper.SendFriendRequest(Client, requester);
+
+        private void SendFriendOnline(int friendId, bool isOnline) => _packetsHelper.SendFriendOnline(Client, friendId, isOnline);
+
+        private void SendFriends() => _packetsHelper.SendFriends(Client, Friends.Values);
+
+        private void SendFriendAdd(Character friend) => _packetsHelper.SendFriendAdded(Client, friend);
+
+        private void SendFriendResponse(bool accepted) => _packetsHelper.SendFriendResponse(Client, accepted);
+
+        private void SendFriendDelete(int id) => _packetsHelper.SendFriendDelete(Client, id);
 
         private void SendQuestCountUpdate(ushort questId, byte index, byte count) => _packetsHelper.SendQuestCountUpdate(Client, questId, index, count);
 

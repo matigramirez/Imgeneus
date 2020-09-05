@@ -32,6 +32,10 @@
         // Appearance
         SAVE_APPEARANCE,
 
+        // Friends
+        SAVE_FRIENDS,
+        DELETE_FRIENDS,
+
         // Logs
         LOG_SAVE_CHAT_MESSAGE
     }

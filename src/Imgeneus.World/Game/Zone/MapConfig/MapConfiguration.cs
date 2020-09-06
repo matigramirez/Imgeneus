@@ -6,11 +6,6 @@ namespace Imgeneus.World.Game.Zone.MapConfig
     public class MapConfiguration
     {
         /// <summary>
-        /// Map id.
-        /// </summary>
-        public ushort Id { get; set; }
-
-        /// <summary>
         /// Map size.
         /// </summary>
         [JsonPropertyName("size")]

@@ -6,7 +6,6 @@ using Imgeneus.World.Game.Monster;
 using Imgeneus.World.Game.NPCs;
 using Imgeneus.World.Game.Player;
 using Imgeneus.World.Game.Zone.MapConfig;
-using Imgeneus.World.Packets;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Concurrent;
@@ -22,6 +21,7 @@ namespace Imgeneus.World.Game.Zone
     {
         #region Constructor
 
+        private readonly MapDefinition _definition;
         private readonly MapConfiguration _config;
         private readonly ILogger<Map> _logger;
         private readonly IDatabasePreloader _databasePreloader;
@@ -29,12 +29,24 @@ namespace Imgeneus.World.Game.Zone
         /// <summary>
         /// Map id.
         /// </summary>
-        public ushort Id { get => _config.Id; }
+        public ushort Id { get; private set; }
+
+        /// <summary>
+        /// Is map a dungeon?
+        /// </summary>
+        public bool IsDungeon { get => _definition.MapType == MapType.Dungeon; }
+
+        /// <summary>
+        /// How map was created.
+        /// </summary>
+        public CreateType MapCreationType { get => _definition.CreateType; }
 
         public static readonly ushort TEST_MAP_ID = 9999;
 
-        public Map(MapConfiguration config, ILogger<Map> logger, IDatabasePreloader databasePreloader)
+        public Map(ushort id, MapDefinition definition, MapConfiguration config, ILogger<Map> logger, IDatabasePreloader databasePreloader)
         {
+            Id = id;
+            _definition = definition;
             _config = config;
             _logger = logger;
             _databasePreloader = databasePreloader;
@@ -49,39 +61,9 @@ namespace Imgeneus.World.Game.Zone
         {
             CalculateCells(_config.Size, _config.CellSize);
 
-            // TODO: init map.
-
-            // Create npcs.
-            foreach (var conf in _config.NPCs)
-            {
-                if (_databasePreloader.NPCs.TryGetValue((conf.Type, conf.TypeId), out var dbNpc))
-                {
-                    var moveCoordinates = conf.Coordinates.Select(c => (c.X, c.Y, c.Z, Convert.ToUInt16(c.Angle))).ToList();
-                    var npc = new Npc(DependencyContainer.Instance.Resolve<ILogger<Npc>>(), dbNpc, moveCoordinates, this);
-                    var cellIndex = GetCellIndex(npc);
-                    AddNPC(cellIndex, npc);
-                }
-            }
-
-            // Create mobs.
-            foreach (var mobArea in _config.MobAreas)
-            {
-                foreach (var mobConf in mobArea.Mobs)
-                {
-                    if (_databasePreloader.Mobs.ContainsKey(mobConf.MobId))
-                        for (var i = 0; i < mobConf.MobCount; i++)
-                        {
-                            var mob = new Mob(
-                                DependencyContainer.Instance.Resolve<ILogger<Mob>>(),
-                                _databasePreloader,
-                                mobConf.MobId,
-                                true,
-                                new MoveArea(mobArea.X1, mobArea.X2, mobArea.Y1, mobArea.Y2, mobArea.Z1, mobArea.Z2),
-                                this);
-                            AddMob(mob);
-                        }
-                }
-            }
+            InitWeather();
+            InitNPCs();
+            InitMobs();
         }
 
         #endregion
@@ -361,7 +343,7 @@ namespace Imgeneus.World.Game.Zone
         {
             mob.Id = GenerateId();
             Cells[GetCellIndex(mob)].AddMob(mob);
-            _logger.LogDebug($"Mob {mob.MobId} with global id {mob.Id} entered map {Id}");
+            //_logger.LogDebug($"Mob {mob.MobId} with global id {mob.Id} entered map {Id}");
 
             mob.OnDead += Mob_OnDead;
         }
@@ -404,6 +386,35 @@ namespace Imgeneus.World.Game.Zone
             mob.PosZ = sender.PosZ;
 
             AddMob(mob);
+        }
+
+        private void InitMobs()
+        {
+            int finalMobsCount = 0;
+            foreach (var mobArea in _config.MobAreas)
+            {
+                foreach (var mobConf in mobArea.Mobs)
+                {
+                    if (_databasePreloader.Mobs.ContainsKey(mobConf.MobId))
+                    {
+                        for (var i = 0; i < mobConf.MobCount; i++)
+                        {
+                            var mob = new Mob(
+                                DependencyContainer.Instance.Resolve<ILogger<Mob>>(),
+                                _databasePreloader,
+                                mobConf.MobId,
+                                true,
+                                new MoveArea(mobArea.X1, mobArea.X2, mobArea.Y1, mobArea.Y2, mobArea.Z1, mobArea.Z2),
+                                this);
+                            AddMob(mob);
+                            finalMobsCount++;
+                        }
+                    }
+                }
+            }
+
+            _logger.LogInformation($"Map {Id} created {_config.MobAreas.Count} mob areas.");
+            _logger.LogInformation($"Map {Id} created {finalMobsCount} mobs.");
         }
 
         #endregion
@@ -466,6 +477,55 @@ namespace Imgeneus.World.Game.Zone
         public Npc GetNPC(int cellIndex, int id)
         {
             return Cells[cellIndex].GetNPC(id, true);
+        }
+
+        private void InitNPCs()
+        {
+            int finalNPCsCount = 0;
+            foreach (var conf in _config.NPCs)
+            {
+                if (_databasePreloader.NPCs.TryGetValue((conf.Type, conf.TypeId), out var dbNpc))
+                {
+                    var moveCoordinates = conf.Coordinates.Select(c => (c.X, c.Y, c.Z, Convert.ToUInt16(c.Angle))).ToList();
+                    var npc = new Npc(DependencyContainer.Instance.Resolve<ILogger<Npc>>(), dbNpc, moveCoordinates, this);
+                    var cellIndex = GetCellIndex(npc);
+                    AddNPC(cellIndex, npc);
+                    finalNPCsCount++;
+                }
+            }
+
+            _logger.LogInformation($"Map {Id} created {finalNPCsCount} NPCs.");
+        }
+
+        #endregion
+
+        #region Weather
+
+        public WeatherState WeatherState
+        {
+            get
+            {
+                if (IsDungeon)
+                    return WeatherState.None;
+
+                return _definition.WeatherState;
+            }
+        }
+
+        public WeatherPower WeatherPower
+        {
+            get
+            {
+                return _definition.WeatherPower;
+            }
+        }
+
+        private void InitWeather()
+        {
+            if (IsDungeon)
+                return;
+
+            // TODO: setup weather timer.
         }
 
         #endregion

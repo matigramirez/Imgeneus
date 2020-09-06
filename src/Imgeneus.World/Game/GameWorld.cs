@@ -54,13 +54,17 @@ namespace Imgeneus.World.Game
         /// </summary>
         private void InitMaps()
         {
-            var mapConfigs = _mapsLoader.LoadMaps();
-            foreach (var config in mapConfigs)
+            var mapDefinitions = _mapsLoader.LoadMapDefinitions();
+            foreach (var mapDefinition in mapDefinitions.Maps)
             {
-                var map = new Map(config, DependencyContainer.Instance.Resolve<ILogger<Map>>(), _databasePreloader);
-                if (Maps.TryAdd(config.Id, map))
-                    _logger.LogInformation($"Loaded map {map.Id}.");
+                var config = _mapsLoader.LoadMapConfiguration(mapDefinition.Id);
 
+                if (mapDefinition.CreateType == CreateType.Default)
+                {
+                    var map = new Map(mapDefinition.Id, mapDefinition, config, DependencyContainer.Instance.Resolve<ILogger<Map>>(), _databasePreloader);
+                    if (Maps.TryAdd(mapDefinition.Id, map))
+                        _logger.LogInformation($"Map {map.Id} was successfully loaded.");
+                }
             }
         }
 

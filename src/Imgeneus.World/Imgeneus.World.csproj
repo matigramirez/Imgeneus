@@ -7,6 +7,7 @@
 
   <ItemGroup>
     <PackageReference Include="BinarySerializer" Version="8.4.3" />
+    <PackageReference Include="Macross.Json.Extensions" Version="1.5.0" />
     <PackageReference Include="NLog" Version="4.6.8" />
     <PackageReference Include="NLog.Extensions.Logging" Version="1.6.1" />
     <PackageReference Include="Refractored.MvvmHelpers" Version="1.3.0" />
@@ -30,6 +31,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="config\maps\0.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="config\maps\map_init.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="config\private_key.txt">

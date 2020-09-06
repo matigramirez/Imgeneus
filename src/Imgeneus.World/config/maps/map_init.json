@@ -1,0 +1,11 @@
+{
+  "maps": [
+    {
+      "MapId": 0,
+      "MapType": "Field",
+      "WeatherState": "Rain",
+      "WeatherPower": "Light",
+      "WeatherDelay": 10
+    }
+  ]
+}

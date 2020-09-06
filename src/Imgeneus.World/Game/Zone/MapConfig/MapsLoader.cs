@@ -20,31 +20,44 @@ namespace Imgeneus.World.Game.Zone.MapConfig
         /// </summary>
         private const string ConfigsFolder = "config/maps/";
 
-        public IEnumerable<MapConfiguration> LoadMaps()
+        /// <summary>
+        /// File, that contains definitions for all maps, that must be loaded.
+        /// </summary>
+        private const string InitFile = "map_init.json";
+
+        public MapDefinitions LoadMapDefinitions()
         {
-            if (!Directory.Exists(ConfigsFolder))
+            var initFilePath = Path.Combine(ConfigsFolder, InitFile);
+            if (!File.Exists(initFilePath))
             {
-                _logger.LogError("No map configuration is found.");
-                return new List<MapConfiguration>();
+                _logger.LogError("No map definition is found.");
+                return new MapDefinitions();
             }
 
-            var configs = new List<MapConfiguration>();
-            var files = Directory.GetFiles(ConfigsFolder).Where(f => f.EndsWith(".json"));
-            foreach (var f in files)
-            {
-                try
-                {
-                    var config = ConfigurationHelper.Load<MapConfiguration>(f);
-                    config.Id = ushort.Parse(Path.GetFileNameWithoutExtension(f));
-                    configs.Add(config);
-                }
-                catch
-                {
-                    _logger.LogError($"Failed to parse {f} map configuration.");
-                }
-            }
+            return ConfigurationHelper.Load<MapDefinitions>(initFilePath); ;
+        }
 
-            return configs;
+        private readonly Dictionary<ushort, MapConfiguration> _loadedConfigs = new Dictionary<ushort, MapConfiguration>();
+
+        public MapConfiguration LoadMapConfiguration(ushort mapId)
+        {
+            if (_loadedConfigs.ContainsKey(mapId))
+            {
+                return _loadedConfigs[mapId];
+            }
+            else
+            {
+                var mapFile = Path.Combine(ConfigsFolder, $"{mapId}.json");
+                if (!File.Exists(mapFile))
+                {
+                    _logger.LogError($"Configuration for map {mapId} is not found.");
+                    return new MapConfiguration();
+                }
+
+                var config = ConfigurationHelper.Load<MapConfiguration>(mapFile);
+                _loadedConfigs.Add(mapId, config);
+                return config;
+            }
         }
     }
 }

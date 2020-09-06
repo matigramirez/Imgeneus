@@ -27,7 +27,9 @@ namespace Imgeneus.World.Tests
         protected Mock<IWorldClient> worldClientMock = new Mock<IWorldClient>();
 
         protected Map testMap => new Map(
-                    new MapConfiguration() { Id = Map.TEST_MAP_ID, Size = 100, CellSize = 100 },
+                    Map.TEST_MAP_ID,
+                    new MapDefinition(),
+                    new MapConfiguration() { Size = 100, CellSize = 100 },
                     mapLoggerMock.Object,
                     databasePreloader.Object);
 

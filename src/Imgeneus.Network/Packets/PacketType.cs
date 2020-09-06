@@ -121,6 +121,10 @@
         MAP_NPC_ENTER = 0x0E01, // 3585
         MAP_NPC_LEAVE = 0x0E02, // 3586
 
+        // Obelisk
+        OBELISK_LIST = 0x2101, // 8449
+        OBELISK_CHANGE = 0x2102, // 8450
+
         // Inventory
         INVENTORY_MOVE_ITEM = 0x204,
         ADD_ITEM = 0x0205, // 517

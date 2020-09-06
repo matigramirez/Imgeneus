@@ -10,6 +10,7 @@ using Imgeneus.World.Game.Monster;
 using Imgeneus.World.Game.PartyAndRaid;
 using Imgeneus.World.Game.Player;
 using Imgeneus.World.Game.Zone;
+using Imgeneus.World.Game.Zone.Obelisks;
 using Imgeneus.World.Serialization;
 
 namespace Imgeneus.World.Packets
@@ -488,6 +489,21 @@ namespace Imgeneus.World.Packets
         {
             using var packet = new Packet(PacketType.MAP_WEATHER);
             packet.Write(new MapWeather(map).Serialize());
+            client.SendPacket(packet);
+        }
+
+        internal void SendObelisks(IWorldClient client, IEnumerable<Obelisk> obelisks)
+        {
+            using var packet = new Packet(PacketType.OBELISK_LIST);
+            packet.Write(new ObeliskList(obelisks).Serialize());
+            client.SendPacket(packet);
+        }
+
+        internal void SendObeliskBroken(IWorldClient client, Obelisk obelisk)
+        {
+            using var packet = new Packet(PacketType.OBELISK_CHANGE);
+            packet.Write(obelisk.Id);
+            packet.Write((byte)obelisk.ObeliskCountry);
             client.SendPacket(packet);
         }
     }

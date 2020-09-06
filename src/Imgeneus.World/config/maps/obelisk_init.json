@@ -1,0 +1,31 @@
+{
+  "Maps": [
+    {
+      "MapId": 0,
+      "Obelisks": [
+        {
+          "Id": 0,
+          "PosX": 155.10,
+          "PosY": 39.43,
+          "PosZ": 190.38,
+          "NeutralObeliskMobId": 52,
+          "LightObeliskMobId": 252,
+          "DarkObeliskMobId": 152,
+          "DefaultCountry": "None",
+          "Mobs": [
+            {
+              "PosX": 155.17,
+              "PosY": 39.44,
+              "PosZ": 180.20,
+              "Radius": 1,
+              "NeutralMobId": 77,
+              "LightMobId": 69,
+              "DarkMobId": 73,
+              "Count": 1
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

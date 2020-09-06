@@ -14,7 +14,9 @@ namespace Imgeneus.World.Tests.MobTests
 
             var character = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object);
             character.Client = worldClientMock.Object;
+
             map.LoadPlayer(character);
+            map.AddMob(mob);
 
             Assert.True(mob.TryGetPlayer());
             Assert.Equal(mob.Target, character);
@@ -33,7 +35,9 @@ namespace Imgeneus.World.Tests.MobTests
             character.Client = worldClientMock.Object;
             character.IncreaseHP(1);
             Assert.True(character.CurrentHP > 0);
+
             map.LoadPlayer(character);
+            map.AddMob(mob);
 
             Assert.True(mob.TryGetPlayer());
             mob.Attack(character, 0, Database.Constants.Element.None, 100, 100);

@@ -9,6 +9,7 @@ using Imgeneus.Network.Server;
 using Imgeneus.World.Game.Monster;
 using Imgeneus.World.Game.NPCs;
 using Imgeneus.World.Game.Zone;
+using Imgeneus.World.Game.Zone.Obelisks;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -594,6 +595,10 @@ namespace Imgeneus.World.Game.Player
         public void SendRemoveItemFromInventory(Item item, bool fullRemove) => _packetsHelper.SendRemoveItem(Client, item, fullRemove);
 
         public void SendWeather() => _packetsHelper.SendWeather(Client, Map);
+
+        public void SendObelisks() => _packetsHelper.SendObelisks(Client, Map.Obelisks.Values);
+
+        public void SendObeliskBroken(Obelisk obelisk) => _packetsHelper.SendObeliskBroken(Client, obelisk);
 
         private void TargetChanged(IKillable target)
         {

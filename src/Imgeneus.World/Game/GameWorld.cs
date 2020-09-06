@@ -15,7 +15,6 @@ using Imgeneus.World.Game.Zone.MapConfig;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System.Collections.Concurrent;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Imgeneus.World.Game
@@ -61,6 +60,8 @@ namespace Imgeneus.World.Game
 
                 if (mapDefinition.CreateType == CreateType.Default)
                 {
+                    config.Obelisks = _mapsLoader.GetObelisks(mapDefinition.Id);
+
                     var map = new Map(mapDefinition.Id, mapDefinition, config, DependencyContainer.Instance.Resolve<ILogger<Map>>(), _databasePreloader);
                     if (Maps.TryAdd(mapDefinition.Id, map))
                         _logger.LogInformation($"Map {map.Id} was successfully loaded.");

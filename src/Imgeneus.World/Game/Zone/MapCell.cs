@@ -55,7 +55,7 @@ namespace Imgeneus.World.Game.Zone
             AssignCellIndex(character);
 
             // Send update players.
-            var oldPlayers = Map.Cells[character.OldCellId].GetAllPlayers(true);
+            var oldPlayers = character.OldCellId != -1 ? Map.Cells[character.OldCellId].GetAllPlayers(true) : new List<Character>();
             var newPlayers = GetAllPlayers(true);
 
             var sendPlayerLeave = oldPlayers.Where(p => !newPlayers.Contains(p) && p != character);
@@ -78,7 +78,7 @@ namespace Imgeneus.World.Game.Zone
                 }
 
             // Send update npcs.
-            var oldCellNPCs = Map.Cells[character.OldCellId].GetAllNPCs(true);
+            var oldCellNPCs = character.OldCellId != -1 ? Map.Cells[character.OldCellId].GetAllNPCs(true) : new List<Npc>();
             var newCellNPCs = GetAllNPCs(true);
 
             var npcToLeave = oldCellNPCs.Where(npc => !newCellNPCs.Contains(npc));
@@ -90,7 +90,7 @@ namespace Imgeneus.World.Game.Zone
                 _packetHelper.SendNpcEnter(character.Client, npc);
 
             // Send update mobs.
-            var oldCellMobs = Map.Cells[character.OldCellId].GetAllMobs(true);
+            var oldCellMobs = character.OldCellId != -1 ? Map.Cells[character.OldCellId].GetAllMobs(true) : new List<Mob>();
             var newCellMobs = GetAllMobs(true);
 
             var mobToLeave = oldCellMobs.Where(m => !newCellMobs.Contains(m));

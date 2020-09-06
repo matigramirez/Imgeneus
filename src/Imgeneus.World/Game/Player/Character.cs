@@ -113,30 +113,30 @@ namespace Imgeneus.World.Game.Player
 
         #region Character info
 
-        public string Name;
-        public Fraction Country;
-        public ushort MapId;
-        public Race Race;
-        public CharacterProfession Class;
-        public Mode Mode;
-        public byte Hair;
-        public byte Face;
-        public byte Height;
-        public Gender Gender;
-        public ushort StatPoint;
-        public ushort SkillPoint;
-        public ushort Strength;
-        public ushort Dexterity;
-        public ushort Rec;
-        public ushort Intelligence;
-        public ushort Luck;
-        public ushort Wisdom;
-        public uint Exp;
-        public ushort Kills;
-        public ushort Deaths;
-        public ushort Victories;
-        public ushort Defeats;
-        public bool IsAdmin;
+        public string Name { get; set; }
+        public Fraction Country { get; set; }
+        public ushort MapId { get; set; }
+        public Race Race { get; set; }
+        public CharacterProfession Class { get; set; }
+        public Mode Mode { get; set; }
+        public byte Hair { get; set; }
+        public byte Face { get; set; }
+        public byte Height { get; set; }
+        public Gender Gender { get; set; }
+        public ushort StatPoint { get; set; }
+        public ushort SkillPoint { get; set; }
+        public ushort Strength { get; set; }
+        public ushort Dexterity { get; set; }
+        public ushort Rec { get; set; }
+        public ushort Intelligence { get; set; }
+        public ushort Luck { get; set; }
+        public ushort Wisdom { get; set; }
+        public uint Exp { get; set; }
+        public ushort Kills { get; set; }
+        public ushort Deaths { get; set; }
+        public ushort Victories { get; set; }
+        public ushort Defeats { get; set; }
+        public bool IsAdmin { get; set; }
 
         #endregion
 
@@ -893,7 +893,7 @@ namespace Imgeneus.World.Game.Player
         /// <summary>
         /// Creates character from database information.
         /// </summary>
-        public static Character FromDbCharacter(DbCharacter dbCharacter, ILogger<Character> logger, IGameWorld gameWorld, CharacterConfiguration characterConfig, IBackgroundTaskQueue taskQueue, IDatabasePreloader databasePreloader, IChatManager chatManager)
+        public static Character FromDbCharacter(DbCharacter dbCharacter, ILogger<Character> logger, IGameWorld gameWorld, ICharacterConfiguration characterConfig, IBackgroundTaskQueue taskQueue, IDatabasePreloader databasePreloader, IChatManager chatManager)
         {
             var character = new Character(logger, gameWorld, characterConfig, taskQueue, databasePreloader, chatManager)
             {

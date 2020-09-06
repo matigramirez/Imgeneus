@@ -23,6 +23,7 @@ namespace Imgeneus.World.Game.Monster
             _logger = logger;
             _dbMob = databasePreloader.Mobs[mobId];
 
+            Id = map.GenerateId();
             CurrentHP = _dbMob.HP;
             Level = _dbMob.Level;
             AI = _dbMob.AI;

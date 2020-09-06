@@ -295,7 +295,7 @@ namespace Imgeneus.World.Game.Player
             if (skillNumber == 255 && DateTime.UtcNow < _nextAttackTime)
             {
                 // TODO: send not enough elapsed time?
-                _logger.Log(LogLevel.Debug, "Too fast attack.");
+                //_logger.Log(LogLevel.Debug, "Too fast attack.");
                 return false;
             }
 

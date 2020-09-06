@@ -6,12 +6,12 @@ using Imgeneus.World.Game.Monster;
 using Imgeneus.World.Game.NPCs;
 using Imgeneus.World.Game.Player;
 using Imgeneus.World.Game.Zone.MapConfig;
+using Imgeneus.World.Game.Zone.Obelisks;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 
 namespace Imgeneus.World.Game.Zone
 {
@@ -65,6 +65,7 @@ namespace Imgeneus.World.Game.Zone
             InitWeather();
             InitNPCs();
             InitMobs();
+            InitObelisks();
         }
 
         #endregion
@@ -219,7 +220,11 @@ namespace Imgeneus.World.Game.Zone
             {
                 character.Map = this;
                 Cells[GetCellIndex(character)].AddPlayer(character);
+
+                // Send map values.
                 character.SendWeather();
+                character.SendObelisks();
+
                 character.OnPositionChanged += Character_OnPositionChanged;
                 _logger.LogDebug($"Player {character.Id} connected to map {Id}, cell index {character.CellId}.");
             }
@@ -328,7 +333,7 @@ namespace Imgeneus.World.Game.Zone
         /// Each entity in game has its' own id.
         /// Call this method, when you need to get new id.
         /// </summary>
-        private int GenerateId()
+        public int GenerateId()
         {
             lock (_currentGlobalMobIdMutex)
             {
@@ -343,7 +348,6 @@ namespace Imgeneus.World.Game.Zone
         /// <returns>turue if mob was added, otherwise false</returns>
         public void AddMob(Mob mob)
         {
-            mob.Id = GenerateId();
             Cells[GetCellIndex(mob)].AddMob(mob);
             //_logger.LogDebug($"Mob {mob.MobId} with global id {mob.Id} entered map {Id}");
 
@@ -572,6 +576,36 @@ namespace Imgeneus.World.Game.Zone
                 player.SendWeather();
 
             _weatherTimer.Start();
+        }
+
+        #endregion
+
+        #region Obelisks
+
+        /// <summary>
+        /// Obelisks on this map.
+        /// </summary>
+        public ConcurrentDictionary<int, Obelisk> Obelisks = new ConcurrentDictionary<int, Obelisk>();
+
+        /// <summary>
+        /// Creates obelisks.
+        /// </summary>
+        private void InitObelisks()
+        {
+            foreach (var obeliskConfig in _config.Obelisks)
+            {
+                var obelisk = new Obelisk(obeliskConfig, _databasePreloader, this);
+                Obelisks.TryAdd(obelisk.Id, obelisk);
+                obelisk.OnObeliskBroken += Obelisk_OnObeliskBroken;
+            }
+
+            _logger.LogInformation($"Map {Id} created {Obelisks.Count} obelisks.");
+        }
+
+        private void Obelisk_OnObeliskBroken(Obelisk obelisk)
+        {
+            foreach (var character in Players.Values)
+                character.SendObeliskBroken(obelisk);
         }
 
         #endregion

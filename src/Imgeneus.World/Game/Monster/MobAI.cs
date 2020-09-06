@@ -121,7 +121,14 @@ namespace Imgeneus.World.Game.Monster
             _idleTimer.Elapsed -= IdleTimer_Elapsed;
             _watchTimer.Elapsed -= WatchTimer_Elapsed;
             _chaseTimer.Elapsed -= ChaseTimer_Elapsed;
+            _attackTimer.Elapsed -= AttackTimer_Elapsed;
             _backToBirthPositionTimer.Elapsed -= BackToBirthPositionTimer_Elapsed;
+
+            _idleTimer.Stop();
+            _watchTimer.Stop();
+            _chaseTimer.Stop();
+            _attackTimer.Stop();
+            _backToBirthPositionTimer.Stop();
         }
 
         /// <summary>
@@ -148,6 +155,27 @@ namespace Imgeneus.World.Game.Monster
                 }
 
                 return playerFraction;
+            }
+        }
+
+        /// <summary>
+        /// Mob's fraction.
+        /// </summary>
+        public Fraction Country
+        {
+            get
+            {
+                switch (_dbMob.Fraction)
+                {
+                    case MobFraction.Dark:
+                        return Fraction.Dark;
+
+                    case MobFraction.Light:
+                        return Fraction.Light;
+
+                    default:
+                        return Fraction.NotSelected;
+                }
             }
         }
 

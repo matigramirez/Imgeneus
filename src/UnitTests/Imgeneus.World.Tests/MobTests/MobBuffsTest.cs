@@ -13,7 +13,7 @@ namespace Imgeneus.World.Tests.MobTests
         [Description("Mob sends notification, when it gets some buff/debuff.")]
         public void MobNotifiesWhenItGetsBuff()
         {
-            var mob = new Mob(mobLoggerMock.Object, databasePreloader.Object, Wolf.Id, true, new MoveArea(0, 0, 0, 0, 0, 0), null);
+            var mob = new Mob(mobLoggerMock.Object, databasePreloader.Object, Wolf.Id, true, new MoveArea(0, 0, 0, 0, 0, 0), testMap);
             ActiveBuff buff = null;
             mob.OnBuffAdded += (IKillable sender, ActiveBuff newBuff) =>
             {

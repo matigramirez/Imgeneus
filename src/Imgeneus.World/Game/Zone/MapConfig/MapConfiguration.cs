@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Imgeneus.World.Game.Zone.Obelisks;
+using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
 namespace Imgeneus.World.Game.Zone.MapConfig
@@ -52,5 +53,8 @@ namespace Imgeneus.World.Game.Zone.MapConfig
         /// </summary>
         [JsonPropertyName("named_areas")]
         public List<NamedAreaConfiguration> NamedAreas { get; set; } = new List<NamedAreaConfiguration>();
+
+        [JsonIgnore]
+        public IEnumerable<ObeliskConfiguration> Obelisks { get; set; } = new List<ObeliskConfiguration>();
     }
 }

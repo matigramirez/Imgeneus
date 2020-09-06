@@ -1,4 +1,5 @@
 ﻿using Imgeneus.Database.Constants;
+using Imgeneus.Database.Entities;
 using Imgeneus.World.Game.Monster;
 using Imgeneus.World.Game.Player;
 using System;
@@ -11,6 +12,11 @@ namespace Imgeneus.World.Game
     /// </summary>
     public interface IKiller : IWorldMember, IStatsHolder
     {
+        /// <summary>
+        /// Killer's fraction.
+        /// </summary>
+        Fraction Country { get; }
+
         /// <summary>
         /// Event, that is fired, when killer makes melee attack.
         /// </summary>

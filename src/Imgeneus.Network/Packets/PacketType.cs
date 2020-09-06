@@ -43,14 +43,17 @@
         CASH_POINT = 0x2605, // 9733
         CHANGE_ENCRYPTION = 0xB106, // I'm not really sure, that exactly this packet starts another encryption, but for now let's assume so.
         CHARACTER_SHAPE = 0x0303,
-        MAP_ADD_ITEM = 0x0401, // 1025
-        MAP_REMOVE_ITEM = 0x0402, // 1026
-        CHARACTER_DEAD = 0x0405,
         CHARACTER_MOTION = 0x0506,
         CHARACTER_CURRENT_HITPOINTS = 0x0521, // 1313
         CHARACTER_ABSORPTION_DAMAGE = 0x0525, // 1317
 
         RUN_MODE = 0x0210, // 528
+
+        // Map
+        MAP_ADD_ITEM = 0x0401, // 1025
+        MAP_REMOVE_ITEM = 0x0402, // 1026
+        CHARACTER_DEAD = 0x0405,
+        MAP_WEATHER = 0x0451, // 1105
 
         // Attack
         ATTACK_START = 0x0212, // 530

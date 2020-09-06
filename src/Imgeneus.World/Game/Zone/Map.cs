@@ -11,6 +11,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 
 namespace Imgeneus.World.Game.Zone
 {
@@ -218,6 +219,7 @@ namespace Imgeneus.World.Game.Zone
             {
                 character.Map = this;
                 Cells[GetCellIndex(character)].AddPlayer(character);
+                character.SendWeather();
                 character.OnPositionChanged += Character_OnPositionChanged;
                 _logger.LogDebug($"Player {character.Id} connected to map {Id}, cell index {character.CellId}.");
             }
@@ -501,6 +503,10 @@ namespace Imgeneus.World.Game.Zone
 
         #region Weather
 
+        private readonly System.Timers.Timer _weatherTimer = new System.Timers.Timer();
+
+        private WeatherState _weatherState = WeatherState.None;
+
         public WeatherState WeatherState
         {
             get
@@ -508,7 +514,7 @@ namespace Imgeneus.World.Game.Zone
                 if (IsDungeon)
                     return WeatherState.None;
 
-                return _definition.WeatherState;
+                return _weatherState;
             }
         }
 
@@ -525,7 +531,47 @@ namespace Imgeneus.World.Game.Zone
             if (IsDungeon)
                 return;
 
-            // TODO: setup weather timer.
+            _weatherTimer.AutoReset = false;
+
+            if (_definition.NoneWeatherDuration == 0)
+                _weatherState = _definition.WeatherState;
+
+            if (_definition.WeatherDuration > 0 && _definition.NoneWeatherDuration != 0 && _definition.WeatherState != WeatherState.None)
+            {
+                _weatherTimer.Elapsed += WeatherTimer_Elapsed;
+                StartWeatherTimer();
+            }
+        }
+
+        private void WeatherTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+        {
+            StartWeatherTimer();
+        }
+
+        /// <summary>
+        /// Starts new weather.
+        /// </summary>
+        private void StartWeatherTimer()
+        {
+            if (_weatherState == WeatherState.None)
+            {
+                // Start raining/snowing.
+                _weatherTimer.Interval = _definition.WeatherDuration * 1000;
+                _weatherState = _definition.WeatherState;
+            }
+            else
+            {
+                // Start none(good) weather.
+                _weatherTimer.Interval = _definition.NoneWeatherDuration * 1000;
+                _weatherState = WeatherState.None;
+            }
+
+            _logger.LogDebug($"Map {Id} changed weather to {_weatherState}.");
+
+            foreach (var player in Players.Values)
+                player.SendWeather();
+
+            _weatherTimer.Start();
         }
 
         #endregion

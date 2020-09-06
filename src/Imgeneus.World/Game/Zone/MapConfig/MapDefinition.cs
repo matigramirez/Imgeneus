@@ -36,9 +36,14 @@ namespace Imgeneus.World.Game.Zone.MapConfig
         public WeatherPower WeatherPower { get; set; }
 
         /// <summary>
-        /// How often it's raining, snowing. In minutes.
+        /// How long it's raining, snowing. In seconds.
         /// </summary>
-        public byte WeatherDelay { get; set; }
+        public byte WeatherDuration { get; set; }
+
+        /// <summary>
+        /// How long it's "good" weather (when it's not showing or raining). In seconds.
+        /// </summary>
+        public byte NoneWeatherDuration { get; set; }
 
         /// <summary>
         /// For party, guild etc.

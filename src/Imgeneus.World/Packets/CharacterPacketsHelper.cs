@@ -9,6 +9,7 @@ using Imgeneus.World.Game;
 using Imgeneus.World.Game.Monster;
 using Imgeneus.World.Game.PartyAndRaid;
 using Imgeneus.World.Game.Player;
+using Imgeneus.World.Game.Zone;
 using Imgeneus.World.Serialization;
 
 namespace Imgeneus.World.Packets
@@ -480,6 +481,13 @@ namespace Imgeneus.World.Packets
         {
             using var packet = new Packet(PacketType.FRIEND_RESPONSE);
             packet.Write(accepted);
+            client.SendPacket(packet);
+        }
+
+        internal void SendWeather(IWorldClient client, Map map)
+        {
+            using var packet = new Packet(PacketType.MAP_WEATHER);
+            packet.Write(new MapWeather(map).Serialize());
             client.SendPacket(packet);
         }
     }

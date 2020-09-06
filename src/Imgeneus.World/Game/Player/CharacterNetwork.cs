@@ -593,6 +593,8 @@ namespace Imgeneus.World.Game.Player
 
         public void SendRemoveItemFromInventory(Item item, bool fullRemove) => _packetsHelper.SendRemoveItem(Client, item, fullRemove);
 
+        public void SendWeather() => _packetsHelper.SendWeather(Client, Map);
+
         private void TargetChanged(IKillable target)
         {
             if (target is Mob)

@@ -5,7 +5,8 @@
       "MapType": "Field",
       "WeatherState": "Rain",
       "WeatherPower": "Light",
-      "WeatherDelay": 10
+      "WeatherDuration": 30,
+      "NoneWeatherDuration": 30
     }
   ]
 }

@@ -1,7 +1,5 @@
 ﻿using Imgeneus.World.Game.Monster;
 using Imgeneus.World.Game.Player;
-using Imgeneus.World.Game.Zone;
-using Imgeneus.World.Game.Zone.MapConfig;
 using Xunit;
 
 namespace Imgeneus.World.Tests.MobTests
@@ -15,6 +13,7 @@ namespace Imgeneus.World.Tests.MobTests
             var mob = new Mob(mobLoggerMock.Object, databasePreloader.Object, Wolf.Id, true, new MoveArea(0, 0, 0, 0, 0, 0), map);
 
             var character = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object);
+            character.Client = worldClientMock.Object;
             map.LoadPlayer(character);
 
             Assert.True(mob.TryGetPlayer());
@@ -31,6 +30,7 @@ namespace Imgeneus.World.Tests.MobTests
             {
                 Class = Database.Entities.CharacterProfession.Fighter
             };
+            character.Client = worldClientMock.Object;
             character.IncreaseHP(1);
             Assert.True(character.CurrentHP > 0);
             map.LoadPlayer(character);

@@ -1,4 +1,5 @@
 ﻿using Imgeneus.Database.Constants;
+using Imgeneus.World.Game.Monster;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -305,6 +306,12 @@ namespace Imgeneus.World.Game.Player
                 return false;
             }
 
+            if (skillNumber == 255 && (target is Mob && (target as Mob).Country == Country))
+            {
+                SendAutoAttackWrongTarget(target);
+                return false;
+            }
+
             if (skillNumber == 255 && ActiveBuffs.Any(b => b.StateType == StateType.Sleep || b.StateType == StateType.Stun || b.StateType == StateType.Silence))
             {
                 SendAutoAttackCanNotAttack(target);
@@ -337,8 +344,10 @@ namespace Imgeneus.World.Game.Player
                 return false;
             }
 
-            if (skill.TargetType == TargetType.AnyEnemy || skill.TargetType == TargetType.EnemiesNearTarget &&
-                (target is null || target.IsDead))
+            if (skill.TargetType == TargetType.SelectedEnemy ||
+                skill.TargetType == TargetType.AnyEnemy ||
+                skill.TargetType == TargetType.EnemiesNearTarget &&
+                (target is null || target.IsDead || (target is Mob && (target as Mob).Country == Country)))
             {
                 SendSkillWrongTarget(target, skill);
                 return false;

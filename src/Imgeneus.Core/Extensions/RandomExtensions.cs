@@ -14,5 +14,16 @@ namespace Imgeneus.Core.Extensions
         {
             return (float)random.NextDouble() * (maxValue - minValue) + minValue;
         }
+
+        /// <summary>
+        /// Generates random double value between min and max values.
+        /// </summary>
+        public static double NextDouble(
+            this Random random,
+            double minValue,
+            double maxValue)
+        {
+            return random.NextDouble() * (maxValue - minValue) + minValue;
+        }
     }
 }

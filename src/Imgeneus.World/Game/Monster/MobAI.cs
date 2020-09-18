@@ -93,7 +93,8 @@ namespace Imgeneus.World.Game.Monster
                 return;
 
             var idleTime = _dbMob.NormalTime <= 0 ? 4000 : _dbMob.NormalTime;
-            _idleTimer.Interval = idleTime * 10;
+            _maxIdleTime = idleTime * 10;
+            _idleTimer.Interval = _idleRandom.NextDouble(1000, _maxIdleTime);
             _idleTimer.AutoReset = false;
             _idleTimer.Elapsed += IdleTimer_Elapsed;
 
@@ -229,6 +230,16 @@ namespace Imgeneus.World.Game.Monster
         /// </summary>
         private readonly Timer _idleTimer = new Timer();
 
+        /// <summary>
+        /// Generates random interval for idle walking.
+        /// </summary>
+        private readonly Random _idleRandom = new Random();
+
+        /// <summary>
+        /// Max idle time.
+        /// </summary>
+        private double _maxIdleTime;
+
         private void IdleTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
             if (State != MobState.Idle)
@@ -236,6 +247,7 @@ namespace Imgeneus.World.Game.Monster
 
             GenerateRandomIdlePosition(_dbMob.NormalStep);
 
+            _idleTimer.Interval = _idleRandom.NextDouble(_maxIdleTime / 2, _maxIdleTime);
             _idleTimer.Start();
         }
 

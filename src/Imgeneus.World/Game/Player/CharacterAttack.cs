@@ -344,9 +344,10 @@ namespace Imgeneus.World.Game.Player
                 return false;
             }
 
-            if (skill.TargetType == TargetType.SelectedEnemy ||
+            if ((skill.TargetType == TargetType.SelectedEnemy ||
                 skill.TargetType == TargetType.AnyEnemy ||
-                skill.TargetType == TargetType.EnemiesNearTarget &&
+                skill.TargetType == TargetType.EnemiesNearTarget)
+                &&
                 (target is null || target.IsDead || (target is Mob && (target as Mob).Country == Country)))
             {
                 SendSkillWrongTarget(target, skill);

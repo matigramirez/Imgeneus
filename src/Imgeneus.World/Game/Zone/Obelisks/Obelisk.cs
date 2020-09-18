@@ -6,6 +6,7 @@ using Imgeneus.World.Game.Monster;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Timers;
 
 namespace Imgeneus.World.Game.Zone.Obelisks
@@ -65,12 +66,11 @@ namespace Imgeneus.World.Game.Zone.Obelisks
 
             Map.AddMob(ObeliskAI);
             ObeliskAI.OnDead += ObeliskAI_OnDead;
-
-            // TODO: init guards.
+            InitGuards();
 
             _rebirthTimer.Interval = TimeSpan.FromMinutes(1).TotalMilliseconds;
             _rebirthTimer.AutoReset = false;
-            _rebirthTimer.Elapsed += RebirthTimer_Elapsed;
+            _rebirthTimer.Elapsed += ObeliskRebirthTimer_Elapsed;
         }
 
         #region Obelisk
@@ -110,12 +110,11 @@ namespace Imgeneus.World.Game.Zone.Obelisks
                 Bless.Instance.LightAmount -= 500;
             }
 
-            // TODO: clear guards.
-
+            ClearGuards();
             _rebirthTimer.Start();
         }
 
-        private void RebirthTimer_Elapsed(object sender, ElapsedEventArgs e)
+        private void ObeliskRebirthTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
             if (Bless.Instance.IsFullBless)
                 return;
@@ -129,12 +128,8 @@ namespace Imgeneus.World.Game.Zone.Obelisks
                                     false,
                                     new MoveArea(PosX, PosX, PosY, PosY, PosZ, PosZ),
                                     Map);
-                ObeliskAI.OnDead += ObeliskAI_OnDead;
-                Map.AddMob(ObeliskAI);
-
-                // TODO: init new guards.
             }
-            else
+            else if (ObeliskCountry == ObeliskCountry.Dark)
             {
                 // Init new ai.
                 ObeliskAI = new Mob(DependencyContainer.Instance.Resolve<ILogger<Mob>>(),
@@ -143,11 +138,11 @@ namespace Imgeneus.World.Game.Zone.Obelisks
                                     false,
                                     new MoveArea(PosX, PosX, PosY, PosY, PosZ, PosZ),
                                     Map);
-                ObeliskAI.OnDead += ObeliskAI_OnDead;
-                Map.AddMob(ObeliskAI);
-
-                // TODO: init new guards.
             }
+
+            ObeliskAI.OnDead += ObeliskAI_OnDead;
+            Map.AddMob(ObeliskAI);
+            InitGuards();
         }
 
 
@@ -158,7 +153,114 @@ namespace Imgeneus.World.Game.Zone.Obelisks
         /// <summary>
         /// Obelisk defenders.
         /// </summary>
-        public IEnumerable<Mob> Guards { get; private set; } = new List<Mob>();
+        public IList<Mob> Guards { get; private set; } = new List<Mob>();
+
+        private readonly List<(Timer Timer, Mob Mob)> _guardRebirthTimers = new List<(Timer, Mob)>();
+
+        private object _syncObjectGuardTimer = new object();
+
+        private void Guard_OnDead(IKillable sender, IKiller killer)
+        {
+            var mob = sender as Mob;
+            mob.OnDead -= Guard_OnDead;
+
+            var rebirthTimer = new Timer();
+            rebirthTimer.AutoReset = false;
+            rebirthTimer.Interval = mob.RespawnTimeInMilliseconds;
+            rebirthTimer.Elapsed += GuardRebirthTimer_Elapsed;
+            Guards.Remove(mob);
+
+            lock (_syncObjectGuardTimer)
+            {
+                _guardRebirthTimers.Add((rebirthTimer, mob));
+            }
+            rebirthTimer.Start();
+        }
+
+        private void GuardRebirthTimer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            var timer = sender as Timer;
+            var timerMob = _guardRebirthTimers.First(t => t.Timer == timer);
+            var mob = timerMob.Mob;
+            var shouldAdd = false;
+
+            if (mob.Country == Fraction.NotSelected && ObeliskCountry == ObeliskCountry.None)
+            {
+                shouldAdd = true;
+            }
+            else if (mob.Country == Fraction.Light && ObeliskCountry == ObeliskCountry.Light)
+            {
+                shouldAdd = true;
+            }
+            else if (mob.Country == Fraction.Dark && ObeliskCountry == ObeliskCountry.Dark)
+            {
+                shouldAdd = true;
+            }
+
+            if (shouldAdd)
+            {
+                var newMob = mob.Clone();
+                newMob.OnDead += Guard_OnDead;
+                Guards.Add(newMob);
+                Map.AddMob(newMob);
+            }
+
+            lock (_syncObjectGuardTimer)
+            {
+                _guardRebirthTimers.Remove(timerMob);
+            }
+            timer.Elapsed -= GuardRebirthTimer_Elapsed;
+        }
+
+        /// <summary>
+        /// Creates guards of altar based on altar country.
+        /// </summary>
+        private void InitGuards()
+        {
+            foreach (var mob in _config.Mobs)
+            {
+                ushort guardId = 0;
+                if (ObeliskCountry == ObeliskCountry.None)
+                    guardId = mob.NeutralMobId;
+                else if (ObeliskCountry == ObeliskCountry.Light)
+                    guardId = mob.LightMobId;
+                else if (ObeliskCountry == ObeliskCountry.Dark)
+                    guardId = mob.DarkMobId;
+
+                var guardAI = new Mob(DependencyContainer.Instance.Resolve<ILogger<Mob>>(),
+                                      _databasePreloader,
+                                      guardId,
+                                      false,
+                                      new MoveArea(mob.PosX, mob.PosX, mob.PosY, mob.PosY, mob.PosZ, mob.PosZ),
+                                      Map);
+                Map.AddMob(guardAI);
+                Guards.Add(guardAI);
+                guardAI.OnDead += Guard_OnDead;
+            }
+        }
+
+        /// <summary>
+        /// Removes guards from map and clears their timers.
+        /// </summary>
+        private void ClearGuards()
+        {
+            foreach (var guard in Guards)
+            {
+                Map.RemoveMob(guard);
+                guard.OnDead -= Guard_OnDead;
+            }
+            foreach (var guardTimer in _guardRebirthTimers)
+            {
+                guardTimer.Timer.Stop();
+                guardTimer.Timer.Elapsed -= GuardRebirthTimer_Elapsed;
+            }
+
+            lock (_syncObjectGuardTimer)
+            {
+                _guardRebirthTimers.Clear();
+            }
+            Guards.Clear();
+        }
 
         #endregion
     }

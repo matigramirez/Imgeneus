@@ -410,6 +410,18 @@ namespace Imgeneus.World.Game.Zone
         }
 
         /// <summary>
+        /// Removes mob from cell.
+        /// </summary>
+        public void RemoveMob(Mob mob)
+        {
+            Mobs.TryRemove(mob.Id, out var removedMob);
+            RemoveListeners(removedMob);
+
+            foreach (var player in GetAllPlayers(true))
+                _packetHelper.SendMobLeave(player.Client, mob);
+        }
+
+        /// <summary>
         /// Tries to get mob from map.
         /// </summary>
         /// <param name="mobId">id of mob, that you are trying to get.</param>
@@ -473,7 +485,6 @@ namespace Imgeneus.World.Game.Zone
         {
             var mob = (Mob)sender;
             RemoveListeners(mob);
-            mob.Dispose();
             Mobs.TryRemove(mob.Id, out var removedMob);
 
             foreach (var player in GetAllPlayers(true))

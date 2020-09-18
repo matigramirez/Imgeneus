@@ -210,7 +210,7 @@ namespace Imgeneus.World.Game.Monster
         /// </summary>
         private void Mob_HP_Changed(IKillable mob, HitpointArgs hitpoints)
         {
-            if (hitpoints.NewValue < hitpoints.OldValue)
+            if (hitpoints.NewValue < hitpoints.OldValue && !IsDead)
             {
                 SelectActionBasedOnAI();
 

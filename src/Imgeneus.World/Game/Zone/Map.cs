@@ -343,15 +343,28 @@ namespace Imgeneus.World.Game.Zone
         }
 
         /// <summary>
-        /// Tries to add mob to map and notifies other players, that mob arrived.
+        /// Tries to add mob to map.
         /// </summary>
-        /// <returns>turue if mob was added, otherwise false</returns>
         public void AddMob(Mob mob)
         {
             Cells[GetCellIndex(mob)].AddMob(mob);
             //_logger.LogDebug($"Mob {mob.MobId} with global id {mob.Id} entered map {Id}");
 
             mob.OnDead += Mob_OnDead;
+        }
+
+        /// <summary>
+        /// Tries to remove mob from map.
+        /// </summary>
+        /// <param name="mob"></param>
+        public void RemoveMob(Mob mob)
+        {
+            Cells[GetCellIndex(mob)].RemoveMob(mob);
+
+            mob.OnDead -= Mob_OnDead;
+            mob.TimeToRebirth -= RebirthMob;
+
+            mob.Dispose();
         }
 
         /// <summary>
@@ -373,6 +386,9 @@ namespace Imgeneus.World.Game.Zone
         private void Mob_OnDead(IKillable sender, IKiller killer)
         {
             var mob = (Mob)sender;
+            mob.OnDead -= Mob_OnDead;
+            mob.Dispose();
+
             if (mob.ShouldRebirth)
                 mob.TimeToRebirth += RebirthMob;
         }
@@ -383,6 +399,8 @@ namespace Imgeneus.World.Game.Zone
         /// <param name="sender">rebirthed mob</param>
         public void RebirthMob(Mob sender)
         {
+            sender.TimeToRebirth -= RebirthMob;
+
             // Create mob clone, because we can not reuse the same id.
             var mob = sender.Clone();
 

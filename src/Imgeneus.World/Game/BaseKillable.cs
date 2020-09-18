@@ -103,7 +103,6 @@ namespace Imgeneus.World.Game
                 if (value > MaxHP)
                     value = MaxHP;
 
-                var args = new HitpointArgs(_currentHP, value);
                 _currentHP = value;
                 if (_currentHP <= 0)
                 {
@@ -114,7 +113,7 @@ namespace Imgeneus.World.Game
                 if (_currentHP == MaxHP)
                     DamageMakers.Clear();
 
-                HP_Changed?.Invoke(this, args);
+                HP_Changed?.Invoke(this, new HitpointArgs(_currentHP, value));
             }
         }
 

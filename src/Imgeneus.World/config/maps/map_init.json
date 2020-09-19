@@ -7,6 +7,14 @@
       "WeatherPower": "Light",
       "WeatherDuration": 30,
       "NoneWeatherDuration": 30
+    },
+    {
+      "MapId": 1,
+      "MapType": "Field",
+      "WeatherState": "Rain",
+      "WeatherPower": "Hard",
+      "WeatherDuration": 30,
+      "NoneWeatherDuration": 60
     }
   ]
 }

@@ -33,6 +33,9 @@
     <None Update="config\maps\0.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="config\maps\1.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="config\maps\map_init.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

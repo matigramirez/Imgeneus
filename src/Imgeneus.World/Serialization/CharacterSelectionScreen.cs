@@ -82,11 +82,11 @@ namespace Imgeneus.Network.Serialization
         [FieldOrder(23)]
         public byte[] EquipmentItemColor = new byte[523]; // bytes, that describe color. I couldn't find out how they are working.
 
-        [FieldOrder(24)]
+        [FieldOrder(24), FieldLength(21)]
         public string Name;
 
-        [FieldOrder(25)]
-        public bool IsDelete;
+        //[FieldOrder(25)]
+        //public byte[] CloakInfo = new byte[6];
 
         public CharacterSelectionScreen(DbCharacter character)
         {
@@ -106,6 +106,9 @@ namespace Imgeneus.Network.Serialization
             Intelligence = character.Intelligence;
             Wisdom = character.Wisdom;
             Luck = character.Luck;
+            HealthPoints = character.HealthPoints;
+            ManaPoints = character.ManaPoints;
+            StaminaPoints = character.StaminaPoints;
 
             var equipmentItems = character.Items.Where(item => item.Bag == 0);
             for (var i = 0; i < 17; i++)
@@ -126,7 +129,6 @@ namespace Imgeneus.Network.Serialization
             }
 
             Name = character.Name;
-            IsDelete = character.IsDelete;
         }
     }
 }

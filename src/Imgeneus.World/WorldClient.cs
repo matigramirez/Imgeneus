@@ -175,7 +175,9 @@ namespace Imgeneus.World
             { PacketType.FRIEND_RESPONSE, (s) => new FriendResponsePacket(s) },
             { PacketType.FRIEND_DELETE, (s) => new FriendDeletePacket(s) },
             { PacketType.PARTY_SEARCH_REGISTRATION, (s) => new PartySearchRegistrationPacket(s) },
-            { PacketType.PARTY_SEARCH_INVITE, (s) => new PartySearchInvitePacket(s) }
+            { PacketType.PARTY_SEARCH_INVITE, (s) => new PartySearchInvitePacket(s) },
+            { PacketType.GM_FIND_PLAYER, (s) => new GMFindPlayerPacket(s) },
+            { PacketType.GM_SUMMON_PLAYER, (s) => new GMSummonPlayerPacket(s) }
         };
 
         /// <inheritdoc />

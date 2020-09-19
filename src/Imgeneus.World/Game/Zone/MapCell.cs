@@ -63,18 +63,18 @@ namespace Imgeneus.World.Game.Zone
 
             foreach (var player in sendPlayerLeave)
             {
-                _packetHelper.SendCharacterLeftMap(player.Client, character);
-                _packetHelper.SendCharacterLeftMap(character.Client, player);
+                _packetHelper.SendCharacterLeave(player.Client, character);
+                _packetHelper.SendCharacterLeave(character.Client, player);
             }
 
             foreach (var player in sendPlayerEnter)
                 if (player.Id != character.Id)
                 {
                     // Notify players in this map, that new player arrived.
-                    _packetHelper.SendCharacterConnectedToMap(player.Client, character);
+                    _packetHelper.SendCharacterEnter(player.Client, character);
 
                     // Notify new player, about already loaded player.
-                    _packetHelper.SendCharacterConnectedToMap(character.Client, player);
+                    _packetHelper.SendCharacterEnter(character.Client, player);
                 }
 
             // Send update npcs.
@@ -170,17 +170,20 @@ namespace Imgeneus.World.Game.Zone
 
             if (notifyPlayers)
                 foreach (var player in GetAllPlayers(true))
-                    _packetHelper.SendCharacterLeftMap(player.Client, character);
+                    _packetHelper.SendCharacterLeave(player.Client, character);
         }
 
         /// <summary>
         /// Teleports player to new position.
         /// </summary>
-        public void TeleportPlayer(Character character, float X, float Z)
+        public void TeleportPlayer(Character character, float X, float Y, float Z)
         {
-            character.UpdatePosition(X, character.PosY, Z, character.Angle, true, true);
-            foreach (var p in Players)
-                _packetHelper.SendCharacterTeleport(p.Value.Client, character);
+            character.UpdatePosition(X, Y, Z, character.Angle, true, true);
+            _packetHelper.SendCharacterTeleport(character.Client, character);
+
+            foreach (var p in GetAllPlayers(true))
+                if (p != character)
+                    _packetHelper.SendCharacterTeleport(p.Client, character);
         }
 
         /// <summary>

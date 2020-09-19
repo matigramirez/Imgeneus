@@ -520,5 +520,26 @@ namespace Imgeneus.World.Packets
             packet.Write(new PartySearchList(partySearchers).Serialize());
             client.SendPacket(packet);
         }
+
+        internal void SendCharacterPosition(IWorldClient client, Character player)
+        {
+            using var packet = new Packet(PacketType.GM_FIND_PLAYER);
+            packet.Write(player.MapId);
+            packet.Write(player.PosX);
+            packet.Write(player.PosY);
+            packet.Write(player.PosZ);
+            client.SendPacket(packet);
+        }
+
+        internal void SendGmSummon(IWorldClient client, Character player)
+        {
+            using var packet = new Packet(PacketType.GM_SUMMON_PLAYER);
+            packet.Write(player.Id);
+            packet.Write(player.MapId);
+            packet.Write(player.PosX);
+            packet.Write(player.PosY);
+            packet.Write(player.PosZ);
+            client.SendPacket(packet);
+        }
     }
 }

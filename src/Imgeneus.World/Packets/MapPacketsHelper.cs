@@ -17,7 +17,7 @@ namespace Imgeneus.World.Packets
     /// </summary>
     internal class MapPacketsHelper
     {
-        internal void SendCharacterLeftMap(IWorldClient client, Character removedCharacter)
+        internal void SendCharacterLeave(IWorldClient client, Character removedCharacter)
         {
             using var packet = new Packet(PacketType.CHARACTER_LEFT_MAP);
             packet.Write(removedCharacter.Id);
@@ -62,7 +62,7 @@ namespace Imgeneus.World.Packets
             packet.Dispose();
         }
 
-        internal void SendCharacterConnectedToMap(IWorldClient client, Character character)
+        internal void SendCharacterEnter(IWorldClient client, Character character)
         {
             using var packet0 = new Packet(PacketType.CHARACTER_ENTERED_MAP);
             packet0.Write(new CharacterEnteredMap(character).Serialize());

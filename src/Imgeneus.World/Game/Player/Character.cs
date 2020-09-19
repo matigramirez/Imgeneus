@@ -671,13 +671,12 @@ namespace Imgeneus.World.Game.Player
         /// <param name="y">new y</param>
         /// <param name="z">new z</param>
         /// <param name="saveChangesToDB">set it to true, if this change should be saved to database</param>
-        /// <param name="silent">if set to true, no notification is sent</param>
-        public void UpdatePosition(float x, float y, float z, ushort angle, bool saveChangesToDB, bool silent = false)
+        /// <param name="isTeleport">if set to true, indicates, that character is teleporting, no notification is sent<</param>
+        public void UpdatePosition(float x, float y, float z, ushort angle, bool saveChangesToDB, bool isTeleport = false)
         {
-            if (ActiveBuffs.Any(b => b.StateType == StateType.Immobilize || b.StateType == StateType.Sleep || b.StateType == StateType.Stun))
+            if (ActiveBuffs.Any(b => b.StateType == StateType.Immobilize || b.StateType == StateType.Sleep || b.StateType == StateType.Stun) && !isTeleport)
             {
-                if (!silent)
-                    OnPositionChanged?.Invoke(this);
+                OnPositionChanged?.Invoke(this);
                 return;
             }
 

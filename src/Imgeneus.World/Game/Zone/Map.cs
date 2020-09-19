@@ -244,6 +244,7 @@ namespace Imgeneus.World.Game.Zone
             if (success)
             {
                 Cells[GetCellIndex(character)].RemovePlayer(character, true);
+                UnregisterSearchForParty(character);
                 character.OnPositionChanged -= Character_OnPositionChanged;
                 _logger.LogDebug($"Player {character.Id} left map {Id}");
             }
@@ -256,8 +257,9 @@ namespace Imgeneus.World.Game.Zone
         /// </summary>
         /// <param name="playerId">Id of player</param>
         /// <param name="X">new X position</param>
+        /// <param name="Y">new Y position</param>
         /// <param name="Z">new Z position</param>
-        public void TeleportPlayer(int playerId, float X, float Z)
+        public void TeleportPlayer(int playerId, float X, float Y, float Z)
         {
             if (!Players.ContainsKey(playerId))
             {
@@ -265,7 +267,7 @@ namespace Imgeneus.World.Game.Zone
             }
 
             var player = Players[playerId];
-            Cells[GetCellIndex(player)].TeleportPlayer(player, X, Z);
+            Cells[GetCellIndex(player)].TeleportPlayer(player, X, Y, Z);
         }
 
         /// <summary>

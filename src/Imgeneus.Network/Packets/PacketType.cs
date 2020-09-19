@@ -112,7 +112,9 @@
         GM_TELEPORT = 0xFA0A, // 64010
         GM_CMD_ERROR = 0xF501, // -2815
         GM_CREATE_NPC = 0xF70C, // 63244, -2292
-        GM_REMOVE_NPC = 0xF70D, // 63245, -2291
+        GM_REMOVE_NPC = 0xF70D, // 63245, -2291FA
+        GM_FIND_PLAYER = 0xFA08, // 64008, -1528
+        GM_SUMMON_PLAYER = 0xF904, //63748
 
         // Map
         CHARACTER_ENTERED_MAP = 0x0201, // 513

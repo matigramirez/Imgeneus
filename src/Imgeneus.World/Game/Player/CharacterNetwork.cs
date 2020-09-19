@@ -303,7 +303,7 @@ namespace Imgeneus.World.Game.Player
                         _gameWorld.LoadPlayerInMap(Id);
                     }
                     _packetsHelper.SendGmCommandSuccess(Client);
-                    Map.TeleportPlayer(Id, gMMovePacket.X, gMMovePacket.Z);
+                    Map.TeleportPlayer(Id, gMMovePacket.X, PosY, gMMovePacket.Z);
                     _packetsHelper.SendGmTeleport(Client, this);
                     break;
 
@@ -331,6 +331,20 @@ namespace Imgeneus.World.Game.Player
                         return;
                     Map.RemoveNPC(CellId, gMRemoveNpcPacket.Type, gMRemoveNpcPacket.TypeId, gMRemoveNpcPacket.Count);
                     _packetsHelper.SendGmCommandSuccess(Client);
+                    break;
+
+                case GMFindPlayerPacket gMFindPlayerPacket:
+                    if (!IsAdmin)
+                        return;
+
+                    HandleFindPlayerPacket(gMFindPlayerPacket.Name);
+                    break;
+
+                case GMSummonPlayerPacket gMSummonPlayerPacket:
+                    if (!IsAdmin)
+                        return;
+
+                    HandleSummonPlayer(gMSummonPlayerPacket.Name);
                     break;
             }
         }
@@ -523,6 +537,32 @@ namespace Imgeneus.World.Game.Player
             var searchers = Map.PartySearchers.Where(s => s.Country == Country && s != this);
             if (searchers.Any())
                 _packetsHelper.SendPartySearchList(Client, searchers.Take(30));
+        }
+
+        private void HandleSummonPlayer(string playerName)
+        {
+            var player = _gameWorld.Players.Values.FirstOrDefault(p => p.Name == playerName);
+
+            if (player is null)
+                _packetsHelper.SendGmCommandError(Client, PacketType.GM_SUMMON_PLAYER);
+            else
+            {
+                _packetsHelper.SendGmCommandSuccess(Client);
+                Map.TeleportPlayer(player.Id, PosX, PosY, PosZ);
+                _packetsHelper.SendGmSummon(player.Client, player);
+            }
+        }
+
+        private void HandleFindPlayerPacket(string playerName)
+        {
+            var player = _gameWorld.Players.Values.FirstOrDefault(p => p.Name == playerName);
+            if (player is null)
+                _packetsHelper.SendGmCommandError(Client, PacketType.GM_FIND_PLAYER);
+            else
+            {
+                _packetsHelper.SendGmCommandSuccess(Client);
+                _packetsHelper.SendCharacterPosition(Client, player);
+            }
         }
 
         #endregion

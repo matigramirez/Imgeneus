@@ -151,6 +151,7 @@
         PARTY_KICK = 0x0B06, // 2822
         PARTY_CHANGE_LEADER = 0x0B07, // 2823
         PARTY_MEMBER_GET_ITEM = 0x0B08, // 2824
+        PARTY_SEARCH_INVITE = 0x0B09, // 2825
         PARTY_CHARACTER_SP_MP = 0x0C01, // 3073
         PARTY_SET_MAX = 0x0C02, // 3074
         PARTY_ADDED_BUFF = 0x0C04, // 3076
@@ -228,6 +229,8 @@
         FRIEND_DELETE = 0x2205, // 8709
         FRIEND_ONLINE = 0x2207, // 8711
 
-        PARTY_SEARCH = 0x220C, // 8716
+        // Party search
+        PARTY_SEARCH_REGISTRATION = 0x220C, // 8716
+        PARTY_SEARCH_LIST = 0x220D, // 8717
     }
 }

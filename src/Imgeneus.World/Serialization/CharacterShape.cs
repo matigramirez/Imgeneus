@@ -65,7 +65,7 @@ namespace Imgeneus.World.Serialization
         public byte[] UnknownBytes { get; } = new byte[459];
 
         [FieldOrder(18)]
-        public byte[] Name = new byte[21];
+        public byte[] Name;
 
         [FieldOrder(19)]
         public byte[] Dummy = new byte[31]; // Probably guild name... Or I'm out of ideas.
@@ -84,11 +84,7 @@ namespace Imgeneus.World.Serialization
             Gender = character.Gender;
             Mode = character.Mode;
             Kills = character.Kills;
-            var chars = character.Name.ToCharArray(0, character.Name.Length);
-            for (var i = 0; i < chars.Length; i++)
-            {
-                Name[i] = (byte)chars[i];
-            }
+            Name = character.NameAsByteArray;
 
             var equipmentItems = character.InventoryItems.Where(item => item.Bag == 0).ToList();
             var equipmentBytes = new List<byte>();

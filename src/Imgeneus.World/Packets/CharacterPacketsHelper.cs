@@ -506,5 +506,19 @@ namespace Imgeneus.World.Packets
             packet.Write((byte)obelisk.ObeliskCountry);
             client.SendPacket(packet);
         }
+
+        internal void SendRegisteredInPartySearch(IWorldClient client, bool isSuccess)
+        {
+            using var packet = new Packet(PacketType.PARTY_SEARCH_REGISTRATION);
+            packet.Write(isSuccess);
+            client.SendPacket(packet);
+        }
+
+        internal void SendPartySearchList(IWorldClient client, IEnumerable<Character> partySearchers)
+        {
+            using var packet = new Packet(PacketType.PARTY_SEARCH_LIST);
+            packet.Write(new PartySearchList(partySearchers).Serialize());
+            client.SendPacket(packet);
+        }
     }
 }

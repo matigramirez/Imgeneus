@@ -322,6 +322,39 @@ namespace Imgeneus.World.Game.Zone
             return (x, y, z);
         }
 
+        #region Party search
+
+        /// <summary>
+        /// Collection of players, that are looking for party.
+        /// </summary>
+        public List<Character> PartySearchers { get; private set; } = new List<Character>();
+
+        private object _partySearchSync = new object();
+
+        /// <summary>
+        /// Registers player is party searchers.
+        /// </summary>
+        public void RegisterSearchForParty(Character character)
+        {
+            lock (_partySearchSync)
+            {
+                PartySearchers.Add(character);
+            }
+        }
+
+        /// <summary>
+        /// Removes player from party searchers.
+        /// </summary>
+        public void UnregisterSearchForParty(Character character)
+        {
+            lock (_partySearchSync)
+            {
+                PartySearchers.Remove(character);
+            }
+        }
+
+        #endregion
+
         #endregion
 
         #region Mobs

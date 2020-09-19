@@ -173,7 +173,9 @@ namespace Imgeneus.World
             { PacketType.CHANGE_APPEARANCE, (s) => new ChangeAppearancePacket(s) },
             { PacketType.FRIEND_REQUEST, (s) => new FriendRequestPacket(s) },
             { PacketType.FRIEND_RESPONSE, (s) => new FriendResponsePacket(s) },
-            { PacketType.FRIEND_DELETE, (s) => new FriendDeletePacket(s) }
+            { PacketType.FRIEND_DELETE, (s) => new FriendDeletePacket(s) },
+            { PacketType.PARTY_SEARCH_REGISTRATION, (s) => new PartySearchRegistrationPacket(s) },
+            { PacketType.PARTY_SEARCH_INVITE, (s) => new PartySearchInvitePacket(s) }
         };
 
         /// <inheritdoc />

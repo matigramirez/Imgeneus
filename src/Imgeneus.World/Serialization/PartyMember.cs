@@ -13,7 +13,7 @@ namespace Imgeneus.World.Serialization
         public int CharacterId;
 
         [FieldOrder(1)]
-        public byte[] Name = new byte[21];
+        public byte[] Name;
 
         [FieldOrder(2)]
         public ushort Level;
@@ -73,12 +73,7 @@ namespace Imgeneus.World.Serialization
             X = character.PosX;
             Y = character.PosY;
             Z = character.PosZ;
-
-            var chars = character.Name.ToCharArray(0, character.Name.Length);
-            for (var i = 0; i < chars.Length; i++)
-            {
-                Name[i] = (byte)chars[i];
-            }
+            Name = character.NameAsByteArray;
 
             foreach (var buff in character.ActiveBuffs.ToList())
             {

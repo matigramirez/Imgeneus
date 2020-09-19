@@ -35,11 +35,7 @@ namespace Imgeneus.World.Game.PartyAndRaid
             switch (packet)
             {
                 case PartyRequestPacket partyRequestPacket:
-                    if (_gameWorld.Players.TryGetValue(partyRequestPacket.CharacterId, out var requestedPlayer))
-                    {
-                        requestedPlayer.PartyInviterId = worldSender.CharID;
-                        SendPartyRequest(requestedPlayer.Client, worldSender.CharID);
-                    }
+                    RequestParty(worldSender.CharID, partyRequestPacket.CharacterId);
                     break;
 
                 case PartyResponsePacket responsePartyPacket:
@@ -96,6 +92,12 @@ namespace Imgeneus.World.Game.PartyAndRaid
                     var newLeader = _player.Party.Members.FirstOrDefault(m => m.Id == changeLeaderPacket.CharacterId);
                     if (newLeader != null)
                         _player.Party.Leader = newLeader;
+                    break;
+
+                case PartySearchInvitePacket partySearchInvitePacket:
+                    var requestedPlayer = _player.Map.PartySearchers.FirstOrDefault(p => p.Name == partySearchInvitePacket.Name);
+                    if (requestedPlayer != null && requestedPlayer.Party is null)
+                        RequestParty(worldSender.CharID, requestedPlayer.Id);
                     break;
 
                 case RaidCreatePacket raidCreatePacket:
@@ -199,6 +201,15 @@ namespace Imgeneus.World.Game.PartyAndRaid
                         return;
                     (_player.Party as Raid).MoveCharacter(raidMovePlayerPacket.SourceIndex, raidMovePlayerPacket.DestinationIndex);
                     break;
+            }
+        }
+
+        private void RequestParty(int requesterId, int requestedId)
+        {
+            if (_gameWorld.Players.TryGetValue(requestedId, out var requestedPlayer))
+            {
+                requestedPlayer.PartyInviterId = requesterId;
+                SendPartyRequest(requestedPlayer.Client, requesterId);
             }
         }
 

@@ -138,6 +138,25 @@ namespace Imgeneus.World.Game.Player
         public ushort Defeats { get; set; }
         public bool IsAdmin { get; set; }
 
+        private byte[] _nameAsByteArray;
+        public byte[] NameAsByteArray
+        {
+            get
+            {
+                if (_nameAsByteArray is null)
+                {
+                    _nameAsByteArray = new byte[21];
+
+                    var chars = Name.ToCharArray(0, Name.Length);
+                    for (var i = 0; i < chars.Length; i++)
+                    {
+                        _nameAsByteArray[i] = (byte)chars[i];
+                    }
+                }
+                return _nameAsByteArray;
+            }
+        }
+
         #endregion
 
         #region Total stats
@@ -846,6 +865,7 @@ namespace Imgeneus.World.Game.Player
                             _packetsHelper.SendRaidInfo(Client, Party as Raid);
                     }
                     _party.OnLeaderChanged += Party_OnLeaderChanged;
+                    Map.UnregisterSearchForParty(this);
                 }
             }
 

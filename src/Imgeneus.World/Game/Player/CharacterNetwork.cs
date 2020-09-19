@@ -279,6 +279,10 @@ namespace Imgeneus.World.Game.Player
                     Rebirth(spawnCoordinate.X, spawnCoordinate.Y, spawnCoordinate.Z);
                     break;
 
+                case PartySearchRegistrationPacket searchPartyPacket:
+                    HandleSearchParty();
+                    break;
+
                 case GMCreateMobPacket gMCreateMobPacket:
                     if (!IsAdmin)
                         return;
@@ -506,6 +510,19 @@ namespace Imgeneus.World.Game.Player
                 return;
 
             character.RequestFriendship(this);
+        }
+
+        private void HandleSearchParty()
+        {
+            if (Party != null)
+                return;
+
+            Map.RegisterSearchForParty(this);
+            _packetsHelper.SendRegisteredInPartySearch(Client, true);
+
+            var searchers = Map.PartySearchers.Where(s => s.Country == Country && s != this);
+            if (searchers.Any())
+                _packetsHelper.SendPartySearchList(Client, searchers.Take(30));
         }
 
         #endregion

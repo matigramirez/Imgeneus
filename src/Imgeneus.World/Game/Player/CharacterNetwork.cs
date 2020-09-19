@@ -294,7 +294,7 @@ namespace Imgeneus.World.Game.Player
                     _packetsHelper.SendGmCommandSuccess(Client);
                     break;
 
-                case GMTeleportPacket gMMovePacket:
+                case GMTeleportMapPacket gMMovePacket:
                     if (!IsAdmin)
                         return;
                     if (Map.Id != gMMovePacket.MapId && _gameWorld.Maps.ContainsKey(gMMovePacket.MapId))
@@ -334,17 +334,15 @@ namespace Imgeneus.World.Game.Player
                     break;
 
                 case GMFindPlayerPacket gMFindPlayerPacket:
-                    if (!IsAdmin)
-                        return;
-
                     HandleFindPlayerPacket(gMFindPlayerPacket.Name);
                     break;
 
                 case GMSummonPlayerPacket gMSummonPlayerPacket:
-                    if (!IsAdmin)
-                        return;
-
                     HandleSummonPlayer(gMSummonPlayerPacket.Name);
+                    break;
+
+                case GMTeleportToPlayerPacket gMTeleportToPlayerPacket:
+                    HandleTeleportToPlayer(gMTeleportToPlayerPacket.Name);
                     break;
             }
         }
@@ -541,6 +539,9 @@ namespace Imgeneus.World.Game.Player
 
         private void HandleSummonPlayer(string playerName)
         {
+            if (!IsAdmin)
+                return;
+
             var player = _gameWorld.Players.Values.FirstOrDefault(p => p.Name == playerName);
 
             if (player is null)
@@ -555,6 +556,9 @@ namespace Imgeneus.World.Game.Player
 
         private void HandleFindPlayerPacket(string playerName)
         {
+            if (!IsAdmin)
+                return;
+
             var player = _gameWorld.Players.Values.FirstOrDefault(p => p.Name == playerName);
             if (player is null)
                 _packetsHelper.SendGmCommandError(Client, PacketType.GM_FIND_PLAYER);
@@ -562,6 +566,22 @@ namespace Imgeneus.World.Game.Player
             {
                 _packetsHelper.SendGmCommandSuccess(Client);
                 _packetsHelper.SendCharacterPosition(Client, player);
+            }
+        }
+
+        private void HandleTeleportToPlayer(string playerName)
+        {
+            if (!IsAdmin)
+                return;
+
+            var player = _gameWorld.Players.Values.FirstOrDefault(p => p.Name == playerName);
+            if (player is null)
+                _packetsHelper.SendGmCommandError(Client, PacketType.GM_TELEPORT_TO_PLAYER);
+            else
+            {
+                _packetsHelper.SendGmCommandSuccess(Client);
+                Map.TeleportPlayer(Id, player.PosX, player.PosY, player.PosZ);
+                _packetsHelper.SendGmTeleportToPlayer(Client, player);
             }
         }
 

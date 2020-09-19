@@ -162,7 +162,7 @@ namespace Imgeneus.World
             { PacketType.RAID_CHANGE_SUBLEADER, (s) => new RaidChangeSubLeaderPacket(s) },
             { PacketType.RAID_KICK, (s) => new RaidKickPacket(s) },
             { PacketType.RAID_MOVE_PLAYER, (s) => new RaidMovePlayerPacket(s) },
-            { PacketType.GM_TELEPORT, (s) => new GMTeleportPacket(s) },
+            { PacketType.GM_TELEPORT_MAP, (s) => new GMTeleportMapPacket(s) },
             { PacketType.GM_CREATE_NPC, (s) => new GMCreateNpcPacket(s) },
             { PacketType.GM_REMOVE_NPC, (s) => new GMRemoveNpcPacket(s) },
             { PacketType.NPC_BUY_ITEM, (s) => new NpcBuyItemPacket(s) },
@@ -177,7 +177,8 @@ namespace Imgeneus.World
             { PacketType.PARTY_SEARCH_REGISTRATION, (s) => new PartySearchRegistrationPacket(s) },
             { PacketType.PARTY_SEARCH_INVITE, (s) => new PartySearchInvitePacket(s) },
             { PacketType.GM_FIND_PLAYER, (s) => new GMFindPlayerPacket(s) },
-            { PacketType.GM_SUMMON_PLAYER, (s) => new GMSummonPlayerPacket(s) }
+            { PacketType.GM_SUMMON_PLAYER, (s) => new GMSummonPlayerPacket(s) },
+            { PacketType.GM_TELEPORT_TO_PLAYER, (s) => new GMTeleportToPlayerPacket(s) }
         };
 
         /// <inheritdoc />

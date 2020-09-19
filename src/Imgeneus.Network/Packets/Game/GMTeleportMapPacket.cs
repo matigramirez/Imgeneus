@@ -2,7 +2,7 @@
 
 namespace Imgeneus.Network.Packets.Game
 {
-    public struct GMTeleportPacket : IDeserializedPacket
+    public struct GMTeleportMapPacket : IDeserializedPacket
     {
         public float X;
 
@@ -10,7 +10,7 @@ namespace Imgeneus.Network.Packets.Game
 
         public ushort MapId;
 
-        public GMTeleportPacket(IPacketStream packet)
+        public GMTeleportMapPacket(IPacketStream packet)
         {
             X = packet.Read<float>();
             Z = packet.Read<float>();

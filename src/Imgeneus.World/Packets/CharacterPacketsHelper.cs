@@ -272,7 +272,7 @@ namespace Imgeneus.World.Packets
 
         internal void SendGmTeleport(IWorldClient client, Character character)
         {
-            using var packet = new Packet(PacketType.GM_TELEPORT);
+            using var packet = new Packet(PacketType.GM_TELEPORT_MAP);
             packet.Write(character.Id);
             packet.Write(character.Map.Id);
             packet.Write(character.PosX);
@@ -534,6 +534,17 @@ namespace Imgeneus.World.Packets
         internal void SendGmSummon(IWorldClient client, Character player)
         {
             using var packet = new Packet(PacketType.GM_SUMMON_PLAYER);
+            packet.Write(player.Id);
+            packet.Write(player.MapId);
+            packet.Write(player.PosX);
+            packet.Write(player.PosY);
+            packet.Write(player.PosZ);
+            client.SendPacket(packet);
+        }
+
+        internal void SendGmTeleportToPlayer(IWorldClient client, Character player)
+        {
+            using var packet = new Packet(PacketType.GM_TELEPORT_TO_PLAYER);
             packet.Write(player.Id);
             packet.Write(player.MapId);
             packet.Write(player.PosX);

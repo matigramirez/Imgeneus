@@ -1,5 +1,6 @@
 ﻿using Imgeneus.World.Game.PartyAndRaid;
 using Imgeneus.World.Game.Player;
+using Imgeneus.World.Game.Zone;
 using System.Collections.Generic;
 using System.ComponentModel;
 using Xunit;
@@ -8,18 +9,27 @@ namespace Imgeneus.World.Tests.PartyTests
 {
     public class PartyTest : BaseTest
     {
+        private Map _map;
+
+        public PartyTest()
+        {
+            _map = testMap;
+        }
+
         [Fact]
         [Description("First player, that connected party is its' leader.")]
         public void Party_Leader()
         {
             var character1 = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object)
             {
-                Name = "Character1"
+                Name = "Character1",
+                Map = _map
             };
             character1.Client = worldClientMock.Object;
             var character2 = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object)
             {
-                Name = "Character2"
+                Name = "Character2",
+                Map = _map
             };
             character2.Client = worldClientMock.Object;
             Assert.False(character1.IsPartyLead);
@@ -38,12 +48,14 @@ namespace Imgeneus.World.Tests.PartyTests
         {
             var character1 = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object)
             {
-                Name = "Character1"
+                Name = "Character1",
+                Map = _map
             };
             character1.Client = worldClientMock.Object;
             var character2 = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object)
             {
-                Name = "Character2"
+                Name = "Character2",
+                Map = _map
             };
             character2.Client = worldClientMock.Object;
 

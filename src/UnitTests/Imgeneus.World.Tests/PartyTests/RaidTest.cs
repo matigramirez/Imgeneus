@@ -1,5 +1,6 @@
 ﻿using Imgeneus.World.Game.PartyAndRaid;
 using Imgeneus.World.Game.Player;
+using Imgeneus.World.Game.Zone;
 using System.Collections.Generic;
 using System.ComponentModel;
 using Xunit;
@@ -8,18 +9,27 @@ namespace Imgeneus.World.Tests.PartyTests
 {
     public class RaidTest : BaseTest
     {
+        private Map _map;
+
+        public RaidTest()
+        {
+            _map = testMap;
+        }
+
         [Fact]
         [Description("First player, that connected raid is its' leader. Second - subleader.")]
         public void Raid_Leader()
         {
             var character1 = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object)
             {
-                Name = "Character1"
+                Name = "Character1",
+                Map = _map
             };
             character1.Client = worldClientMock.Object;
             var character2 = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object)
             {
-                Name = "Character2"
+                Name = "Character2",
+                Map = _map
             };
             character2.Client = worldClientMock.Object;
             Assert.False(character1.IsPartyLead);
@@ -41,12 +51,14 @@ namespace Imgeneus.World.Tests.PartyTests
         {
             var character1 = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object)
             {
-                Name = "Character1"
+                Name = "Character1",
+                Map = _map
             };
             character1.Client = worldClientMock.Object;
             var character2 = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object)
             {
-                Name = "Character2"
+                Name = "Character2",
+                Map = _map
             };
             character2.Client = worldClientMock.Object;
 
@@ -70,12 +82,14 @@ namespace Imgeneus.World.Tests.PartyTests
         {
             var character1 = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object)
             {
-                Name = "Character1"
+                Name = "Character1",
+                Map = _map
             };
             character1.Client = worldClientMock.Object;
             var character2 = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object)
             {
-                Name = "Character2"
+                Name = "Character2",
+                Map = _map
             };
             character2.Client = worldClientMock.Object;
 
@@ -104,12 +118,14 @@ namespace Imgeneus.World.Tests.PartyTests
         {
             var character1 = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object)
             {
-                Name = "Character1"
+                Name = "Character1",
+                Map = _map
             };
             character1.Client = worldClientMock.Object;
             var character2 = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object)
             {
-                Name = "Character2"
+                Name = "Character2",
+                Map = _map
             };
             character2.Client = worldClientMock.Object;
 
@@ -139,17 +155,20 @@ namespace Imgeneus.World.Tests.PartyTests
         {
             var character1 = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object)
             {
-                Name = "Character1"
+                Name = "Character1",
+                Map = _map
             };
             character1.Client = worldClientMock.Object;
             var character2 = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object)
             {
-                Name = "Character2"
+                Name = "Character2",
+                Map = _map
             };
             character2.Client = worldClientMock.Object;
             var character3 = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object)
             {
-                Name = "Character3"
+                Name = "Character3",
+                Map = _map
             };
             character3.Client = worldClientMock.Object;
 
@@ -181,17 +200,20 @@ namespace Imgeneus.World.Tests.PartyTests
         {
             var character1 = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object)
             {
-                Name = "Character1"
+                Name = "Character1",
+                Map = _map
             };
             character1.Client = worldClientMock.Object;
             var character2 = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object)
             {
-                Name = "Character2"
+                Name = "Character2",
+                Map = _map
             };
             character2.Client = worldClientMock.Object;
             var character3 = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object)
             {
-                Name = "Character3"
+                Name = "Character3",
+                Map = _map
             };
             character3.Client = worldClientMock.Object;
 
@@ -215,12 +237,14 @@ namespace Imgeneus.World.Tests.PartyTests
         {
             var character1 = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object)
             {
-                Name = "Character1"
+                Name = "Character1",
+                Map = _map
             };
             character1.Client = worldClientMock.Object;
             var character2 = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object)
             {
-                Name = "Character2"
+                Name = "Character2",
+                Map = _map
             };
             character2.Client = worldClientMock.Object;
 
@@ -250,17 +274,20 @@ namespace Imgeneus.World.Tests.PartyTests
         {
             var character1 = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object)
             {
-                Name = "Character1"
+                Name = "Character1",
+                Map = _map
             };
             character1.Client = worldClientMock.Object;
             var character2 = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object)
             {
-                Name = "Character2"
+                Name = "Character2",
+                Map = _map
             };
             character2.Client = worldClientMock.Object;
             var character3 = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object)
             {
-                Name = "Character3"
+                Name = "Character3",
+                Map = testMap
             };
             character3.Client = worldClientMock.Object;
 

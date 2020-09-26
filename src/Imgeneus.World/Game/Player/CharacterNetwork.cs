@@ -297,13 +297,14 @@ namespace Imgeneus.World.Game.Player
                 case GMTeleportMapPacket gMMovePacket:
                     if (!IsAdmin)
                         return;
-                    if (Map.Id != gMMovePacket.MapId && _gameWorld.Maps.ContainsKey(gMMovePacket.MapId))
+
+                    if (!_gameWorld.Maps.ContainsKey(gMMovePacket.MapId))
                     {
-                        Map.UnloadPlayer(this);
-                        _gameWorld.LoadPlayerInMap(Id);
+                        _packetsHelper.SendGmCommandError(Client, PacketType.GM_TELEPORT_MAP);
+                        return;
                     }
+                    Teleport(gMMovePacket.MapId, gMMovePacket.X, PosY, gMMovePacket.Z);
                     _packetsHelper.SendGmCommandSuccess(Client);
-                    Map.TeleportPlayer(Id, gMMovePacket.X, PosY, gMMovePacket.Z);
                     _packetsHelper.SendGmTeleport(Client, this);
                     break;
 
@@ -501,7 +502,13 @@ namespace Imgeneus.World.Game.Player
 
         private void HandleCharacterShape(int characterId)
         {
-            var character = Map.GetPlayer(characterId);
+            var character = _gameWorld.Players[characterId];
+            if (character is null)
+            {
+                _logger.LogWarning($"Trying to get player {characterId}, that is not presented in game world.");
+                return;
+            }
+
             _packetsHelper.SendCharacterShape(Client, character);
         }
 
@@ -537,7 +544,7 @@ namespace Imgeneus.World.Game.Player
                 _packetsHelper.SendPartySearchList(Client, searchers.Take(30));
         }
 
-        private void HandleSummonPlayer(string playerName)
+        private async void HandleSummonPlayer(string playerName)
         {
             if (!IsAdmin)
                 return;
@@ -548,9 +555,12 @@ namespace Imgeneus.World.Game.Player
                 _packetsHelper.SendGmCommandError(Client, PacketType.GM_SUMMON_PLAYER);
             else
             {
+                player.Teleport(MapId, PosX, PosY, PosZ);
+
                 _packetsHelper.SendGmCommandSuccess(Client);
-                Map.TeleportPlayer(player.Id, PosX, PosY, PosZ);
                 _packetsHelper.SendGmSummon(player.Client, player);
+                await Task.Delay(100);
+                _packetsHelper.SendCharacterTeleport(player.Client, player);
             }
         }
 
@@ -579,8 +589,10 @@ namespace Imgeneus.World.Game.Player
                 _packetsHelper.SendGmCommandError(Client, PacketType.GM_TELEPORT_TO_PLAYER);
             else
             {
+                Teleport(player.MapId, player.PosX, player.PosY, player.PosZ);
+
                 _packetsHelper.SendGmCommandSuccess(Client);
-                Map.TeleportPlayer(Id, player.PosX, player.PosY, player.PosZ);
+                _packetsHelper.SendCharacterTeleport(Client, this);
                 _packetsHelper.SendGmTeleportToPlayer(Client, player);
             }
         }
@@ -676,6 +688,8 @@ namespace Imgeneus.World.Game.Player
         public void SendObelisks() => _packetsHelper.SendObelisks(Client, Map.Obelisks.Values);
 
         public void SendObeliskBroken(Obelisk obelisk) => _packetsHelper.SendObeliskBroken(Client, obelisk);
+
+        public void SendCharacterTeleport() => _packetsHelper.SendCharacterTeleport(Client, this);
 
         private void TargetChanged(IKillable target)
         {

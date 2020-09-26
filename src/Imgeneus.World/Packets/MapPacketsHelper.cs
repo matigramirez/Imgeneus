@@ -204,7 +204,7 @@ namespace Imgeneus.World.Packets
         {
             using var packet = new Packet(PacketType.CHARACTER_MAP_TELEPORT);
             packet.Write(player.Id);
-            packet.Write(player.Map.Id);
+            packet.Write(player.MapId);
             packet.Write(player.PosX);
             packet.Write(player.PosY);
             packet.Write(player.PosZ);

@@ -293,5 +293,18 @@ namespace Imgeneus.DatabaseBackgroundService.Handlers
             await database.SaveChangesAsync();
         }
 
+        [ActionHandler(ActionType.SAVE_MAP_ID)]
+        internal static async Task SaveMapId(object[] args)
+        {
+            int charId = (int)args[0];
+            ushort mapId = (ushort)args[1];
+
+            using var database = DependencyContainer.Instance.Resolve<IDatabase>();
+            var player = database.Characters.Find(charId);
+            player.Map = mapId;
+
+            await database.SaveChangesAsync();
+        }
+
     }
 }

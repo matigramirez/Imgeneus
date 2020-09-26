@@ -15,6 +15,10 @@
       "WeatherPower": "Hard",
       "WeatherDuration": 30,
       "NoneWeatherDuration": 60
+    },
+    {
+      "MapId": 35,
+      "MapType": "Field"
     }
   ]
 }

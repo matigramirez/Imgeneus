@@ -115,7 +115,7 @@ namespace Imgeneus.World.Game.Player
 
         public string Name { get; set; }
         public Fraction Country { get; set; }
-        public ushort MapId { get; set; }
+        public ushort MapId { get; private set; }
         public Race Race { get; set; }
         public CharacterProfession Class { get; set; }
         public Mode Mode { get; set; }
@@ -671,10 +671,9 @@ namespace Imgeneus.World.Game.Player
         /// <param name="y">new y</param>
         /// <param name="z">new z</param>
         /// <param name="saveChangesToDB">set it to true, if this change should be saved to database</param>
-        /// <param name="isTeleport">if set to true, indicates, that character is teleporting, no notification is sent<</param>
-        public void UpdatePosition(float x, float y, float z, ushort angle, bool saveChangesToDB, bool isTeleport = false)
+        private void UpdatePosition(float x, float y, float z, ushort angle, bool saveChangesToDB)
         {
-            if (ActiveBuffs.Any(b => b.StateType == StateType.Immobilize || b.StateType == StateType.Sleep || b.StateType == StateType.Stun) && !isTeleport)
+            if (ActiveBuffs.Any(b => b.StateType == StateType.Immobilize || b.StateType == StateType.Sleep || b.StateType == StateType.Stun))
             {
                 OnPositionChanged?.Invoke(this);
                 return;

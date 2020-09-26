@@ -176,11 +176,8 @@ namespace Imgeneus.World.Game.Zone
         /// <summary>
         /// Teleports player to new position.
         /// </summary>
-        public void TeleportPlayer(Character character, float X, float Y, float Z)
+        public void TeleportPlayer(Character character)
         {
-            character.UpdatePosition(X, Y, Z, character.Angle, true, true);
-            _packetHelper.SendCharacterTeleport(character.Client, character);
-
             foreach (var p in GetAllPlayers(true))
                 if (p != character)
                     _packetHelper.SendCharacterTeleport(p.Client, character);
@@ -192,7 +189,7 @@ namespace Imgeneus.World.Game.Zone
         private void AddListeners(Character character)
         {
             // Map with id is test map.
-            if (character.Map.Id == Map.TEST_MAP_ID)
+            if (character.MapId == Map.TEST_MAP_ID)
                 return;
             character.OnPositionChanged += Character_OnPositionChanged;
             character.OnMotion += Character_OnMotion;

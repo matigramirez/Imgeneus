@@ -7,6 +7,7 @@ using Imgeneus.World.Game.NPCs;
 using Imgeneus.World.Game.Player;
 using Imgeneus.World.Game.Zone.MapConfig;
 using Imgeneus.World.Game.Zone.Obelisks;
+using Imgeneus.World.Game.Zone.Portals;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Concurrent;
@@ -66,6 +67,7 @@ namespace Imgeneus.World.Game.Zone
             InitNPCs();
             InitMobs();
             InitObelisks();
+            InitPortals();
         }
 
         #endregion
@@ -246,6 +248,8 @@ namespace Imgeneus.World.Game.Zone
                 Cells[GetCellIndex(character)].RemovePlayer(character, true);
                 UnregisterSearchForParty(character);
                 character.OnPositionChanged -= Character_OnPositionChanged;
+                character.OldCellId = -1;
+                character.CellId = -1;
                 _logger.LogDebug($"Player {character.Id} left map {Id}");
             }
 
@@ -256,10 +260,7 @@ namespace Imgeneus.World.Game.Zone
         /// Teleports player to selected position on map.
         /// </summary>
         /// <param name="playerId">Id of player</param>
-        /// <param name="X">new X position</param>
-        /// <param name="Y">new Y position</param>
-        /// <param name="Z">new Z position</param>
-        public void TeleportPlayer(int playerId, float X, float Y, float Z)
+        public void TeleportPlayer(int playerId)
         {
             if (!Players.ContainsKey(playerId))
             {
@@ -267,7 +268,7 @@ namespace Imgeneus.World.Game.Zone
             }
 
             var player = Players[playerId];
-            Cells[GetCellIndex(player)].TeleportPlayer(player, X, Y, Z);
+            Cells[GetCellIndex(player)].TeleportPlayer(player);
         }
 
         /// <summary>
@@ -275,6 +276,18 @@ namespace Imgeneus.World.Game.Zone
         /// </summary>
         private void Character_OnPositionChanged(Character sender)
         {
+            var portal = Portals.FirstOrDefault(p =>
+                        p.IsInPortalZone(sender.PosX, sender.PosY, sender.PosZ) &&
+                        p.IsSameFraction(sender.Country)
+                        /*&& p.IsRightLevel(sender.Level)*/);
+
+            if (portal != null)
+            {
+                sender.Teleport(portal.MapId, portal.Destination_X, portal.Destination_Y, portal.Destination_Z);
+                sender.SendCharacterTeleport();
+                return;
+            }
+
             var newCellId = GetCellIndex(sender);
             var oldCellId = sender.CellId;
             if (oldCellId == newCellId) // All is fine, character is in the right cell
@@ -659,6 +672,25 @@ namespace Imgeneus.World.Game.Zone
         {
             foreach (var character in Players.Values)
                 character.SendObeliskBroken(obelisk);
+        }
+
+        #endregion
+
+        #region Portals
+
+        private readonly List<Portal> Portals = new List<Portal>();
+
+        /// <summary>
+        /// Creates portals to another maps.
+        /// </summary>
+        private void InitPortals()
+        {
+            foreach (var portalConfig in _config.Portals)
+            {
+                Portals.Add(new Portal(portalConfig));
+            }
+
+            _logger.LogInformation($"Map {Id} created {Portals.Count} portals.");
         }
 
         #endregion

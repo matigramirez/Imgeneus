@@ -24,6 +24,17 @@ namespace Imgeneus.World.Packets
             client.SendPacket(packet);
         }
 
+        internal void SendCharacterTeleport(IWorldClient client, Character player)
+        {
+            using var packet = new Packet(PacketType.CHARACTER_MAP_TELEPORT);
+            packet.Write(player.Id);
+            packet.Write(player.MapId);
+            packet.Write(player.PosX);
+            packet.Write(player.PosY);
+            packet.Write(player.PosZ);
+            client.SendPacket(packet);
+        }
+
         internal void SendCurrentHitpoints(IWorldClient client, Character character)
         {
             using var packet = new Packet(PacketType.CHARACTER_CURRENT_HITPOINTS);
@@ -274,7 +285,7 @@ namespace Imgeneus.World.Packets
         {
             using var packet = new Packet(PacketType.GM_TELEPORT_MAP);
             packet.Write(character.Id);
-            packet.Write(character.Map.Id);
+            packet.Write(character.MapId);
             packet.Write(character.PosX);
             packet.Write(character.PosY);
             packet.Write(character.PosZ);

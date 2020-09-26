@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Imgeneus.World.Game.Zone.MapConfig
+namespace Imgeneus.World.Game.Zone.Portals
 {
     public class PortalConfiguration
     {
@@ -22,6 +22,7 @@ namespace Imgeneus.World.Game.Zone.MapConfig
         [JsonPropertyName("z")]
         public float Z { get; set; }
 
+        [JsonPropertyName("destination")]
         public DestinationConfiguration Destination { get; set; }
     }
 

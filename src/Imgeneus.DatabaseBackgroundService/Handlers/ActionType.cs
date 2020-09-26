@@ -36,6 +36,9 @@
         SAVE_FRIENDS,
         DELETE_FRIENDS,
 
+        // Map
+        SAVE_MAP_ID,
+
         // Logs
         LOG_SAVE_CHAT_MESSAGE
     }

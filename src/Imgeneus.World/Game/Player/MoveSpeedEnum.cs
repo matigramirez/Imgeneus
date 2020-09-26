@@ -1,6 +1,6 @@
 ﻿namespace Imgeneus.World.Game.Player
 {
-    public enum MoveSpeed : byte
+    public enum MoveSpeedEnum : byte
     {
         VerySlow,
         Slow,

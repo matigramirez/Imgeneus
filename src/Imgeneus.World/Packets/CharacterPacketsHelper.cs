@@ -563,5 +563,13 @@ namespace Imgeneus.World.Packets
             packet.Write(player.PosZ);
             client.SendPacket(packet);
         }
+
+        internal void SendUseVehicle(IWorldClient client, bool success, bool status)
+        {
+            using var packet = new Packet(PacketType.USE_VEHICLE);
+            packet.Write(success);
+            packet.Write(status);
+            client.SendPacket(packet);
+        }
     }
 }

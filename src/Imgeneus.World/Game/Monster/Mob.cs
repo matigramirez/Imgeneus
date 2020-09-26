@@ -47,8 +47,6 @@ namespace Imgeneus.World.Game.Monster
                 OnDead += MobRebirth_OnDead;
             }
 
-            HP_Changed += Mob_HP_Changed;
-
             SetupAITimers();
             State = MobState.Idle;
         }
@@ -129,7 +127,6 @@ namespace Imgeneus.World.Game.Monster
         {
             base.Dispose();
             ClearTimers();
-            HP_Changed -= Mob_HP_Changed;
         }
     }
 }

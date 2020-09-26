@@ -39,6 +39,7 @@ namespace Imgeneus.World.Game.Player
             _packetsHelper = new CharacterPacketsHelper();
 
             _castTimer.Elapsed += CastTimer_Elapsed;
+            _summonVehicleTimer.Elapsed += SummonVehicleTimer_Elapsed;
 
             OnMaxHPChanged += Character_OnMaxHPChanged;
             OnMaxMPChanged += Character_OnMaxMPChanged;
@@ -72,6 +73,7 @@ namespace Imgeneus.World.Game.Player
                 SetParty(null);
 
             _castTimer.Elapsed -= CastTimer_Elapsed;
+            _summonVehicleTimer.Elapsed -= SummonVehicleTimer_Elapsed;
 
             OnMaxHPChanged -= Character_OnMaxHPChanged;
             OnMaxMPChanged -= Character_OnMaxMPChanged;
@@ -404,14 +406,13 @@ namespace Imgeneus.World.Game.Player
             get
             {
                 if (ActiveBuffs.Any(b => b.StateType == StateType.Sleep || b.StateType == StateType.Stun || b.StateType == StateType.Immobilize))
-                {
-                    return 255; // can not move
-                }
+                    return (int)MoveSpeedEnum.CanNotMove;
 
                 if (IsStealth)
-                {
-                    return 2;// normal
-                }
+                    return (int)MoveSpeedEnum.Normal;
+
+                if (IsOnVehicle)
+                    return (int)MoveSpeedEnum.VeryFast;
 
                 return _moveSpeed;
             }
@@ -611,6 +612,14 @@ namespace Imgeneus.World.Game.Player
             {
                 if (IsStealth)
                     return CharacterShapeEnum.Stealth;
+
+                if (IsOnVehicle)
+                {
+                    var value1 = Mount.Grow >= 2 ? 15 : 14;
+                    var value2 = Mount.Range < 2 ? Mount.Range * 2 : Mount.Range + 7;
+                    var mountType = value1 + value2;
+                    return (CharacterShapeEnum)mountType;
+                }
 
                 return CharacterShapeEnum.None;
             }
@@ -904,6 +913,16 @@ namespace Imgeneus.World.Game.Player
         {
             if (IsDuelApproved && killer == DuelOpponent)
                 FinishDuel(DuelCancelReason.Lose);
+        }
+
+        #endregion
+
+        #region Overrides
+
+        protected override void DecreaseHP(IKiller damageMaker)
+        {
+            IsStealth = false;
+            IsOnVehicle = false;
         }
 
         #endregion

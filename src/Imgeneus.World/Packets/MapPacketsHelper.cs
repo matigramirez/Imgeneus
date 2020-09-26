@@ -71,6 +71,11 @@ namespace Imgeneus.World.Packets
             using var packet1 = new Packet(PacketType.CHARACTER_MOVE);
             packet1.Write(new CharacterMove(character).Serialize());
             client.SendPacket(packet1);
+
+            using var packet2 = new Packet(PacketType.CHARACTER_SHAPE_UPDATE);
+            packet2.Write(character.Id);
+            packet2.Write((byte)character.Shape);
+            client.SendPacket(packet2);
         }
 
         internal void SendMobEnter(IWorldClient client, Mob mob, bool isNew)
@@ -352,6 +357,13 @@ namespace Imgeneus.World.Packets
             packet.Write(character.Face);
             packet.Write(character.Height);
             packet.Write((byte)character.Gender);
+            client.SendPacket(packet);
+        }
+
+        internal void SendStartSummoningVehicle(IWorldClient client, Character sender)
+        {
+            using var packet = new Packet(PacketType.USE_VEHICLE_READY);
+            packet.Write(sender.Id);
             client.SendPacket(packet);
         }
     }

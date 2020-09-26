@@ -42,12 +42,14 @@
         PING = 0xA303,
         CASH_POINT = 0x2605, // 9733
         CHANGE_ENCRYPTION = 0xB106, // I'm not really sure, that exactly this packet starts another encryption, but for now let's assume so.
-        CHARACTER_SHAPE = 0x0303,
+        CHARACTER_SHAPE = 0x0303, // 771
         CHARACTER_MOTION = 0x0506,
         CHARACTER_CURRENT_HITPOINTS = 0x0521, // 1313
         CHARACTER_ABSORPTION_DAMAGE = 0x0525, // 1317
 
         RUN_MODE = 0x0210, // 528
+        USE_VEHICLE = 0x0216, // 534
+        USE_VEHICLE_READY = 0x0217, // 535
 
         // Map
         MAP_ADD_ITEM = 0x0401, // 1025

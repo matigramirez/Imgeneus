@@ -208,6 +208,7 @@ namespace Imgeneus.World.Game.Zone
             character.OnUsedRangeSkill += Character_OnUsedRangeSkill;
             character.OnRebirthed += Character_OnRebirthed;
             character.OnAppearanceChanged += Character_OnAppearanceChanged;
+            character.OnStartSummonVehicle += Character_OnStartSummonVehicle;
         }
 
         /// <summary>
@@ -232,6 +233,7 @@ namespace Imgeneus.World.Game.Zone
             character.OnUsedRangeSkill -= Character_OnUsedRangeSkill;
             character.OnRebirthed -= Character_OnRebirthed;
             character.OnAppearanceChanged -= Character_OnAppearanceChanged;
+            character.OnStartSummonVehicle -= Character_OnStartSummonVehicle;
         }
 
         #region Character listeners
@@ -383,6 +385,12 @@ namespace Imgeneus.World.Game.Zone
         {
             foreach (var player in GetAllPlayers(true))
                 _packetHelper.SendAppearanceChanged(player.Client, sender);
+        }
+
+        private void Character_OnStartSummonVehicle(Character sender)
+        {
+            foreach (var player in GetAllPlayers(true))
+                _packetHelper.SendStartSummoningVehicle(player.Client, sender);
         }
 
         #endregion

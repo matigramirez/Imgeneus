@@ -279,7 +279,7 @@ namespace Imgeneus.World.Game.Zone
             var portal = Portals.FirstOrDefault(p =>
                         p.IsInPortalZone(sender.PosX, sender.PosY, sender.PosZ) &&
                         p.IsSameFraction(sender.Country)
-                        /*&& p.IsRightLevel(sender.Level)*/);
+                        && p.IsRightLevel(sender.Level));
 
             if (portal != null)
             {

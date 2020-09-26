@@ -178,7 +178,8 @@ namespace Imgeneus.World
             { PacketType.PARTY_SEARCH_INVITE, (s) => new PartySearchInvitePacket(s) },
             { PacketType.GM_FIND_PLAYER, (s) => new GMFindPlayerPacket(s) },
             { PacketType.GM_SUMMON_PLAYER, (s) => new GMSummonPlayerPacket(s) },
-            { PacketType.GM_TELEPORT_TO_PLAYER, (s) => new GMTeleportToPlayerPacket(s) }
+            { PacketType.GM_TELEPORT_TO_PLAYER, (s) => new GMTeleportToPlayerPacket(s) },
+            { PacketType.USE_VEHICLE, (s) => new UseVehiclePacket(s) }
         };
 
         /// <inheritdoc />

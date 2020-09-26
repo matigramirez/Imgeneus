@@ -92,7 +92,7 @@ namespace Imgeneus.Database.Entities
         public ushort ReqStr { get; set; }
 
         /// <summary>
-        /// Required dexterity to use it.
+        /// Defines "color" of item.
         /// </summary>
         [Required]
         public ushort ReqDex { get; set; }
@@ -128,25 +128,26 @@ namespace Imgeneus.Database.Entities
         public ushort ReqVg { get; set; }
 
         /// <summary>
-        /// Account restrictions.
+        /// Account restrictions, i.e. trade/untradeable.
         /// </summary>
         [Required]
         public ItemAccountRestrictionType ReqOg { get; set; }
 
         /// <summary>
-        /// Required ig(?) to use it.
+        /// Item cooldown.
         /// </summary>
         [Required]
         public byte ReqIg { get; set; }
 
         /// <summary>
         /// From how far away character can use this item.
+        /// For mounts, its value specifies which character shape we should use.
         /// </summary>
         [Required]
         public ushort Range { get; set; }
 
         /// <summary>
-        /// How fast this item.
+        /// How fast this item. For mounts it's casting time in seconds.
         /// </summary>
         [Required]
         public byte AttackTime { get; set; }

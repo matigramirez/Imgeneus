@@ -1,6 +1,7 @@
 ﻿using Imgeneus.Database.Constants;
 using Imgeneus.Database.Entities;
 using Imgeneus.Database.Preload;
+using NLog.Targets.Wrappers;
 
 namespace Imgeneus.World.Game.Player
 {
@@ -78,6 +79,9 @@ namespace Imgeneus.World.Game.Player
                 Special = item.Special;
                 AccountRestriction = item.ReqOg;
                 Sell = item.Sell;
+                Range = item.Range;
+                Grow = item.Grow;
+                ReqDex = item.ReqDex;
             }
         }
 
@@ -513,6 +517,21 @@ namespace Imgeneus.World.Game.Player
         /// If item can be given away.
         /// </summary>
         public ItemAccountRestrictionType AccountRestriction { get; }
+
+        /// <summary>
+        /// For mounts, its value specifies which character shape we should use.
+        /// </summary>
+        public ushort Range { get; }
+
+        /// <summary>
+        /// Can be used in basic, ultimate etc. mode.
+        /// </summary>
+        public byte Grow { get; }
+
+        /// <summary>
+        /// Defines "color" of item.
+        /// </summary>
+        public ushort ReqDex { get; }
 
         #endregion
 

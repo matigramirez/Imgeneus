@@ -209,9 +209,9 @@ namespace Imgeneus.World.Game.Monster
         /// <summary>
         /// When user hits mob, it automatically turns on ai.
         /// </summary>
-        private void Mob_HP_Changed(IKillable mob, HitpointArgs hitpoints)
+        protected override void DecreaseHP(IKiller damageMaker)
         {
-            if (hitpoints.NewValue < hitpoints.OldValue && !IsDead)
+            if (!IsDead)
             {
                 SelectActionBasedOnAI();
 

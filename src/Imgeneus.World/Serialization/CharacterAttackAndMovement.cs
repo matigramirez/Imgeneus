@@ -14,13 +14,13 @@ namespace Imgeneus.World.Serialization
         public AttackSpeed AttackSpeed { get; }
 
         [FieldOrder(2)]
-        public MoveSpeed MoveSpeed { get; }
+        public MoveSpeedEnum MoveSpeed { get; }
 
         public CharacterAttackAndMovement(IKillable character)
         {
             CharacterId = character.Id;
             AttackSpeed = character.AttackSpeed;
-            MoveSpeed = (MoveSpeed)character.MoveSpeed;
+            MoveSpeed = (MoveSpeedEnum)character.MoveSpeed;
         }
     }
 }

@@ -176,7 +176,10 @@ namespace Imgeneus.World.Game
                 DamageMakers.TryAdd(damageMaker, hp);
 
             CurrentHP -= hp;
+            DecreaseHP(damageMaker);
         }
+
+        protected virtual void DecreaseHP(IKiller damageMaker) { }
 
         /// <inheritdoc />
         public void IncreaseHP(int hp)

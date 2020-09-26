@@ -283,6 +283,13 @@ namespace Imgeneus.World.Game.Player
                     HandleSearchParty();
                     break;
 
+                case UseVehiclePacket useVehiclePacket:
+                    if (IsOnVehicle)
+                        RemoveVehicle();
+                    else
+                        CallVehicle();
+                    break;
+
                 case GMCreateMobPacket gMCreateMobPacket:
                     if (!IsAdmin)
                         return;
@@ -690,6 +697,8 @@ namespace Imgeneus.World.Game.Player
         public void SendObeliskBroken(Obelisk obelisk) => _packetsHelper.SendObeliskBroken(Client, obelisk);
 
         public void SendCharacterTeleport() => _packetsHelper.SendCharacterTeleport(Client, this);
+
+        public void SendUseVehicle(bool success, bool status) => _packetsHelper.SendUseVehicle(Client, success, status);
 
         private void TargetChanged(IKillable target)
         {

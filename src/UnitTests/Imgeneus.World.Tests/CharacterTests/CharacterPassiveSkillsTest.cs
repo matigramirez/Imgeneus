@@ -19,7 +19,7 @@ namespace Imgeneus.World.Tests
         [Fact]
         public void StrengthTrainingTest()
         {
-            var character = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object)
+            var character = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object, linkingMock.Object)
             {
                 Class = CharacterProfession.Fighter
             };
@@ -37,7 +37,7 @@ namespace Imgeneus.World.Tests
         [Fact]
         public void ManaTrainingTest()
         {
-            var character = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object)
+            var character = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object, linkingMock.Object)
             {
                 Class = CharacterProfession.Mage
             };
@@ -52,7 +52,7 @@ namespace Imgeneus.World.Tests
         [Fact]
         public void WeaponMasteryTest()
         {
-            var character = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object)
+            var character = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object, linkingMock.Object)
             {
                 Class = CharacterProfession.Fighter,
             };

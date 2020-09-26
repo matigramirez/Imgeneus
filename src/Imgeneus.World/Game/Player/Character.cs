@@ -9,6 +9,7 @@ using Imgeneus.DatabaseBackgroundService.Handlers;
 using Imgeneus.World.Game.Blessing;
 using Imgeneus.World.Game.Chat;
 using Imgeneus.World.Game.Duel;
+using Imgeneus.World.Game.Linking;
 using Imgeneus.World.Game.PartyAndRaid;
 using Imgeneus.World.Game.Trade;
 using Imgeneus.World.Game.Zone;
@@ -28,14 +29,22 @@ namespace Imgeneus.World.Game.Player
         private readonly IBackgroundTaskQueue _taskQueue;
         private readonly CharacterPacketsHelper _packetsHelper;
         private readonly IChatManager _chatManager;
+        private readonly ILinkingManager _linkingManager;
 
-        public Character(ILogger<Character> logger, IGameWorld gameWorld, ICharacterConfiguration characterConfig, IBackgroundTaskQueue taskQueue, IDatabasePreloader databasePreloader, IChatManager chatManager) : base(databasePreloader)
+        public Character(ILogger<Character> logger,
+                         IGameWorld gameWorld,
+                         ICharacterConfiguration characterConfig,
+                         IBackgroundTaskQueue taskQueue,
+                         IDatabasePreloader databasePreloader,
+                         IChatManager chatManager,
+                         ILinkingManager linkinManager) : base(databasePreloader)
         {
             _logger = logger;
             _gameWorld = gameWorld;
             _characterConfig = characterConfig;
             _taskQueue = taskQueue;
             _chatManager = chatManager;
+            _linkingManager = linkinManager;
             _packetsHelper = new CharacterPacketsHelper();
 
             _castTimer.Elapsed += CastTimer_Elapsed;
@@ -930,9 +939,9 @@ namespace Imgeneus.World.Game.Player
         /// <summary>
         /// Creates character from database information.
         /// </summary>
-        public static Character FromDbCharacter(DbCharacter dbCharacter, ILogger<Character> logger, IGameWorld gameWorld, ICharacterConfiguration characterConfig, IBackgroundTaskQueue taskQueue, IDatabasePreloader databasePreloader, IChatManager chatManager)
+        public static Character FromDbCharacter(DbCharacter dbCharacter, ILogger<Character> logger, IGameWorld gameWorld, ICharacterConfiguration characterConfig, IBackgroundTaskQueue taskQueue, IDatabasePreloader databasePreloader, IChatManager chatManager, ILinkingManager linkingManager)
         {
-            var character = new Character(logger, gameWorld, characterConfig, taskQueue, databasePreloader, chatManager)
+            var character = new Character(logger, gameWorld, characterConfig, taskQueue, databasePreloader, chatManager, linkingManager)
             {
                 Id = dbCharacter.Id,
                 Name = dbCharacter.Name,

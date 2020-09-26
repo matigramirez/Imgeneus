@@ -237,5 +237,17 @@
         // Party search
         PARTY_SEARCH_REGISTRATION = 0x220C, // 8716
         PARTY_SEARCH_LIST = 0x220D, // 8717
+
+        // Linking
+        GEM_ADD = 0x0801, // 2049
+        GEM_REMOVE = 0x0802, // 2050
+        CLOACK_ADD = 0x0803, // 2051
+        CLOACK_REMOVE = 0x0804, // 2052
+        LAPISIAN_ADD = 0x0805, // 2053
+        ITEM_COMPOSE = 0x0806, // 2054
+        ITEM_REMAKE = 0x0807, // 2055
+        ITEM_CONSIDER = 0x0808, // 2056
+        GEM_POSSIBILITY = 0x0809 // 2057
+
     }
 }

@@ -7,6 +7,7 @@ using Imgeneus.Network.Server;
 using Imgeneus.World.Game.Blessing;
 using Imgeneus.World.Game.Chat;
 using Imgeneus.World.Game.Duel;
+using Imgeneus.World.Game.Linking;
 using Imgeneus.World.Game.PartyAndRaid;
 using Imgeneus.World.Game.Player;
 using Imgeneus.World.Game.Trade;
@@ -100,7 +101,8 @@ namespace Imgeneus.World.Game
                                                      _characterConfig,
                                                      _taskQueue,
                                                      _databasePreloader,
-                                                     DependencyContainer.Instance.Resolve<IChatManager>());
+                                                     DependencyContainer.Instance.Resolve<IChatManager>(),
+                                                     DependencyContainer.Instance.Resolve<ILinkingManager>());
             newPlayer.Client = client;
 
             Players.TryAdd(newPlayer.Id, newPlayer);

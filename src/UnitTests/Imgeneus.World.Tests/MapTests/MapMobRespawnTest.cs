@@ -12,7 +12,7 @@ namespace Imgeneus.World.Tests
         {
             var map = testMap;
             var mob = new Mob(mobLoggerMock.Object, databasePreloader.Object, 1, true, new MoveArea(0, 0, 0, 0, 0, 0), map);
-            var character = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object);
+            var character = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object, linkingMock.Object);
 
             map.AddMob(mob);
             Assert.NotNull(map.GetMob(mob.CellId, 1));

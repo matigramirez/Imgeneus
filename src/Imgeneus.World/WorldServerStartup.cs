@@ -8,6 +8,7 @@ using Imgeneus.DatabaseBackgroundService;
 using Imgeneus.Logs;
 using Imgeneus.World.Game;
 using Imgeneus.World.Game.Chat;
+using Imgeneus.World.Game.Linking;
 using Imgeneus.World.Game.Player;
 using Imgeneus.World.Game.Zone;
 using Imgeneus.World.Game.Zone.MapConfig;
@@ -39,6 +40,7 @@ namespace Imgeneus.World
             DependencyContainer.Instance.Register<IMapsLoader, MapsLoader>(ServiceLifetime.Singleton);
             DependencyContainer.Instance.Register<IDatabasePreloader, DatabasePreloader>(ServiceLifetime.Singleton);
             DependencyContainer.Instance.Register<IChatManager, ChatManager>(ServiceLifetime.Singleton);
+            DependencyContainer.Instance.Register<ILinkingManager, LinkingManager>(ServiceLifetime.Singleton);
             DependencyContainer.Instance.Configure(services => services.AddLogging(builder =>
             {
                 builder.AddFilter("Microsoft", LogLevel.Warning);

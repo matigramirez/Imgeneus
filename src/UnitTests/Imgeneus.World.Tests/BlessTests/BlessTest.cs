@@ -12,7 +12,7 @@ namespace Imgeneus.World.Tests.BlessTests
         [Description("Amount of bless can change max HP, SP and MP.")]
         public void Bless_Max_HP_SP_MP()
         {
-            var character = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object);
+            var character = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object, linkingMock.Object);
             character.Client = worldClientMock.Object;
 
             Assert.Equal(100, character.MaxHP);

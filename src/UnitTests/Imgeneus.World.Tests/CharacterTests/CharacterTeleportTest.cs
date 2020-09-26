@@ -12,7 +12,7 @@ namespace Imgeneus.World.Tests.CharacterTests
         [Description("It should be possible to teleport inside one map.")]
         public void Character_Teleport()
         {
-            var character = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object);
+            var character = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object, linkingMock.Object);
             character.Client = worldClientMock.Object;
             testMap.LoadPlayer(character);
             Assert.Equal(0, character.PosX);
@@ -43,7 +43,7 @@ namespace Imgeneus.World.Tests.CharacterTests
                     mapLoggerMock.Object,
                     databasePreloader.Object);
 
-            var character = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object);
+            var character = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object, linkingMock.Object);
             character.Client = worldClientMock.Object;
             map1.LoadPlayer(character);
             Assert.NotNull(map1.GetPlayer(0));

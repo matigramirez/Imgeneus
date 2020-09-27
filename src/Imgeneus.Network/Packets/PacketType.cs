@@ -248,6 +248,5 @@
         ITEM_REMAKE = 0x0807, // 2055
         ITEM_CONSIDER = 0x0808, // 2056
         GEM_POSSIBILITY = 0x0809 // 2057
-
     }
 }

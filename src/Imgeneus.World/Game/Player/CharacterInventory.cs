@@ -867,6 +867,11 @@ namespace Imgeneus.World.Game.Player
                     // Used in ChangeAppearance call.
                     break;
 
+                case SpecialEffect.LinkingHammer:
+                case SpecialEffect.PerfectLinkingHammer:
+                    // Effect is added in linking manager.
+                    break;
+
                 case SpecialEffect.None:
                     // Some herbs do not have HealingPotion effect, but still they heal.
                     UseHealingPotion(item);

@@ -122,7 +122,8 @@ namespace Imgeneus.Database.Entities
         public short Reqluc { get; set; }
 
         /// <summary>
-        /// Required vg(?) to use it.
+        /// For linking hammer, it's how many times it increases the success linking rate.
+        /// For lapis, if it's set to 1, lapis can break equipment while unsuccessful linking.
         /// </summary>
         [Required]
         public ushort ReqVg { get; set; }
@@ -135,6 +136,7 @@ namespace Imgeneus.Database.Entities
 
         /// <summary>
         /// Item cooldown.
+        /// For lapis it's value of linking success.
         /// </summary>
         [Required]
         public byte ReqIg { get; set; }
@@ -165,7 +167,8 @@ namespace Imgeneus.Database.Entities
         public SpecialEffect Special { get; set; }
 
         /// <summary>
-        /// How many slots lapis will take.
+        /// For item, how many free slots item has.
+        /// For gem, how many slots lapis will take.
         /// </summary>
         [Required]
         public byte Slot { get; set; }

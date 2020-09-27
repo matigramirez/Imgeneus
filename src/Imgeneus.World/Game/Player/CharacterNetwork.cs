@@ -2,6 +2,7 @@
 using Imgeneus.Database;
 using Imgeneus.Database.Constants;
 using Imgeneus.Database.Entities;
+using Imgeneus.DatabaseBackgroundService.Handlers;
 using Imgeneus.Network.Data;
 using Imgeneus.Network.Packets;
 using Imgeneus.Network.Packets.Game;
@@ -288,6 +289,14 @@ namespace Imgeneus.World.Game.Player
                         RemoveVehicle();
                     else
                         CallVehicle();
+                    break;
+
+                case GemAddPacket gemAddPacket:
+                    HandleAddGem(gemAddPacket.Bag, gemAddPacket.Slot, gemAddPacket.DestinationBag, gemAddPacket.DestinationSlot, gemAddPacket.HammerBag, gemAddPacket.HammerSlot);
+                    break;
+
+                case GemPossibilityPacket gemPossibilityPacket:
+                    HandleGemPossibility(gemPossibilityPacket.GemBag, gemPossibilityPacket.GemSlot, gemPossibilityPacket.DestinationBag, gemPossibilityPacket.DestinationSlot, gemPossibilityPacket.HammerBag, gemPossibilityPacket.HammerSlot);
                     break;
 
                 case GMCreateMobPacket gMCreateMobPacket:
@@ -602,6 +611,77 @@ namespace Imgeneus.World.Game.Player
                 _packetsHelper.SendCharacterTeleport(Client, this);
                 _packetsHelper.SendGmTeleportToPlayer(Client, player);
             }
+        }
+
+        private void HandleAddGem(byte bag, byte slot, byte destinationBag, byte destinationSlot, byte hammerBag, byte hammerSlot)
+        {
+            var gem = InventoryItems.FirstOrDefault(itm => itm.Bag == bag && itm.Slot == slot);
+            if (gem is null || gem.Type != Gem.GEM_TYPE)
+                return;
+
+            var linkingGold = _linkingManager.GetGold(gem);
+            if (Gold < linkingGold)
+            {
+                // TODO: send warning, that not enough money?
+                return;
+            }
+
+            var destinationItem = InventoryItems.FirstOrDefault(itm => itm.Bag == destinationBag && itm.Slot == destinationSlot);
+            if (destinationItem is null || destinationItem.FreeSlots == 0 || destinationItem.ContainsGem(gem.TypeId))
+                return;
+
+            Item hammer = null;
+            if (hammerBag != 0)
+                hammer = InventoryItems.FirstOrDefault(itm => itm.Bag == hammerBag && itm.Slot == hammerSlot);
+
+            Item saveItem = null;
+            if (gem.ReqVg > 0)
+            {
+                saveItem = InventoryItems.FirstOrDefault(itm => itm.Special == SpecialEffect.LuckyCharm);
+                if (saveItem != null)
+                    UseItem(saveItem.Bag, saveItem.Slot);
+            }
+
+            var result = _linkingManager.AddGem(destinationItem, gem, hammer);
+            ChangeGold((uint)(Gold - linkingGold));
+            if (gem.Count > 0)
+            {
+                _taskQueue.Enqueue(ActionType.UPDATE_ITEM_COUNT_IN_INVENTORY,
+                                   Id, gem.Bag, gem.Slot, gem.Count);
+            }
+            else
+            {
+                InventoryItems.Remove(gem);
+                _taskQueue.Enqueue(ActionType.REMOVE_ITEM_FROM_INVENTORY,
+                                   Id, gem.Bag, gem.Slot);
+            }
+
+            if (hammer != null)
+                UseItem(hammer.Bag, hammer.Slot);
+
+            _packetsHelper.SendAddGem(Client, result.Success, gem, destinationItem, result.Slot, Gold, saveItem, hammer);
+
+            if (!result.Success && saveItem == null && gem.ReqVg > 0)
+            {
+                RemoveItemFromInventory(destinationItem);
+                SendRemoveItemFromInventory(destinationItem, true);
+            }
+        }
+
+        private void HandleGemPossibility(byte gemBag, byte gemSlot, byte destinationBag, byte destinationSlot, byte hammerBag, byte hammerSlot)
+        {
+            var gem = InventoryItems.FirstOrDefault(itm => itm.Bag == gemBag && itm.Slot == gemSlot);
+            if (gem is null)
+                return;
+
+            Item hammer = null;
+            if (hammerBag != 0)
+                hammer = InventoryItems.FirstOrDefault(itm => itm.Bag == hammerBag && itm.Slot == hammerSlot);
+
+            var rate = _linkingManager.GetRate(gem, hammer);
+            var gold = _linkingManager.GetGold(gem);
+
+            _packetsHelper.SendGemPossibility(Client, rate, gold);
         }
 
         #endregion

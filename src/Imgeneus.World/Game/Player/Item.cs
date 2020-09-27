@@ -1,13 +1,13 @@
 ﻿using Imgeneus.Database.Constants;
 using Imgeneus.Database.Entities;
 using Imgeneus.Database.Preload;
-using NLog.Targets.Wrappers;
 
 namespace Imgeneus.World.Game.Player
 {
     public class Item
     {
         private readonly IDatabasePreloader _databasePreloader;
+        private readonly DbItem _item;
 
         /// <summary>
         /// Unique type, used only for drop money on map.
@@ -26,6 +26,103 @@ namespace Imgeneus.World.Game.Player
         public Gem Gem4;
         public Gem Gem5;
         public Gem Gem6;
+
+        /// <summary>
+        /// Number of still free slots.
+        /// </summary>
+        public byte FreeSlots
+        {
+            get
+            {
+                byte count = 0;
+                switch (_item.Slot)
+                {
+                    case 0:
+                        break;
+
+                    case 1:
+                        if (Gem1 is null)
+                            count++;
+                        break;
+
+                    case 2:
+                        if (Gem1 is null)
+                            count++;
+                        if (Gem2 is null)
+                            count++;
+                        break;
+
+                    case 3:
+                        if (Gem1 is null)
+                            count++;
+                        if (Gem2 is null)
+                            count++;
+                        if (Gem3 is null)
+                            count++;
+                        break;
+
+                    case 4:
+                        if (Gem1 is null)
+                            count++;
+                        if (Gem2 is null)
+                            count++;
+                        if (Gem3 is null)
+                            count++;
+                        if (Gem4 is null)
+                            count++;
+                        break;
+
+                    case 5:
+                        if (Gem1 is null)
+                            count++;
+                        if (Gem2 is null)
+                            count++;
+                        if (Gem3 is null)
+                            count++;
+                        if (Gem4 is null)
+                            count++;
+                        if (Gem5 is null)
+                            count++;
+                        break;
+
+                    case 6:
+                        if (Gem1 is null)
+                            count++;
+                        if (Gem2 is null)
+                            count++;
+                        if (Gem3 is null)
+                            count++;
+                        if (Gem4 is null)
+                            count++;
+                        if (Gem5 is null)
+                            count++;
+                        if (Gem6 is null)
+                            count++;
+                        break;
+
+
+                    default:
+                        return 0;
+                }
+
+                return count;
+            }
+        }
+
+        /// <summary>
+        /// Checks if item already has such gem linked.
+        /// </summary>
+        /// <param name="typeId">gem type id</param>
+        /// <returns>true, if item already has such gem</returns>
+        public bool ContainsGem(byte typeId)
+        {
+            return (Gem1 != null && Gem1.TypeId == typeId) ||
+                   (Gem2 != null && Gem2.TypeId == typeId) ||
+                   (Gem3 != null && Gem3.TypeId == typeId) ||
+                   (Gem4 != null && Gem4.TypeId == typeId) ||
+                   (Gem5 != null && Gem5.TypeId == typeId) ||
+                   (Gem6 != null && Gem6.TypeId == typeId);
+        }
 
         public byte Count;
 
@@ -57,32 +154,7 @@ namespace Imgeneus.World.Game.Player
             Count = count;
 
             if (Type != 0 && TypeId != 0 && Type != MONEY_ITEM_TYPE)
-            {
-                var item = _databasePreloader.Items[(Type, TypeId)];
-                ConstStr = item.ConstStr;
-                ConstDex = item.ConstDex;
-                ConstRec = item.ConstRec;
-                ConstInt = item.ConstInt;
-                ConstLuc = item.ConstLuc;
-                ConstWis = item.ConstWis;
-                ConstHP = item.ConstHP;
-                ConstMP = item.ConstMP;
-                ConstSP = item.ConstSP;
-                ConstAttackSpeed = item.AttackTime;
-                ConstMoveSpeed = item.Speed;
-                ConstDefense = item.Defense;
-                ConstResistance = item.Resistance;
-                ConstMinAttack = item.MinAttack;
-                ConstPlusAttack = item.PlusAttack;
-                MaxCount = item.Count;
-                ConstElement = item.Element;
-                Special = item.Special;
-                AccountRestriction = item.ReqOg;
-                Sell = item.Sell;
-                Range = item.Range;
-                Grow = item.Grow;
-                ReqDex = item.ReqDex;
-            }
+                _item = _databasePreloader.Items[(Type, TypeId)];
         }
 
         #region Trade
@@ -93,23 +165,24 @@ namespace Imgeneus.World.Game.Player
 
         #region Extra stats
 
-        private readonly int ConstStr;
-        private readonly int ConstDex;
-        private readonly int ConstRec;
-        private readonly int ConstInt;
-        private readonly int ConstLuc;
-        private readonly int ConstWis;
-        private readonly int ConstHP;
-        private readonly int ConstMP;
-        private readonly int ConstSP;
-        private readonly byte ConstAttackSpeed;
-        private readonly byte ConstMoveSpeed;
-        private readonly ushort ConstDefense;
-        private readonly ushort ConstResistance;
-        private readonly ushort ConstMinAttack;
-        private readonly ushort ConstPlusAttack;
-        private readonly Element ConstElement;
-        public readonly int Sell;
+        private int ConstStr => _item.ConstStr;
+        private int ConstDex => _item.ConstDex;
+        private int ConstRec => _item.ConstRec;
+        private int ConstInt => _item.ConstInt;
+        private int ConstLuc => _item.ConstLuc;
+        private int ConstWis => _item.ConstWis;
+        private int ConstHP => _item.ConstHP;
+        private int ConstMP => _item.ConstMP;
+        private int ConstSP => _item.ConstSP;
+        private byte ConstAttackSpeed => _item.AttackTime;
+        private byte ConstMoveSpeed => _item.Speed;
+        private ushort ConstDefense => _item.Defense;
+        private ushort ConstResistance => _item.Resistance;
+        private ushort ConstMinAttack => _item.MinAttack;
+        private ushort ConstPlusAttack => _item.PlusAttack;
+        private Element ConstElement => _item.Element;
+        public int Sell => _item.Sell;
+        public byte ReqIg => _item.ReqIg;
 
         /// <summary>
         /// Str contains yellow(default) stat + orange stat (take it from craft name later).
@@ -511,33 +584,39 @@ namespace Imgeneus.World.Game.Player
         /// <summary>
         /// Special effect like teleport/cure/summon etc.
         /// </summary>
-        public SpecialEffect Special { get; }
+        public SpecialEffect Special => _item.Special;
 
         /// <summary>
         /// If item can be given away.
         /// </summary>
-        public ItemAccountRestrictionType AccountRestriction { get; }
+        public ItemAccountRestrictionType AccountRestriction => _item.ReqOg;
 
         /// <summary>
         /// For mounts, its value specifies which character shape we should use.
         /// </summary>
-        public ushort Range { get; }
+        public ushort Range => _item.Range;
 
         /// <summary>
         /// Can be used in basic, ultimate etc. mode.
         /// </summary>
-        public byte Grow { get; }
+        public byte Grow => _item.Grow;
 
         /// <summary>
         /// Defines "color" of item.
         /// </summary>
-        public ushort ReqDex { get; }
+        public ushort ReqDex => _item.ReqDex;
+
+        /// <summary>
+        /// For linking hammer, it's how many times it increases the success linking rate.
+        /// For lapis, if it's set to 1, lapis can break equipment while unsuccessful linking.
+        /// </summary>
+        public ushort ReqVg => _item.ReqVg;
 
         #endregion
 
         #region Max count
 
-        public byte MaxCount { get; }
+        public byte MaxCount => _item.Count;
 
         /// <summary>
         /// Consumables and lapis are joinable objects. I.e. count can be > 1.

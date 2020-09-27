@@ -571,5 +571,43 @@ namespace Imgeneus.World.Packets
             packet.Write(status);
             client.SendPacket(packet);
         }
+
+        internal void SendAddGem(IWorldClient client, bool success, Item gem, Item destinationItem, byte gemSlot, uint gold, Item saveItem, Item hammer)
+        {
+            using var packet = new Packet(PacketType.GEM_ADD);
+            packet.Write(success);
+            packet.Write(gem.Bag);
+            packet.Write(gem.Slot);
+            packet.Write(gem.Count);
+            packet.Write(destinationItem.Bag);
+            packet.Write(destinationItem.Slot);
+            packet.Write(gemSlot);
+            packet.Write(gem.TypeId);
+            packet.WriteByte(0); // unknown, old eps: byBag
+            packet.WriteByte(0); // unknown, old eps: bySlot
+            packet.WriteByte(0); // unknown, old eps: byTypeID; maybe in new ep TypeId is int?
+            packet.Write(gold);
+            if (hammer is null)
+            {
+                packet.WriteByte(0);
+                packet.WriteByte(0);
+            }
+            else
+            {
+                packet.Write(hammer.Bag);
+                packet.Write(hammer.Slot);
+            }
+
+            client.SendPacket(packet);
+        }
+
+        internal void SendGemPossibility(IWorldClient client, double rate, int gold)
+        {
+            using var packet = new Packet(PacketType.GEM_POSSIBILITY);
+            packet.WriteByte(1); // TODO: unknown, maybe bool, that we can link?
+            packet.Write(rate);
+            packet.Write(gold);
+            client.SendPacket(packet);
+        }
     }
 }

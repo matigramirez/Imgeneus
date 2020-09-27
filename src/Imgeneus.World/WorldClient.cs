@@ -180,7 +180,8 @@ namespace Imgeneus.World
             { PacketType.GM_SUMMON_PLAYER, (s) => new GMSummonPlayerPacket(s) },
             { PacketType.GM_TELEPORT_TO_PLAYER, (s) => new GMTeleportToPlayerPacket(s) },
             { PacketType.USE_VEHICLE, (s) => new UseVehiclePacket(s) },
-            { PacketType.GEM_ADD, (s) => new GemAddPacket(s) }
+            { PacketType.GEM_ADD, (s) => new GemAddPacket(s) },
+            { PacketType.GEM_POSSIBILITY, (s) => new GemPossibilityPacket(s) }
         };
 
         /// <inheritdoc />

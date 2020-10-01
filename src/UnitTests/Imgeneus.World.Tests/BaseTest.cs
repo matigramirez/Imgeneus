@@ -68,7 +68,16 @@ namespace Imgeneus.World.Tests
                 .Returns(new Dictionary<(byte Type, byte TypeId), DbItem>()
                 {
                     { (17, 2), WaterArmor },
-                    { (2, 92), FireSword }
+                    { (2, 92), FireSword },
+                    { (100, 192), PerfectLinkingHammer },
+                    { (44, 237), PerfectExtractingHammer },
+                    { (100, 139), LuckyCharm },
+                    { (17, 59), JustiaArmor },
+                    { (30, 1), Gem_Str_Level_1 },
+                    { (30, 2), Gem_Str_Level_2 },
+                    { (30, 3), Gem_Str_Level_3 },
+                    { (30, 7), Gem_Str_Level_7 }
+
                 });
 
             databasePreloader
@@ -235,6 +244,79 @@ namespace Imgeneus.World.Tests
             TypeId = 92,
             ItemName = "Thane Breaker of Fire",
             Element = Element.Fire1
+        };
+
+        protected DbItem PerfectLinkingHammer = new DbItem()
+        {
+            Type = 100,
+            TypeId = 192,
+            ItemName = "Perfect Linking Hammer",
+            Special = SpecialEffect.PerfectLinkingHammer
+        };
+
+        protected DbItem PerfectExtractingHammer = new DbItem()
+        {
+            Type = 44,
+            TypeId = 237,
+            ItemName = "GM Extraction Hammer",
+            Special = SpecialEffect.PerfectExtractionHammer
+        };
+
+        protected DbItem LuckyCharm = new DbItem()
+        {
+            Type = 100,
+            TypeId = 139,
+            ItemName = "Lucky Charm",
+            Special = SpecialEffect.LuckyCharm
+        };
+
+        protected DbItem JustiaArmor = new DbItem()
+        {
+            Type = 17,
+            TypeId = 59,
+            ItemName = "Justia Armor",
+            ConstStr = 30,
+            ConstDex = 30,
+            ConstRec = 30,
+            ConstHP = 1800,
+            ConstSP = 600,
+            Slot = 6,
+            Quality = 1200,
+            Attackfighter = 1,
+            Defensefighter = 1
+        };
+
+        protected DbItem Gem_Str_Level_1 = new DbItem()
+        {
+            Type = 30,
+            TypeId = 1,
+            ConstStr = 3,
+            ReqIg = 0 // always fail linking or extracting, unless hammer is used
+        };
+
+        protected DbItem Gem_Str_Level_2 = new DbItem()
+        {
+            Type = 30,
+            TypeId = 2,
+            ConstStr = 5,
+            ReqIg = 255 // always sucess linking or extracting.
+        };
+
+        protected DbItem Gem_Str_Level_3 = new DbItem()
+        {
+            Type = 30,
+            TypeId = 3,
+            ConstStr = 7,
+            ReqIg = 255 // always sucess linking or extracting.
+        };
+
+        protected DbItem Gem_Str_Level_7 = new DbItem()
+        {
+            Type = 30,
+            TypeId = 7,
+            ConstStr = 50,
+            ReqVg = 1, // Will break item if linking/extracting fails
+            ReqIg = 0 // always fail linking or extracting, unless hammer is used
         };
 
         #endregion

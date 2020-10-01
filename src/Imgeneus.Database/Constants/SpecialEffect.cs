@@ -50,7 +50,7 @@
         GuildHouseTeleport = 56,
         LuckyCharm = 57,
         ExtractionHammer = 58,
-        Unknown1 = 59,
+        PerfectExtractionHammer = 59,
         RecreationRune = 62,
         EventItem1 = 63,
         EventItem2 = 64,

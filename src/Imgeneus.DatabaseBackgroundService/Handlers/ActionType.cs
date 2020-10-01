@@ -15,6 +15,9 @@
         UPDATE_ITEM_COUNT_IN_INVENTORY,
         UPDATE_GOLD,
 
+        // Gems
+        UPDATE_GEM,
+
         // Skills
         SAVE_SKILL,
         REMOVE_SKILL,

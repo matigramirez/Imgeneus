@@ -39,7 +39,7 @@ namespace Imgeneus.World.Game.Monster
             {
                 var money = _dropRandom.Next(_dbMob.MoneyMin, _dbMob.MoneyMax);
                 var item = new Item(_databasePreloader, Item.MONEY_ITEM_TYPE, 0);
-                item.Gem1 = new Gem(_databasePreloader, money);
+                item.Gem1 = new Gem(money);
                 items.Add(item);
             }
 

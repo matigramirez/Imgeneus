@@ -14,6 +14,7 @@ namespace Imgeneus.World.Game.Player
         /// </summary>
         public const byte MONEY_ITEM_TYPE = 26;
 
+        public readonly int Id;
         public byte Bag;
         public byte Slot;
         public byte Type;
@@ -128,22 +129,23 @@ namespace Imgeneus.World.Game.Player
 
         public Item(IDatabasePreloader databasePreloader, DbCharacterItems dbItem) : this(databasePreloader, dbItem.Type, dbItem.TypeId, dbItem.Count)
         {
+            Id = dbItem.Id;
             Bag = dbItem.Bag;
             Slot = dbItem.Slot;
             Quality = dbItem.Quality;
 
             if (dbItem.GemTypeId1 != 0)
-                Gem1 = new Gem(databasePreloader, dbItem.GemTypeId1);
+                Gem1 = new Gem(databasePreloader, dbItem.GemTypeId1, 0);
             if (dbItem.GemTypeId2 != 0)
-                Gem2 = new Gem(databasePreloader, dbItem.GemTypeId2);
+                Gem2 = new Gem(databasePreloader, dbItem.GemTypeId2, 1);
             if (dbItem.GemTypeId3 != 0)
-                Gem3 = new Gem(databasePreloader, dbItem.GemTypeId3);
+                Gem3 = new Gem(databasePreloader, dbItem.GemTypeId3, 2);
             if (dbItem.GemTypeId4 != 0)
-                Gem4 = new Gem(databasePreloader, dbItem.GemTypeId4);
+                Gem4 = new Gem(databasePreloader, dbItem.GemTypeId4, 3);
             if (dbItem.GemTypeId5 != 0)
-                Gem5 = new Gem(databasePreloader, dbItem.GemTypeId5);
+                Gem5 = new Gem(databasePreloader, dbItem.GemTypeId5, 4);
             if (dbItem.GemTypeId6 != 0)
-                Gem6 = new Gem(databasePreloader, dbItem.GemTypeId6);
+                Gem6 = new Gem(databasePreloader, dbItem.GemTypeId6, 5);
         }
 
         public Item(IDatabasePreloader databasePreloader, byte type, byte typeId, byte count = 1)

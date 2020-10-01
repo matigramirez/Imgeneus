@@ -25,43 +25,106 @@ namespace Imgeneus.World.Game.Linking
             {
                 if (item.Gem1 is null)
                 {
-                    item.Gem1 = new Gem(_databasePreloader, gem.TypeId);
                     slot = 0;
+                    item.Gem1 = new Gem(_databasePreloader, gem.TypeId, slot);
                 }
                 else if (item.Gem2 is null)
                 {
-                    item.Gem2 = new Gem(_databasePreloader, gem.TypeId);
                     slot = 1;
+                    item.Gem2 = new Gem(_databasePreloader, gem.TypeId, slot);
                 }
                 else if (item.Gem3 is null)
                 {
-                    item.Gem3 = new Gem(_databasePreloader, gem.TypeId);
                     slot = 2;
+                    item.Gem3 = new Gem(_databasePreloader, gem.TypeId, slot);
                 }
                 else if (item.Gem4 is null)
                 {
-                    item.Gem4 = new Gem(_databasePreloader, gem.TypeId);
                     slot = 3;
+                    item.Gem4 = new Gem(_databasePreloader, gem.TypeId, slot);
                 }
                 else if (item.Gem2 is null)
                 {
-                    item.Gem5 = new Gem(_databasePreloader, gem.TypeId);
                     slot = 4;
+                    item.Gem5 = new Gem(_databasePreloader, gem.TypeId, slot);
                 }
                 else if (item.Gem2 is null)
                 {
-                    item.Gem6 = new Gem(_databasePreloader, gem.TypeId);
                     slot = 5;
+                    item.Gem6 = new Gem(_databasePreloader, gem.TypeId, slot);
                 }
             }
             gem.Count--;
             return (success, slot);
         }
 
+        public bool RemoveGem(Item item, Gem gem, Item hammer)
+        {
+            var rate = GetRemoveRate(gem, hammer);
+            var rand = _random.Next(1, 101);
+            var success = rate >= rand;
+
+            return success;
+        }
+
         public double GetRate(Item gem, Item hammer)
         {
+            double rate = GetRateByReqIg(gem.ReqIg);
+
+            if (hammer != null)
+            {
+                if (hammer.Special == SpecialEffect.LinkingHammer)
+                {
+                    rate = rate * (hammer.ReqVg / 100);
+                    if (rate > 50)
+                        rate = 50;
+                }
+
+                if (hammer.Special == SpecialEffect.PerfectLinkingHammer)
+                    rate = 100;
+            }
+
+            return rate;
+        }
+
+        public int GetGold(Item gem)
+        {
+            int gold = GetGoldByReqIg(gem.ReqIg);
+            return gold;
+        }
+
+        public double GetRemoveRate(Gem gem, Item hammer)
+        {
+            double rate = GetRateByReqIg(gem.ReqIg);
+
+            if (hammer != null)
+            {
+                if (hammer.Special == SpecialEffect.ExtractionHammer)
+                {
+                    if (hammer.ReqVg == 40) // Small extracting hammer.
+                        rate = 40;
+
+                    if (hammer.ReqVg >= 80) // Big extracting hammer.
+                        rate = 80;
+                }
+
+                if (hammer.Special == SpecialEffect.PerfectExtractionHammer)
+                    rate = 100; // GM exrracting hammer. Usually it's item with Type = 44 and TypeId = 237 or create your own.
+            }
+
+            return rate;
+        }
+
+        public int GetRemoveGold(Gem gem)
+        {
+            int gold = GetGoldByReqIg(gem.ReqIg);
+            return gold;
+        }
+
+        private double GetRateByReqIg(byte ReqIg)
+        {
             double rate;
-            switch (gem.ReqIg)
+            switch (ReqIg)
             {
                 case 30:
                     rate = 50;
@@ -111,31 +174,22 @@ namespace Imgeneus.World.Game.Linking
                     rate = 1;
                     break;
 
-                default:
-                    rate = 1;
-                    break;
-            }
-
-            if (hammer != null)
-            {
-                if (hammer.Special == SpecialEffect.LinkingHammer)
-                {
-                    rate = rate * (hammer.ReqVg / 100);
-                    if (rate > 50)
-                        rate = 50;
-                }
-
-                if (hammer.Special == SpecialEffect.PerfectLinkingHammer)
+                case 255: // ONLY FOR TESTS!
                     rate = 100;
+                    break;
+
+                default:
+                    rate = 0;
+                    break;
             }
 
             return rate;
         }
 
-        public int GetGold(Item gem)
+        private int GetGoldByReqIg(byte reqIg)
         {
             int gold;
-            switch (gem.ReqIg)
+            switch (reqIg)
             {
                 case 30:
                     gold = 1000;
@@ -186,7 +240,7 @@ namespace Imgeneus.World.Game.Linking
                     break;
 
                 default:
-                    gold = 1;
+                    gold = 0;
                     break;
             }
 

@@ -306,5 +306,47 @@ namespace Imgeneus.DatabaseBackgroundService.Handlers
             await database.SaveChangesAsync();
         }
 
+        [ActionHandler(ActionType.UPDATE_GEM)]
+        internal static async Task UpdateGem(object[] args)
+        {
+            int itemId = (int)args[0];
+            byte gemSlot = (byte)args[1];
+            int gemTypeId = (int)args[2];
+
+            using var database = DependencyContainer.Instance.Resolve<IDatabase>();
+            var item = database.CharacterItems.Find(itemId);
+            if (item is null)
+                return;
+
+            switch (gemSlot)
+            {
+                case 0:
+                    item.GemTypeId1 = gemTypeId;
+                    break;
+
+                case 1:
+                    item.GemTypeId2 = gemTypeId;
+                    break;
+
+                case 2:
+                    item.GemTypeId3 = gemTypeId;
+                    break;
+
+                case 3:
+                    item.GemTypeId4 = gemTypeId;
+                    break;
+
+                case 4:
+                    item.GemTypeId5 = gemTypeId;
+                    break;
+
+                case 5:
+                    item.GemTypeId6 = gemTypeId;
+                    break;
+            }
+
+            await database.SaveChangesAsync();
+        }
+
     }
 }

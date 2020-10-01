@@ -2,7 +2,7 @@
 
 namespace Imgeneus.Network.Packets.Game
 {
-    public struct GemPossibilityPacket : IDeserializedPacket
+    public struct GemAddPossibilityPacket : IDeserializedPacket
     {
         public byte GemBag;
         public byte GemSlot;
@@ -11,7 +11,7 @@ namespace Imgeneus.Network.Packets.Game
         public byte HammerBag;
         public byte HammerSlot;
 
-        public GemPossibilityPacket(IPacketStream packet)
+        public GemAddPossibilityPacket(IPacketStream packet)
         {
             GemBag = packet.Read<byte>();
             GemSlot = packet.Read<byte>();

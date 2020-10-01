@@ -181,7 +181,9 @@ namespace Imgeneus.World
             { PacketType.GM_TELEPORT_TO_PLAYER, (s) => new GMTeleportToPlayerPacket(s) },
             { PacketType.USE_VEHICLE, (s) => new UseVehiclePacket(s) },
             { PacketType.GEM_ADD, (s) => new GemAddPacket(s) },
-            { PacketType.GEM_POSSIBILITY, (s) => new GemPossibilityPacket(s) }
+            { PacketType.GEM_ADD_POSSIBILITY, (s) => new GemAddPossibilityPacket(s) },
+            { PacketType.GEM_REMOVE, (s) => new GemRemovePacket(s) },
+            { PacketType.GEM_REMOVE_POSSIBILITY, (s) => new GemRemovePossibilityPacket(s) }
         };
 
         /// <inheritdoc />

@@ -1,40 +1,29 @@
 ﻿
 using Imgeneus.Database.Constants;
+using Imgeneus.Database.Entities;
 using Imgeneus.Database.Preload;
 
 namespace Imgeneus.World.Game.Player
 {
     public class Gem
     {
+        /// <summary>
+        /// 30 type is always lapis.
+        /// </summary>
         public const byte GEM_TYPE = 30;
 
         private readonly IDatabasePreloader _databasePreloader;
+        private readonly DbItem _item;
 
         public int TypeId { get; private set; }
 
-        public Gem(IDatabasePreloader databasePreloader, int typeId)
+        public Gem(IDatabasePreloader databasePreloader, int typeId, byte position)
         {
             _databasePreloader = databasePreloader;
             TypeId = typeId;
+            Position = position;
 
-            // 30 type is always lapis.
-            var item = _databasePreloader.Items[(GEM_TYPE, (byte)TypeId)];
-            Str = item.ConstStr;
-            Dex = item.ConstDex;
-            Rec = item.ConstRec;
-            Int = item.ConstInt;
-            Luc = item.ConstLuc;
-            Wis = item.ConstWis;
-            HP = item.ConstHP;
-            MP = item.ConstMP;
-            SP = item.ConstSP;
-            AttackSpeed = item.AttackTime;
-            MoveSpeed = item.Speed;
-            Defense = item.Defense;
-            Resistance = item.Resistance;
-            MinAttack = item.MinAttack;
-            PlusAttack = item.PlusAttack;
-            Element = item.Element;
+            _item = _databasePreloader.Items[(GEM_TYPE, (byte)TypeId)];
         }
 
         /// <summary>
@@ -53,36 +42,42 @@ namespace Imgeneus.World.Game.Player
             TypeId = typeId;
         }
 
-        public ushort Str { get; }
+        public byte Position { get; private set; }
 
-        public ushort Dex { get; }
+        public ushort Str => _item.ConstStr;
 
-        public ushort Rec { get; }
+        public ushort Dex => _item.ConstDex;
 
-        public ushort Int { get; }
+        public ushort Rec => _item.ConstRec;
 
-        public ushort Luc { get; }
+        public ushort Int => _item.ConstInt;
 
-        public ushort Wis { get; }
+        public ushort Luc => _item.ConstLuc;
 
-        public ushort HP { get; }
+        public ushort Wis => _item.ConstWis;
 
-        public ushort MP { get; }
+        public ushort HP => _item.ConstHP;
 
-        public ushort SP { get; }
+        public ushort MP => _item.ConstMP;
 
-        public byte AttackSpeed { get; }
+        public ushort SP => _item.ConstSP;
 
-        public byte MoveSpeed { get; }
+        public byte AttackSpeed => _item.AttackTime;
 
-        public ushort Defense { get; }
+        public byte MoveSpeed => _item.Speed;
 
-        public ushort Resistance { get; }
+        public ushort Defense => _item.Defense;
 
-        public ushort MinAttack { get; }
+        public ushort Resistance => _item.Resistance;
 
-        public ushort PlusAttack { get; }
+        public ushort MinAttack => _item.MinAttack;
 
-        public Element Element { get; }
+        public ushort PlusAttack => _item.PlusAttack;
+
+        public Element Element => _item.Element;
+
+        public byte ReqIg => _item.ReqIg;
+
+        public ushort ReqVg => _item.ReqVg;
     }
 }

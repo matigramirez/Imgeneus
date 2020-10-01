@@ -603,9 +603,54 @@ namespace Imgeneus.World.Packets
 
         internal void SendGemPossibility(IWorldClient client, double rate, int gold)
         {
-            using var packet = new Packet(PacketType.GEM_POSSIBILITY);
+            using var packet = new Packet(PacketType.GEM_ADD_POSSIBILITY);
             packet.WriteByte(1); // TODO: unknown, maybe bool, that we can link?
             packet.Write(rate);
+            packet.Write(gold);
+            client.SendPacket(packet);
+        }
+
+        internal void SendGemRemovePossibility(IWorldClient client, double rate, int gold)
+        {
+            using var packet = new Packet(PacketType.GEM_REMOVE_POSSIBILITY);
+            packet.WriteByte(1); // TODO: unknown, maybe bool, that we can link?
+            packet.Write(rate);
+            packet.Write(gold);
+            client.SendPacket(packet);
+        }
+
+        internal void SendRemoveGem(IWorldClient client, bool success, Item item, byte gemPosition, List<Item> savedGems, uint gold)
+        {
+            using var packet = new Packet(PacketType.GEM_REMOVE);
+            packet.Write(success);
+            packet.Write(item.Bag);
+            packet.Write(item.Slot);
+            packet.Write(gemPosition);
+
+            for (var i = 0; i < 6; i++)
+                if (savedGems[i] is null)
+                    packet.WriteByte(0); // bag
+                else
+                    packet.Write(savedGems[i].Bag);
+
+            for (var i = 0; i < 6; i++)
+                if (savedGems[i] is null)
+                    packet.WriteByte(0); // slot
+                else
+                    packet.Write(savedGems[i].Slot);
+
+            for (var i = 0; i < 6; i++) // NB! in old eps this value was byte.
+                if (savedGems[i] is null)
+                    packet.Write(0); // type id
+                else
+                    packet.Write((int)savedGems[i].TypeId);
+
+            for (var i = 0; i < 6; i++)
+                if (savedGems[i] is null)
+                    packet.WriteByte(0); // count
+                else
+                    packet.Write(savedGems[i].Count);
+
             packet.Write(gold);
             client.SendPacket(packet);
         }

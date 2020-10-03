@@ -1,7 +1,6 @@
 ﻿using Imgeneus.World.Game.Linking;
 using Imgeneus.World.Game.Player;
 using System.ComponentModel;
-using System.Linq;
 using Xunit;
 
 namespace Imgeneus.World.Tests.GemLinkingTests
@@ -19,9 +18,9 @@ namespace Imgeneus.World.Tests.GemLinkingTests
             character.AddItemToInventory(new Item(databasePreloader.Object, PerfectLinkingHammer.Type, PerfectLinkingHammer.TypeId));
             character.AddItemToInventory(new Item(databasePreloader.Object, Gem_Str_Level_1.Type, Gem_Str_Level_1.TypeId));
 
-            var armor = character.InventoryItems.FirstOrDefault(itm => itm.Bag == 1 && itm.Slot == 0);
-            var hammer = character.InventoryItems.FirstOrDefault(itm => itm.Bag == 1 && itm.Slot == 1);
-            var gem = character.InventoryItems.FirstOrDefault(itm => itm.Bag == 1 && itm.Slot == 2);
+            var armor = character.InventoryItems[(1, 0)];
+            var hammer = character.InventoryItems[(1, 1)];
+            var gem = character.InventoryItems[(1, 2)];
             Assert.NotNull(armor);
             Assert.NotNull(hammer);
             Assert.NotNull(gem);
@@ -45,20 +44,19 @@ namespace Imgeneus.World.Tests.GemLinkingTests
             character.AddItemToInventory(new Item(databasePreloader.Object, JustiaArmor.Type, JustiaArmor.TypeId));
             character.AddItemToInventory(new Item(databasePreloader.Object, Gem_Str_Level_1.Type, Gem_Str_Level_1.TypeId));
 
-            var armor = character.InventoryItems.FirstOrDefault(itm => itm.Bag == 1 && itm.Slot == 0);
-            var gem = character.InventoryItems.FirstOrDefault(itm => itm.Bag == 1 && itm.Slot == 1);
+            var armor = character.InventoryItems[(1, 0)];
+            var gem = character.InventoryItems[(1, 1)];
             Assert.NotNull(armor);
             Assert.NotNull(gem);
             Assert.Null(armor.Gem1);
 
             character.AddGem(gem.Bag, gem.Slot, armor.Bag, armor.Slot, 0, 0);
 
-            armor = character.InventoryItems.FirstOrDefault(itm => itm.Bag == 1 && itm.Slot == 0);
-            gem = character.InventoryItems.FirstOrDefault(itm => itm.Bag == 1 && itm.Slot == 1);
+            armor = character.InventoryItems[(1, 0)];
 
             Assert.NotNull(armor);
             Assert.Null(armor.Gem1);
-            Assert.Null(gem);
+            Assert.False(character.InventoryItems.ContainsKey((1, 1))); // no gem
         }
 
         [Fact]
@@ -71,19 +69,16 @@ namespace Imgeneus.World.Tests.GemLinkingTests
             character.AddItemToInventory(new Item(databasePreloader.Object, JustiaArmor.Type, JustiaArmor.TypeId));
             character.AddItemToInventory(new Item(databasePreloader.Object, Gem_Str_Level_7.Type, Gem_Str_Level_7.TypeId));
 
-            var armor = character.InventoryItems.FirstOrDefault(itm => itm.Bag == 1 && itm.Slot == 0);
-            var gem = character.InventoryItems.FirstOrDefault(itm => itm.Bag == 1 && itm.Slot == 1);
+            var armor = character.InventoryItems[(1, 0)];
+            var gem = character.InventoryItems[(1, 1)];
             Assert.NotNull(armor);
             Assert.NotNull(gem);
             Assert.Null(armor.Gem1);
 
             character.AddGem(gem.Bag, gem.Slot, armor.Bag, armor.Slot, 0, 0);
 
-            armor = character.InventoryItems.FirstOrDefault(itm => itm.Bag == 1 && itm.Slot == 0);
-            gem = character.InventoryItems.FirstOrDefault(itm => itm.Bag == 1 && itm.Slot == 1);
-
-            Assert.Null(armor);
-            Assert.Null(gem);
+            Assert.False(character.InventoryItems.ContainsKey((1, 0))); // no armor
+            Assert.False(character.InventoryItems.ContainsKey((1, 1))); // no gem
         }
 
         [Fact]
@@ -101,8 +96,8 @@ namespace Imgeneus.World.Tests.GemLinkingTests
             Assert.NotNull(character.Armor);
             Assert.Equal(JustiaArmor.ConstStr, character.TotalStr);
 
-            var hammer = character.InventoryItems.FirstOrDefault(itm => itm.Bag == 1 && itm.Slot == 1);
-            var gem = character.InventoryItems.FirstOrDefault(itm => itm.Bag == 1 && itm.Slot == 2);
+            var hammer = character.InventoryItems[(1, 1)];
+            var gem = character.InventoryItems[(1, 2)];
 
             character.AddGem(gem.Bag, gem.Slot, character.Armor.Bag, character.Armor.Slot, hammer.Bag, hammer.Slot);
 
@@ -131,7 +126,7 @@ namespace Imgeneus.World.Tests.GemLinkingTests
             Assert.NotNull(character.Armor);
             Assert.Equal(JustiaArmor.ConstStr, character.TotalStr);
 
-            var gem = character.InventoryItems.FirstOrDefault(itm => itm.Bag == 1 && itm.Slot == 1);
+            var gem = character.InventoryItems[(1, 1)];
 
             character.AddGem(gem.Bag, gem.Slot, character.Armor.Bag, character.Armor.Slot, 0, 0);
 
@@ -153,11 +148,11 @@ namespace Imgeneus.World.Tests.GemLinkingTests
             character.AddItemToInventory(new Item(databasePreloader.Object, Gem_Str_Level_7.Type, Gem_Str_Level_7.TypeId));
             character.AddItemToInventory(new Item(databasePreloader.Object, Gem_Str_Level_7.Type, Gem_Str_Level_7.TypeId));
 
-            var armor = character.InventoryItems.FirstOrDefault(itm => itm.Bag == 1 && itm.Slot == 0);
-            var hammer1 = character.InventoryItems.FirstOrDefault(itm => itm.Bag == 1 && itm.Slot == 1);
-            var hammer2 = character.InventoryItems.FirstOrDefault(itm => itm.Bag == 1 && itm.Slot == 2);
-            var gem1 = character.InventoryItems.FirstOrDefault(itm => itm.Bag == 1 && itm.Slot == 3);
-            var gem2 = character.InventoryItems.FirstOrDefault(itm => itm.Bag == 1 && itm.Slot == 4);
+            var armor = character.InventoryItems[(1, 0)];
+            var hammer1 = character.InventoryItems[(1, 1)];
+            var hammer2 = character.InventoryItems[(1, 2)];
+            var gem1 = character.InventoryItems[(1, 3)];
+            var gem2 = character.InventoryItems[(1, 4)];
 
             Assert.NotNull(armor);
             Assert.NotNull(hammer1);
@@ -171,8 +166,8 @@ namespace Imgeneus.World.Tests.GemLinkingTests
             character.AddGem(gem2.Bag, gem2.Slot, armor.Bag, armor.Slot, hammer2.Bag, hammer2.Slot);
             Assert.Null(armor.Gem2);
 
-            hammer2 = character.InventoryItems.FirstOrDefault(itm => itm.Bag == 1 && itm.Slot == 2);
-            gem2 = character.InventoryItems.FirstOrDefault(itm => itm.Bag == 1 && itm.Slot == 4);
+            hammer2 = character.InventoryItems[(1, 2)];
+            gem2 = character.InventoryItems[(1, 4)];
 
             Assert.NotNull(hammer2);
             Assert.NotNull(gem2);
@@ -191,11 +186,11 @@ namespace Imgeneus.World.Tests.GemLinkingTests
             character.AddItemToInventory(new Item(databasePreloader.Object, Gem_Str_Level_1.Type, Gem_Str_Level_1.TypeId));
             character.AddItemToInventory(new Item(databasePreloader.Object, Gem_Str_Level_7.Type, Gem_Str_Level_7.TypeId));
 
-            var armor = character.InventoryItems.FirstOrDefault(itm => itm.Bag == 1 && itm.Slot == 0);
-            var hammer1 = character.InventoryItems.FirstOrDefault(itm => itm.Bag == 1 && itm.Slot == 1);
-            var hammer2 = character.InventoryItems.FirstOrDefault(itm => itm.Bag == 1 && itm.Slot == 2);
-            var gem1 = character.InventoryItems.FirstOrDefault(itm => itm.Bag == 1 && itm.Slot == 3);
-            var gem2 = character.InventoryItems.FirstOrDefault(itm => itm.Bag == 1 && itm.Slot == 4);
+            var armor = character.InventoryItems[(1, 0)];
+            var hammer1 = character.InventoryItems[(1, 1)];
+            var hammer2 = character.InventoryItems[(1, 2)];
+            var gem1 = character.InventoryItems[(1, 3)];
+            var gem2 = character.InventoryItems[(1, 4)];
 
             Assert.NotNull(armor);
             Assert.NotNull(hammer1);
@@ -224,9 +219,9 @@ namespace Imgeneus.World.Tests.GemLinkingTests
             character.AddItemToInventory(new Item(databasePreloader.Object, PerfectLinkingHammer.Type, PerfectLinkingHammer.TypeId));
             character.AddItemToInventory(new Item(databasePreloader.Object, Gem_Str_Level_1.Type, Gem_Str_Level_1.TypeId));
 
-            var armor = character.InventoryItems.FirstOrDefault(itm => itm.Bag == 1 && itm.Slot == 0);
-            var hammer = character.InventoryItems.FirstOrDefault(itm => itm.Bag == 1 && itm.Slot == 1);
-            var gem = character.InventoryItems.FirstOrDefault(itm => itm.Bag == 1 && itm.Slot == 2);
+            var armor = character.InventoryItems[(1, 0)];
+            var hammer = character.InventoryItems[(1, 1)];
+            var gem = character.InventoryItems[(1, 2)];
             Assert.NotNull(armor);
             Assert.NotNull(hammer);
             Assert.NotNull(gem);
@@ -235,8 +230,8 @@ namespace Imgeneus.World.Tests.GemLinkingTests
             character.AddGem(gem.Bag, gem.Slot, armor.Bag, armor.Slot, hammer.Bag, hammer.Slot);
             Assert.Null(armor.Gem1);
 
-            hammer = character.InventoryItems.FirstOrDefault(itm => itm.Bag == 1 && itm.Slot == 1);
-            gem = character.InventoryItems.FirstOrDefault(itm => itm.Bag == 1 && itm.Slot == 2);
+            hammer = character.InventoryItems[(1, 1)];
+            gem = character.InventoryItems[(1, 2)];
             Assert.NotNull(hammer);
             Assert.NotNull(gem);
         }
@@ -252,9 +247,9 @@ namespace Imgeneus.World.Tests.GemLinkingTests
             character.AddItemToInventory(new Item(databasePreloader.Object, Gem_Str_Level_7.Type, Gem_Str_Level_7.TypeId));
             character.AddItemToInventory(new Item(databasePreloader.Object, LuckyCharm.Type, LuckyCharm.TypeId));
 
-            var armor = character.InventoryItems.FirstOrDefault(itm => itm.Bag == 1 && itm.Slot == 0);
-            var gem = character.InventoryItems.FirstOrDefault(itm => itm.Bag == 1 && itm.Slot == 1);
-            var luckyCharm = character.InventoryItems.FirstOrDefault(itm => itm.Bag == 1 && itm.Slot == 2);
+            var armor = character.InventoryItems[(1, 0)];
+            var gem = character.InventoryItems[(1, 1)];
+            var luckyCharm = character.InventoryItems[(1, 2)];
 
             Assert.NotNull(armor);
             Assert.NotNull(gem);
@@ -263,7 +258,7 @@ namespace Imgeneus.World.Tests.GemLinkingTests
             character.AddGem(gem.Bag, gem.Slot, armor.Bag, armor.Slot, 0, 0);
             Assert.Null(armor.Gem1);
 
-            armor = character.InventoryItems.FirstOrDefault(itm => itm.Bag == 1 && itm.Slot == 0);
+            armor = character.InventoryItems[(1, 0)];
             Assert.NotNull(armor);
             Assert.Single(character.InventoryItems); // Lucky charm was used and it saved armor.
         }
@@ -279,9 +274,9 @@ namespace Imgeneus.World.Tests.GemLinkingTests
             character.AddItemToInventory(new Item(databasePreloader.Object, Gem_Str_Level_1.Type, Gem_Str_Level_1.TypeId));
             character.AddItemToInventory(new Item(databasePreloader.Object, LuckyCharm.Type, LuckyCharm.TypeId));
 
-            var armor = character.InventoryItems.FirstOrDefault(itm => itm.Bag == 1 && itm.Slot == 0);
-            var gem = character.InventoryItems.FirstOrDefault(itm => itm.Bag == 1 && itm.Slot == 1);
-            var luckyCharm = character.InventoryItems.FirstOrDefault(itm => itm.Bag == 1 && itm.Slot == 2);
+            var armor = character.InventoryItems[(1, 0)];
+            var gem = character.InventoryItems[(1, 1)];
+            var luckyCharm = character.InventoryItems[(1, 2)];
 
             Assert.NotNull(armor);
             Assert.NotNull(gem);
@@ -290,9 +285,9 @@ namespace Imgeneus.World.Tests.GemLinkingTests
             character.AddGem(gem.Bag, gem.Slot, armor.Bag, armor.Slot, 0, 0);
             Assert.Null(armor.Gem1);
 
-            armor = character.InventoryItems.FirstOrDefault(itm => itm.Bag == 1 && itm.Slot == 0);
+            armor = character.InventoryItems[(1, 0)];
             Assert.NotNull(armor);
-            luckyCharm = character.InventoryItems.FirstOrDefault(itm => itm.Bag == 1 && itm.Slot == 2);
+            luckyCharm = character.InventoryItems[(1, 2)];
             Assert.NotNull(luckyCharm);
 
             Assert.Equal(2, character.InventoryItems.Count); // Only gem was used, lucky charm is still in inventory.
@@ -313,12 +308,12 @@ namespace Imgeneus.World.Tests.GemLinkingTests
             character.AddItemToInventory(armorItem);
             character.AddItemToInventory(new Item(databasePreloader.Object, PerfectExtractingHammer.Type, PerfectExtractingHammer.TypeId));
 
-            var armor = character.InventoryItems.FirstOrDefault(itm => itm.Bag == 1 && itm.Slot == 0);
-            var hammer = character.InventoryItems.FirstOrDefault(itm => itm.Bag == 1 && itm.Slot == 1);
+            var armor = character.InventoryItems[(1, 0)];
+            var hammer = character.InventoryItems[(1, 1)];
 
             character.RemoveGem(armor.Bag, armor.Slot, true, 0, hammer.Bag, hammer.Slot);
             Assert.Null(armor.Gem1);
-            var gem = character.InventoryItems.FirstOrDefault(itm => itm.Bag == 1 && itm.Slot == 1);
+            var gem = character.InventoryItems[(1, 1)];
             Assert.NotNull(gem);
             Assert.Equal(Gem_Str_Level_1.Type, gem.Type);
             Assert.Equal(Gem_Str_Level_1.TypeId, gem.TypeId);
@@ -340,24 +335,24 @@ namespace Imgeneus.World.Tests.GemLinkingTests
 
             character.AddItemToInventory(armorItem);
 
-            var armor = character.InventoryItems.FirstOrDefault(itm => itm.Bag == 1 && itm.Slot == 0);
+            var armor = character.InventoryItems[(1, 0)];
             Assert.NotNull(armor);
             Assert.NotNull(armor.Gem1);
             Assert.NotNull(armor.Gem2);
 
             character.RemoveGem(armor.Bag, armor.Slot, false, 0, 0, 0);
 
-            armor = character.InventoryItems.FirstOrDefault(itm => itm.Bag == 1 && itm.Slot == 0);
+            armor = character.InventoryItems[(1, 0)];
             Assert.NotNull(armor);
             Assert.Null(armor.Gem1);
             Assert.Null(armor.Gem2);
 
-            var gem1 = character.InventoryItems.FirstOrDefault(itm => itm.Bag == 1 && itm.Slot == 1);
+            var gem1 = character.InventoryItems[(1, 1)];
             Assert.NotNull(gem1);
             Assert.Equal(gem1.Type, Gem_Str_Level_2.Type);
             Assert.Equal(gem1.TypeId, Gem_Str_Level_2.TypeId);
 
-            var gem2 = character.InventoryItems.FirstOrDefault(itm => itm.Bag == 1 && itm.Slot == 2);
+            var gem2 = character.InventoryItems[(1, 2)];
             Assert.NotNull(gem2);
             Assert.Equal(gem2.Type, Gem_Str_Level_3.Type);
             Assert.Equal(gem2.TypeId, Gem_Str_Level_3.TypeId);
@@ -379,7 +374,7 @@ namespace Imgeneus.World.Tests.GemLinkingTests
 
             character.AddItemToInventory(armorItem);
 
-            var armor = character.InventoryItems.FirstOrDefault(itm => itm.Bag == 1 && itm.Slot == 0);
+            var armor = character.InventoryItems[(1, 0)];
             Assert.NotNull(armor);
             Assert.NotNull(armor.Gem1);
 

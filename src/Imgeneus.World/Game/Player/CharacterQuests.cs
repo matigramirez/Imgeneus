@@ -67,7 +67,7 @@ namespace Imgeneus.World.Game.Player
             var quest = Quests.FirstOrDefault(q => q.Id == questId && !q.IsFinished);
             if (quest is null)
                 return;
-            if (!quest.RequirementsFulfilled(InventoryItems.ToList()))
+            if (!quest.RequirementsFulfilled(InventoryItems.Values.ToList()))
                 return;
 
             // TODO: remove items from inventory.

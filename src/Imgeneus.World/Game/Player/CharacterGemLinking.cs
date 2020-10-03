@@ -2,6 +2,7 @@
 using Imgeneus.DatabaseBackgroundService.Handlers;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security;
 
 namespace Imgeneus.World.Game.Player
 {
@@ -9,7 +10,7 @@ namespace Imgeneus.World.Game.Player
     {
         public void AddGem(byte bag, byte slot, byte destinationBag, byte destinationSlot, byte hammerBag, byte hammerSlot)
         {
-            var gem = InventoryItems.FirstOrDefault(itm => itm.Bag == bag && itm.Slot == slot);
+            InventoryItems.TryGetValue((bag, slot), out var gem);
             if (gem is null || gem.Type != Gem.GEM_TYPE)
                 return;
 
@@ -20,18 +21,18 @@ namespace Imgeneus.World.Game.Player
                 return;
             }
 
-            var item = InventoryItems.FirstOrDefault(itm => itm.Bag == destinationBag && itm.Slot == destinationSlot);
+            InventoryItems.TryGetValue((destinationBag, destinationSlot), out var item);
             if (item is null || item.FreeSlots == 0 || item.ContainsGem(gem.TypeId))
                 return;
 
             Item hammer = null;
             if (hammerBag != 0)
-                hammer = InventoryItems.FirstOrDefault(itm => itm.Bag == hammerBag && itm.Slot == hammerSlot);
+                InventoryItems.TryGetValue((hammerBag, hammerSlot), out hammer);
 
             Item saveItem = null;
             if (gem.ReqVg > 0)
             {
-                saveItem = InventoryItems.FirstOrDefault(itm => itm.Special == SpecialEffect.LuckyCharm);
+                saveItem = InventoryItems.Select(itm => itm.Value).FirstOrDefault(itm => itm.Special == SpecialEffect.LuckyCharm);
                 if (saveItem != null)
                     UseItem(saveItem.Bag, saveItem.Slot);
             }
@@ -45,7 +46,7 @@ namespace Imgeneus.World.Game.Player
             }
             else
             {
-                InventoryItems.Remove(gem);
+                InventoryItems.TryRemove((gem.Bag, gem.Slot), out var removedGem);
                 _taskQueue.Enqueue(ActionType.REMOVE_ITEM_FROM_INVENTORY,
                                    Id, gem.Bag, gem.Slot);
             }
@@ -126,13 +127,13 @@ namespace Imgeneus.World.Game.Player
 
         public void AddGemPossibility(byte gemBag, byte gemSlot, byte destinationBag, byte destinationSlot, byte hammerBag, byte hammerSlot)
         {
-            var gem = InventoryItems.FirstOrDefault(itm => itm.Bag == gemBag && itm.Slot == gemSlot);
+            InventoryItems.TryGetValue((gemBag, gemSlot), out var gem);
             if (gem is null)
                 return;
 
             Item hammer = null;
             if (hammerBag != 0)
-                hammer = InventoryItems.FirstOrDefault(itm => itm.Bag == hammerBag && itm.Slot == hammerSlot);
+                InventoryItems.TryGetValue((hammerBag, hammerSlot), out hammer);
 
             var rate = _linkingManager.GetRate(gem, hammer);
             var gold = _linkingManager.GetGold(gem);
@@ -142,7 +143,7 @@ namespace Imgeneus.World.Game.Player
 
         public void RemoveGem(byte bag, byte slot, bool shouldRemoveSpecificGem, byte gemPosition, byte hammerBag, byte hammerSlot)
         {
-            var item = InventoryItems.FirstOrDefault(itm => itm.Bag == bag && itm.Slot == slot);
+            InventoryItems.TryGetValue((bag, slot), out var item);
             if (item is null)
                 return;
 
@@ -190,7 +191,7 @@ namespace Imgeneus.World.Game.Player
                 if (gem is null)
                     return;
 
-                var hammer = InventoryItems.FirstOrDefault(itm => itm.Bag == hammerBag && itm.Slot == hammerSlot);
+                InventoryItems.TryGetValue((hammerBag, hammerSlot), out var hammer);
                 if (hammer != null)
                     UseItem(hammer.Bag, hammer.Slot);
 
@@ -375,7 +376,7 @@ namespace Imgeneus.World.Game.Player
 
         public void GemRemovePossibility(byte bag, byte slot, bool shouldRemoveSpecificGem, byte gemPosition, byte hammerBag, byte hammerSlot)
         {
-            var item = InventoryItems.FirstOrDefault(itm => itm.Bag == bag && itm.Slot == slot);
+            InventoryItems.TryGetValue((bag, slot), out var item);
             if (item is null)
                 return;
 
@@ -415,7 +416,7 @@ namespace Imgeneus.World.Game.Player
                 if (gem is null)
                     return;
 
-                var hammer = InventoryItems.FirstOrDefault(itm => itm.Bag == hammerBag && itm.Slot == hammerSlot);
+                InventoryItems.TryGetValue((hammerBag, hammerSlot), out var hammer);
 
                 rate = _linkingManager.GetRemoveRate(gem, hammer);
                 gold = _linkingManager.GetRemoveGold(gem);

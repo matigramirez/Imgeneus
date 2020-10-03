@@ -181,7 +181,7 @@ namespace Imgeneus.World.Game.Player
                     break;
 
                 case RemoveItemPacket removeItemPacket:
-                    var item = InventoryItems.FirstOrDefault(itm => itm.Slot == removeItemPacket.Slot && itm.Bag == removeItemPacket.Bag);
+                    InventoryItems.TryGetValue((removeItemPacket.Bag, removeItemPacket.Slot), out var item);
                     if (item is null || item.AccountRestriction == ItemAccountRestrictionType.AccountRestricted || item.AccountRestriction == ItemAccountRestrictionType.CharacterRestricted)
                         return;
                     item.TradeQuantity = removeItemPacket.Count <= item.Count ? removeItemPacket.Count : item.Count;
@@ -235,7 +235,7 @@ namespace Imgeneus.World.Game.Player
                     if (npcSellItemPacket.Bag == 0) // Worn item can not be sold, player should take it off first.
                         return;
 
-                    var itemToSell = InventoryItems.FirstOrDefault(i => i.Bag == npcSellItemPacket.Bag && i.Slot == npcSellItemPacket.Slot);
+                    InventoryItems.TryGetValue((npcSellItemPacket.Bag, npcSellItemPacket.Slot), out var itemToSell);
                     if (itemToSell is null) // Item for sale not found.
                         return;
 
@@ -551,7 +551,7 @@ namespace Imgeneus.World.Game.Player
 
         private void HandleChangeAppearance(ChangeAppearancePacket changeAppearancePacket)
         {
-            var item = InventoryItems.FirstOrDefault(itm => itm.Slot == changeAppearancePacket.Slot && itm.Bag == changeAppearancePacket.Bag);
+            InventoryItems.TryGetValue((changeAppearancePacket.Bag, changeAppearancePacket.Slot), out var item);
             if (item is null || (item.Special != SpecialEffect.AppearanceChange && item.Special != SpecialEffect.SexChange))
                 return;
 
@@ -636,14 +636,14 @@ namespace Imgeneus.World.Game.Player
 
         private void HandleDyeSelectItem(byte dyeItemBag, byte dyeItemSlot, byte targetItemBag, byte targetItemSlot)
         {
-            var dyeItem = InventoryItems.FirstOrDefault(itm => itm.Bag == dyeItemBag && itm.Slot == dyeItemSlot);
+            InventoryItems.TryGetValue((dyeItemBag, dyeItemSlot), out var dyeItem);
             if (dyeItem is null || dyeItem.Special != SpecialEffect.Dye)
             {
                 _packetsHelper.SendSelectDyeItem(Client, false);
                 return;
             }
 
-            var item = InventoryItems.FirstOrDefault(itm => itm.Bag == targetItemBag && itm.Slot == targetItemSlot);
+            InventoryItems.TryGetValue((targetItemBag, targetItemSlot), out var item);
             if (item is null)
             {
                 _packetsHelper.SendSelectDyeItem(Client, false);
@@ -695,14 +695,14 @@ namespace Imgeneus.World.Game.Player
 
             var color = _dyeingManager.AvailableColors[new Random().Next(0, 5)];
 
-            var dyeItem = InventoryItems.FirstOrDefault(itm => itm.Bag == dyeItemBag && itm.Slot == dyeItemSlot);
+            InventoryItems.TryGetValue((dyeItemBag, dyeItemSlot), out var dyeItem);
             if (dyeItem is null || dyeItem.Special != SpecialEffect.Dye || _dyeingManager.DyeingItem is null)
             {
                 _packetsHelper.SendDyeConfirm(Client, false, color);
                 return;
             }
 
-            var item = InventoryItems.FirstOrDefault(itm => itm.Bag == targetItemBag && itm.Slot == targetItemSlot);
+            InventoryItems.TryGetValue((targetItemBag, targetItemSlot), out var item);
             if (item is null)
             {
                 _packetsHelper.SendDyeConfirm(Client, false, color);
@@ -746,7 +746,7 @@ namespace Imgeneus.World.Game.Player
 
         protected override void SendCurrentHitpoints() => _packetsHelper.SendCurrentHitpoints(Client, this);
 
-        private void SendInventoryItems() => _packetsHelper.SendInventoryItems(Client, InventoryItems);
+        private void SendInventoryItems() => _packetsHelper.SendInventoryItems(Client, InventoryItems.Values.ToList());
 
         private void SendLearnedSkills() => _packetsHelper.SendLearnedSkills(Client, this);
 

@@ -22,13 +22,11 @@ namespace Imgeneus.World.Tests.PartyTests
         {
             var character1 = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object, linkingMock.Object, dyeingMock.Object)
             {
-                Name = "Character1",
                 Map = _map
             };
             character1.Client = worldClientMock.Object;
             var character2 = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object, linkingMock.Object, dyeingMock.Object)
             {
-                Name = "Character2",
                 Map = _map
             };
             character2.Client = worldClientMock.Object;
@@ -48,13 +46,11 @@ namespace Imgeneus.World.Tests.PartyTests
         {
             var character1 = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object, linkingMock.Object, dyeingMock.Object)
             {
-                Name = "Character1",
                 Map = _map
             };
             character1.Client = worldClientMock.Object;
             var character2 = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object, linkingMock.Object, dyeingMock.Object)
             {
-                Name = "Character2",
                 Map = _map
             };
             character2.Client = worldClientMock.Object;
@@ -73,10 +69,10 @@ namespace Imgeneus.World.Tests.PartyTests
             Assert.Equal(2, character1.InventoryItems.Count);
             Assert.Single(character2.InventoryItems);
 
-            Assert.Equal(WaterArmor.Type, character1.InventoryItems[0].Type);
-            Assert.Equal(FireSword.Type, character1.InventoryItems[1].Type);
+            Assert.Equal(WaterArmor.Type, character1.InventoryItems[(1, 0)].Type);
+            Assert.Equal(FireSword.Type, character1.InventoryItems[(1, 1)].Type);
 
-            Assert.Equal(WaterArmor.Type, character2.InventoryItems[0].Type);
+            Assert.Equal(WaterArmor.Type, character2.InventoryItems[(1, 0)].Type);
         }
     }
 }

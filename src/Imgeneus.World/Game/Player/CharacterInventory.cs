@@ -6,6 +6,7 @@ using Imgeneus.World.Game.NPCs;
 using Microsoft.Extensions.Logging;
 using MvvmHelpers;
 using System;
+using System.Collections.Concurrent;
 using System.Linq;
 
 namespace Imgeneus.World.Game.Player
@@ -388,23 +389,58 @@ namespace Imgeneus.World.Game.Player
         /// </summary>
         private void InitEquipment()
         {
-            Helmet = InventoryItems.FirstOrDefault(itm => itm.Bag == 0 && itm.Slot == 0);
-            Armor = InventoryItems.FirstOrDefault(itm => itm.Bag == 0 && itm.Slot == 1);
-            Pants = InventoryItems.FirstOrDefault(itm => itm.Bag == 0 && itm.Slot == 2);
-            Gauntlet = InventoryItems.FirstOrDefault(itm => itm.Bag == 0 && itm.Slot == 3);
-            Boots = InventoryItems.FirstOrDefault(itm => itm.Bag == 0 && itm.Slot == 4);
-            Weapon = InventoryItems.FirstOrDefault(itm => itm.Bag == 0 && itm.Slot == 5);
-            Shield = InventoryItems.FirstOrDefault(itm => itm.Bag == 0 && itm.Slot == 6);
-            Cape = InventoryItems.FirstOrDefault(itm => itm.Bag == 0 && itm.Slot == 7);
-            Amulet = InventoryItems.FirstOrDefault(itm => itm.Bag == 0 && itm.Slot == 8);
-            Ring1 = InventoryItems.FirstOrDefault(itm => itm.Bag == 0 && itm.Slot == 9);
-            Ring2 = InventoryItems.FirstOrDefault(itm => itm.Bag == 0 && itm.Slot == 10);
-            Bracelet1 = InventoryItems.FirstOrDefault(itm => itm.Bag == 0 && itm.Slot == 11);
-            Bracelet2 = InventoryItems.FirstOrDefault(itm => itm.Bag == 0 && itm.Slot == 12);
-            Mount = InventoryItems.FirstOrDefault(itm => itm.Bag == 0 && itm.Slot == 13);
-            Pet = InventoryItems.FirstOrDefault(itm => itm.Bag == 0 && itm.Slot == 14);
-            Costume = InventoryItems.FirstOrDefault(itm => itm.Bag == 0 && itm.Slot == 15);
-            Wings = InventoryItems.FirstOrDefault(itm => itm.Bag == 0 && itm.Slot == 16);
+            Item item;
+
+            InventoryItems.TryGetValue((0, 0), out item);
+            Helmet = item;
+
+            InventoryItems.TryGetValue((0, 1), out item);
+            Armor = item;
+
+            InventoryItems.TryGetValue((0, 2), out item);
+            Pants = item;
+
+            InventoryItems.TryGetValue((0, 3), out item);
+            Gauntlet = item;
+
+            InventoryItems.TryGetValue((0, 4), out item);
+            Boots = item;
+
+            InventoryItems.TryGetValue((0, 5), out item);
+            Weapon = item;
+
+            InventoryItems.TryGetValue((0, 6), out item);
+            Shield = item;
+
+            InventoryItems.TryGetValue((0, 7), out item);
+            Cape = item;
+
+            InventoryItems.TryGetValue((0, 8), out item);
+            Amulet = item;
+
+            InventoryItems.TryGetValue((0, 9), out item);
+            Ring1 = item;
+
+            InventoryItems.TryGetValue((0, 10), out item);
+            Ring2 = item;
+
+            InventoryItems.TryGetValue((0, 11), out item);
+            Bracelet1 = item;
+
+            InventoryItems.TryGetValue((0, 12), out item);
+            Bracelet2 = item;
+
+            InventoryItems.TryGetValue((0, 13), out item);
+            Mount = item;
+
+            InventoryItems.TryGetValue((0, 14), out item);
+            Pet = item;
+
+            InventoryItems.TryGetValue((0, 15), out item);
+            Costume = item;
+
+            InventoryItems.TryGetValue((0, 16), out item);
+            Wings = item;
         }
 
         /// <summary>
@@ -464,7 +500,7 @@ namespace Imgeneus.World.Game.Player
         /// <summary>
         /// Collection of inventory items.
         /// </summary>
-        public ObservableRangeCollection<Item> InventoryItems { get; private set; } = new ObservableRangeCollection<Item>();
+        public readonly ConcurrentDictionary<(byte Bag, byte Slot), Item> InventoryItems = new ConcurrentDictionary<(byte Bag, byte Slot), Item>();
 
         /// <summary>
         /// Adds item to player's inventory.
@@ -496,7 +532,7 @@ namespace Imgeneus.World.Game.Player
                                item.Gem6 is null ? 0 : item.Gem6.TypeId,
                                item.DyeColor.IsEnabled, item.DyeColor.Alpha, item.DyeColor.Saturation, item.DyeColor.R, item.DyeColor.G, item.DyeColor.B);
 
-            InventoryItems.Add(item);
+            InventoryItems.TryAdd((item.Bag, item.Slot), item);
             _logger.LogDebug($"Character {Id} got item {item.Type} {item.TypeId}");
             return item;
         }
@@ -525,7 +561,7 @@ namespace Imgeneus.World.Game.Player
             _taskQueue.Enqueue(ActionType.REMOVE_ITEM_FROM_INVENTORY,
                                Id, item.Bag, item.Slot);
 
-            InventoryItems.Remove(item);
+            InventoryItems.TryRemove((item.Bag, item.Slot), out var removedItem);
             _logger.LogDebug($"Character {Id} lost item {item.Type} {item.TypeId}");
             return item;
         }
@@ -543,7 +579,7 @@ namespace Imgeneus.World.Game.Player
             bool shouldDeleteSourceItemFromDB = false;
 
             // Find source item.
-            var sourceItem = InventoryItems.First(ci => ci.Bag == currentBag && ci.Slot == currentSlot);
+            InventoryItems.TryRemove((currentBag, currentSlot), out var sourceItem);
 
             // Source item is always to remove.
             // TODO: rethink if this can be done without removing item from db.
@@ -551,7 +587,7 @@ namespace Imgeneus.World.Game.Player
                                Id, currentBag, currentSlot);
 
             // Check, if any other item is at destination slot.
-            var destinationItem = InventoryItems.FirstOrDefault(ci => ci.Bag == destinationBag && ci.Slot == destinationSlot);
+            InventoryItems.TryRemove((destinationBag, destinationSlot), out var destinationItem);
             if (destinationItem is null)
             {
                 // No item at destination place.
@@ -575,7 +611,6 @@ namespace Imgeneus.World.Game.Player
                     // Increase destination item count, if they are joinable.
                     destinationItem.Count += sourceItem.Count;
                     shouldDeleteSourceItemFromDB = true;
-                    InventoryItems.Remove(sourceItem);
 
                     sourceItem = new Item(_databasePreloader, 0, 0) { Bag = currentBag, Slot = currentSlot }; // empty item.
                 }
@@ -748,6 +783,12 @@ namespace Imgeneus.World.Game.Player
                 }
             }
 
+            if (sourceItem.Type != 0 && sourceItem.TypeId != 0)
+                InventoryItems.TryAdd((sourceItem.Bag, sourceItem.Slot), sourceItem);
+
+            if (destinationItem.Type != 0 && destinationItem.TypeId != 0)
+                InventoryItems.TryAdd((destinationItem.Bag, destinationItem.Slot), destinationItem);
+
             return (sourceItem, destinationItem);
         }
 
@@ -767,7 +808,7 @@ namespace Imgeneus.World.Game.Player
         /// <param name="slot">slot, where item is situated</param>
         private void UseItem(byte bag, byte slot)
         {
-            var item = InventoryItems.FirstOrDefault(itm => itm.Bag == bag && itm.Slot == slot);
+            InventoryItems.TryGetValue((bag, slot), out var item);
             if (item is null)
             {
                 _logger.LogWarning($"Character {Id} is trying to use item, that does not exist. Possible hack?");
@@ -788,7 +829,7 @@ namespace Imgeneus.World.Game.Player
             }
             else
             {
-                InventoryItems.Remove(item);
+                InventoryItems.TryRemove((item.Bag, item.Slot), out var removedItem);
                 _taskQueue.Enqueue(ActionType.REMOVE_ITEM_FROM_INVENTORY,
                                    Id, item.Bag, item.Slot);
             }
@@ -1026,7 +1067,7 @@ namespace Imgeneus.World.Game.Player
         /// <param name="count">how many item player want to sell</param>
         public Item SellItem(Item item, byte count)
         {
-            if (!InventoryItems.Contains(item))
+            if (!InventoryItems.ContainsKey((item.Bag, item.Slot)))
             {
                 return null;
             }
@@ -1058,10 +1099,10 @@ namespace Imgeneus.World.Game.Player
                 // Start with 1, because 0 is worn items.
                 for (byte i = 1; i <= maxBag; i++)
                 {
-                    var bagItems = InventoryItems.Where(itm => itm.Bag == i).OrderBy(b => b.Slot);
+                    var bagItems = InventoryItems.Where(itm => itm.Value.Bag == i).OrderBy(b => b.Value.Slot);
                     for (var j = 0; j < maxSlots; j++)
                     {
-                        if (!bagItems.Any(b => b.Slot == j))
+                        if (!bagItems.Any(b => b.Value.Slot == j))
                         {
                             freeSlot = j;
                             break;

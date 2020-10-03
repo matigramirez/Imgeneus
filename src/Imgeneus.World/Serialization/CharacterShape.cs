@@ -3,8 +3,6 @@ using Imgeneus.Database.Constants;
 using Imgeneus.Database.Entities;
 using Imgeneus.Network.Serialization;
 using Imgeneus.World.Game.Player;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Imgeneus.World.Serialization
 {
@@ -86,11 +84,9 @@ namespace Imgeneus.World.Serialization
             Kills = character.Kills;
             Name = character.NameAsByteArray;
 
-            var equipmentItems = character.InventoryItems.Where(item => item.Bag == 0).ToList();
-            var equipmentBytes = new List<byte>();
-            for (var i = 0; i < 17; i++)
+            for (byte i = 0; i < 17; i++)
             {
-                var item = equipmentItems.FirstOrDefault(itm => itm.Slot == i);
+                character.InventoryItems.TryGetValue((0, i), out var item);
                 EquipmentItems[i] = new EquipmentItem(item);
 
                 if (item != null)

@@ -986,9 +986,11 @@ namespace Imgeneus.World.Game.Player
                 character.Skills.Add(skill.Number, skill);
 
             character.ActiveBuffs.AddRange(dbCharacter.ActiveBuffs.Select(b => ActiveBuff.FromDbCharacterActiveBuff(b)));
-            character.InventoryItems.AddRange(dbCharacter.Items.Select(i => new Item(databasePreloader, i)));
             character.Quests.AddRange(dbCharacter.Quests.Select(q => new Quest(databasePreloader, q)));
             character.QuickItems = dbCharacter.QuickItems;
+
+            foreach (var item in dbCharacter.Items.Select(i => new Item(databasePreloader, i)))
+                character.InventoryItems.TryAdd((item.Bag, item.Slot), item);
 
             foreach (var friend in dbCharacter.Friends.Select(f => f.Friend))
                 character.Friends.TryAdd(friend.Id, new Friend(friend.Id, friend.Name, friend.Class, gameWorld.Players.ContainsKey(friend.Id)));

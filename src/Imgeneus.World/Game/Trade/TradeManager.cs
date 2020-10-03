@@ -122,7 +122,7 @@ namespace Imgeneus.World.Game.Trade
             var trader = _gameWorld.Players[sender.CharID];
             var partner = trader.TradePartner;
 
-            var tradeItem = trader.InventoryItems.FirstOrDefault(item => item.Bag == tradeAddItemPacket.Bag && item.Slot == tradeAddItemPacket.Slot);
+            trader.InventoryItems.TryGetValue((tradeAddItemPacket.Bag, tradeAddItemPacket.Slot), out var tradeItem);
             if (tradeItem is null)
             {
                 // Possible cheating?

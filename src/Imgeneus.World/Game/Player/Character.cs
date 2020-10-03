@@ -128,7 +128,7 @@ namespace Imgeneus.World.Game.Player
 
         #region Character info
 
-        public string Name { get; set; }
+        public string Name { get; set; } = "";
         public Fraction Country { get; set; }
         public ushort MapId { get; private set; }
         public Race Race { get; set; }

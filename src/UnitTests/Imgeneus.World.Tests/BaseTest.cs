@@ -4,6 +4,7 @@ using Imgeneus.Database.Preload;
 using Imgeneus.DatabaseBackgroundService;
 using Imgeneus.World.Game;
 using Imgeneus.World.Game.Chat;
+using Imgeneus.World.Game.Dyeing;
 using Imgeneus.World.Game.Linking;
 using Imgeneus.World.Game.Monster;
 using Imgeneus.World.Game.Player;
@@ -26,6 +27,7 @@ namespace Imgeneus.World.Tests
         protected Mock<ILogger<Mob>> mobLoggerMock = new Mock<ILogger<Mob>>();
         protected Mock<IChatManager> chatMock = new Mock<IChatManager>();
         protected Mock<ILinkingManager> linkingMock = new Mock<ILinkingManager>();
+        protected Mock<IDyeingManager> dyeingMock = new Mock<IDyeingManager>();
         protected Mock<IWorldClient> worldClientMock = new Mock<IWorldClient>();
 
         protected Map testMap => new Map(

@@ -36,6 +36,18 @@ namespace Imgeneus.DatabaseBackgroundService.Handlers
             byte count = (byte)args[3];
             byte bag = (byte)args[4];
             byte slot = (byte)args[5];
+            int gem1 = (int)args[6];
+            int gem2 = (int)args[7];
+            int gem3 = (int)args[8];
+            int gem4 = (int)args[9];
+            int gem5 = (int)args[10];
+            int gem6 = (int)args[11];
+            bool hasColor = (bool)args[12];
+            byte alpha = (byte)args[13];
+            byte saturation = (byte)args[14];
+            byte r = (byte)args[15];
+            byte g = (byte)args[16];
+            byte b = (byte)args[16];
 
             using var database = DependencyContainer.Instance.Resolve<IDatabase>();
             var dbItem = new DbCharacterItems()
@@ -46,6 +58,18 @@ namespace Imgeneus.DatabaseBackgroundService.Handlers
                 Count = count,
                 Bag = bag,
                 Slot = slot,
+                GemTypeId1 = gem1,
+                GemTypeId2 = gem2,
+                GemTypeId3 = gem3,
+                GemTypeId4 = gem4,
+                GemTypeId5 = gem5,
+                GemTypeId6 = gem6,
+                HasDyeColor = hasColor,
+                DyeColorAlpha = alpha,
+                DyeColorSaturation = saturation,
+                DyeColorR = r,
+                DyeColorG = g,
+                DyeColorB = b
             };
 
             database.CharacterItems.Add(dbItem);
@@ -309,14 +333,14 @@ namespace Imgeneus.DatabaseBackgroundService.Handlers
         [ActionHandler(ActionType.UPDATE_GEM)]
         internal static async Task UpdateGem(object[] args)
         {
-            int itemId = (int)args[0];
-            byte gemSlot = (byte)args[1];
-            int gemTypeId = (int)args[2];
+            int characterId = (int)args[0];
+            byte bag = (byte)args[1];
+            byte slot = (byte)args[2];
+            byte gemSlot = (byte)args[3];
+            int gemTypeId = (int)args[4];
 
             using var database = DependencyContainer.Instance.Resolve<IDatabase>();
-            var item = database.CharacterItems.Find(itemId);
-            if (item is null)
-                return;
+            var item = database.CharacterItems.First(itm => itm.CharacterId == characterId && itm.Bag == bag && itm.Slot == slot);
 
             switch (gemSlot)
             {
@@ -348,5 +372,29 @@ namespace Imgeneus.DatabaseBackgroundService.Handlers
             await database.SaveChangesAsync();
         }
 
+        [ActionHandler(ActionType.CREATE_DYE_COLOR)]
+        internal static async Task CreateDyeColor(object[] args)
+        {
+            int characterId = (int)args[0];
+            byte bag = (byte)args[1];
+            byte slot = (byte)args[2];
+            byte alpha = (byte)args[3];
+            byte saturation = (byte)args[4];
+            byte r = (byte)args[5];
+            byte g = (byte)args[6];
+            byte b = (byte)args[7];
+
+            using var database = DependencyContainer.Instance.Resolve<IDatabase>();
+            var item = database.CharacterItems.First(itm => itm.CharacterId == characterId && itm.Bag == bag && itm.Slot == slot);
+
+            item.HasDyeColor = true;
+            item.DyeColorAlpha = alpha;
+            item.DyeColorSaturation = saturation;
+            item.DyeColorR = r;
+            item.DyeColorG = g;
+            item.DyeColorB = b;
+
+            await database.SaveChangesAsync();
+        }
     }
 }

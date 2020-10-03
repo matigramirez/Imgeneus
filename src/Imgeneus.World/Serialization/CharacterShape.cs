@@ -50,19 +50,19 @@ namespace Imgeneus.World.Serialization
         public int Kills { get; }
 
         [FieldOrder(13)]
-        public byte[] EquipmentItems { get; }
+        public EquipmentItem[] EquipmentItems { get; } = new EquipmentItem[17];
 
         [FieldOrder(14)]
-        public bool[] EquipmentItemHasColor { get; } = new bool[16]; // TODO: support colors
+        public bool[] EquipmentItemHasColor { get; } = new bool[17];
 
         [FieldOrder(15)]
         public int UnknownInt { get; }
 
         [FieldOrder(16)]
-        public byte[] EquipmentItemColor { get; } = new byte[16 * 4]; // TODO: support colors. Each color is 4 bytes. Probably alfa, r, g, b.
+        public DyeColorSerialized[] EquipmentItemColor { get; } = new DyeColorSerialized[17];
 
         [FieldOrder(17)]
-        public byte[] UnknownBytes { get; } = new byte[459];
+        public byte[] UnknownBytes2 { get; } = new byte[452];
 
         [FieldOrder(18)]
         public byte[] Name;
@@ -88,12 +88,18 @@ namespace Imgeneus.World.Serialization
 
             var equipmentItems = character.InventoryItems.Where(item => item.Bag == 0).ToList();
             var equipmentBytes = new List<byte>();
-            for (var i = 0; i < 16; i++)
+            for (var i = 0; i < 17; i++)
             {
                 var item = equipmentItems.FirstOrDefault(itm => itm.Slot == i);
-                equipmentBytes.AddRange(new EquipmentItem(item).Serialize());
+                EquipmentItems[i] = new EquipmentItem(item);
+
+                if (item != null)
+                {
+                    EquipmentItemHasColor[i] = item.DyeColor.IsEnabled;
+                    if (item.DyeColor.IsEnabled)
+                        EquipmentItemColor[i] = new DyeColorSerialized(item.DyeColor.Saturation, item.DyeColor.R, item.DyeColor.G, item.DyeColor.B);
+                }
             }
-            EquipmentItems = equipmentBytes.ToArray();
 
             if (character.HasParty)
             {

@@ -14,6 +14,7 @@
         REMOVE_ITEM_FROM_INVENTORY,
         UPDATE_ITEM_COUNT_IN_INVENTORY,
         UPDATE_GOLD,
+        CREATE_DYE_COLOR,
 
         // Gems
         UPDATE_GEM,

@@ -7,6 +7,7 @@ using Imgeneus.Network.Server;
 using Imgeneus.World.Game.Blessing;
 using Imgeneus.World.Game.Chat;
 using Imgeneus.World.Game.Duel;
+using Imgeneus.World.Game.Dyeing;
 using Imgeneus.World.Game.Linking;
 using Imgeneus.World.Game.PartyAndRaid;
 using Imgeneus.World.Game.Player;
@@ -102,7 +103,8 @@ namespace Imgeneus.World.Game
                                                      _taskQueue,
                                                      _databasePreloader,
                                                      DependencyContainer.Instance.Resolve<IChatManager>(),
-                                                     DependencyContainer.Instance.Resolve<ILinkingManager>());
+                                                     DependencyContainer.Instance.Resolve<ILinkingManager>(),
+                                                     DependencyContainer.Instance.Resolve<IDyeingManager>());
             newPlayer.Client = client;
 
             Players.TryAdd(newPlayer.Id, newPlayer);

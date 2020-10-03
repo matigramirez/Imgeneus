@@ -487,7 +487,14 @@ namespace Imgeneus.World.Game.Player
             item.Slot = (byte)free.Slot;
 
             _taskQueue.Enqueue(ActionType.SAVE_ITEM_IN_INVENTORY,
-                               Id, item.Type, item.TypeId, item.Count, item.Bag, item.Slot);
+                               Id, item.Type, item.TypeId, item.Count, item.Bag, item.Slot,
+                               item.Gem1 is null ? 0 : item.Gem1.TypeId,
+                               item.Gem2 is null ? 0 : item.Gem2.TypeId,
+                               item.Gem3 is null ? 0 : item.Gem3.TypeId,
+                               item.Gem4 is null ? 0 : item.Gem4.TypeId,
+                               item.Gem5 is null ? 0 : item.Gem5.TypeId,
+                               item.Gem6 is null ? 0 : item.Gem6.TypeId,
+                               item.DyeColor.IsEnabled, item.DyeColor.Alpha, item.DyeColor.Saturation, item.DyeColor.R, item.DyeColor.G, item.DyeColor.B);
 
             InventoryItems.Add(item);
             _logger.LogDebug($"Character {Id} got item {item.Type} {item.TypeId}");
@@ -539,6 +546,7 @@ namespace Imgeneus.World.Game.Player
             var sourceItem = InventoryItems.First(ci => ci.Bag == currentBag && ci.Slot == currentSlot);
 
             // Source item is always to remove.
+            // TODO: rethink if this can be done without removing item from db.
             _taskQueue.Enqueue(ActionType.REMOVE_ITEM_FROM_INVENTORY,
                                Id, currentBag, currentSlot);
 
@@ -591,14 +599,35 @@ namespace Imgeneus.World.Game.Player
             if (shouldDeleteSourceItemFromDB)
             {
                 _taskQueue.Enqueue(ActionType.SAVE_ITEM_IN_INVENTORY,
-                                   Id, destinationItem.Type, destinationItem.TypeId, destinationItem.Count, destinationItem.Bag, destinationItem.Slot);
+                                   Id, destinationItem.Type, destinationItem.TypeId, destinationItem.Count, destinationItem.Bag, destinationItem.Slot,
+                                   destinationItem.Gem1 is null ? 0 : destinationItem.Gem1.TypeId,
+                                   destinationItem.Gem2 is null ? 0 : destinationItem.Gem2.TypeId,
+                                   destinationItem.Gem3 is null ? 0 : destinationItem.Gem3.TypeId,
+                                   destinationItem.Gem4 is null ? 0 : destinationItem.Gem4.TypeId,
+                                   destinationItem.Gem5 is null ? 0 : destinationItem.Gem5.TypeId,
+                                   destinationItem.Gem6 is null ? 0 : destinationItem.Gem6.TypeId,
+                                   destinationItem.DyeColor.IsEnabled, destinationItem.DyeColor.Alpha, destinationItem.DyeColor.Saturation, destinationItem.DyeColor.R, destinationItem.DyeColor.G, destinationItem.DyeColor.B);
             }
             else
             {
                 _taskQueue.Enqueue(ActionType.SAVE_ITEM_IN_INVENTORY,
-                                   Id, sourceItem.Type, sourceItem.TypeId, sourceItem.Count, sourceItem.Bag, sourceItem.Slot);
+                                   Id, sourceItem.Type, sourceItem.TypeId, sourceItem.Count, sourceItem.Bag, sourceItem.Slot,
+                                   sourceItem.Gem1 is null ? 0 : sourceItem.Gem1.TypeId,
+                                   sourceItem.Gem2 is null ? 0 : sourceItem.Gem2.TypeId,
+                                   sourceItem.Gem3 is null ? 0 : sourceItem.Gem3.TypeId,
+                                   sourceItem.Gem4 is null ? 0 : sourceItem.Gem4.TypeId,
+                                   sourceItem.Gem5 is null ? 0 : sourceItem.Gem5.TypeId,
+                                   sourceItem.Gem6 is null ? 0 : sourceItem.Gem6.TypeId,
+                                   sourceItem.DyeColor.IsEnabled, sourceItem.DyeColor.Alpha, sourceItem.DyeColor.Saturation, sourceItem.DyeColor.R, sourceItem.DyeColor.G, sourceItem.DyeColor.B);
                 _taskQueue.Enqueue(ActionType.SAVE_ITEM_IN_INVENTORY,
-                                   Id, destinationItem.Type, destinationItem.TypeId, destinationItem.Count, destinationItem.Bag, destinationItem.Slot);
+                                   Id, destinationItem.Type, destinationItem.TypeId, destinationItem.Count, destinationItem.Bag, destinationItem.Slot,
+                                   destinationItem.Gem1 is null ? 0 : destinationItem.Gem1.TypeId,
+                                   destinationItem.Gem2 is null ? 0 : destinationItem.Gem2.TypeId,
+                                   destinationItem.Gem3 is null ? 0 : destinationItem.Gem3.TypeId,
+                                   destinationItem.Gem4 is null ? 0 : destinationItem.Gem4.TypeId,
+                                   destinationItem.Gem5 is null ? 0 : destinationItem.Gem5.TypeId,
+                                   destinationItem.Gem6 is null ? 0 : destinationItem.Gem6.TypeId,
+                                   destinationItem.DyeColor.IsEnabled, destinationItem.DyeColor.Alpha, destinationItem.DyeColor.Saturation, destinationItem.DyeColor.R, destinationItem.DyeColor.G, destinationItem.DyeColor.B);
             }
 
             // Update equipment if needed.
@@ -870,6 +899,10 @@ namespace Imgeneus.World.Game.Player
                 case SpecialEffect.LinkingHammer:
                 case SpecialEffect.PerfectLinkingHammer:
                     // Effect is added in linking manager.
+                    break;
+
+                case SpecialEffect.Dye:
+                    // Effect is handled in dyeing manager.
                     break;
 
                 case SpecialEffect.None:

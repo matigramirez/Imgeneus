@@ -20,13 +20,13 @@ namespace Imgeneus.World.Tests.PartyTests
         [Description("First player, that connected raid is its' leader. Second - subleader.")]
         public void Raid_Leader()
         {
-            var character1 = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object, linkingMock.Object)
+            var character1 = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object, linkingMock.Object, dyeingMock.Object)
             {
                 Name = "Character1",
                 Map = _map
             };
             character1.Client = worldClientMock.Object;
-            var character2 = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object, linkingMock.Object)
+            var character2 = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object, linkingMock.Object, dyeingMock.Object)
             {
                 Name = "Character2",
                 Map = _map
@@ -49,13 +49,13 @@ namespace Imgeneus.World.Tests.PartyTests
         [Description("If drop type is RaidDropType.Leader, then leader should get all items in drop.")]
         public void Raid_DropToLeader()
         {
-            var character1 = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object, linkingMock.Object)
+            var character1 = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object, linkingMock.Object, dyeingMock.Object)
             {
                 Name = "Character1",
                 Map = _map
             };
             character1.Client = worldClientMock.Object;
-            var character2 = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object, linkingMock.Object)
+            var character2 = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object, linkingMock.Object, dyeingMock.Object)
             {
                 Name = "Character2",
                 Map = _map
@@ -80,13 +80,13 @@ namespace Imgeneus.World.Tests.PartyTests
         [Description("If drop type is RaidDropType.Leader, but leader is too far away, then he doesn't get drop.")]
         public void Raid_DropToLeader_LeaderIsFarAway()
         {
-            var character1 = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object, linkingMock.Object)
+            var character1 = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object, linkingMock.Object, dyeingMock.Object)
             {
                 Name = "Character1",
                 Map = _map
             };
             character1.Client = worldClientMock.Object;
-            var character2 = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object, linkingMock.Object)
+            var character2 = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object, linkingMock.Object, dyeingMock.Object)
             {
                 Name = "Character2",
                 Map = _map
@@ -116,13 +116,13 @@ namespace Imgeneus.World.Tests.PartyTests
         [Description("If drop type is RaidDropType.Group, items are distributed one by one to each raid member.")]
         public void Raid_DropToGroup()
         {
-            var character1 = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object, linkingMock.Object)
+            var character1 = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object, linkingMock.Object, dyeingMock.Object)
             {
                 Name = "Character1",
                 Map = _map
             };
             character1.Client = worldClientMock.Object;
-            var character2 = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object, linkingMock.Object)
+            var character2 = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object, linkingMock.Object, dyeingMock.Object)
             {
                 Name = "Character2",
                 Map = _map
@@ -153,19 +153,19 @@ namespace Imgeneus.World.Tests.PartyTests
         [Description("If drop type is RaidDropType.Group, but some member is far away he doesn't get drop.")]
         public void Raid_DropToGroup_FarAway()
         {
-            var character1 = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object, linkingMock.Object)
+            var character1 = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object, linkingMock.Object, dyeingMock.Object)
             {
                 Name = "Character1",
                 Map = _map
             };
             character1.Client = worldClientMock.Object;
-            var character2 = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object, linkingMock.Object)
+            var character2 = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object, linkingMock.Object, dyeingMock.Object)
             {
                 Name = "Character2",
                 Map = _map
             };
             character2.Client = worldClientMock.Object;
-            var character3 = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object, linkingMock.Object)
+            var character3 = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object, linkingMock.Object, dyeingMock.Object)
             {
                 Name = "Character3",
                 Map = _map
@@ -198,19 +198,19 @@ namespace Imgeneus.World.Tests.PartyTests
         [Description("If drop type is RaidDropType.Group, money should be distributed equally.")]
         public void Raid_DropToGroup_GoldDistribution()
         {
-            var character1 = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object, linkingMock.Object)
+            var character1 = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object, linkingMock.Object, dyeingMock.Object)
             {
                 Name = "Character1",
                 Map = _map
             };
             character1.Client = worldClientMock.Object;
-            var character2 = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object, linkingMock.Object)
+            var character2 = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object, linkingMock.Object, dyeingMock.Object)
             {
                 Name = "Character2",
                 Map = _map
             };
             character2.Client = worldClientMock.Object;
-            var character3 = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object, linkingMock.Object)
+            var character3 = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object, linkingMock.Object, dyeingMock.Object)
             {
                 Name = "Character3",
                 Map = _map
@@ -235,13 +235,13 @@ namespace Imgeneus.World.Tests.PartyTests
         [Description("If drop type is RaidDropType.Group, but members do not have place in inventory, items are not distributed.")]
         public void Raid_DropToGroup_NoPlaceInInventory()
         {
-            var character1 = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object, linkingMock.Object)
+            var character1 = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object, linkingMock.Object, dyeingMock.Object)
             {
                 Name = "Character1",
                 Map = _map
             };
             character1.Client = worldClientMock.Object;
-            var character2 = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object, linkingMock.Object)
+            var character2 = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object, linkingMock.Object, dyeingMock.Object)
             {
                 Name = "Character2",
                 Map = _map
@@ -272,19 +272,19 @@ namespace Imgeneus.World.Tests.PartyTests
         [Description("If drop type is RaidDropType.Random, drop items should be assign to random users.")]
         public void Raid_DropToRandom()
         {
-            var character1 = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object, linkingMock.Object)
+            var character1 = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object, linkingMock.Object, dyeingMock.Object)
             {
                 Name = "Character1",
                 Map = _map
             };
             character1.Client = worldClientMock.Object;
-            var character2 = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object, linkingMock.Object)
+            var character2 = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object, linkingMock.Object, dyeingMock.Object)
             {
                 Name = "Character2",
                 Map = _map
             };
             character2.Client = worldClientMock.Object;
-            var character3 = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object, linkingMock.Object)
+            var character3 = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object, linkingMock.Object, dyeingMock.Object)
             {
                 Name = "Character3",
                 Map = testMap

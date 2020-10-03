@@ -12,7 +12,7 @@ namespace Imgeneus.World.Tests.MobTests
             var map = testMap;
             var mob = new Mob(mobLoggerMock.Object, databasePreloader.Object, Wolf.Id, true, new MoveArea(0, 0, 0, 0, 0, 0), map);
 
-            var character = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object, linkingMock.Object);
+            var character = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object, linkingMock.Object, dyeingMock.Object);
             character.Client = worldClientMock.Object;
 
             map.LoadPlayer(character);
@@ -28,7 +28,7 @@ namespace Imgeneus.World.Tests.MobTests
             var map = testMap;
             var mob = new Mob(mobLoggerMock.Object, databasePreloader.Object, CrypticImmortal.Id, true, new MoveArea(0, 0, 0, 0, 0, 0), map);
 
-            var character = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object, linkingMock.Object)
+            var character = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object, linkingMock.Object, dyeingMock.Object)
             {
                 Class = Database.Entities.CharacterProfession.Fighter
             };

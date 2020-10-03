@@ -7,6 +7,7 @@ using Imgeneus.Network.Data;
 using Imgeneus.Network.Packets;
 using Imgeneus.Network.Packets.Game;
 using Imgeneus.Network.Server;
+using Imgeneus.World.Game.Dyeing;
 using Imgeneus.World.Game.Monster;
 using Imgeneus.World.Game.NPCs;
 using Imgeneus.World.Game.Zone;
@@ -305,6 +306,18 @@ namespace Imgeneus.World.Game.Player
 
                 case GemRemovePossibilityPacket gemRemovePossibilityPacket:
                     GemRemovePossibility(gemRemovePossibilityPacket.Bag, gemRemovePossibilityPacket.Slot, gemRemovePossibilityPacket.ShouldRemoveSpecificGem, gemRemovePossibilityPacket.GemPosition, gemRemovePossibilityPacket.HammerBag, gemRemovePossibilityPacket.HammerSlot);
+                    break;
+
+                case DyeSelectItemPacket dyeSelectItemPacket:
+                    HandleDyeSelectItem(dyeSelectItemPacket.DyeItemBag, dyeSelectItemPacket.DyeItemSlot, dyeSelectItemPacket.TargetItemBag, dyeSelectItemPacket.TargetItemSlot);
+                    break;
+
+                case DyeRerollPacket dyeRerollPacket:
+                    HandleDyeReroll();
+                    break;
+
+                case DyeConfirmPacket dyeConfirmPacket:
+                    HandleDyeConfirm(dyeConfirmPacket.DyeItemBag, dyeConfirmPacket.DyeItemSlot, dyeConfirmPacket.TargetItemBag, dyeConfirmPacket.TargetItemSlot);
                     break;
 
                 case GMCreateMobPacket gMCreateMobPacket:
@@ -621,6 +634,110 @@ namespace Imgeneus.World.Game.Player
             }
         }
 
+        private void HandleDyeSelectItem(byte dyeItemBag, byte dyeItemSlot, byte targetItemBag, byte targetItemSlot)
+        {
+            var dyeItem = InventoryItems.FirstOrDefault(itm => itm.Bag == dyeItemBag && itm.Slot == dyeItemSlot);
+            if (dyeItem is null || dyeItem.Special != SpecialEffect.Dye)
+            {
+                _packetsHelper.SendSelectDyeItem(Client, false);
+                return;
+            }
+
+            var item = InventoryItems.FirstOrDefault(itm => itm.Bag == targetItemBag && itm.Slot == targetItemSlot);
+            if (item is null)
+            {
+                _packetsHelper.SendSelectDyeItem(Client, false);
+                return;
+            }
+
+            if (dyeItem.TypeId == 55 && item.IsWeapon)
+            {
+                _dyeingManager.DyeingItem = item;
+                _packetsHelper.SendSelectDyeItem(Client, true);
+            }
+            else if (dyeItem.TypeId == 56 && item.IsArmor)
+            {
+                _dyeingManager.DyeingItem = item;
+                _packetsHelper.SendSelectDyeItem(Client, true);
+            }
+            else if (dyeItem.TypeId == 57 && item.IsMount)
+            {
+                _dyeingManager.DyeingItem = item;
+                _packetsHelper.SendSelectDyeItem(Client, true);
+            }
+            else if (dyeItem.TypeId == 58 && item.IsPet)
+            {
+                _dyeingManager.DyeingItem = item;
+                _packetsHelper.SendSelectDyeItem(Client, true);
+            }
+            else if (dyeItem.TypeId == 59 && item.IsCostume)
+            {
+                _dyeingManager.DyeingItem = item;
+                _packetsHelper.SendSelectDyeItem(Client, true);
+            }
+            else
+            {
+                _packetsHelper.SendSelectDyeItem(Client, false);
+                return;
+            }
+        }
+
+        private void HandleDyeReroll()
+        {
+            _dyeingManager.Reroll();
+            _packetsHelper.SendDyeColors(Client, _dyeingManager.AvailableColors);
+        }
+
+        private void HandleDyeConfirm(byte dyeItemBag, byte dyeItemSlot, byte targetItemBag, byte targetItemSlot)
+        {
+            if (_dyeingManager.AvailableColors.Count == 0)
+                _dyeingManager.Reroll();
+
+            var color = _dyeingManager.AvailableColors[new Random().Next(0, 5)];
+
+            var dyeItem = InventoryItems.FirstOrDefault(itm => itm.Bag == dyeItemBag && itm.Slot == dyeItemSlot);
+            if (dyeItem is null || dyeItem.Special != SpecialEffect.Dye || _dyeingManager.DyeingItem is null)
+            {
+                _packetsHelper.SendDyeConfirm(Client, false, color);
+                return;
+            }
+
+            var item = InventoryItems.FirstOrDefault(itm => itm.Bag == targetItemBag && itm.Slot == targetItemSlot);
+            if (item is null)
+            {
+                _packetsHelper.SendDyeConfirm(Client, false, color);
+                return;
+            }
+
+            bool success = (dyeItem.TypeId == 55 && item.IsWeapon) ||
+                           (dyeItem.TypeId == 56 && item.IsArmor) ||
+                           (dyeItem.TypeId == 57 && item.IsMount) ||
+                           (dyeItem.TypeId == 58 && item.IsPet) ||
+                           (dyeItem.TypeId == 59 && item.IsCostume);
+
+            if (success)
+            {
+                _dyeingManager.DyeingItem.DyeColor = color;
+                _dyeingManager.DyeingItem = null;
+                _packetsHelper.SendDyeConfirm(Client, success, color);
+            }
+            else
+            {
+                _packetsHelper.SendDyeConfirm(Client, false, color);
+                return;
+            }
+
+            if (success)
+            {
+                _taskQueue.Enqueue(ActionType.CREATE_DYE_COLOR, Id, item.Bag, item.Slot, color.Alpha, color.Saturation, color.R, color.G, color.B);
+
+                if (item.Bag == 0)
+                    OnEquipmentChanged?.Invoke(this, item, item.Slot);
+
+                UseItem(dyeItem.Bag, dyeItem.Slot);
+            }
+        }
+
         #endregion
 
         #region Senders
@@ -716,6 +833,8 @@ namespace Imgeneus.World.Game.Player
         public void SendCharacterTeleport() => _packetsHelper.SendCharacterTeleport(Client, this);
 
         public void SendUseVehicle(bool success, bool status) => _packetsHelper.SendUseVehicle(Client, success, status);
+
+        public void SendMyShape() => _packetsHelper.SendCharacterShape(Client, this);
 
         private void TargetChanged(IKillable target)
         {

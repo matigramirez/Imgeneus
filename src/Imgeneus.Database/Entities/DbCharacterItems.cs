@@ -44,6 +44,36 @@ namespace Imgeneus.Database.Entities
         public bool IsDeleted { get; set; }
 
         /// <summary>
+        /// Bool indicator, that shows if an item has a unique color painting.
+        /// </summary>
+        public bool HasDyeColor { get; set; }
+
+        /// <summary>
+        /// Color painting alpha.
+        /// </summary>
+        public byte DyeColorAlpha { get; set; }
+
+        /// <summary>
+        /// Color painting saturation.
+        /// </summary>
+        public byte DyeColorSaturation { get; set; }
+
+        /// <summary>
+        /// Color painting Red.
+        /// </summary>
+        public byte DyeColorR { get; set; }
+
+        /// <summary>
+        /// Color painting Green.
+        /// </summary>
+        public byte DyeColorG { get; set; }
+
+        /// <summary>
+        /// Color painting Blue.
+        /// </summary>
+        public byte DyeColorB { get; set; }
+
+        /// <summary>
         /// Gets or sets the character Id associated to this item.
         /// </summary>
         public int CharacterId { get; set; }

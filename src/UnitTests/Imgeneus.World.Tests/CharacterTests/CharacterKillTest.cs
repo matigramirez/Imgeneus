@@ -12,14 +12,14 @@ namespace Imgeneus.World.Tests.CharacterTests
         [Description("Character killer should be the character, that did max damage")]
         public void Character_TestKillerCalculation()
         {
-            var characterToKill = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object, linkingMock.Object)
+            var characterToKill = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object, linkingMock.Object, dyeingMock.Object)
             {
                 Class = CharacterProfession.Archer
             };
             characterToKill.IncreaseHP(characterToKill.MaxHP);
 
-            var killer1 = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object, linkingMock.Object);
-            var killer2 = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object, linkingMock.Object);
+            var killer1 = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object, linkingMock.Object, dyeingMock.Object);
+            var killer2 = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object, linkingMock.Object, dyeingMock.Object);
             IKiller finalKiller = null;
             characterToKill.OnDead += (IKillable sender, IKiller killer) =>
             {

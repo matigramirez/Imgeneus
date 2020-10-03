@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Imgeneus.Database.Entities;
 using Imgeneus.Network.Data;
 using Imgeneus.Network.Packets;
 using Imgeneus.Network.Serialization;
 using Imgeneus.World.Game;
+using Imgeneus.World.Game.Dyeing;
 using Imgeneus.World.Game.Monster;
 using Imgeneus.World.Game.PartyAndRaid;
 using Imgeneus.World.Game.Player;
@@ -652,6 +652,54 @@ namespace Imgeneus.World.Packets
                     packet.Write(savedGems[i].Count);
 
             packet.Write(gold);
+            client.SendPacket(packet);
+        }
+
+        internal void SendSelectDyeItem(IWorldClient client, bool success)
+        {
+            using var packet = new Packet(PacketType.DYE_SELECT_ITEM);
+            packet.Write(success);
+            client.SendPacket(packet);
+        }
+
+        internal void SendDyeColors(IWorldClient client, IEnumerable<DyeColor> availableColors)
+        {
+            using var packet = new Packet(PacketType.DYE_REROLL);
+            foreach (var color in availableColors)
+            {
+                packet.Write(color.IsEnabled);
+                packet.Write(color.Alpha);
+                packet.Write(color.Saturation);
+                packet.Write(color.R);
+                packet.Write(color.G);
+                packet.Write(color.B);
+
+                for (var i = 0; i < 21; i++)
+                    packet.WriteByte(0); // unknown bytes.
+            }
+            client.SendPacket(packet);
+        }
+
+        internal void SendDyeConfirm(IWorldClient client, bool success, DyeColor color)
+        {
+            using var packet = new Packet(PacketType.DYE_CONFIRM);
+            packet.Write(success);
+            if (success)
+            {
+                packet.Write(color.Alpha);
+                packet.Write(color.Saturation);
+                packet.Write(color.R);
+                packet.Write(color.G);
+                packet.Write(color.B);
+            }
+            else
+            {
+                packet.WriteByte(0);
+                packet.WriteByte(0);
+                packet.WriteByte(0);
+                packet.WriteByte(0);
+                packet.WriteByte(0);
+            }
             client.SendPacket(packet);
         }
     }

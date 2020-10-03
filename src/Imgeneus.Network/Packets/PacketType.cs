@@ -11,10 +11,10 @@
         AES_KEY_REQUEST = 10,
 
         // Character
-        CHARACTER_LIST = 0x0101,
+        CHARACTER_LIST = 0x0101, // 257
         CREATE_CHARACTER = 0x0102,
         DELETE_CHARACTER = 0x0103,
-        SELECT_CHARACTER = 0x0104,
+        SELECT_CHARACTER = 0x0104, // 260
         CHARACTER_DETAILS = 0x0105,
         CHARACTER_ITEMS = 0x0106,
         CHECK_CHARACTER_AVAILABLE_NAME = 0x0119,
@@ -25,7 +25,7 @@
         // Common
         LOGOUT = 0x0107, // 263
         CHARACTER_SKILLS = 0x0108,
-        ACCOUNT_FACTION = 0x0109,
+        ACCOUNT_FACTION = 0x0109, // 265
         CHARACTER_ACTIVE_BUFFS = 0x010A,
         CHARACTER_SKILL_BAR = 0x010B,
         RENAME_CHARACTER = 0x010E,
@@ -131,10 +131,10 @@
         OBELISK_CHANGE = 0x2102, // 8450
 
         // Inventory
-        INVENTORY_MOVE_ITEM = 0x204,
+        INVENTORY_MOVE_ITEM = 0x0204,
         ADD_ITEM = 0x0205, // 517
         REMOVE_ITEM = 0x0206, // 518
-        SEND_EQUIPMENT = 0x0507,
+        SEND_EQUIPMENT = 0x0507, // 1287
 
         // Trade
         TRADE_REQUEST = 0x0A01, // 2561
@@ -249,5 +249,10 @@
         ITEM_CONSIDER = 0x0808, // 2056
         GEM_ADD_POSSIBILITY = 0x0809, // 2057
         GEM_REMOVE_POSSIBILITY = 0x080A, // 2058
+
+        // Dyeing
+        DYE_CONFIRM = 0x055B, // 1371
+        DYE_REROLL = 0x055C, // 1372
+        DYE_SELECT_ITEM = 0x055D, // 1373
     }
 }

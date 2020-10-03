@@ -226,6 +226,7 @@ namespace Imgeneus.World.Game.Zone
                 // Send map values.
                 character.SendWeather();
                 character.SendObelisks();
+                character.SendMyShape(); // SHould fix the issue with dye color, when first connection.
 
                 character.OnPositionChanged += Character_OnPositionChanged;
                 _logger.LogDebug($"Player {character.Id} connected to map {Id}, cell index {character.CellId}.");

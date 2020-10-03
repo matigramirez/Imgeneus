@@ -1,6 +1,8 @@
 ﻿using Imgeneus.Database.Constants;
 using Imgeneus.Database.Entities;
 using Imgeneus.Database.Preload;
+using Imgeneus.World.Game.Dyeing;
+using System.Collections.Generic;
 
 namespace Imgeneus.World.Game.Player
 {
@@ -14,7 +16,6 @@ namespace Imgeneus.World.Game.Player
         /// </summary>
         public const byte MONEY_ITEM_TYPE = 26;
 
-        public readonly int Id;
         public byte Bag;
         public byte Slot;
         public byte Type;
@@ -129,10 +130,12 @@ namespace Imgeneus.World.Game.Player
 
         public Item(IDatabasePreloader databasePreloader, DbCharacterItems dbItem) : this(databasePreloader, dbItem.Type, dbItem.TypeId, dbItem.Count)
         {
-            Id = dbItem.Id;
             Bag = dbItem.Bag;
             Slot = dbItem.Slot;
             Quality = dbItem.Quality;
+
+            if (dbItem.HasDyeColor)
+                DyeColor = new DyeColor(dbItem.DyeColorAlpha, dbItem.DyeColorSaturation, dbItem.DyeColorR, dbItem.DyeColorG, dbItem.DyeColorB);
 
             if (dbItem.GemTypeId1 != 0)
                 Gem1 = new Gem(databasePreloader, dbItem.GemTypeId1, 0);
@@ -630,9 +633,47 @@ namespace Imgeneus.World.Game.Player
 
         #endregion
 
+        #region Dye color
+
+        /// <summary>
+        /// Unique color.
+        /// </summary>
+        public DyeColor DyeColor { get; set; }
+
+        #endregion
+
         public bool IsCloakSlot
         {
             get => Slot == 7;
+        }
+
+        private static readonly List<byte> AllWeaponIds = new List<byte>() { 1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 12, 13, 14, 15, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 59, 60, 61, 62, 63, 64, 65 };
+
+        public bool IsWeapon
+        {
+            get => AllWeaponIds.Contains(Type);
+        }
+
+        private static readonly List<byte> AddArmorIds = new List<byte>() { 16, 17, 18, 20, 21, 31, 32, 33, 35, 36, 67, 68, 70, 71, 72, 73, 74, 76, 77, 82, 83, 85, 86, 87, 88, 89, 91, 92 };
+
+        public bool IsArmor
+        {
+            get => AddArmorIds.Contains(Type);
+        }
+
+        public bool IsMount
+        {
+            get => Type == 42;
+        }
+
+        public bool IsPet
+        {
+            get => Type == 120;
+        }
+
+        public bool IsCostume
+        {
+            get => Type == 150;
         }
 
         public Item Clone()
@@ -645,6 +686,7 @@ namespace Imgeneus.World.Game.Player
                 TypeId = TypeId,
                 Quality = Quality,
                 Count = Count,
+                DyeColor = DyeColor
             };
         }
 

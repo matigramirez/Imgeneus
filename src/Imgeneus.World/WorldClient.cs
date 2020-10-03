@@ -183,7 +183,10 @@ namespace Imgeneus.World
             { PacketType.GEM_ADD, (s) => new GemAddPacket(s) },
             { PacketType.GEM_ADD_POSSIBILITY, (s) => new GemAddPossibilityPacket(s) },
             { PacketType.GEM_REMOVE, (s) => new GemRemovePacket(s) },
-            { PacketType.GEM_REMOVE_POSSIBILITY, (s) => new GemRemovePossibilityPacket(s) }
+            { PacketType.GEM_REMOVE_POSSIBILITY, (s) => new GemRemovePossibilityPacket(s) },
+            { PacketType.DYE_SELECT_ITEM, (s) => new DyeSelectItemPacket(s) },
+            { PacketType.DYE_REROLL, (s) => new DyeRerollPacket(s) },
+            { PacketType.DYE_CONFIRM, (s) => new DyeConfirmPacket(s) }
         };
 
         /// <inheritdoc />

@@ -116,21 +116,7 @@ namespace Imgeneus.World.Packets
         internal void SendCharacterChangedEquipment(IWorldClient client, int characterId, Item equipmentItem, byte slot)
         {
             using var packet = new Packet(PacketType.SEND_EQUIPMENT);
-            packet.Write(characterId);
-
-            packet.WriteByte(slot);
-            packet.WriteByte(equipmentItem is null ? (byte)0 : equipmentItem.Type);
-            packet.WriteByte(equipmentItem is null ? (byte)0 : equipmentItem.TypeId);
-            packet.WriteByte(equipmentItem is null ? (byte)0 : (byte)20); // TODO: implement enchant here.
-
-            if (equipmentItem != null && equipmentItem.IsCloakSlot)
-            {
-                for (var i = 0; i < 6; i++) // Something about cloak.
-                {
-                    packet.WriteByte(0);
-                }
-            }
-
+            packet.Write(new CharacterEquipmentChange(characterId, slot, equipmentItem).Serialize());
             client.SendPacket(packet);
         }
 

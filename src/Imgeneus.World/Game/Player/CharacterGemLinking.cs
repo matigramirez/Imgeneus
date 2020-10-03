@@ -51,7 +51,7 @@ namespace Imgeneus.World.Game.Player
             }
 
             if (result.Success)
-                _taskQueue.Enqueue(ActionType.UPDATE_GEM, item.Id, result.Slot, (int)gem.TypeId);
+                _taskQueue.Enqueue(ActionType.UPDATE_GEM, Id, item.Bag, item.Slot, result.Slot, (int)gem.TypeId);
 
             if (hammer != null)
                 UseItem(hammer.Bag, hammer.Slot);
@@ -368,7 +368,7 @@ namespace Imgeneus.World.Game.Player
                             item.Gem6 = null;
                             break;
                     }
-                    _taskQueue.Enqueue(ActionType.UPDATE_GEM, item.Id, gem.Position, 0);
+                    _taskQueue.Enqueue(ActionType.UPDATE_GEM, Id, item.Bag, item.Slot, gem.Position, 0);
                 }
             }
         }

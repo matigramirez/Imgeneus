@@ -1,6 +1,6 @@
 ﻿using BinarySerialization;
-using Imgeneus.Database.Constants;
 using Imgeneus.Database.Entities;
+using Imgeneus.World.Serialization;
 using System.Linq;
 
 namespace Imgeneus.Network.Serialization
@@ -77,16 +77,22 @@ namespace Imgeneus.Network.Serialization
         public byte[] EquipmentItemsTypeId = new byte[17];
 
         [FieldOrder(22)]
-        public bool[] EquipmentItemHasColor = new bool[17]; // Set it to true if equipment has color.
+        public bool[] EquipmentItemHasColor = new bool[17];
 
         [FieldOrder(23)]
-        public byte[] EquipmentItemColor = new byte[523]; // bytes, that describe color. I couldn't find out how they are working.
+        public int UnknownInt = 0;
 
-        [FieldOrder(24), FieldLength(21)]
+        [FieldOrder(24)]
+        public DyeColorSerialized[] Colors = new DyeColorSerialized[17];
+
+        [FieldOrder(25)]
+        public byte[] UnknownBytes = new byte[445];
+
+        [FieldOrder(26)]
+        public byte[] CloakInfo = new byte[6];
+
+        [FieldOrder(27), FieldLength(21)]
         public string Name;
-
-        //[FieldOrder(25)]
-        //public byte[] CloakInfo = new byte[6];
 
         public CharacterSelectionScreen(DbCharacter character)
         {
@@ -114,17 +120,13 @@ namespace Imgeneus.Network.Serialization
             for (var i = 0; i < 17; i++)
             {
                 var item = equipmentItems.FirstOrDefault(itm => itm.Slot == i);
-                if (item is null)
-                {
-                    EquipmentItemsType[i] = 0;
-                    EquipmentItemsTypeId[i] = 0;
-                    EquipmentItemHasColor[i] = false;
-                }
-                else
+                if (item != null)
                 {
                     EquipmentItemsType[i] = item.Type;
                     EquipmentItemsTypeId[i] = item.TypeId;
-                    EquipmentItemHasColor[i] = false; // TODO: research how colors are working
+                    EquipmentItemHasColor[i] = item.HasDyeColor;
+                    if (item.HasDyeColor)
+                        Colors[i] = new DyeColorSerialized(item.DyeColorSaturation, item.DyeColorR, item.DyeColorG, item.DyeColorB);
                 }
             }
 

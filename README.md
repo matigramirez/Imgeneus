@@ -28,3 +28,14 @@ This repo also uses the best parts of these repos: [Drakkus/ShaiyaGenesis](https
 ![image1](images/image1.JPG?raw=true "Title")
 ![image2](images/image2.JPG?raw=true "Title")
 
+## Hall of fame :star:
+* __KSExtrez__ - firstly started the project and setup DI containers and web socket pool.
+* __Cups__ - the first person, that created a dummy emulator, with his source code we could understand packet structure.
+* __anton1312__ - helped with packet encryption algorithm implementation in C#.
+* __Juuf__ - helped with Dye system packet structure.
+* maybe YOU?
+
+## Uknown issues
+1. Sometimes Login server can not decrypt the first packet (with user name and password). Try to restart game.exe several times. Might be, that client caches old encryption key (not sure).
+2. When character attacks mob without weapon, character starts running to it and doesn't stop, the only way to stop is to close game.exe. Maybe can be fixed by sending not allowed to attack packet.
+3. Many others, usually marked as `// TODO: <some comment>` throughout the code base.

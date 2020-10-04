@@ -25,16 +25,22 @@ namespace Imgeneus.World.Serialization
         public ushort Quality { get; }
 
         [FieldOrder(6)]
-        public int[] Gems { get; }
+        public int UnknownInt { get; }
 
         [FieldOrder(7)]
-        public byte[] UnknownBytes { get; }
+        public int[] Gems { get; }
 
         [FieldOrder(8)]
-        public CraftName CraftName { get; }
+        public byte[] UnknownBytes { get; }
 
         [FieldOrder(9)]
-        public byte UnknownByte { get; } // maybe part of craft name... not sure
+        public bool IsItemDyed { get; }
+
+        [FieldOrder(10)]
+        public byte[] UnknownBytes2 { get; }
+
+        [FieldOrder(11)]
+        public CraftName CraftName { get; }
 
         public AddedInventoryItem(Item item)
         {
@@ -53,6 +59,8 @@ namespace Imgeneus.World.Serialization
                 item.Gem6 is null ? 0 : item.Gem6.TypeId,
             };
 
+            IsItemDyed = item.DyeColor.IsEnabled;
+
             CraftName = new CraftName(
                '0', '1', // str 1
                '0', '2', // dex 2
@@ -66,7 +74,9 @@ namespace Imgeneus.World.Serialization
                '2', '0' // step 20
                );
 
-            UnknownBytes = new byte[54];
+            // Check InventoryItem.cs for more info.
+            UnknownBytes = new byte[23];
+            UnknownBytes2 = new byte[26];
         }
     }
 }

@@ -30,9 +30,6 @@ namespace Imgeneus.World.Serialization
         [FieldOrder(7)]
         public CraftName CraftName { get; }
 
-        [FieldOrder(8)]
-        public byte UnknownByte { get; } // maybe part of craft name... not sure
-
         public TradeItem(byte slotInTradeWindow, byte quantity, Item item)
         {
             SlotInTradeWindow = slotInTradeWindow;

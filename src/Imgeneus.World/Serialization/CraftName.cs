@@ -71,6 +71,9 @@ namespace Imgeneus.World.Serialization
         [FieldOrder(9)]
         public byte[] EnchantedStep;
 
+        [FieldOrder(10)]
+        public bool IsDisabled;
+
         public CraftName(
             char str1, char str2,
             char dex1, char dex2,
@@ -81,7 +84,8 @@ namespace Imgeneus.World.Serialization
             char hp1, char hp2,
             char mp1, char mp2,
             char sp1, char sp2,
-            char step1, char step2)
+            char step1, char step2,
+            bool isDisabled = false)
         {
             EnchantedSTR = new byte[2] { (byte)str1, (byte)str2 };
             EnchantedDEX = new byte[2] { (byte)dex1, (byte)dex2 };
@@ -93,6 +97,7 @@ namespace Imgeneus.World.Serialization
             EnchantedMP = new byte[2] { (byte)mp1, (byte)mp2 };
             EnchantedSP = new byte[2] { (byte)sp1, (byte)sp2 };
             EnchantedStep = new byte[2] { (byte)step1, (byte)step2 };
+            IsDisabled = isDisabled;
         }
     }
 }

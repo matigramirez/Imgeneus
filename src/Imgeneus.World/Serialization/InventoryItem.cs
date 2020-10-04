@@ -31,15 +31,12 @@ namespace Imgeneus.Network.Serialization
         public CraftName CraftName { get; }
 
         [FieldOrder(8)]
-        public byte ShowOrangeStats { get; }
-
-        [FieldOrder(9)]
         public byte[] UnknownBytes { get; }
 
-        [FieldOrder(10)]
+        [FieldOrder(9)]
         public bool IsItemDyed { get; }
 
-        [FieldOrder(11)]
+        [FieldOrder(10)]
         public byte[] UnknownBytes2 { get; }
 
         public InventoryItem(Item item)
@@ -72,11 +69,7 @@ namespace Imgeneus.Network.Serialization
                 '2', '0' // step 20
                 );
 
-            // Not sure what is it, but set it to 0 and you will see orange stats or set it to 1 and you will see "from" and "until" time.
-            // I leave it unimplemented for now.
-            ShowOrangeStats = 0;
-
-            // Unknown bytes. Not sure what is it, but if all set to 1 from and until date is shown.
+            // Unknown bytes. Not sure what is it, but if all set to 1 AND CraftName IsDisabled to "true" from and until date is shown.
             UnknownBytes = new byte[23];
             for (var i = 0; i < UnknownBytes.Length; i++)
             {

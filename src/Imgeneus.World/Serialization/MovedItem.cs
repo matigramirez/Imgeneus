@@ -36,9 +36,6 @@ namespace Imgeneus.Network.Serialization
         [FieldOrder(9)]
         public CraftName CraftName { get; }
 
-        [FieldOrder(10)]
-        public byte UnknownByte { get; } // maybe part of craft name... not sure
-
         public MovedItem(Item item)
         {
             Bag = item.Bag;

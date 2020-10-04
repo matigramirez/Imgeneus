@@ -60,7 +60,7 @@ namespace Imgeneus.World.Serialization
         public DyeColorSerialized[] EquipmentItemColor { get; } = new DyeColorSerialized[17];
 
         [FieldOrder(17)]
-        public byte[] UnknownBytes2 { get; } = new byte[452];
+        public byte[] UnknownBytes2 { get; } = new byte[451];
 
         [FieldOrder(18)]
         public byte[] Name;

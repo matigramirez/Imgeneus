@@ -83,7 +83,7 @@ namespace Imgeneus.Network.Serialization
                 UnknownBytes[i] = 1;
             }
 
-            IsItemDyed = true;
+            IsItemDyed = item.DyeColor.IsEnabled;
 
             // Unknown bytes. Not sure what is it, but if all set to 1 from and until date is shown.
             UnknownBytes2 = new byte[26];

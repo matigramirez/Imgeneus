@@ -25,15 +25,18 @@ namespace Imgeneus.Network.Serialization
         public ushort Quality { get; }
 
         [FieldOrder(6)]
-        public byte[] ItemDyed { get; }
-
-        [FieldOrder(7)]
         public byte[] UnknownBytes { get; }
 
+        [FieldOrder(7)]
+        public bool IsItemDyed { get; }
+
         [FieldOrder(8)]
-        public int[] Gems { get; }
+        public byte[] UnknownBytes2 { get; }
 
         [FieldOrder(9)]
+        public int[] Gems { get; }
+
+        [FieldOrder(10)]
         public CraftName CraftName { get; }
 
         public MovedItem(Item item)
@@ -53,19 +56,7 @@ namespace Imgeneus.Network.Serialization
                 item.Gem6 is null ? 0 : item.Gem6.TypeId,
             };
 
-            // Something connect with dyed feature. Couldn't figure out this this yet.
-            // If all set to 1, you will see "Item dyed" string.
-            ItemDyed = new byte[24];
-            for (var i = 0; i < 24; i++)
-            {
-                ItemDyed[i] = 1;
-            }
-
-            UnknownBytes = new byte[26];
-            for (var i = 0; i < 26; i++)
-            {
-                UnknownBytes[i] = 1;
-            }
+            IsItemDyed = item.DyeColor.IsEnabled;
 
             CraftName = new CraftName(
                 '0', '1', // str 1
@@ -79,6 +70,10 @@ namespace Imgeneus.Network.Serialization
                 '0', '9', // sp 900
                 '2', '0' // step 20
                 );
+
+            // Check InventoryItem.cs for more info.
+            UnknownBytes = new byte[23];
+            UnknownBytes2 = new byte[26];
         }
     }
 }

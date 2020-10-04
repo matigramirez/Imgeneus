@@ -1,6 +1,7 @@
 ﻿using BinarySerialization;
 using Imgeneus.Network.Serialization;
 using Imgeneus.World.Game.Player;
+using System;
 
 namespace Imgeneus.World.Serialization
 {
@@ -16,26 +17,39 @@ namespace Imgeneus.World.Serialization
         public byte TypeId { get; }
 
         [FieldOrder(3)]
-        public byte Quantity { get; }
+        public byte Count { get; }
 
         [FieldOrder(4)]
         public ushort Quality { get; }
 
         [FieldOrder(5)]
-        public byte[] UnknownBytes { get; }
+        public byte[] FromDate = new byte[4]; // ?
 
         [FieldOrder(6)]
-        public int[] Gems { get; }
+        public byte[] UntilDate = new byte[4]; // ?
 
         [FieldOrder(7)]
+        public byte[] UnknownBytes1 { get; }
+
+        [FieldOrder(8)]
+        public bool IsItemDyed { get; }
+
+        [FieldOrder(9)]
+        public byte[] UnknownBytes2 { get; }
+
+        [FieldOrder(10)]
+        public int[] Gems { get; }
+
+        [FieldOrder(11)]
         public CraftName CraftName { get; }
 
-        public TradeItem(byte slotInTradeWindow, byte quantity, Item item)
+        public TradeItem(byte slotInTradeWindow, byte count, Item item)
         {
             SlotInTradeWindow = slotInTradeWindow;
             Type = item.Type;
             TypeId = item.TypeId;
-            Quantity = quantity;
+            Count = count;
+            Quality = item.Quality;
             Gems = new int[] {
                 item.Gem1 is null ? 0 : item.Gem1.TypeId,
                 item.Gem2 is null ? 0 : item.Gem2.TypeId,
@@ -44,7 +58,6 @@ namespace Imgeneus.World.Serialization
                 item.Gem5 is null ? 0 : item.Gem5.TypeId,
                 item.Gem6 is null ? 0 : item.Gem6.TypeId,
             };
-            UnknownBytes = new byte[0];
 
             CraftName = new CraftName(
                 '0', '1', // str 1
@@ -59,6 +72,9 @@ namespace Imgeneus.World.Serialization
                 '2', '0' // step 20
                 );
 
+            IsItemDyed = true;
+            UnknownBytes1 = new byte[22];
+            UnknownBytes2 = new byte[26];
         }
     }
 }

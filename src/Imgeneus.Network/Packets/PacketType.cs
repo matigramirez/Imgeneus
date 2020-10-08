@@ -249,6 +249,7 @@
         ITEM_CONSIDER = 0x0808, // 2056
         GEM_ADD_POSSIBILITY = 0x0809, // 2057
         GEM_REMOVE_POSSIBILITY = 0x080A, // 2058
+        ITEM_COMPOSE_ABSOLUTE = 0x0834, // 2100
 
         // Dyeing
         DYE_CONFIRM = 0x055B, // 1371

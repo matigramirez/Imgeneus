@@ -110,7 +110,7 @@ namespace Imgeneus.Database.Entities
         public ushort ReqInt { get; set; }
 
         /// <summary>
-        /// Required wisdom to use it.
+        /// Max number of stats, that can be created during item composition (rec rune).
         /// </summary>
         [Required]
         public ushort ReqWis { get; set; }

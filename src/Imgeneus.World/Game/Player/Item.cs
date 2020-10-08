@@ -3,6 +3,7 @@ using Imgeneus.Database.Entities;
 using Imgeneus.Database.Preload;
 using Imgeneus.World.Game.Dyeing;
 using System.Collections.Generic;
+using System.Text;
 
 namespace Imgeneus.World.Game.Player
 {
@@ -29,103 +30,6 @@ namespace Imgeneus.World.Game.Player
         public Gem Gem5;
         public Gem Gem6;
 
-        /// <summary>
-        /// Number of still free slots.
-        /// </summary>
-        public byte FreeSlots
-        {
-            get
-            {
-                byte count = 0;
-                switch (_item.Slot)
-                {
-                    case 0:
-                        break;
-
-                    case 1:
-                        if (Gem1 is null)
-                            count++;
-                        break;
-
-                    case 2:
-                        if (Gem1 is null)
-                            count++;
-                        if (Gem2 is null)
-                            count++;
-                        break;
-
-                    case 3:
-                        if (Gem1 is null)
-                            count++;
-                        if (Gem2 is null)
-                            count++;
-                        if (Gem3 is null)
-                            count++;
-                        break;
-
-                    case 4:
-                        if (Gem1 is null)
-                            count++;
-                        if (Gem2 is null)
-                            count++;
-                        if (Gem3 is null)
-                            count++;
-                        if (Gem4 is null)
-                            count++;
-                        break;
-
-                    case 5:
-                        if (Gem1 is null)
-                            count++;
-                        if (Gem2 is null)
-                            count++;
-                        if (Gem3 is null)
-                            count++;
-                        if (Gem4 is null)
-                            count++;
-                        if (Gem5 is null)
-                            count++;
-                        break;
-
-                    case 6:
-                        if (Gem1 is null)
-                            count++;
-                        if (Gem2 is null)
-                            count++;
-                        if (Gem3 is null)
-                            count++;
-                        if (Gem4 is null)
-                            count++;
-                        if (Gem5 is null)
-                            count++;
-                        if (Gem6 is null)
-                            count++;
-                        break;
-
-
-                    default:
-                        return 0;
-                }
-
-                return count;
-            }
-        }
-
-        /// <summary>
-        /// Checks if item already has such gem linked.
-        /// </summary>
-        /// <param name="typeId">gem type id</param>
-        /// <returns>true, if item already has such gem</returns>
-        public bool ContainsGem(byte typeId)
-        {
-            return (Gem1 != null && Gem1.TypeId == typeId) ||
-                   (Gem2 != null && Gem2.TypeId == typeId) ||
-                   (Gem3 != null && Gem3.TypeId == typeId) ||
-                   (Gem4 != null && Gem4.TypeId == typeId) ||
-                   (Gem5 != null && Gem5.TypeId == typeId) ||
-                   (Gem6 != null && Gem6.TypeId == typeId);
-        }
-
         public byte Count;
 
         public Item(IDatabasePreloader databasePreloader, DbCharacterItems dbItem) : this(databasePreloader, dbItem.Type, dbItem.TypeId, dbItem.Count)
@@ -133,6 +37,9 @@ namespace Imgeneus.World.Game.Player
             Bag = dbItem.Bag;
             Slot = dbItem.Slot;
             Quality = dbItem.Quality;
+
+            if (!string.IsNullOrWhiteSpace(dbItem.Craftname))
+                ParseCraftname(dbItem.Craftname);
 
             if (dbItem.HasDyeColor)
                 DyeColor = new DyeColor(dbItem.DyeColorAlpha, dbItem.DyeColorSaturation, dbItem.DyeColorR, dbItem.DyeColorG, dbItem.DyeColorB);
@@ -211,7 +118,7 @@ namespace Imgeneus.World.Game.Player
                 if (Gem6 != null)
                     gemsStr += Gem6.Str;
 
-                return ConstStr + gemsStr; // + TODO: orange stats from craft name.
+                return ConstStr + gemsStr + ComposedStr;
             }
         }
 
@@ -237,7 +144,7 @@ namespace Imgeneus.World.Game.Player
                 if (Gem6 != null)
                     gemsDex += Gem6.Dex;
 
-                return ConstDex + gemsDex; // + TODO: orange stats from craft name.
+                return ConstDex + gemsDex + ComposedDex;
             }
         }
 
@@ -263,7 +170,7 @@ namespace Imgeneus.World.Game.Player
                 if (Gem6 != null)
                     gemsRec += Gem6.Rec;
 
-                return ConstRec + gemsRec; // + TODO: orange stats from craft name.
+                return ConstRec + gemsRec + ComposedRec;
             }
         }
 
@@ -289,7 +196,7 @@ namespace Imgeneus.World.Game.Player
                 if (Gem6 != null)
                     gemsInt += Gem6.Int;
 
-                return ConstInt + gemsInt; // + TODO: orange stats from craft name.
+                return ConstInt + gemsInt + ComposedInt;
             }
         }
 
@@ -315,7 +222,7 @@ namespace Imgeneus.World.Game.Player
                 if (Gem6 != null)
                     gemsLuc += Gem6.Luc;
 
-                return ConstLuc + gemsLuc; // + TODO: orange stats from craft name.
+                return ConstLuc + gemsLuc + ComposedLuc;
             }
         }
 
@@ -341,7 +248,7 @@ namespace Imgeneus.World.Game.Player
                 if (Gem6 != null)
                     gemsWis += Gem6.Wis;
 
-                return ConstWis + gemsWis; // + TODO: orange stats from craft name.
+                return ConstWis + gemsWis + ComposedWis;
             }
         }
 
@@ -367,7 +274,7 @@ namespace Imgeneus.World.Game.Player
                 if (Gem6 != null)
                     gemsHP += Gem6.HP;
 
-                return ConstHP + gemsHP; // + TODO: orange stats from craft name.
+                return ConstHP + gemsHP + ComposedHP;
             }
         }
 
@@ -393,7 +300,7 @@ namespace Imgeneus.World.Game.Player
                 if (Gem6 != null)
                     gemsMP += Gem6.MP;
 
-                return ConstMP + gemsMP; // + TODO: orange stats from craft name.
+                return ConstMP + gemsMP + ComposedMP;
             }
         }
 
@@ -419,7 +326,7 @@ namespace Imgeneus.World.Game.Player
                 if (Gem6 != null)
                     gemsSP += Gem6.SP;
 
-                return ConstSP + gemsSP; // + TODO: orange stats from craft name.
+                return ConstSP + gemsSP + ComposedSP;
             }
         }
 
@@ -619,6 +526,191 @@ namespace Imgeneus.World.Game.Player
 
         #endregion
 
+        #region Craft name stats (orange stats)
+
+        /// <summary>
+        /// Orange str stat.
+        /// </summary>
+        public int ComposedStr { get; set; }
+
+        /// <summary>
+        /// Orange dex stat.
+        /// </summary>
+        public int ComposedDex { get; set; }
+
+        /// <summary>
+        /// Orange rec stat.
+        /// </summary>
+        public int ComposedRec { get; set; }
+
+        /// <summary>
+        /// Orange str stat.
+        /// </summary>
+        public int ComposedInt { get; set; }
+
+        /// <summary>
+        /// Orange str stat.
+        /// </summary>
+        public int ComposedLuc { get; set; }
+
+        /// <summary>
+        /// Orange str stat.
+        /// </summary>
+        public int ComposedWis { get; set; }
+
+        /// <summary>
+        /// Orange str stat.
+        /// </summary>
+        public int ComposedHP { get; set; }
+
+        /// <summary>
+        /// Orange str stat.
+        /// </summary>
+        public int ComposedMP { get; set; }
+
+        /// <summary>
+        /// Orange str stat.
+        /// </summary>
+        public int ComposedSP { get; set; }
+
+        /// <summary>
+        /// Max number of composed stats.
+        /// </summary>
+        public ushort ReqWis { get => _item.ReqWis; }
+
+        /// <summary>
+        /// Bool indicator, that shows if item can be rec-runed.
+        /// </summary>
+        public bool IsComposable { get => ReqWis > 0; }
+
+        /// <summary>
+        /// Generates craft name, that is stored in db.
+        /// </summary>
+        public string GetCraftName()
+        {
+            var strBuilder = new StringBuilder();
+
+            if (ComposedStr > 9)
+                strBuilder.Append($"{ComposedStr}");
+            else
+                strBuilder.Append($"0{ComposedStr}");
+
+            if (ComposedDex > 9)
+                strBuilder.Append($"{ComposedDex}");
+            else
+                strBuilder.Append($"0{ComposedDex}");
+
+            if (ComposedRec > 9)
+                strBuilder.Append($"{ComposedRec}");
+            else
+                strBuilder.Append($"0{ComposedRec}");
+
+            if (ComposedInt > 9)
+                strBuilder.Append($"{ComposedInt}");
+            else
+                strBuilder.Append($"0{ComposedInt}");
+
+            if (ComposedWis > 9)
+                strBuilder.Append($"{ComposedWis}");
+            else
+                strBuilder.Append($"0{ComposedWis}");
+
+            if (ComposedLuc > 9)
+                strBuilder.Append($"{ComposedLuc}");
+            else
+                strBuilder.Append($"0{ComposedLuc}");
+
+            var hp = ComposedHP / 100;
+            if (hp > 9)
+                strBuilder.Append($"{hp}");
+            else
+                strBuilder.Append($"0{hp}");
+
+            var mp = ComposedMP / 100;
+            if (mp > 9)
+                strBuilder.Append($"{mp}");
+            else
+                strBuilder.Append($"0{mp}");
+
+            var sp = ComposedSP / 100;
+            if (sp > 9)
+                strBuilder.Append($"{sp}");
+            else
+                strBuilder.Append($"0{sp}");
+
+            strBuilder.Append("00"); // TODO: support enchanted level
+
+            if (IsComposable)
+                strBuilder.Append("1");
+            else
+                strBuilder.Append("0");
+
+            return strBuilder.ToString();
+        }
+
+        /// <summary>
+        /// Parses db craft name into numbers.
+        /// </summary>
+        private void ParseCraftname(string craftname)
+        {
+            if (craftname.Length != 21)
+                return;
+
+            for (var i = 0; i <= 18; i += 2)
+            {
+                var strBuilder = new StringBuilder();
+                strBuilder.Append(craftname[i]);
+                strBuilder.Append(craftname[i + 1]);
+                if (int.TryParse(strBuilder.ToString(), out var number))
+                {
+                    switch (i)
+                    {
+                        case 0:
+                            ComposedStr = number;
+                            break;
+
+                        case 2:
+                            ComposedDex = number;
+                            break;
+
+                        case 4:
+                            ComposedRec = number;
+                            break;
+
+                        case 6:
+                            ComposedInt = number;
+                            break;
+
+                        case 8:
+                            ComposedWis = number;
+                            break;
+
+                        case 10:
+                            ComposedLuc = number;
+                            break;
+
+                        case 12:
+                            ComposedHP = number * 100;
+                            break;
+
+                        case 14:
+                            ComposedMP = number * 100;
+                            break;
+
+                        case 16:
+                            ComposedSP = number * 100;
+                            break;
+
+                        case 18:
+                            // TODO: support enchanted level
+                            break;
+                    }
+                }
+            }
+        }
+
+        #endregion
+
         #region Max count
 
         public byte MaxCount => _item.Count;
@@ -641,6 +733,105 @@ namespace Imgeneus.World.Game.Player
         public DyeColor DyeColor { get; set; }
 
         #endregion
+
+        #region Helpers
+
+        /// <summary>
+        /// Number of still free slots.
+        /// </summary>
+        public byte FreeSlots
+        {
+            get
+            {
+                byte count = 0;
+                switch (_item.Slot)
+                {
+                    case 0:
+                        break;
+
+                    case 1:
+                        if (Gem1 is null)
+                            count++;
+                        break;
+
+                    case 2:
+                        if (Gem1 is null)
+                            count++;
+                        if (Gem2 is null)
+                            count++;
+                        break;
+
+                    case 3:
+                        if (Gem1 is null)
+                            count++;
+                        if (Gem2 is null)
+                            count++;
+                        if (Gem3 is null)
+                            count++;
+                        break;
+
+                    case 4:
+                        if (Gem1 is null)
+                            count++;
+                        if (Gem2 is null)
+                            count++;
+                        if (Gem3 is null)
+                            count++;
+                        if (Gem4 is null)
+                            count++;
+                        break;
+
+                    case 5:
+                        if (Gem1 is null)
+                            count++;
+                        if (Gem2 is null)
+                            count++;
+                        if (Gem3 is null)
+                            count++;
+                        if (Gem4 is null)
+                            count++;
+                        if (Gem5 is null)
+                            count++;
+                        break;
+
+                    case 6:
+                        if (Gem1 is null)
+                            count++;
+                        if (Gem2 is null)
+                            count++;
+                        if (Gem3 is null)
+                            count++;
+                        if (Gem4 is null)
+                            count++;
+                        if (Gem5 is null)
+                            count++;
+                        if (Gem6 is null)
+                            count++;
+                        break;
+
+
+                    default:
+                        return 0;
+                }
+
+                return count;
+            }
+        }
+
+        /// <summary>
+        /// Checks if item already has such gem linked.
+        /// </summary>
+        /// <param name="typeId">gem type id</param>
+        /// <returns>true, if item already has such gem</returns>
+        public bool ContainsGem(byte typeId)
+        {
+            return (Gem1 != null && Gem1.TypeId == typeId) ||
+                   (Gem2 != null && Gem2.TypeId == typeId) ||
+                   (Gem3 != null && Gem3.TypeId == typeId) ||
+                   (Gem4 != null && Gem4.TypeId == typeId) ||
+                   (Gem5 != null && Gem5.TypeId == typeId) ||
+                   (Gem6 != null && Gem6.TypeId == typeId);
+        }
 
         public bool IsCloakSlot
         {
@@ -674,20 +865,6 @@ namespace Imgeneus.World.Game.Player
         public bool IsCostume
         {
             get => Type == 150;
-        }
-
-        public Item Clone()
-        {
-            return new Item(_databasePreloader, Type, TypeId)
-            {
-                Bag = Bag,
-                Slot = Slot,
-                Type = Type,
-                TypeId = TypeId,
-                Quality = Quality,
-                Count = Count,
-                DyeColor = DyeColor
-            };
         }
 
         /// <summary>
@@ -762,6 +939,22 @@ namespace Imgeneus.World.Game.Player
                 default:
                     return 0;
             }
+        }
+
+        #endregion
+
+        public Item Clone()
+        {
+            return new Item(_databasePreloader, Type, TypeId)
+            {
+                Bag = Bag,
+                Slot = Slot,
+                Type = Type,
+                TypeId = TypeId,
+                Quality = Quality,
+                Count = Count,
+                DyeColor = DyeColor
+            };
         }
     }
 }

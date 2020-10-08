@@ -285,7 +285,8 @@ namespace Imgeneus.World.Tests
             Slot = 6,
             Quality = 1200,
             Attackfighter = 1,
-            Defensefighter = 1
+            Defensefighter = 1,
+            ReqWis = 20
         };
 
         protected DbItem Gem_Str_Level_1 = new DbItem()

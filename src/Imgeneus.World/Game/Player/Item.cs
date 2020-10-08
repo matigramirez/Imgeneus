@@ -528,6 +528,8 @@ namespace Imgeneus.World.Game.Player
 
         #region Craft name stats (orange stats)
 
+        public const string DEFAULT_CRAFT_NAME = "00000000000000000000";
+
         /// <summary>
         /// Orange str stat.
         /// </summary>
@@ -589,7 +591,7 @@ namespace Imgeneus.World.Game.Player
         public string GetCraftName()
         {
             if (!IsComposable)
-                return "00000000000000000000";
+                return DEFAULT_CRAFT_NAME;
 
             var strBuilder = new StringBuilder();
 

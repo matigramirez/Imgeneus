@@ -61,18 +61,7 @@ namespace Imgeneus.World.Serialization
 
             IsItemDyed = item.DyeColor.IsEnabled;
 
-            CraftName = new CraftName(
-               '0', '1', // str 1
-               '0', '2', // dex 2
-               '0', '3', // rec 3
-               '0', '4', // int 4
-               '0', '5', // wis 5
-               '0', '6', // luc 6
-               '0', '7', // hp 700
-               '0', '8', // mp 800
-               '0', '9', // sp 900
-               '2', '0' // step 20
-               );
+            CraftName = new CraftName(item.GetCraftName());
 
             // Check InventoryItem.cs for more info.
             UnknownBytes = new byte[23];

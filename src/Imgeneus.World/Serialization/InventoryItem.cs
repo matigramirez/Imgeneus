@@ -56,18 +56,7 @@ namespace Imgeneus.Network.Serialization
             };
             Count = item.Count;
 
-            CraftName = new CraftName(
-                '0', '1', // str 1
-                '0', '2', // dex 2
-                '0', '3', // rec 3
-                '0', '4', // int 4
-                '0', '5', // wis 5
-                '0', '6', // luc 6
-                '0', '7', // hp 700
-                '0', '8', // mp 800
-                '0', '9', // sp 900
-                '2', '0' // step 20
-                );
+            CraftName = new CraftName(item.GetCraftName());
 
             // Unknown bytes. Not sure what is it, but if all set to 1 AND CraftName IsDisabled to "true" from and until date is shown.
             UnknownBytes = new byte[23];

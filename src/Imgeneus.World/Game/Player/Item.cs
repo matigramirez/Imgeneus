@@ -10,7 +10,7 @@ namespace Imgeneus.World.Game.Player
     public class Item
     {
         private readonly IDatabasePreloader _databasePreloader;
-        private readonly DbItem _item;
+        private readonly DbItem _dbItem;
 
         /// <summary>
         /// Unique type, used only for drop money on map.
@@ -66,7 +66,7 @@ namespace Imgeneus.World.Game.Player
             Count = count;
 
             if (Type != 0 && TypeId != 0 && Type != MONEY_ITEM_TYPE)
-                _item = _databasePreloader.Items[(Type, TypeId)];
+                _dbItem = _databasePreloader.Items[(Type, TypeId)];
         }
 
         #region Trade
@@ -77,24 +77,24 @@ namespace Imgeneus.World.Game.Player
 
         #region Extra stats
 
-        private int ConstStr => _item.ConstStr;
-        private int ConstDex => _item.ConstDex;
-        private int ConstRec => _item.ConstRec;
-        private int ConstInt => _item.ConstInt;
-        private int ConstLuc => _item.ConstLuc;
-        private int ConstWis => _item.ConstWis;
-        private int ConstHP => _item.ConstHP;
-        private int ConstMP => _item.ConstMP;
-        private int ConstSP => _item.ConstSP;
-        private byte ConstAttackSpeed => _item.AttackTime;
-        private byte ConstMoveSpeed => _item.Speed;
-        private ushort ConstDefense => _item.Defense;
-        private ushort ConstResistance => _item.Resistance;
-        private ushort ConstMinAttack => _item.MinAttack;
-        private ushort ConstPlusAttack => _item.PlusAttack;
-        private Element ConstElement => _item.Element;
-        public int Sell => _item.Sell;
-        public byte ReqIg => _item.ReqIg;
+        private int ConstStr => _dbItem.ConstStr;
+        private int ConstDex => _dbItem.ConstDex;
+        private int ConstRec => _dbItem.ConstRec;
+        private int ConstInt => _dbItem.ConstInt;
+        private int ConstLuc => _dbItem.ConstLuc;
+        private int ConstWis => _dbItem.ConstWis;
+        private int ConstHP => _dbItem.ConstHP;
+        private int ConstMP => _dbItem.ConstMP;
+        private int ConstSP => _dbItem.ConstSP;
+        private byte ConstAttackSpeed => _dbItem.AttackTime;
+        private byte ConstMoveSpeed => _dbItem.Speed;
+        private ushort ConstDefense => _dbItem.Defense;
+        private ushort ConstResistance => _dbItem.Resistance;
+        private ushort ConstMinAttack => _dbItem.MinAttack;
+        private ushort ConstPlusAttack => _dbItem.PlusAttack;
+        private Element ConstElement => _dbItem.Element;
+        public int Sell => _dbItem.Sell;
+        public byte ReqIg => _dbItem.ReqIg;
 
         /// <summary>
         /// Str contains yellow(default) stat + orange stat (take it from craft name later).
@@ -496,33 +496,33 @@ namespace Imgeneus.World.Game.Player
         /// <summary>
         /// Special effect like teleport/cure/summon etc.
         /// </summary>
-        public SpecialEffect Special => _item.Special;
+        public SpecialEffect Special => _dbItem.Special;
 
         /// <summary>
         /// If item can be given away.
         /// </summary>
-        public ItemAccountRestrictionType AccountRestriction => _item.ReqOg;
+        public ItemAccountRestrictionType AccountRestriction => _dbItem.ReqOg;
 
         /// <summary>
         /// For mounts, its value specifies which character shape we should use.
         /// </summary>
-        public ushort Range => _item.Range;
+        public ushort Range => _dbItem.Range;
 
         /// <summary>
         /// Can be used in basic, ultimate etc. mode.
         /// </summary>
-        public byte Grow => _item.Grow;
+        public byte Grow => _dbItem.Grow;
 
         /// <summary>
         /// Defines "color" of item.
         /// </summary>
-        public ushort ReqDex => _item.ReqDex;
+        public ushort ReqDex => _dbItem.ReqDex;
 
         /// <summary>
         /// For linking hammer, it's how many times it increases the success linking rate.
         /// For lapis, if it's set to 1, lapis can break equipment while unsuccessful linking.
         /// </summary>
-        public ushort ReqVg => _item.ReqVg;
+        public ushort ReqVg => _dbItem.ReqVg;
 
         #endregion
 
@@ -576,18 +576,21 @@ namespace Imgeneus.World.Game.Player
         /// <summary>
         /// Max number of composed stats.
         /// </summary>
-        public ushort ReqWis { get => _item.ReqWis; }
+        public ushort ReqWis { get => _dbItem.ReqWis; }
 
         /// <summary>
         /// Bool indicator, that shows if item can be rec-runed.
         /// </summary>
-        public bool IsComposable { get => ReqWis > 0; }
+        public bool IsComposable { get => _dbItem != null && ReqWis > 0; }
 
         /// <summary>
         /// Generates craft name, that is stored in db.
         /// </summary>
         public string GetCraftName()
         {
+            if (!IsComposable)
+                return "00000000000000000000";
+
             var strBuilder = new StringBuilder();
 
             if (ComposedStr > 9)
@@ -640,11 +643,6 @@ namespace Imgeneus.World.Game.Player
 
             strBuilder.Append("00"); // TODO: support enchanted level
 
-            if (IsComposable)
-                strBuilder.Append("1");
-            else
-                strBuilder.Append("0");
-
             return strBuilder.ToString();
         }
 
@@ -653,7 +651,7 @@ namespace Imgeneus.World.Game.Player
         /// </summary>
         private void ParseCraftname(string craftname)
         {
-            if (craftname.Length != 21)
+            if (craftname.Length != 20)
                 return;
 
             for (var i = 0; i <= 18; i += 2)
@@ -713,7 +711,7 @@ namespace Imgeneus.World.Game.Player
 
         #region Max count
 
-        public byte MaxCount => _item.Count;
+        public byte MaxCount => _dbItem.Count;
 
         /// <summary>
         /// Consumables and lapis are joinable objects. I.e. count can be > 1.
@@ -744,7 +742,7 @@ namespace Imgeneus.World.Game.Player
             get
             {
                 byte count = 0;
-                switch (_item.Slot)
+                switch (_dbItem.Slot)
                 {
                     case 0:
                         break;

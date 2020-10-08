@@ -45,9 +45,9 @@ namespace Imgeneus.World.Tests.ItemTests
 
         [Theory]
         [Description("If item has composed stats, we can create craft name.")]
-        [InlineData(0, 0, 0, 0, 0, 0, 100, 200, 300, "000000000000010203001")]
-        [InlineData(1, 2, 3, 4, 5, 6, 100, 200, 300, "010203040506010203001")]
-        [InlineData(10, 22, 33, 44, 55, 66, 1000, 2000, 3000, "102233445566102030001")]
+        [InlineData(0, 0, 0, 0, 0, 0, 100, 200, 300, "00000000000001020300")]
+        [InlineData(1, 2, 3, 4, 5, 6, 100, 200, 300, "01020304050601020300")]
+        [InlineData(10, 22, 33, 44, 55, 66, 1000, 2000, 3000, "10223344556610203000")]
         public void ComposedStatsCanBeTranslatedToCraftName(int str, int dex, int rec, int intl, int wis, int luc, int hp, int mp, int sp, string expected)
         {
             var item = new Item(databasePreloader.Object, JustiaArmor.Type, JustiaArmor.TypeId);
@@ -68,11 +68,11 @@ namespace Imgeneus.World.Tests.ItemTests
         [Description("It should be possible to recreate item compose stats from craft name.")]
         [InlineData(null, 0, 0, 0, 0, 0, 0, 0, 0, 0)]
         [InlineData("", 0, 0, 0, 0, 0, 0, 0, 0, 0)]
-        [InlineData("bad_craft_name_length", 0, 0, 0, 0, 0, 0, 0, 0, 0)]
-        [InlineData("1111111111111111111111", 0, 0, 0, 0, 0, 0, 0, 0, 0)]
-        [InlineData("000000000000010203001", 0, 0, 0, 0, 0, 0, 100, 200, 300)]
-        [InlineData("010203040506010203001", 1, 2, 3, 4, 5, 6, 100, 200, 300)]
-        [InlineData("102233445566102030001", 10, 22, 33, 44, 55, 66, 1000, 2000, 3000)]
+        [InlineData("bad_craftname_length", 0, 0, 0, 0, 0, 0, 0, 0, 0)]
+        [InlineData("111111111111111111111", 0, 0, 0, 0, 0, 0, 0, 0, 0)]
+        [InlineData("00000000000001020300", 0, 0, 0, 0, 0, 0, 100, 200, 300)]
+        [InlineData("01020304050601020300", 1, 2, 3, 4, 5, 6, 100, 200, 300)]
+        [InlineData("10223344556610203000", 10, 22, 33, 44, 55, 66, 1000, 2000, 3000)]
         public void ComposedStatsCanBeReadFromCraftName(string craftName, int str, int dex, int rec, int intl, int wis, int luc, int hp, int mp, int sp)
         {
             var item = new Item(databasePreloader.Object, new DbCharacterItems()

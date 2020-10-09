@@ -1,4 +1,5 @@
 ﻿using Imgeneus.World.Game.Player;
+using System.Collections.Generic;
 
 namespace Imgeneus.World.Game.Linking
 {
@@ -44,5 +45,10 @@ namespace Imgeneus.World.Game.Linking
         /// Gets gold amount for extracting based on gem.
         /// </summary>
         public int GetRemoveGold(Gem gem);
+
+        /// <summary>
+        /// 3 random stats.
+        /// </summary>
+        public void Compose(Item item);
     }
 }

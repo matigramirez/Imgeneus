@@ -702,5 +702,25 @@ namespace Imgeneus.World.Packets
             }
             client.SendPacket(packet);
         }
+
+        internal void SendAbsoluteComposition(IWorldClient client, bool isFailure, string craftName)
+        {
+            using var packet = new Packet(PacketType.ITEM_COMPOSE_ABSOLUTE);
+            packet.Write(isFailure);
+            packet.Write(new CraftName(craftName).Serialize());
+            packet.Write(true); // ? 
+
+            client.SendPacket(packet);
+        }
+
+        internal void SendComposition(IWorldClient client, bool isFailure, Item item)
+        {
+            using var packet = new Packet(PacketType.ITEM_COMPOSE);
+            packet.Write(isFailure);
+            packet.Write(item.Bag);
+            packet.Write(item.Slot);
+            packet.Write(new CraftName(item.GetCraftName()).Serialize());
+            client.SendPacket(packet);
+        }
     }
 }

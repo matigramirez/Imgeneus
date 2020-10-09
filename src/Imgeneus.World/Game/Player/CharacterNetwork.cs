@@ -320,6 +320,14 @@ namespace Imgeneus.World.Game.Player
                     HandleDyeConfirm(dyeConfirmPacket.DyeItemBag, dyeConfirmPacket.DyeItemSlot, dyeConfirmPacket.TargetItemBag, dyeConfirmPacket.TargetItemSlot);
                     break;
 
+                case ItemComposeAbsolutePacket itemComposeAbsolutePacket:
+                    HandleAbsoluteCompose(itemComposeAbsolutePacket.RuneBag, itemComposeAbsolutePacket.RuneSlot, itemComposeAbsolutePacket.ItemBag, itemComposeAbsolutePacket.ItemSlot);
+                    break;
+
+                case ItemComposePacket itemComposePacket:
+                    HandleItemComposePacket(itemComposePacket.RuneBag, itemComposePacket.RuneSlot, itemComposePacket.ItemBag, itemComposePacket.ItemSlot);
+                    break;
+
                 case GMCreateMobPacket gMCreateMobPacket:
                     if (!IsAdmin)
                         return;
@@ -736,6 +744,72 @@ namespace Imgeneus.World.Game.Player
 
                 UseItem(dyeItem.Bag, dyeItem.Slot);
             }
+        }
+
+        private void HandleAbsoluteCompose(byte runeBag, byte runeSlot, byte itemBag, byte itemSlot)
+        {
+            InventoryItems.TryGetValue((runeBag, runeSlot), out var rune);
+            InventoryItems.TryGetValue((itemBag, itemSlot), out var item);
+
+            if (rune is null || item is null || rune.Special != SpecialEffect.AbsoluteRecreationRune || !item.IsComposable)
+            {
+                _packetsHelper.SendComposition(Client, true, item);
+                return;
+            }
+
+            var itemClone = item.Clone();
+            _linkingManager.Compose(itemClone);
+
+            _packetsHelper.SendAbsoluteComposition(Client, false, itemClone.GetCraftName());
+
+            // TODO: I'm not sure how absolute composite works and what to do next.
+        }
+
+        private void HandleItemComposePacket(byte runeBag, byte runeSlot, byte itemBag, byte itemSlot)
+        {
+            InventoryItems.TryGetValue((runeBag, runeSlot), out var rune);
+            InventoryItems.TryGetValue((itemBag, itemSlot), out var item);
+
+            if (rune is null || item is null || rune.Special != SpecialEffect.RecreationRune || !item.IsComposable)
+            {
+                _packetsHelper.SendComposition(Client, true, item);
+                return;
+            }
+
+            if (item.Bag == 0)
+            {
+                ExtraStr -= item.ComposedStr;
+                ExtraDex -= item.ComposedDex;
+                ExtraRec -= item.ComposedRec;
+                ExtraInt -= item.ComposedInt;
+                ExtraWis -= item.ComposedWis;
+                ExtraLuc -= item.ComposedLuc;
+                ExtraHP -= item.ComposedHP;
+                ExtraMP -= item.ComposedMP;
+                ExtraSP -= item.ComposedSP;
+            }
+
+            _linkingManager.Compose(item);
+
+            _packetsHelper.SendComposition(Client, false, item);
+
+            if (item.Bag == 0)
+            {
+                ExtraStr += item.ComposedStr;
+                ExtraDex += item.ComposedDex;
+                ExtraRec += item.ComposedRec;
+                ExtraInt += item.ComposedInt;
+                ExtraWis += item.ComposedWis;
+                ExtraLuc += item.ComposedLuc;
+                ExtraHP += item.ComposedHP;
+                ExtraMP += item.ComposedMP;
+                ExtraSP += item.ComposedSP;
+
+                SendAdditionalStats();
+            }
+
+            _taskQueue.Enqueue(ActionType.UPDATE_CRAFT_NAME, Id, item.Bag, item.Slot, item.GetCraftName());
+            UseItem(rune.Bag, rune.Slot);
         }
 
         #endregion

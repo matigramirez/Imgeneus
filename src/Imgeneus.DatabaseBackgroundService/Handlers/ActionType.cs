@@ -15,6 +15,7 @@
         UPDATE_ITEM_COUNT_IN_INVENTORY,
         UPDATE_GOLD,
         CREATE_DYE_COLOR,
+        UPDATE_CRAFT_NAME,
 
         // Gems
         UPDATE_GEM,

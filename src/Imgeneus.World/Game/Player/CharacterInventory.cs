@@ -939,6 +939,8 @@ namespace Imgeneus.World.Game.Player
 
                 case SpecialEffect.LinkingHammer:
                 case SpecialEffect.PerfectLinkingHammer:
+                case SpecialEffect.RecreationRune:
+                case SpecialEffect.AbsoluteRecreationRune:
                     // Effect is added in linking manager.
                     break;
 

@@ -396,5 +396,20 @@ namespace Imgeneus.DatabaseBackgroundService.Handlers
 
             await database.SaveChangesAsync();
         }
+
+        [ActionHandler(ActionType.UPDATE_CRAFT_NAME)]
+        internal static async Task UpdateCraftName(object[] args)
+        {
+            int characterId = (int)args[0];
+            byte bag = (byte)args[1];
+            byte slot = (byte)args[2];
+            string craftName = (string)args[3];
+
+            using var database = DependencyContainer.Instance.Resolve<IDatabase>();
+            var item = database.CharacterItems.First(itm => itm.CharacterId == characterId && itm.Bag == bag && itm.Slot == slot);
+            item.Craftname = craftName;
+
+            await database.SaveChangesAsync();
+        }
     }
 }

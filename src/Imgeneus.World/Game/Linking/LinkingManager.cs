@@ -2,6 +2,7 @@
 using Imgeneus.Database.Preload;
 using Imgeneus.World.Game.Player;
 using System;
+using System.Collections.Generic;
 
 namespace Imgeneus.World.Game.Linking
 {
@@ -245,6 +246,73 @@ namespace Imgeneus.World.Game.Linking
             }
 
             return gold;
+        }
+
+        public void Compose(Item item)
+        {
+            item.ComposedStr = 0;
+            item.ComposedDex = 0;
+            item.ComposedRec = 0;
+            item.ComposedInt = 0;
+            item.ComposedWis = 0;
+            item.ComposedLuc = 0;
+            item.ComposedHP = 0;
+            item.ComposedMP = 0;
+            item.ComposedSP = 0;
+
+            var indexes = new List<int>();
+            do
+            {
+                var index = _random.Next(0, 9);
+                if (!indexes.Contains(index))
+                    indexes.Add(index);
+            }
+            while (indexes.Count != 3);
+
+            foreach (var i in indexes)
+            {
+                switch (i)
+                {
+                    case 0:
+                        item.ComposedStr = _random.Next(1, item.ReqWis + 1);
+                        break;
+
+                    case 1:
+                        item.ComposedDex = _random.Next(1, item.ReqWis + 1);
+                        break;
+
+                    case 2:
+                        item.ComposedRec = _random.Next(1, item.ReqWis + 1);
+                        break;
+
+                    case 3:
+                        item.ComposedInt = _random.Next(1, item.ReqWis + 1);
+                        break;
+
+                    case 4:
+                        item.ComposedWis = _random.Next(1, item.ReqWis + 1);
+                        break;
+
+                    case 5:
+                        item.ComposedLuc = _random.Next(1, item.ReqWis + 1);
+                        break;
+
+                    case 6:
+                        item.ComposedHP = _random.Next(1, item.ReqWis + 1) * 100;
+                        break;
+
+                    case 7:
+                        item.ComposedMP = _random.Next(1, item.ReqWis + 1) * 100;
+                        break;
+
+                    case 8:
+                        item.ComposedSP = _random.Next(1, item.ReqWis + 1) * 100;
+                        break;
+
+                    default:
+                        break;
+                }
+            }
         }
     }
 }

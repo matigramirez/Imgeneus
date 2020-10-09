@@ -1,9 +1,10 @@
 ﻿using BinarySerialization;
+using Imgeneus.Network.Serialization;
 using System.ComponentModel.DataAnnotations;
 
 namespace Imgeneus.World.Serialization
 {
-    public struct CraftName
+    public class CraftName : BaseSerializable
     {
         [FieldOrder(0), MinLength(20)]
         public byte[] Name;

@@ -758,11 +758,14 @@ namespace Imgeneus.World.Game.Player
             }
 
             var itemClone = item.Clone();
-            _linkingManager.Compose(itemClone);
+            _linkingManager.Item = itemClone;
+            _linkingManager.Compose();
 
             _packetsHelper.SendAbsoluteComposition(Client, false, itemClone.GetCraftName());
 
             // TODO: I'm not sure how absolute composite works and what to do next.
+
+            _linkingManager.Item = null;
         }
 
         private void HandleItemComposePacket(byte runeBag, byte runeSlot, byte itemBag, byte itemSlot)
@@ -789,7 +792,8 @@ namespace Imgeneus.World.Game.Player
                 ExtraSP -= item.ComposedSP;
             }
 
-            _linkingManager.Compose(item);
+            _linkingManager.Item = item;
+            _linkingManager.Compose();
 
             _packetsHelper.SendComposition(Client, false, item);
 
@@ -810,6 +814,8 @@ namespace Imgeneus.World.Game.Player
 
             _taskQueue.Enqueue(ActionType.UPDATE_CRAFT_NAME, Id, item.Bag, item.Slot, item.GetCraftName());
             UseItem(rune.Bag, rune.Slot);
+
+            _linkingManager.Item = null;
         }
 
         #endregion

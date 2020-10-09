@@ -1,5 +1,4 @@
 ﻿using Imgeneus.World.Game.Player;
-using System.Collections.Generic;
 
 namespace Imgeneus.World.Game.Linking
 {
@@ -8,6 +7,11 @@ namespace Imgeneus.World.Game.Linking
     /// </summary>
     public interface ILinkingManager
     {
+        /// <summary>
+        /// Selected item.
+        /// </summary>
+        public Item Item { get; set; }
+
         /// <summary>
         /// Tries to add gem to item.
         /// </summary>
@@ -49,6 +53,6 @@ namespace Imgeneus.World.Game.Linking
         /// <summary>
         /// 3 random stats.
         /// </summary>
-        public void Compose(Item item);
+        public void Compose();
     }
 }

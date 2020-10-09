@@ -722,5 +722,17 @@ namespace Imgeneus.World.Packets
             packet.Write(new CraftName(item.GetCraftName()).Serialize());
             client.SendPacket(packet);
         }
+
+        internal void SendCanNotUseItem(IWorldClient client, int characterId)
+        {
+            using var packet = new Packet(PacketType.USE_ITEM);
+            packet.Write(characterId);
+            packet.WriteByte(0); // bag
+            packet.WriteByte(0); // slot
+            packet.WriteByte(0); // type
+            packet.WriteByte(0); // type id
+            packet.WriteByte(0); // count
+            client.SendPacket(packet);
+        }
     }
 }

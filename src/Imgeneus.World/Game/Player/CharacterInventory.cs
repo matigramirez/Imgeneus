@@ -816,7 +816,10 @@ namespace Imgeneus.World.Game.Player
             }
 
             if (!CanUseItem(item))
+            {
+                _packetsHelper.SendCanNotUseItem(Client, Id);
                 return;
+            }
 
             item.Count--;
             ApplyItemEffect(item);
@@ -1020,6 +1023,19 @@ namespace Imgeneus.World.Game.Player
         private bool CanUseItem(Item item)
         {
             // TODO: implement checks.
+
+            switch (item.Special)
+            {
+                case SpecialEffect.RecreationRune:
+                case SpecialEffect.AbsoluteRecreationRune:
+                case SpecialEffect.RecreationRune_STR:
+                case SpecialEffect.RecreationRune_DEX:
+                case SpecialEffect.RecreationRune_REC:
+                case SpecialEffect.RecreationRune_INT:
+                case SpecialEffect.RecreationRune_WIS:
+                case SpecialEffect.RecreationRune_LUC:
+                    return _linkingManager.Item != null && _linkingManager.Item.IsComposable;
+            }
 
             return true;
         }

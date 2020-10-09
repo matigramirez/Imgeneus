@@ -41,7 +41,7 @@ namespace Imgeneus.World
             DependencyContainer.Instance.Register<IMapsLoader, MapsLoader>(ServiceLifetime.Singleton);
             DependencyContainer.Instance.Register<IDatabasePreloader, DatabasePreloader>(ServiceLifetime.Singleton);
             DependencyContainer.Instance.Register<IChatManager, ChatManager>(ServiceLifetime.Singleton);
-            DependencyContainer.Instance.Register<ILinkingManager, LinkingManager>(ServiceLifetime.Singleton);
+            DependencyContainer.Instance.Register<ILinkingManager, LinkingManager>(ServiceLifetime.Transient);
             DependencyContainer.Instance.Register<IDyeingManager, DyeingManager>(ServiceLifetime.Transient);
             DependencyContainer.Instance.Configure(services => services.AddLogging(builder =>
             {

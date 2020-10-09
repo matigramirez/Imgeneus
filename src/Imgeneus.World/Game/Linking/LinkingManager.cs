@@ -16,6 +16,8 @@ namespace Imgeneus.World.Game.Linking
             _databasePreloader = databasePreloader;
         }
 
+        public Item Item { get; set; }
+
         public (bool Success, byte Slot) AddGem(Item item, Item gem, Item hammer)
         {
             double rate = GetRate(gem, hammer);
@@ -248,17 +250,17 @@ namespace Imgeneus.World.Game.Linking
             return gold;
         }
 
-        public void Compose(Item item)
+        public void Compose()
         {
-            item.ComposedStr = 0;
-            item.ComposedDex = 0;
-            item.ComposedRec = 0;
-            item.ComposedInt = 0;
-            item.ComposedWis = 0;
-            item.ComposedLuc = 0;
-            item.ComposedHP = 0;
-            item.ComposedMP = 0;
-            item.ComposedSP = 0;
+            Item.ComposedStr = 0;
+            Item.ComposedDex = 0;
+            Item.ComposedRec = 0;
+            Item.ComposedInt = 0;
+            Item.ComposedWis = 0;
+            Item.ComposedLuc = 0;
+            Item.ComposedHP = 0;
+            Item.ComposedMP = 0;
+            Item.ComposedSP = 0;
 
             var indexes = new List<int>();
             do
@@ -274,39 +276,39 @@ namespace Imgeneus.World.Game.Linking
                 switch (i)
                 {
                     case 0:
-                        item.ComposedStr = _random.Next(1, item.ReqWis + 1);
+                        Item.ComposedStr = _random.Next(1, Item.ReqWis + 1);
                         break;
 
                     case 1:
-                        item.ComposedDex = _random.Next(1, item.ReqWis + 1);
+                        Item.ComposedDex = _random.Next(1, Item.ReqWis + 1);
                         break;
 
                     case 2:
-                        item.ComposedRec = _random.Next(1, item.ReqWis + 1);
+                        Item.ComposedRec = _random.Next(1, Item.ReqWis + 1);
                         break;
 
                     case 3:
-                        item.ComposedInt = _random.Next(1, item.ReqWis + 1);
+                        Item.ComposedInt = _random.Next(1, Item.ReqWis + 1);
                         break;
 
                     case 4:
-                        item.ComposedWis = _random.Next(1, item.ReqWis + 1);
+                        Item.ComposedWis = _random.Next(1, Item.ReqWis + 1);
                         break;
 
                     case 5:
-                        item.ComposedLuc = _random.Next(1, item.ReqWis + 1);
+                        Item.ComposedLuc = _random.Next(1, Item.ReqWis + 1);
                         break;
 
                     case 6:
-                        item.ComposedHP = _random.Next(1, item.ReqWis + 1) * 100;
+                        Item.ComposedHP = _random.Next(1, Item.ReqWis + 1) * 100;
                         break;
 
                     case 7:
-                        item.ComposedMP = _random.Next(1, item.ReqWis + 1) * 100;
+                        Item.ComposedMP = _random.Next(1, Item.ReqWis + 1) * 100;
                         break;
 
                     case 8:
-                        item.ComposedSP = _random.Next(1, item.ReqWis + 1) * 100;
+                        Item.ComposedSP = _random.Next(1, Item.ReqWis + 1) * 100;
                         break;
 
                     default:

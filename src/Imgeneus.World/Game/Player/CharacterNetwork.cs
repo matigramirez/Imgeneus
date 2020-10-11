@@ -759,7 +759,7 @@ namespace Imgeneus.World.Game.Player
 
             var itemClone = item.Clone();
             _linkingManager.Item = itemClone;
-            _linkingManager.Compose();
+            _linkingManager.Compose(rune);
 
             _packetsHelper.SendAbsoluteComposition(Client, false, itemClone.GetCraftName());
 
@@ -773,7 +773,15 @@ namespace Imgeneus.World.Game.Player
             InventoryItems.TryGetValue((runeBag, runeSlot), out var rune);
             InventoryItems.TryGetValue((itemBag, itemSlot), out var item);
 
-            if (rune is null || item is null || rune.Special != SpecialEffect.RecreationRune || !item.IsComposable)
+            if (rune is null || item is null ||
+                   (rune.Special != SpecialEffect.RecreationRune &&
+                    rune.Special != SpecialEffect.RecreationRune_STR &&
+                    rune.Special != SpecialEffect.RecreationRune_DEX &&
+                    rune.Special != SpecialEffect.RecreationRune_REC &&
+                    rune.Special != SpecialEffect.RecreationRune_INT &&
+                    rune.Special != SpecialEffect.RecreationRune_WIS &&
+                    rune.Special != SpecialEffect.RecreationRune_LUC) ||
+                !item.IsComposable)
             {
                 _packetsHelper.SendComposition(Client, true, item);
                 return;
@@ -793,7 +801,7 @@ namespace Imgeneus.World.Game.Player
             }
 
             _linkingManager.Item = item;
-            _linkingManager.Compose();
+            _linkingManager.Compose(rune);
 
             _packetsHelper.SendComposition(Client, false, item);
 

@@ -838,7 +838,7 @@ namespace Imgeneus.World.Game.Player
             get => Slot == 7;
         }
 
-        private static readonly List<byte> AllWeaponIds = new List<byte>() { 1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 12, 13, 14, 15, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 59, 60, 61, 62, 63, 64, 65 };
+        private static readonly List<byte> AllWeaponIds = new List<byte>() { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 59, 60, 61, 62, 63, 64, 65 };
 
         public bool IsWeapon
         {

@@ -53,6 +53,6 @@ namespace Imgeneus.World.Game.Linking
         /// <summary>
         /// 3 random stats.
         /// </summary>
-        public void Compose();
+        public void Compose(Item recRune);
     }
 }

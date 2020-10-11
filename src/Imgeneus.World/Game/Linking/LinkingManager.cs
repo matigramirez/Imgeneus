@@ -250,7 +250,92 @@ namespace Imgeneus.World.Game.Linking
             return gold;
         }
 
-        public void Compose()
+        public void Compose(Item recRune)
+        {
+            switch (recRune.Special)
+            {
+                case SpecialEffect.RecreationRune:
+                    RandomCompose();
+                    break;
+
+                case SpecialEffect.RecreationRune_STR:
+                    ComposeStr();
+                    break;
+
+                case SpecialEffect.RecreationRune_DEX:
+                    ComposeDex();
+                    break;
+
+                case SpecialEffect.RecreationRune_REC:
+                    ComposeRec();
+                    break;
+
+                case SpecialEffect.RecreationRune_INT:
+                    ComposeInt();
+                    break;
+
+                case SpecialEffect.RecreationRune_WIS:
+                    ComposeWis();
+                    break;
+
+                case SpecialEffect.RecreationRune_LUC:
+                    ComposeLuc();
+                    break;
+
+                default:
+                    break;
+            }
+        }
+
+        private void ComposeStr()
+        {
+            if (Item.ComposedStr == 0)
+                return;
+
+            Item.ComposedStr = _random.Next(1, Item.ReqWis + 1);
+        }
+
+        private void ComposeDex()
+        {
+            if (Item.ComposedDex == 0)
+                return;
+
+            Item.ComposedDex = _random.Next(1, Item.ReqWis + 1);
+        }
+
+        private void ComposeRec()
+        {
+            if (Item.ComposedRec == 0)
+                return;
+
+            Item.ComposedRec = _random.Next(1, Item.ReqWis + 1);
+        }
+
+        private void ComposeInt()
+        {
+            if (Item.ComposedInt == 0)
+                return;
+
+            Item.ComposedInt = _random.Next(1, Item.ReqWis + 1);
+        }
+
+        private void ComposeWis()
+        {
+            if (Item.ComposedWis == 0)
+                return;
+
+            Item.ComposedWis = _random.Next(1, Item.ReqWis + 1);
+        }
+
+        private void ComposeLuc()
+        {
+            if (Item.ComposedLuc == 0)
+                return;
+
+            Item.ComposedLuc = _random.Next(1, Item.ReqWis + 1);
+        }
+
+        private void RandomCompose()
         {
             Item.ComposedStr = 0;
             Item.ComposedDex = 0;
@@ -262,10 +347,11 @@ namespace Imgeneus.World.Game.Linking
             Item.ComposedMP = 0;
             Item.ComposedSP = 0;
 
+            var maxIndex = Item.IsWeapon ? 6 : 9; // Weapons can not have hp, mp or sp recreated.
             var indexes = new List<int>();
             do
             {
-                var index = _random.Next(0, 9);
+                var index = _random.Next(0, maxIndex);
                 if (!indexes.Contains(index))
                     indexes.Add(index);
             }

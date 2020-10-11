@@ -118,22 +118,14 @@ namespace Imgeneus.World.SelectionScreen
             // Get number of user characters.
             var characters = database.Characters.Where(x => x.UserId == _client.UserID).ToList();
 
-            if (characters.Count == Constants.MaxCharacters)
+            byte freeSlot = createCharacterPacket.Slot;
+            if (characters.Any(c => c.Slot == freeSlot && !c.IsDelete))
             {
-                // Max number is reached.
+                // Wrong slot.
                 SendCreatedCharacter(false);
                 return;
             }
 
-            byte freeSlot = 0;
-            for (byte i = 0; i < Constants.MaxCharacters; i++)
-            {
-                if (!characters.Any(c => c.Slot == i))
-                {
-                    freeSlot = i;
-                    break;
-                }
-            }
             DbCharacter character = new DbCharacter()
             {
                 Name = createCharacterPacket.CharacterName,
@@ -163,7 +155,7 @@ namespace Imgeneus.World.SelectionScreen
         /// </summary>
         private void SendCharacterList(ICollection<DbCharacter> characters)
         {
-            for (byte i = 0; i < Constants.MaxCharacters; i++)
+            for (byte i = 0; i < 5; i++)
             {
                 using var packet = new Packet(PacketType.CHARACTER_LIST);
                 packet.Write(i);

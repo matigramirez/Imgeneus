@@ -5,6 +5,8 @@ namespace Imgeneus.Network.Packets.Game
 {
     public struct CreateCharacterPacket : IDeserializedPacket
     {
+        public byte Slot { get; }
+
         public Race Race { get; }
 
         public Mode Mode { get; }
@@ -23,7 +25,7 @@ namespace Imgeneus.Network.Packets.Game
 
         public CreateCharacterPacket(IPacketStream packet)
         {
-            packet.Skip(1); // Length of packet.
+            Slot = packet.Read<byte>();
             Race = (Race)packet.Read<byte>();
             Mode = (Mode)packet.Read<byte>();
             Hair = packet.Read<byte>();

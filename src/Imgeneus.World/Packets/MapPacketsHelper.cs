@@ -1,5 +1,4 @@
-﻿using System;
-using Imgeneus.Database.Constants;
+﻿using Imgeneus.Database.Constants;
 using Imgeneus.Network.Data;
 using Imgeneus.Network.Packets;
 using Imgeneus.World.Game;
@@ -305,6 +304,10 @@ namespace Imgeneus.World.Packets
             packet.Write(mapItem.PosX);
             packet.Write(mapItem.PosY);
             packet.Write(mapItem.PosZ);
+            if (mapItem.Item.ReqDex > 4) // Highlights valuable items.
+                packet.Write(mapItem.Owner.Id);
+            else
+                packet.Write(0);
             client.SendPacket(packet);
         }
 

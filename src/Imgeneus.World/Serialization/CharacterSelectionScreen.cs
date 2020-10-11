@@ -91,8 +91,14 @@ namespace Imgeneus.Network.Serialization
         [FieldOrder(26)]
         public byte[] CloakInfo = new byte[6];
 
-        [FieldOrder(27), FieldLength(21)]
+        [FieldOrder(27), FieldLength(19)]
         public string Name;
+
+        [FieldOrder(28)]
+        public bool IsDelete;
+
+        [FieldOrder(29)]
+        public byte[] UnknownBytes2 = new byte[25];
 
         public CharacterSelectionScreen(DbCharacter character)
         {
@@ -131,6 +137,7 @@ namespace Imgeneus.Network.Serialization
             }
 
             Name = character.Name;
+            IsDelete = character.IsDelete;
         }
     }
 }

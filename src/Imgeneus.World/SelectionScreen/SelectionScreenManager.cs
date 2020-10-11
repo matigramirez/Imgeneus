@@ -52,19 +52,27 @@ namespace Imgeneus.World.SelectionScreen
                 case SelectCharacterPacket selectCharacterPacket:
                     HandleSelectCharacter(selectCharacterPacket);
                     break;
+
+                case DeleteCharacterPacket characterDeletePacket:
+                    HandleDeleteCharacter(characterDeletePacket);
+                    break;
+
+                case RestoreCharacterPacket restoreCharacterPacket:
+                    HandleRestoreCharacter(restoreCharacterPacket);
+                    break;
             }
         }
 
         /// <summary>
         /// Call this right after gameshake to get user characters.
         /// </summary>
-        public void SendSelectionScrenInformation(int userId)
+        public async void SendSelectionScrenInformation(int userId)
         {
             using var database = DependencyContainer.Instance.Resolve<IDatabase>();
-            DbUser user = database.Users.Include(u => u.Characters)
+            DbUser user = await database.Users.Include(u => u.Characters)
                                         .ThenInclude(c => c.Items)
                                         .Where(u => u.Id == userId)
-                                        .FirstOrDefault();
+                                        .FirstOrDefaultAsync();
 
             SendCharacterList(user.Characters);
 
@@ -159,7 +167,7 @@ namespace Imgeneus.World.SelectionScreen
             {
                 using var packet = new Packet(PacketType.CHARACTER_LIST);
                 packet.Write(i);
-                var character = characters.FirstOrDefault(c => c.Slot == i);
+                var character = characters.FirstOrDefault(c => c.Slot == i && (!c.IsDelete || c.IsDelete && c.DeleteTime != null && DateTime.UtcNow.Subtract((DateTime)c.DeleteTime) < TimeSpan.FromHours(2)));
                 if (character is null)
                 {
                     // No char at this slot.
@@ -197,7 +205,6 @@ namespace Imgeneus.World.SelectionScreen
         /// <summary>
         /// Selects character and loads it into game world.
         /// </summary>
-        /// <param name="packet"></param>
         private async void HandleSelectCharacter(SelectCharacterPacket selectCharacterPacket)
         {
             var gameWorld = DependencyContainer.Instance.Resolve<IGameWorld>();
@@ -212,7 +219,49 @@ namespace Imgeneus.World.SelectionScreen
                 packet.Write(character.Id);
                 _client.SendPacket(packet);
             }
+        }
 
+
+        /// <summary>
+        /// Marks character as deleted.
+        /// </summary>
+        private async void HandleDeleteCharacter(DeleteCharacterPacket characterDeletePacket)
+        {
+            using var database = DependencyContainer.Instance.Resolve<IDatabase>();
+            var character = await database.Characters.FirstOrDefaultAsync(c => c.UserId == _client.UserID && c.Id == characterDeletePacket.CharacterId);
+            if (character is null)
+                return;
+
+            character.IsDelete = true;
+            character.DeleteTime = DateTime.UtcNow;
+
+            await database.SaveChangesAsync();
+
+            using var packet = new Packet(PacketType.DELETE_CHARACTER);
+            packet.WriteByte(0); // ok response
+            packet.Write(character.Id);
+            _client.SendPacket(packet);
+        }
+
+        /// <summary>
+        /// Restores dead character.
+        /// </summary>
+        private async void HandleRestoreCharacter(RestoreCharacterPacket restoreCharacterPacket)
+        {
+            using var database = DependencyContainer.Instance.Resolve<IDatabase>();
+            var character = await database.Characters.FirstOrDefaultAsync(c => c.UserId == _client.UserID && c.Id == restoreCharacterPacket.CharacterId);
+            if (character is null)
+                return;
+
+            character.IsDelete = false;
+            character.DeleteTime = null;
+
+            await database.SaveChangesAsync();
+
+            using var packet = new Packet(PacketType.RESTORE_CHARACTER);
+            packet.WriteByte(0); // ok response
+            packet.Write(character.Id);
+            _client.SendPacket(packet);
         }
     }
 }

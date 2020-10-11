@@ -102,6 +102,8 @@ namespace Imgeneus.World
             { PacketType.ACCOUNT_FACTION, (s) => new AccountFractionPacket(s) },
             { PacketType.CHECK_CHARACTER_AVAILABLE_NAME, (s) => new CheckCharacterAvailableNamePacket(s) },
             { PacketType.CREATE_CHARACTER, (s) => new CreateCharacterPacket(s) },
+            { PacketType.DELETE_CHARACTER, (s) => new DeleteCharacterPacket(s) },
+            { PacketType.RESTORE_CHARACTER, (s) => new RestoreCharacterPacket(s) },
             { PacketType.SELECT_CHARACTER, (s) => new SelectCharacterPacket(s) },
             { PacketType.LEARN_NEW_SKILL, (s) => new LearnNewSkillPacket(s) },
             { PacketType.INVENTORY_MOVE_ITEM, (s) => new MoveItemInInventoryPacket(s) },

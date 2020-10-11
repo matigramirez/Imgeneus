@@ -12,8 +12,8 @@
 
         // Character
         CHARACTER_LIST = 0x0101, // 257
-        CREATE_CHARACTER = 0x0102,
-        DELETE_CHARACTER = 0x0103,
+        CREATE_CHARACTER = 0x0102, // 258
+        DELETE_CHARACTER = 0x0103, // 259
         SELECT_CHARACTER = 0x0104, // 260
         CHARACTER_DETAILS = 0x0105,
         CHARACTER_ITEMS = 0x0106,

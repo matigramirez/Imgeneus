@@ -1,5 +1,6 @@
 ﻿using Imgeneus.Database.Constants;
 using Imgeneus.Database.Entities;
+using Imgeneus.DatabaseBackgroundService.Handlers;
 using System;
 using System.Linq;
 
@@ -456,7 +457,73 @@ namespace Imgeneus.World.Game.Player
 
         public void ResetStats()
         {
+            var defaultStat = _characterConfig.DefaultStats.First(s => s.Job == Class);
+            Strength = defaultStat.Str;
+            Dexterity = defaultStat.Dex;
+            Reaction = defaultStat.Rec;
+            Intelligence = defaultStat.Int;
+            Wisdom = defaultStat.Wis;
+            Luck = defaultStat.Luc;
 
+            ushort statPerLevel;
+            switch (Mode)
+            {
+                case Mode.Beginner:
+                    statPerLevel = 3;
+                    break;
+
+                case Mode.Normal:
+                    statPerLevel = 5;
+                    break;
+
+                case Mode.Hard:
+                    statPerLevel = 7;
+                    break;
+
+                case Mode.Ultimate:
+                    statPerLevel = 9;
+                    break;
+
+                default:
+                    statPerLevel = 0;
+                    break;
+            }
+
+            StatPoint = (ushort)((Level - 1) * statPerLevel); // Level - 1, because we are starting with 1 level.
+
+            switch (defaultStat.MainStat)
+            {
+                case 0:
+                    Strength += (ushort)(Level - 1);
+                    break;
+
+                case 1:
+                    Dexterity += (ushort)(Level - 1);
+                    break;
+
+                case 2:
+                    Reaction += (ushort)(Level - 1);
+                    break;
+
+                case 3:
+                    Intelligence += (ushort)(Level - 1);
+                    break;
+
+                case 4:
+                    Wisdom += (ushort)(Level - 1);
+                    break;
+
+                case 5:
+                    Luck += (ushort)(Level - 1);
+                    break;
+
+                default:
+                    break;
+            }
+
+            _taskQueue.Enqueue(ActionType.UPDATE_STATS, Id, Strength, Dexterity, Reaction, Intelligence, Wisdom, Luck, StatPoint);
+            _packetsHelper.SendResetStats(Client, this);
+            SendAdditionalStats();
         }
 
         #endregion

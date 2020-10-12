@@ -335,6 +335,20 @@ namespace Imgeneus.World.Packets
             client.SendPacket(packet);
         }
 
+        internal void SendResetStats(IWorldClient client, Character character)
+        {
+            using var packet = new Packet(PacketType.STATS_RESET);
+            packet.Write(true); // success
+            packet.Write(character.StatPoint);
+            packet.Write(character.Strength);
+            packet.Write(character.Reaction);
+            packet.Write(character.Intelligence);
+            packet.Write(character.Wisdom);
+            packet.Write(character.Dexterity);
+            packet.Write(character.Luck);
+            client.SendPacket(packet);
+        }
+
         internal void SendCurrentBuffs(IWorldClient client, IKillable target)
         {
             using var packet = new Packet(PacketType.TARGET_BUFFS);

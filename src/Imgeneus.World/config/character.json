@@ -2529,7 +2529,8 @@
       "Rec": 10,
       "Int": 8,
       "Wis": 9,
-      "Luc": 10
+      "Luc": 10,
+      "MainStat": 0
     },
     {
       "Job": 1,
@@ -2538,7 +2539,8 @@
       "Rec": 12,
       "Int": 8,
       "Wis": 10,
-      "Luc": 9
+      "Luc": 9,
+      "MainStat": 2
     },
     {
       "Job": 2,
@@ -2547,7 +2549,8 @@
       "Rec": 10,
       "Int": 8,
       "Wis": 9,
-      "Luc": 10
+      "Luc": 10,
+      "MainStat": 1
     },
     {
       "Job": 3,
@@ -2556,7 +2559,8 @@
       "Rec": 10,
       "Int": 8,
       "Wis": 9,
-      "Luc": 12
+      "Luc": 12,
+      "MainStat": 5
     },
     {
       "Job": 4,
@@ -2565,7 +2569,8 @@
       "Rec": 11,
       "Int": 12,
       "Wis": 10,
-      "Luc": 9
+      "Luc": 9,
+      "MainStat": 3
     },
     {
       "Job": 5,
@@ -2574,7 +2579,8 @@
       "Rec": 11,
       "Int": 10,
       "Wis": 12,
-      "Luc": 9
+      "Luc": 9,
+      "MainStat": 4
     }
   ]
 }

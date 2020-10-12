@@ -458,6 +458,7 @@ namespace Imgeneus.World.Game.Player
             _taskQueue.Enqueue(ActionType.UPDATE_STATS, Id, Strength, Dexterity, Reaction, Intelligence, Wisdom, Luck, StatPoint);
 
             _packetsHelper.SendStatsUpdate(Client, str, dex, rec, intl, wis, luc);
+            SendAdditionalStats();
         }
     }
 }

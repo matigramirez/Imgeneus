@@ -17,5 +17,7 @@ namespace Imgeneus.World.Game.Player
         public ushort Wis { get; set; }
 
         public ushort Luc { get; set; }
+
+        public byte MainStat { get; set; }
     }
 }

@@ -40,7 +40,22 @@ namespace Imgeneus.World.Tests
         public BaseTest()
         {
             config.Setup((conf) => conf.GetConfig(It.IsAny<int>()))
-                .Returns(new Character_HP_SP_MP() { HP = 100, MP = 200, SP = 300 });
+                  .Returns(new Character_HP_SP_MP() { HP = 100, MP = 200, SP = 300 });
+
+            config.Setup((conf) => conf.DefaultStats)
+                  .Returns(new DefaultStat[1] {
+                      new DefaultStat()
+                      {
+                          Job = CharacterProfession.Fighter,
+                          Str = 12,
+                          Dex = 11,
+                          Rec = 10,
+                          Int = 8,
+                          Wis = 9,
+                          Luc = 10,
+                          MainStat = 0
+                      }
+                  });
 
             databasePreloader
                 .SetupGet((preloader) => preloader.Mobs)

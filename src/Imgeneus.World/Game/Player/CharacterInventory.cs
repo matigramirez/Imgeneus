@@ -931,6 +931,10 @@ namespace Imgeneus.World.Game.Player
                     // ?
                     break;
 
+                case SpecialEffect.StatResetStone:
+                    ResetStats();
+                    break;
+
                 case SpecialEffect.GoddessBlessing:
                     UseBlessItem();
                     break;

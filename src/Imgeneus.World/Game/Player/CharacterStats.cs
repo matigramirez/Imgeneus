@@ -451,5 +451,14 @@ namespace Imgeneus.World.Game.Player
         }
 
         #endregion
+
+        #region Reset stats
+
+        public void ResetStats()
+        {
+
+        }
+
+        #endregion
     }
 }

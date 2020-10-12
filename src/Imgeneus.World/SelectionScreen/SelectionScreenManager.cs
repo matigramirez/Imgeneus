@@ -8,6 +8,7 @@ using Imgeneus.Network.Packets.Game;
 using Imgeneus.Network.Serialization;
 using Imgeneus.Network.Server;
 using Imgeneus.World.Game;
+using Imgeneus.World.Game.Player;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -126,6 +127,16 @@ namespace Imgeneus.World.SelectionScreen
                 return;
             }
 
+            var charConfig = DependencyContainer.Instance.Resolve<CharacterConfiguration>();
+            var defaultStats = charConfig.DefaultStats.FirstOrDefault(s => s.Job == createCharacterPacket.Class);
+
+            if (defaultStats is null)
+            {
+                // Something went very wrong. No default stats for this job.
+                SendCreatedCharacter(false);
+                return;
+            }
+
             DbCharacter character = new DbCharacter()
             {
                 Name = createCharacterPacket.CharacterName,
@@ -136,6 +147,12 @@ namespace Imgeneus.World.SelectionScreen
                 Height = createCharacterPacket.Height,
                 Class = createCharacterPacket.Class,
                 Gender = createCharacterPacket.Gender,
+                Strength = defaultStats.Str,
+                Dexterity = defaultStats.Dex,
+                Rec = defaultStats.Rec,
+                Intelligence = defaultStats.Int,
+                Wisdom = defaultStats.Wis,
+                Luck = defaultStats.Luc,
                 Level = 1,
                 Slot = freeSlot,
                 UserId = _client.UserID

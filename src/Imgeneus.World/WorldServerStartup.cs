@@ -11,7 +11,6 @@ using Imgeneus.World.Game.Chat;
 using Imgeneus.World.Game.Dyeing;
 using Imgeneus.World.Game.Linking;
 using Imgeneus.World.Game.Player;
-using Imgeneus.World.Game.Zone;
 using Imgeneus.World.Game.Zone.MapConfig;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -25,7 +24,7 @@ namespace Imgeneus.World
     public sealed class WorldServerStartup : IProgramStartup
     {
         private const string WorldConfigFile = "config/world.json";
-        private const string CharacterConfigFile = "config/character_hp_mp_sp.json";
+        private const string CharacterConfigFile = "config/character.json";
 
         /// <inheritdoc />
         public void Configure()

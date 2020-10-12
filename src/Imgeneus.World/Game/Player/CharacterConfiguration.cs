@@ -8,9 +8,16 @@ namespace Imgeneus.World.Game.Player
         /// <summary>
         /// Config for each job and level.
         /// </summary>
-        [JsonProperty("Configs")]
         public Character_HP_SP_MP[] Configs { get; set; }
 
+        /// <summary>
+        /// Default starting stats.
+        /// </summary>
+        public DefaultStat[] DefaultStats { get; set; }
+
+        /// <summary>
+        /// Gets hp, mp, sp config by index calculation.
+        /// </summary>
         public Character_HP_SP_MP GetConfig(int index)
         {
             if (Configs.Length < index)
@@ -30,6 +37,11 @@ namespace Imgeneus.World.Game.Player
         /// Config for each job and level.
         /// </summary>
         public Character_HP_SP_MP[] Configs { get; }
+
+        /// <summary>
+        /// Default starting stats.
+        /// </summary>
+        public DefaultStat[] DefaultStats { get; set; }
 
         public Character_HP_SP_MP GetConfig(int index);
     }

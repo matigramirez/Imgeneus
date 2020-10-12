@@ -29,6 +29,7 @@ namespace Imgeneus.World.Game
         public virtual void Dispose()
         {
             ActiveBuffs.CollectionChanged -= ActiveBuffs_CollectionChanged;
+            PassiveBuffs.CollectionChanged -= PassiveBuffs_CollectionChanged;
         }
 
         private int _id;

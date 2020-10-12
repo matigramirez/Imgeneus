@@ -81,7 +81,7 @@ namespace Imgeneus.Network.Serialization
         {
             Strength = character.Strength;
             Dexterity = character.Dexterity;
-            Rec = character.Rec;
+            Rec = character.Reaction;
             Intelligence = character.Intelligence;
             Wisdom = character.Wisdom;
             Luck = character.Luck;

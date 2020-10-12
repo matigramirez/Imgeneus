@@ -191,7 +191,8 @@ namespace Imgeneus.World
             { PacketType.DYE_CONFIRM, (s) => new DyeConfirmPacket(s) },
             { PacketType.ITEM_COMPOSE_ABSOLUTE, (s) => new ItemComposeAbsolutePacket(s) },
             { PacketType.ITEM_COMPOSE, (s) => new ItemComposePacket(s) },
-            { PacketType.ITEM_COMPOSE_ABSOLUTE_SELECT, (s) => new ItemComposeAbsoluteSelectPacket(s) }
+            { PacketType.ITEM_COMPOSE_ABSOLUTE_SELECT, (s) => new ItemComposeAbsoluteSelectPacket(s) },
+            { PacketType.UPDATE_STATS, (s) => new UpdateStatsPacket(s) }
         };
 
         /// <inheritdoc />

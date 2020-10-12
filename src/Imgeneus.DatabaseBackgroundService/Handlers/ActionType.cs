@@ -20,6 +20,9 @@
         // Gems
         UPDATE_GEM,
 
+        // Stats
+        UPDATE_STATS,
+
         // Skills
         SAVE_SKILL,
         REMOVE_SKILL,

@@ -7,7 +7,6 @@ using Imgeneus.Network.Data;
 using Imgeneus.Network.Packets;
 using Imgeneus.Network.Packets.Game;
 using Imgeneus.Network.Server;
-using Imgeneus.World.Game.Dyeing;
 using Imgeneus.World.Game.Monster;
 using Imgeneus.World.Game.NPCs;
 using Imgeneus.World.Game.Zone;
@@ -326,6 +325,10 @@ namespace Imgeneus.World.Game.Player
 
                 case ItemComposePacket itemComposePacket:
                     HandleItemComposePacket(itemComposePacket.RuneBag, itemComposePacket.RuneSlot, itemComposePacket.ItemBag, itemComposePacket.ItemSlot);
+                    break;
+
+                case UpdateStatsPacket updateStatsPacket:
+                    HandleUpdateStats(updateStatsPacket.Str, updateStatsPacket.Dex, updateStatsPacket.Rec, updateStatsPacket.Int, updateStatsPacket.Wis, updateStatsPacket.Luc);
                     break;
 
                 case GMCreateMobPacket gMCreateMobPacket:
@@ -824,6 +827,25 @@ namespace Imgeneus.World.Game.Player
             UseItem(rune.Bag, rune.Slot);
 
             _linkingManager.Item = null;
+        }
+
+        private void HandleUpdateStats(ushort str, ushort dex, ushort rec, ushort intl, ushort wis, ushort luc)
+        {
+            var fullStat = str + dex + rec + intl + wis + luc;
+            if (fullStat > StatPoint || fullStat > ushort.MaxValue)
+                return;
+
+            Strength += str;
+            Dexterity += dex;
+            Reaction += rec;
+            Intelligence += intl;
+            Wisdom += wis;
+            Luck += luc;
+            StatPoint -= (ushort)fullStat;
+
+            _taskQueue.Enqueue(ActionType.UPDATE_STATS, Id, Strength, Dexterity, Reaction, Intelligence, Wisdom, Luck, StatPoint);
+
+            _packetsHelper.SendStatsUpdate(Client, str, dex, rec, intl, wis, luc);
         }
 
         #endregion

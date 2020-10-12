@@ -734,5 +734,17 @@ namespace Imgeneus.World.Packets
             packet.WriteByte(0); // count
             client.SendPacket(packet);
         }
+
+        internal void SendStatsUpdate(IWorldClient client, ushort str, ushort dex, ushort rec, ushort intl, ushort wis, ushort luc)
+        {
+            using var packet = new Packet(PacketType.UPDATE_STATS);
+            packet.Write(str);
+            packet.Write(dex);
+            packet.Write(rec);
+            packet.Write(intl);
+            packet.Write(wis);
+            packet.Write(luc);
+            client.SendPacket(packet);
+        }
     }
 }

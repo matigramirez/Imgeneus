@@ -411,5 +411,31 @@ namespace Imgeneus.DatabaseBackgroundService.Handlers
 
             await database.SaveChangesAsync();
         }
+
+        [ActionHandler(ActionType.UPDATE_STATS)]
+        internal static async Task UpdateStats(object[] args)
+        {
+            int characterId = (int)args[0];
+            ushort str = (ushort)args[1];
+            ushort dex = (ushort)args[2];
+            ushort rec = (ushort)args[3];
+            ushort intl = (ushort)args[4];
+            ushort wis = (ushort)args[5];
+            ushort luc = (ushort)args[6];
+            ushort statPoints = (ushort)args[7];
+
+            using var database = DependencyContainer.Instance.Resolve<IDatabase>();
+            var character = database.Characters.Find(characterId);
+
+            character.Strength = str;
+            character.Dexterity = dex;
+            character.Rec = rec;
+            character.Intelligence = intl;
+            character.Wisdom = wis;
+            character.Luck = luc;
+            character.StatPoint = statPoints;
+
+            await database.SaveChangesAsync();
+        }
     }
 }

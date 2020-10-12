@@ -142,7 +142,7 @@ namespace Imgeneus.World.Game.Player
         public ushort SkillPoint { get; set; }
         public ushort Strength { get; set; }
         public ushort Dexterity { get; set; }
-        public ushort Rec { get; set; }
+        public ushort Reaction { get; set; }
         public ushort Intelligence { get; set; }
         public ushort Luck { get; set; }
         public ushort Wisdom { get; set; }
@@ -178,7 +178,7 @@ namespace Imgeneus.World.Game.Player
 
         public int TotalStr => Strength + ExtraStr;
         public override int TotalDex => Dexterity + ExtraDex;
-        public int TotalRec => Rec + ExtraRec;
+        public int TotalRec => Reaction + ExtraRec;
         public int TotalInt => Intelligence + ExtraInt;
         public override int TotalWis => Wisdom + ExtraWis;
         public override int TotalLuc => Luck + ExtraLuc;
@@ -966,7 +966,7 @@ namespace Imgeneus.World.Game.Player
                 SkillPoint = dbCharacter.SkillPoint,
                 Strength = dbCharacter.Strength,
                 Dexterity = dbCharacter.Dexterity,
-                Rec = dbCharacter.Rec,
+                Reaction = dbCharacter.Rec,
                 Intelligence = dbCharacter.Intelligence,
                 Luck = dbCharacter.Luck,
                 Wisdom = dbCharacter.Wisdom,

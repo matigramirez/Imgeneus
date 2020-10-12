@@ -48,6 +48,7 @@
         CHARACTER_ABSORPTION_DAMAGE = 0x0525, // 1317
 
         RUN_MODE = 0x0210, // 528
+
         USE_VEHICLE = 0x0216, // 534
         USE_VEHICLE_READY = 0x0217, // 535
 
@@ -73,8 +74,10 @@
         MOB_RECOVER = 0x0610, // 1552
         MOB_SKILL_USE = 0x060B, // 1547
 
-        // Char skills
-        LEARN_NEW_SKILL = 0x209,
+        // Char stats & skills
+        UPDATE_STATS = 0x0208, // 520
+        LEARN_NEW_SKILL = 0x0209, // 521
+        STATS_RESET = 0x0214, // 532
 
         // Target
         TARGET_SELECT_CHARACTER = 0x0302, // 770
@@ -131,7 +134,7 @@
         OBELISK_CHANGE = 0x2102, // 8450
 
         // Inventory
-        INVENTORY_MOVE_ITEM = 0x0204,
+        INVENTORY_MOVE_ITEM = 0x0204, // 516
         ADD_ITEM = 0x0205, // 517
         REMOVE_ITEM = 0x0206, // 518
         SEND_EQUIPMENT = 0x0507, // 1287

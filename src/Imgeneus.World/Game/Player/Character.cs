@@ -28,7 +28,7 @@ namespace Imgeneus.World.Game.Player
         private readonly IGameWorld _gameWorld;
         private readonly ICharacterConfiguration _characterConfig;
         private readonly IBackgroundTaskQueue _taskQueue;
-        private readonly CharacterPacketsHelper _packetsHelper;
+        private readonly PacketsHelper _packetsHelper;
         private readonly IChatManager _chatManager;
         private readonly ILinkingManager _linkingManager;
         private readonly IDyeingManager _dyeingManager;
@@ -49,7 +49,7 @@ namespace Imgeneus.World.Game.Player
             _chatManager = chatManager;
             _linkingManager = linkinManager;
             _dyeingManager = dyeingManager;
-            _packetsHelper = new CharacterPacketsHelper();
+            _packetsHelper = new PacketsHelper();
 
             _castTimer.Elapsed += CastTimer_Elapsed;
             _summonVehicleTimer.Elapsed += SummonVehicleTimer_Elapsed;

@@ -14,7 +14,7 @@ namespace Imgeneus.World.Game.Zone
 {
     public class MapCell
     {
-        private readonly MapPacketsHelper _packetHelper = new MapPacketsHelper();
+        private readonly PacketsHelper _packetsHelper = new PacketsHelper();
 
         public MapCell(int index, IEnumerable<int> neighborCells, Map map)
         {
@@ -63,18 +63,18 @@ namespace Imgeneus.World.Game.Zone
 
             foreach (var player in sendPlayerLeave)
             {
-                _packetHelper.SendCharacterLeave(player.Client, character);
-                _packetHelper.SendCharacterLeave(character.Client, player);
+                _packetsHelper.SendCharacterLeave(player.Client, character);
+                _packetsHelper.SendCharacterLeave(character.Client, player);
             }
 
             foreach (var player in sendPlayerEnter)
                 if (player.Id != character.Id)
                 {
                     // Notify players in this map, that new player arrived.
-                    _packetHelper.SendCharacterEnter(player.Client, character);
+                    _packetsHelper.SendCharacterEnter(player.Client, character);
 
                     // Notify new player, about already loaded player.
-                    _packetHelper.SendCharacterEnter(character.Client, player);
+                    _packetsHelper.SendCharacterEnter(character.Client, player);
                 }
 
             // Send update npcs.
@@ -85,9 +85,9 @@ namespace Imgeneus.World.Game.Zone
             var npcToEnter = newCellNPCs.Where(npc => !oldCellNPCs.Contains(npc));
 
             foreach (var npc in npcToLeave)
-                _packetHelper.SendNpcLeave(character.Client, npc);
+                _packetsHelper.SendNpcLeave(character.Client, npc);
             foreach (var npc in npcToEnter)
-                _packetHelper.SendNpcEnter(character.Client, npc);
+                _packetsHelper.SendNpcEnter(character.Client, npc);
 
             // Send update mobs.
             var oldCellMobs = character.OldCellId != -1 ? Map.Cells[character.OldCellId].GetAllMobs(true) : new List<Mob>();
@@ -97,10 +97,10 @@ namespace Imgeneus.World.Game.Zone
             var mobToEnter = newCellMobs.Where(m => !oldCellMobs.Contains(m));
 
             foreach (var mob in mobToLeave)
-                _packetHelper.SendMobLeave(character.Client, mob);
+                _packetsHelper.SendMobLeave(character.Client, mob);
 
             foreach (var mob in mobToEnter)
-                _packetHelper.SendMobEnter(character.Client, mob, false);
+                _packetsHelper.SendMobEnter(character.Client, mob, false);
         }
 
         /// <summary>
@@ -170,7 +170,7 @@ namespace Imgeneus.World.Game.Zone
 
             if (notifyPlayers)
                 foreach (var player in GetAllPlayers(true))
-                    _packetHelper.SendCharacterLeave(player.Client, character);
+                    _packetsHelper.SendCharacterLeave(player.Client, character);
         }
 
         /// <summary>
@@ -180,7 +180,7 @@ namespace Imgeneus.World.Game.Zone
         {
             foreach (var p in GetAllPlayers(true))
                 if (p != character)
-                    _packetHelper.SendCharacterTeleport(p.Client, character);
+                    _packetsHelper.SendCharacterTeleport(p.Client, character);
         }
 
         /// <summary>
@@ -245,7 +245,7 @@ namespace Imgeneus.World.Game.Zone
         {
             // Send other clients notification, that user is moving.
             foreach (var player in GetAllPlayers(true))
-                _packetHelper.SendCharacterMoves(player.Client, movedPlayer);
+                _packetsHelper.SendCharacterMoves(player.Client, movedPlayer);
         }
 
         /// <summary>
@@ -254,7 +254,7 @@ namespace Imgeneus.World.Game.Zone
         private void Character_OnMotion(Character playerWithMotion, Motion motion)
         {
             foreach (var player in GetAllPlayers(true))
-                _packetHelper.SendCharacterMotion(player.Client, playerWithMotion.Id, motion);
+                _packetsHelper.SendCharacterMotion(player.Client, playerWithMotion.Id, motion);
         }
 
         /// <summary>
@@ -266,7 +266,7 @@ namespace Imgeneus.World.Game.Zone
         private void Character_OnEquipmentChanged(Character sender, Item equipmentItem, byte slot)
         {
             foreach (var player in GetAllPlayers(true))
-                _packetHelper.SendCharacterChangedEquipment(player.Client, sender.Id, equipmentItem, slot);
+                _packetsHelper.SendCharacterChangedEquipment(player.Client, sender.Id, equipmentItem, slot);
         }
 
         /// <summary>
@@ -283,7 +283,7 @@ namespace Imgeneus.World.Game.Zone
                 else if (sender.HasParty)
                     type = PartyMemberType.Member;
 
-                _packetHelper.SendCharacterPartyChanged(player.Client, sender.Id, type);
+                _packetsHelper.SendCharacterPartyChanged(player.Client, sender.Id, type);
             }
         }
 
@@ -293,7 +293,7 @@ namespace Imgeneus.World.Game.Zone
         private void Character_OnAttackOrMoveChanged(IKillable sender)
         {
             foreach (var player in GetAllPlayers(true))
-                _packetHelper.SendAttackAndMovementSpeed(player.Client, sender);
+                _packetsHelper.SendAttackAndMovementSpeed(player.Client, sender);
         }
 
         /// <summary>
@@ -302,7 +302,7 @@ namespace Imgeneus.World.Game.Zone
         private void Character_OnUsedSkill(IKiller sender, IKillable target, Skill skill, AttackResult attackResult)
         {
             foreach (var player in GetAllPlayers(true))
-                _packetHelper.SendCharacterUsedSkill(player.Client, (Character)sender, target, skill, attackResult);
+                _packetsHelper.SendCharacterUsedSkill(player.Client, (Character)sender, target, skill, attackResult);
         }
 
         /// <summary>
@@ -311,7 +311,7 @@ namespace Imgeneus.World.Game.Zone
         private void Character_OnAttack(IKiller sender, IKillable target, AttackResult attackResult)
         {
             foreach (var player in GetAllPlayers(true))
-                _packetHelper.SendCharacterUsualAttack(player.Client, sender, target, attackResult);
+                _packetsHelper.SendCharacterUsualAttack(player.Client, sender, target, attackResult);
         }
 
         /// <summary>
@@ -320,7 +320,7 @@ namespace Imgeneus.World.Game.Zone
         private void Character_OnDead(IKillable sender, IKiller killer)
         {
             foreach (var player in GetAllPlayers(true))
-                _packetHelper.SendCharacterKilled(player.Client, (Character)sender, killer);
+                _packetsHelper.SendCharacterKilled(player.Client, (Character)sender, killer);
         }
 
         /// <summary>
@@ -329,7 +329,7 @@ namespace Imgeneus.World.Game.Zone
         private void Character_OnSkillCastStarted(Character sender, IKillable target, Skill skill)
         {
             foreach (var player in GetAllPlayers(true))
-                _packetHelper.SendSkillCastStarted(player.Client, sender, target, skill);
+                _packetsHelper.SendSkillCastStarted(player.Client, sender, target, skill);
         }
 
         /// <summary>
@@ -338,59 +338,59 @@ namespace Imgeneus.World.Game.Zone
         private void Character_OnUsedItem(Character sender, Item item)
         {
             foreach (var player in GetAllPlayers(true))
-                _packetHelper.SendUsedItem(player.Client, sender, item);
+                _packetsHelper.SendUsedItem(player.Client, sender, item);
         }
 
         private void Character_OnRecover(IKillable sender, int hp, int mp, int sp)
         {
             foreach (var player in GetAllPlayers(true))
-                _packetHelper.SendRecoverCharacter(player.Client, sender, hp, mp, sp);
+                _packetsHelper.SendRecoverCharacter(player.Client, sender, hp, mp, sp);
         }
 
         private void Character_OnMaxHPChanged(IKillable sender, int maxHP)
         {
             foreach (var player in GetAllPlayers(true))
-                _packetHelper.Send_Max_HP(player.Client, sender.Id, maxHP);
+                _packetsHelper.Send_Max_HP(player.Client, sender.Id, maxHP);
         }
 
         private void Character_OnSkillKeep(IKillable sender, ActiveBuff buff, AttackResult result)
         {
             foreach (var player in GetAllPlayers(true))
-                _packetHelper.SendSkillKeep(player.Client, sender.Id, buff.SkillId, buff.SkillLevel, result);
+                _packetsHelper.SendSkillKeep(player.Client, sender.Id, buff.SkillId, buff.SkillLevel, result);
         }
 
         private void Character_OnShapeChange(Character sender)
         {
             foreach (var player in GetAllPlayers(true))
-                _packetHelper.SendShapeUpdate(player.Client, sender);
+                _packetsHelper.SendShapeUpdate(player.Client, sender);
         }
 
         private void Character_OnUsedRangeSkill(IKiller sender, IKillable target, Skill skill, AttackResult attackResult)
         {
             foreach (var player in GetAllPlayers(true))
-                _packetHelper.SendUsedRangeSkill(player.Client, (Character)sender, target, skill, attackResult);
+                _packetsHelper.SendUsedRangeSkill(player.Client, (Character)sender, target, skill, attackResult);
         }
 
         private void Character_OnRebirthed(IKillable sender)
         {
             foreach (var player in GetAllPlayers(true))
             {
-                _packetHelper.SendCharacterRebirth(player.Client, sender);
-                _packetHelper.SendDeadRebirth(player.Client, (Character)sender);
-                _packetHelper.SendRecoverCharacter(player.Client, sender, sender.CurrentHP, sender.CurrentMP, sender.CurrentSP);
+                _packetsHelper.SendCharacterRebirth(player.Client, sender);
+                _packetsHelper.SendDeadRebirth(player.Client, (Character)sender);
+                _packetsHelper.SendRecoverCharacter(player.Client, sender, sender.CurrentHP, sender.CurrentMP, sender.CurrentSP);
             }
         }
 
         private void Character_OnAppearanceChanged(Character sender)
         {
             foreach (var player in GetAllPlayers(true))
-                _packetHelper.SendAppearanceChanged(player.Client, sender);
+                _packetsHelper.SendAppearanceChanged(player.Client, sender);
         }
 
         private void Character_OnStartSummonVehicle(Character sender)
         {
             foreach (var player in GetAllPlayers(true))
-                _packetHelper.SendStartSummoningVehicle(player.Client, sender);
+                _packetsHelper.SendStartSummoningVehicle(player.Client, sender);
         }
 
         #endregion
@@ -414,7 +414,7 @@ namespace Imgeneus.World.Game.Zone
             AddListeners(mob);
 
             foreach (var player in GetAllPlayers(true))
-                _packetHelper.SendMobEnter(player.Client, mob, true);
+                _packetsHelper.SendMobEnter(player.Client, mob, true);
         }
 
         /// <summary>
@@ -426,7 +426,7 @@ namespace Imgeneus.World.Game.Zone
             RemoveListeners(removedMob);
 
             foreach (var player in GetAllPlayers(true))
-                _packetHelper.SendMobLeave(player.Client, mob);
+                _packetsHelper.SendMobLeave(player.Client, mob);
         }
 
         /// <summary>
@@ -496,31 +496,31 @@ namespace Imgeneus.World.Game.Zone
             Mobs.TryRemove(mob.Id, out var removedMob);
 
             foreach (var player in GetAllPlayers(true))
-                _packetHelper.SendMobDead(player.Client, sender, killer);
+                _packetsHelper.SendMobDead(player.Client, sender, killer);
         }
 
         private void Mob_OnMove(Mob sender)
         {
             foreach (var player in GetAllPlayers(true))
-                _packetHelper.SendMobMove(player.Client, sender);
+                _packetsHelper.SendMobMove(player.Client, sender);
         }
 
         private void Mob_OnAttack(IKiller sender, IKillable target, AttackResult attackResult)
         {
             foreach (var player in GetAllPlayers(true))
-                _packetHelper.SendMobAttack(player.Client, (Mob)sender, target.Id, attackResult);
+                _packetsHelper.SendMobAttack(player.Client, (Mob)sender, target.Id, attackResult);
         }
 
         private void Mob_OnUsedSkill(IKiller sender, IKillable target, Skill skill, AttackResult attackResult)
         {
             foreach (var player in GetAllPlayers(true))
-                _packetHelper.SendMobUsedSkill(player.Client, (Mob)sender, target.Id, skill, attackResult);
+                _packetsHelper.SendMobUsedSkill(player.Client, (Mob)sender, target.Id, skill, attackResult);
         }
 
         private void Mob_OnRecover(IKillable sender)
         {
             foreach (var player in GetAllPlayers(true))
-                _packetHelper.SendMobRecover(player.Client, sender);
+                _packetsHelper.SendMobRecover(player.Client, sender);
         }
 
         #endregion
@@ -542,7 +542,7 @@ namespace Imgeneus.World.Game.Zone
             {
                 AssignCellIndex(npc);
                 foreach (var player in GetAllPlayers(true))
-                    _packetHelper.SendNpcEnter(player.Client, npc);
+                    _packetsHelper.SendNpcEnter(player.Client, npc);
             }
         }
 
@@ -557,7 +557,7 @@ namespace Imgeneus.World.Game.Zone
                 if (NPCs.TryRemove(npc.Id, out var removedNpc))
                 {
                     foreach (var player in GetAllPlayers(true))
-                        _packetHelper.SendNpcLeave(player.Client, npc);
+                        _packetsHelper.SendNpcLeave(player.Client, npc);
                 }
             }
         }
@@ -613,7 +613,7 @@ namespace Imgeneus.World.Game.Zone
             {
                 AssignCellIndex(item);
                 foreach (var player in GetAllPlayers(true))
-                    _packetHelper.SendAddItem(player.Client, item);
+                    _packetsHelper.SendAddItem(player.Client, item);
             }
         }
 
@@ -657,7 +657,7 @@ namespace Imgeneus.World.Game.Zone
             if (Items.TryRemove(itemId, out var mapItem))
             {
                 foreach (var player in GetAllPlayers(true))
-                    _packetHelper.SendRemoveItem(player.Client, mapItem);
+                    _packetsHelper.SendRemoveItem(player.Client, mapItem);
             }
         }
 

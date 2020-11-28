@@ -68,8 +68,9 @@ namespace Imgeneus.World.Game.Player
             if (Type != 0 && TypeId != 0 && Type != MONEY_ITEM_TYPE)
             {
                 _dbItem = _databasePreloader.Items[(Type, TypeId)];
-                // Prevent Count from exceeding MaxCount
-                Count = count > MaxCount ? MaxCount : count;
+                // Prevent Count from exceeding MaxCount and from being 0 (zero)
+                var newCount = count > MaxCount ? MaxCount : count;
+                Count = newCount < 1 ? (byte)1 : newCount;
             }
         }
 

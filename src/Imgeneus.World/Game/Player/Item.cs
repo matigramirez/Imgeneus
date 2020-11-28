@@ -31,7 +31,7 @@ namespace Imgeneus.World.Game.Player
         public Gem Gem6;
 
         public byte Count;
-
+        
         public Item(IDatabasePreloader databasePreloader, DbCharacterItems dbItem) : this(databasePreloader, dbItem.Type, dbItem.TypeId, dbItem.Count)
         {
             Bag = dbItem.Bag;
@@ -66,7 +66,11 @@ namespace Imgeneus.World.Game.Player
             Count = count;
 
             if (Type != 0 && TypeId != 0 && Type != MONEY_ITEM_TYPE)
+            {
                 _dbItem = _databasePreloader.Items[(Type, TypeId)];
+                // Prevent Count from exceeding MaxCount
+                Count = count > MaxCount ? MaxCount : count;
+            }
         }
 
         #region Trade

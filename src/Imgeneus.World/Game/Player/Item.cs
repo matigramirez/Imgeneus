@@ -31,7 +31,7 @@ namespace Imgeneus.World.Game.Player
         public Gem Gem6;
 
         public byte Count;
-        
+
         public Item(IDatabasePreloader databasePreloader, DbCharacterItems dbItem) : this(databasePreloader, dbItem.Type, dbItem.TypeId, dbItem.Count)
         {
             Bag = dbItem.Bag;

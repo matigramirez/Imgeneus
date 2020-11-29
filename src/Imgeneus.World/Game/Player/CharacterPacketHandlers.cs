@@ -37,7 +37,7 @@ namespace Imgeneus.World.Game.Player
             if (!IsAdmin)
                 return;
 
-            byte itemCount = gMGetItemPacket.Count;
+            var itemCount = gMGetItemPacket.Count;
 
             while (itemCount > 0)
             {

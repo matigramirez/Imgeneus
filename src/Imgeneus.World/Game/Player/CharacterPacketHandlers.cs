@@ -37,14 +37,24 @@ namespace Imgeneus.World.Game.Player
             if (!IsAdmin)
                 return;
 
-            var item = AddItemToInventory(new Item(_databasePreloader, gMGetItemPacket.Type, gMGetItemPacket.TypeId, gMGetItemPacket.Count));
-            if (item != null)
+            var itemCount = gMGetItemPacket.Count;
+
+            while (itemCount > 0)
             {
-                _packetsHelper.SendAddItem(Client, item);
-                _packetsHelper.SendGmCommandSuccess(Client);
+                var newItem = new Item(_databasePreloader, gMGetItemPacket.Type, gMGetItemPacket.TypeId,
+                    itemCount);
+
+                var item = AddItemToInventory(newItem);
+                if (item != null)
+                {
+                    _packetsHelper.SendAddItem(Client, item);
+                    _packetsHelper.SendGmCommandSuccess(Client);
+                }
+                else
+                    _packetsHelper.SendGmCommandError(Client, PacketType.GM_COMMAND_GET_ITEM);
+
+                itemCount -= newItem.Count;
             }
-            else
-                _packetsHelper.SendGmCommandError(Client, PacketType.GM_COMMAND_GET_ITEM);
         }
 
         private void HandlePlayerInTarget(PlayerInTargetPacket packet)

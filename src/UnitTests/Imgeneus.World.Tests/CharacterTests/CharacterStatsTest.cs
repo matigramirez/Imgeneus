@@ -19,7 +19,7 @@ namespace Imgeneus.World.Tests.CharacterTests
             character.Client = worldClientMock.Object;
 
             ushort level = 10;
-            character.SetLevel(level);
+            character.TrySetLevel(level);
             character.ResetStats();
 
             Assert.Equal(12 + 9, character.Strength); // 12 is default + 9 str per each level

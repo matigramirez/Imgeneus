@@ -21,6 +21,9 @@ namespace Imgeneus.World.Game.Player
         /// TODO: Update stats accordingly, send new stats to client
         public bool TrySetLevel(ushort newLevel)
         {
+            if (Level == newLevel)
+                return false;
+
             // Check minimum level boundary
             if (newLevel < 1)
                 return false;

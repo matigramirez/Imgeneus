@@ -4,6 +4,7 @@ using Imgeneus.Database.Constants;
 using Imgeneus.Database.Entities;
 using Imgeneus.Network.Data;
 using Imgeneus.Network.Packets;
+using Imgeneus.Network.Packets.Game;
 using Imgeneus.Network.Serialization;
 using Imgeneus.World.Game;
 using Imgeneus.World.Game.Dyeing;
@@ -1092,6 +1093,14 @@ namespace Imgeneus.World.Packets
         {
             using var packet = new Packet(PacketType.USE_VEHICLE_READY);
             packet.Write(sender.Id);
+            client.SendPacket(packet);
+        }
+
+        internal void SendAttribute(IWorldClient client, CharacterAttributeEnum attribute, uint attributeValue)
+        {
+            using var packet = new Packet(PacketType.CHARACTER_ATTRIBUTE_SET);
+            packet.Write((byte)attribute);
+            packet.Write(attributeValue);
             client.SendPacket(packet);
         }
     }

@@ -624,5 +624,65 @@ namespace Imgeneus.World.Game.Player
         }
 
         #endregion
+
+        #region Mode
+
+        /// <summary>
+        /// Set the mode (Grow)
+        /// </summary>
+        public void SetMode(Mode mode)
+        {
+            Mode = mode;
+        }
+
+        #endregion
+
+        #region Stat and Skill Points
+
+        /// <summary>
+        /// Set the stat points amount
+        /// </summary>
+        public void SetStatPoint(ushort statPoint)
+        {
+            StatPoint = statPoint;
+
+            SendAttribute(CharacterAttributeEnum.StatPoint);
+        }
+
+        /// <summary>
+        /// Set the skill points amount
+        /// </summary>
+        public void SetSkillPoint(ushort skillPoint)
+        {
+            SkillPoint = skillPoint;
+
+            SendAttribute(CharacterAttributeEnum.SkillPoint);
+        }
+
+        #endregion
+
+        #region Kills and Deaths
+
+        /// <summary>
+        /// Sets the kill count
+        /// </summary>
+        public void SetKills(ushort kills)
+        {
+            Kills = kills;
+
+            SendAttribute(CharacterAttributeEnum.Kills);
+        }
+
+        /// <summary>
+        /// Sets the death count
+        /// </summary>
+        public void SetDeaths(ushort deaths)
+        {
+            Deaths = deaths;
+
+            SendAttribute(CharacterAttributeEnum.Deaths);
+        }
+
+        #endregion
     }
 }

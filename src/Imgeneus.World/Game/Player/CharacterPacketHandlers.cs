@@ -486,6 +486,9 @@ namespace Imgeneus.World.Game.Player
             switch (attribute)
             {
                 case CharacterAttributeEnum.Grow:
+                    targetPlayer.SetMode((Mode) attributeValue);
+                    targetPlayer.SendAttribute(attribute);
+                    _packetsHelper.SendGmCommandSuccess(Client);
                     break;
 
                 case CharacterAttributeEnum.Level:
@@ -502,9 +505,14 @@ namespace Imgeneus.World.Game.Player
                     break;
 
                 case CharacterAttributeEnum.StatPoint:
+                    targetPlayer.SetStatPoint((ushort)attributeValue);
+                    _packetsHelper.SendGmCommandSuccess(Client);
                     break;
 
                 case CharacterAttributeEnum.SkillPoint:
+                    targetPlayer.SetSkillPoint((ushort)attributeValue);
+                    targetPlayer.SendAttribute(attribute);
+                    _packetsHelper.SendGmCommandSuccess(Client);
                     break;
 
                 case CharacterAttributeEnum.Strength:
@@ -514,6 +522,7 @@ namespace Imgeneus.World.Game.Player
                 case CharacterAttributeEnum.Luck:
                 case CharacterAttributeEnum.Wisdom:
                     targetPlayer.SetStat(attribute, (ushort)attributeValue);
+                    // TODO: Send attribute should be part of the SetStat method but the implementation should also verify new attack/defense/magic/hp/mp/sp and push everything to client
                     targetPlayer.SendAttribute(attribute);
                     _packetsHelper.SendGmCommandSuccess(Client);
                     break;
@@ -526,13 +535,19 @@ namespace Imgeneus.World.Game.Player
                     _packetsHelper.SendGmCommandError(Client, PacketType.CHARACTER_ATTRIBUTE_SET);
                     break;
 
+                // TODO: Add experience logic
                 case CharacterAttributeEnum.Exp:
+                    _packetsHelper.SendGmCommandError(Client, PacketType.CHARACTER_ATTRIBUTE_SET);
                     break;
 
                 case CharacterAttributeEnum.Kills:
+                    targetPlayer.SetKills((ushort)attributeValue);
+                    _packetsHelper.SendGmCommandSuccess(Client);
                     break;
 
                 case CharacterAttributeEnum.Deaths:
+                    targetPlayer.SetDeaths((ushort) attributeValue);
+                    _packetsHelper.SendGmCommandSuccess(Client);
                     break;
 
                 default:

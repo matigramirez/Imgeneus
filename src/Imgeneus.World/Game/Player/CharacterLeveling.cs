@@ -41,7 +41,6 @@ namespace Imgeneus.World.Game.Player
                     else
                     {
                         SetLevel(newLevel);
-                        SendAttribute(CharacterAttributeEnum.Level);
                         return true;
                     }
                 default:

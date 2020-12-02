@@ -590,37 +590,33 @@ namespace Imgeneus.World.Game.Player
             }
         }
 
-        public void SetStat(CharacterAttributeEnum stat, ushort newStatValue)
+        public void SetStat(CharacterAttributeEnum statAttribute, ushort newStatValue)
         {
-            switch (stat)
+            switch (statAttribute)
             {
                 case CharacterAttributeEnum.Strength:
                     Strength = newStatValue;
-                    SendAttribute(stat);
                     break;
                 case CharacterAttributeEnum.Dexterity:
                     Dexterity = newStatValue;
-                    SendAttribute(stat);
                     break;
                 case CharacterAttributeEnum.Reaction:
                     Reaction = newStatValue;
-                    SendAttribute(stat);
                     break;
                 case CharacterAttributeEnum.Intelligence:
                     Intelligence = newStatValue;
-                    SendAttribute(stat);
                     break;
                 case CharacterAttributeEnum.Luck:
                     Luck = newStatValue;
-                    SendAttribute(stat);
                     break;
                 case CharacterAttributeEnum.Wisdom:
                     Wisdom = newStatValue;
-                    SendAttribute(stat);
                     break;
                 default:
                     return;
             }
+
+            SendAttribute(statAttribute);
         }
 
         #endregion

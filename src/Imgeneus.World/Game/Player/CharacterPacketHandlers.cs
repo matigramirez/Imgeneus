@@ -487,7 +487,6 @@ namespace Imgeneus.World.Game.Player
             {
                 case CharacterAttributeEnum.Grow:
                     targetPlayer.SetMode((Mode) attributeValue);
-                    targetPlayer.SendAttribute(attribute);
                     _packetsHelper.SendGmCommandSuccess(Client);
                     break;
 
@@ -500,7 +499,6 @@ namespace Imgeneus.World.Game.Player
 
                 case CharacterAttributeEnum.Money:
                     targetPlayer.ChangeGold(attributeValue);
-                    targetPlayer.SendAttribute(attribute);
                     _packetsHelper.SendGmCommandSuccess(Client);
                     break;
 
@@ -511,7 +509,6 @@ namespace Imgeneus.World.Game.Player
 
                 case CharacterAttributeEnum.SkillPoint:
                     targetPlayer.SetSkillPoint((ushort)attributeValue);
-                    targetPlayer.SendAttribute(attribute);
                     _packetsHelper.SendGmCommandSuccess(Client);
                     break;
 
@@ -522,8 +519,6 @@ namespace Imgeneus.World.Game.Player
                 case CharacterAttributeEnum.Luck:
                 case CharacterAttributeEnum.Wisdom:
                     targetPlayer.SetStat(attribute, (ushort)attributeValue);
-                    // TODO: Send attribute should be part of the SetStat method but the implementation should also verify new attack/defense/magic/hp/mp/sp and push everything to client
-                    targetPlayer.SendAttribute(attribute);
                     _packetsHelper.SendGmCommandSuccess(Client);
                     break;
 
@@ -533,12 +528,12 @@ namespace Imgeneus.World.Game.Player
                 case CharacterAttributeEnum.Og:
                 case CharacterAttributeEnum.Ig:
                     _packetsHelper.SendGmCommandError(Client, PacketType.CHARACTER_ATTRIBUTE_SET);
-                    break;
+                    return;
 
                 // TODO: Add experience logic
                 case CharacterAttributeEnum.Exp:
                     _packetsHelper.SendGmCommandError(Client, PacketType.CHARACTER_ATTRIBUTE_SET);
-                    break;
+                    return;
 
                 case CharacterAttributeEnum.Kills:
                     targetPlayer.SetKills((ushort)attributeValue);
@@ -554,6 +549,8 @@ namespace Imgeneus.World.Game.Player
                     _packetsHelper.SendGmCommandError(Client, PacketType.CHARACTER_ATTRIBUTE_SET);
                     return;
             }
+
+            targetPlayer.SendAttribute(attribute);
         }
     }
 }

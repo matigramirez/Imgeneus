@@ -11,6 +11,7 @@ namespace Imgeneus.World.Game.Player
         private void SetLevel(ushort newLevel)
         {
             Level = newLevel;
+            SendAttribute(CharacterAttributeEnum.Level);
         }
 
         /// <summary>

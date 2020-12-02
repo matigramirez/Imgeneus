@@ -549,8 +549,6 @@ namespace Imgeneus.World.Game.Player
                     _packetsHelper.SendGmCommandError(Client, PacketType.CHARACTER_ATTRIBUTE_SET);
                     return;
             }
-
-            targetPlayer.SendAttribute(attribute);
         }
     }
 }

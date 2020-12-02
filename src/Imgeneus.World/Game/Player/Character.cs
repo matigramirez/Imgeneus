@@ -5,6 +5,7 @@ using Imgeneus.Database.Entities;
 using Imgeneus.Database.Preload;
 using Imgeneus.DatabaseBackgroundService;
 using Imgeneus.DatabaseBackgroundService.Handlers;
+using Imgeneus.Network.Packets.Game;
 using Imgeneus.World.Game.Blessing;
 using Imgeneus.World.Game.Chat;
 using Imgeneus.World.Game.Duel;
@@ -232,6 +233,15 @@ namespace Imgeneus.World.Game.Player
 
             _taskQueue.Enqueue(ActionType.UPDATE_GOLD,
                                Id, Gold);
+        }
+
+        /// <summary>
+        /// Sets player gold
+        /// </summary>
+        public void SetGold(uint newGold)
+        {
+            ChangeGold(newGold);
+            SendAttribute(CharacterAttributeEnum.Money);
         }
 
         /// <summary>

@@ -629,6 +629,7 @@ namespace Imgeneus.World.Game.Player
         public void SetMode(Mode mode)
         {
             Mode = mode;
+            SendAttribute(CharacterAttributeEnum.Grow);
         }
 
         #endregion
@@ -641,7 +642,6 @@ namespace Imgeneus.World.Game.Player
         public void SetStatPoint(ushort statPoint)
         {
             StatPoint = statPoint;
-
             SendAttribute(CharacterAttributeEnum.StatPoint);
         }
 
@@ -651,7 +651,6 @@ namespace Imgeneus.World.Game.Player
         public void SetSkillPoint(ushort skillPoint)
         {
             SkillPoint = skillPoint;
-
             SendAttribute(CharacterAttributeEnum.SkillPoint);
         }
 
@@ -665,7 +664,6 @@ namespace Imgeneus.World.Game.Player
         public void SetKills(ushort kills)
         {
             Kills = kills;
-
             SendAttribute(CharacterAttributeEnum.Kills);
         }
 
@@ -675,7 +673,6 @@ namespace Imgeneus.World.Game.Player
         public void SetDeaths(ushort deaths)
         {
             Deaths = deaths;
-
             SendAttribute(CharacterAttributeEnum.Deaths);
         }
 

@@ -387,6 +387,12 @@ namespace Imgeneus.World.Game.Player
                 case GMTeleportToPlayerPacket gMTeleportToPlayerPacket:
                     HandleTeleportToPlayer(gMTeleportToPlayerPacket.Name);
                     break;
+
+                case GMSetAttributePacket gmSetAttributePacket:
+                    if (!IsAdmin)
+                        return;
+                    HandleGMSetAttributePacket(gmSetAttributePacket);
+                    break;
             }
         }
     }

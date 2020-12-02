@@ -470,5 +470,75 @@ namespace Imgeneus.World.Game.Player
             _packetsHelper.SendStatsUpdate(Client, str, dex, rec, intl, wis, luc);
             SendAdditionalStats();
         }
+
+        private void HandleGMSetAttributePacket(GMSetAttributePacket gmSetAttributePacket)
+        {
+            var (attribute, attributeValue, player) = gmSetAttributePacket;
+
+            var targetPlayer = _gameWorld.Players.Values.FirstOrDefault(p => p.Name == player);
+
+            if (targetPlayer == null)
+            {
+                _packetsHelper.SendGmCommandError(Client, PacketType.CHARACTER_ATTRIBUTE_SET);
+                return;
+            }
+
+            switch (attribute)
+            {
+                case CharacterAttributeEnum.Grow:
+                    break;
+
+                case CharacterAttributeEnum.Level:
+                    if (targetPlayer.TrySetLevel((ushort)attributeValue))
+                        _packetsHelper.SendGmCommandSuccess(Client);
+                    else
+                        _packetsHelper.SendGmCommandError(Client, PacketType.CHARACTER_ATTRIBUTE_SET);
+                    break;
+
+                case CharacterAttributeEnum.Money:
+                    targetPlayer.ChangeGold(attributeValue);
+                    targetPlayer.SendAttribute(attribute);
+                    _packetsHelper.SendGmCommandSuccess(Client);
+                    break;
+
+                case CharacterAttributeEnum.StatPoint:
+                    break;
+
+                case CharacterAttributeEnum.SkillPoint:
+                    break;
+
+                case CharacterAttributeEnum.Strength:
+                case CharacterAttributeEnum.Dexterity:
+                case CharacterAttributeEnum.Reaction:
+                case CharacterAttributeEnum.Intelligence:
+                case CharacterAttributeEnum.Luck:
+                case CharacterAttributeEnum.Wisdom:
+                    targetPlayer.SetStat(attribute, (ushort)attributeValue);
+                    targetPlayer.SendAttribute(attribute);
+                    _packetsHelper.SendGmCommandSuccess(Client);
+                    break;
+
+                case CharacterAttributeEnum.Hg:
+                case CharacterAttributeEnum.Vg:
+                case CharacterAttributeEnum.Cg:
+                case CharacterAttributeEnum.Og:
+                case CharacterAttributeEnum.Ig:
+                    _packetsHelper.SendGmCommandError(Client, PacketType.CHARACTER_ATTRIBUTE_SET);
+                    break;
+
+                case CharacterAttributeEnum.Exp:
+                    break;
+
+                case CharacterAttributeEnum.Kills:
+                    break;
+
+                case CharacterAttributeEnum.Deaths:
+                    break;
+
+                default:
+                    _packetsHelper.SendGmCommandError(Client, PacketType.CHARACTER_ATTRIBUTE_SET);
+                    return;
+            }
+        }
     }
 }

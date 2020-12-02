@@ -1,6 +1,7 @@
 ﻿using Imgeneus.Database.Constants;
 using Imgeneus.Database.Entities;
 using Imgeneus.DatabaseBackgroundService.Handlers;
+using Imgeneus.Network.Packets.Game;
 using System;
 using System.Linq;
 
@@ -524,6 +525,102 @@ namespace Imgeneus.World.Game.Player
             _taskQueue.Enqueue(ActionType.UPDATE_STATS, Id, Strength, Dexterity, Reaction, Intelligence, Wisdom, Luck, StatPoint);
             _packetsHelper.SendResetStats(Client, this);
             SendAdditionalStats();
+        }
+
+        #endregion
+
+        #region Attributes
+
+        public uint GetAttributeValue(CharacterAttributeEnum attribute)
+        {
+            switch (attribute)
+            {
+                case CharacterAttributeEnum.Grow:
+                    return (uint)Mode;
+
+                case CharacterAttributeEnum.Level:
+                    return Level;
+
+                case CharacterAttributeEnum.Money:
+                    return Gold;
+
+                case CharacterAttributeEnum.StatPoint:
+                    return StatPoint;
+
+                case CharacterAttributeEnum.SkillPoint:
+                    return SkillPoint;
+
+                case CharacterAttributeEnum.Strength:
+                    return Strength;
+
+                case CharacterAttributeEnum.Dexterity:
+                    return Dexterity;
+
+                case CharacterAttributeEnum.Reaction:
+                    return Reaction;
+
+                case CharacterAttributeEnum.Intelligence:
+                    return Intelligence;
+
+                case CharacterAttributeEnum.Luck:
+                    return Luck;
+
+                case CharacterAttributeEnum.Wisdom:
+                    return Wisdom;
+
+                // TODO: Investigate what these attributes represent
+                case CharacterAttributeEnum.Hg:
+                case CharacterAttributeEnum.Vg:
+                case CharacterAttributeEnum.Cg:
+                case CharacterAttributeEnum.Og:
+                case CharacterAttributeEnum.Ig:
+                    return 0;
+
+                case CharacterAttributeEnum.Exp:
+                    return Exp;
+
+                case CharacterAttributeEnum.Kills:
+                    return Kills;
+
+                case CharacterAttributeEnum.Deaths:
+                    return Deaths;
+
+                default:
+                    return 0;
+            }
+        }
+
+        public void SetStat(CharacterAttributeEnum stat, ushort newStatValue)
+        {
+            switch (stat)
+            {
+                case CharacterAttributeEnum.Strength:
+                    Strength = newStatValue;
+                    SendAttribute(stat);
+                    break;
+                case CharacterAttributeEnum.Dexterity:
+                    Dexterity = newStatValue;
+                    SendAttribute(stat);
+                    break;
+                case CharacterAttributeEnum.Reaction:
+                    Reaction = newStatValue;
+                    SendAttribute(stat);
+                    break;
+                case CharacterAttributeEnum.Intelligence:
+                    Intelligence = newStatValue;
+                    SendAttribute(stat);
+                    break;
+                case CharacterAttributeEnum.Luck:
+                    Luck = newStatValue;
+                    SendAttribute(stat);
+                    break;
+                case CharacterAttributeEnum.Wisdom:
+                    Wisdom = newStatValue;
+                    SendAttribute(stat);
+                    break;
+                default:
+                    return;
+            }
         }
 
         #endregion

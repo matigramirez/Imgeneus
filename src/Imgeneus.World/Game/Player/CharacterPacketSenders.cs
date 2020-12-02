@@ -1,4 +1,5 @@
-﻿using Imgeneus.World.Game.Monster;
+﻿using Imgeneus.Network.Packets.Game;
+using Imgeneus.World.Game.Monster;
 using Imgeneus.World.Game.Zone.Obelisks;
 using System.Linq;
 
@@ -111,5 +112,8 @@ namespace Imgeneus.World.Game.Player
                 _packetsHelper.SetPlayerInTarget(Client, (Character)target);
             }
         }
+
+        public void SendAttribute(CharacterAttributeEnum attribute) =>
+            _packetsHelper.SendAttribute(Client, attribute, GetAttributeValue(attribute));
     }
 }

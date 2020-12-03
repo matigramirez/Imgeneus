@@ -241,7 +241,6 @@ namespace Imgeneus.World.Game.Player
         public void SetGold(uint newGold)
         {
             ChangeGold(newGold);
-            SendAttribute(CharacterAttributeEnum.Money);
         }
 
         /// <summary>

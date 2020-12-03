@@ -13,7 +13,6 @@ namespace Imgeneus.World.Game.Player
         {
             Level = newLevel;
 
-            SendAttribute(CharacterAttributeEnum.Level);
             _taskQueue.Enqueue(ActionType.SAVE_CHARACTER_LEVEL, Id, Level);
         }
 

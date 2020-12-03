@@ -632,7 +632,7 @@ namespace Imgeneus.World.Game.Player
             Mode = mode;
 
             SendAttribute(CharacterAttributeEnum.Grow);
-            _taskQueue.Enqueue(ActionType.UPDATE_CHARACTER_MODE, mode);
+            _taskQueue.Enqueue(ActionType.UPDATE_CHARACTER_MODE, Id, mode);
         }
 
         #endregion
@@ -647,7 +647,7 @@ namespace Imgeneus.World.Game.Player
             StatPoint = statPoint;
 
             SendAttribute(CharacterAttributeEnum.StatPoint);
-            _taskQueue.Enqueue(ActionType.SAVE_CHARACTER_STATPOINT, StatPoint);
+            _taskQueue.Enqueue(ActionType.SAVE_CHARACTER_STATPOINT, Id, StatPoint);
         }
 
         /// <summary>
@@ -658,7 +658,7 @@ namespace Imgeneus.World.Game.Player
             SkillPoint = skillPoint;
 
             SendAttribute(CharacterAttributeEnum.SkillPoint);
-            _taskQueue.Enqueue(ActionType.SAVE_CHARACTER_SKILLPOINT, SkillPoint);
+            _taskQueue.Enqueue(ActionType.SAVE_CHARACTER_SKILLPOINT, Id, SkillPoint);
         }
 
         #endregion
@@ -673,7 +673,7 @@ namespace Imgeneus.World.Game.Player
             Kills = kills;
 
             SendAttribute(CharacterAttributeEnum.Kills);
-            _taskQueue.Enqueue(ActionType.SAVE_CHARACTER_KILLS, Kills);
+            _taskQueue.Enqueue(ActionType.SAVE_CHARACTER_KILLS, Id, Kills);
         }
 
         /// <summary>
@@ -684,7 +684,7 @@ namespace Imgeneus.World.Game.Player
             Deaths = deaths;
 
             SendAttribute(CharacterAttributeEnum.Deaths);
-            _taskQueue.Enqueue(ActionType.SAVE_CHARACTER_DEATHS, Deaths);
+            _taskQueue.Enqueue(ActionType.SAVE_CHARACTER_DEATHS, Id, Deaths);
         }
 
         #endregion

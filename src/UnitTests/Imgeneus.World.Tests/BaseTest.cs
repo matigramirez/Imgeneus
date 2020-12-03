@@ -252,7 +252,9 @@ namespace Imgeneus.World.Tests
             Type = 17,
             TypeId = 2,
             ItemName = "Water armor",
-            Element = Element.Water1
+            Element = Element.Water1,
+            Count = 1,
+            Quality = 1200
         };
 
         protected DbItem FireSword = new DbItem()
@@ -260,7 +262,9 @@ namespace Imgeneus.World.Tests
             Type = 2,
             TypeId = 92,
             ItemName = "Thane Breaker of Fire",
-            Element = Element.Fire1
+            Element = Element.Fire1,
+            Count = 1,
+            Quality = 1200
         };
 
         protected DbItem PerfectLinkingHammer = new DbItem()
@@ -268,7 +272,9 @@ namespace Imgeneus.World.Tests
             Type = 100,
             TypeId = 192,
             ItemName = "Perfect Linking Hammer",
-            Special = SpecialEffect.PerfectLinkingHammer
+            Special = SpecialEffect.PerfectLinkingHammer,
+            Count = 255,
+            Quality = 0
         };
 
         protected DbItem PerfectExtractingHammer = new DbItem()
@@ -276,7 +282,9 @@ namespace Imgeneus.World.Tests
             Type = 44,
             TypeId = 237,
             ItemName = "GM Extraction Hammer",
-            Special = SpecialEffect.PerfectExtractionHammer
+            Special = SpecialEffect.PerfectExtractionHammer,
+            Count = 10,
+            Quality = 0
         };
 
         protected DbItem LuckyCharm = new DbItem()
@@ -284,7 +292,9 @@ namespace Imgeneus.World.Tests
             Type = 100,
             TypeId = 139,
             ItemName = "Lucky Charm",
-            Special = SpecialEffect.LuckyCharm
+            Special = SpecialEffect.LuckyCharm,
+            Count = 255,
+            Quality = 0
         };
 
         protected DbItem JustiaArmor = new DbItem()
@@ -301,7 +311,8 @@ namespace Imgeneus.World.Tests
             Quality = 1200,
             Attackfighter = 1,
             Defensefighter = 1,
-            ReqWis = 20
+            ReqWis = 20,
+            Count = 1
         };
 
         protected DbItem Gem_Str_Level_1 = new DbItem()
@@ -309,7 +320,9 @@ namespace Imgeneus.World.Tests
             Type = 30,
             TypeId = 1,
             ConstStr = 3,
-            ReqIg = 0 // always fail linking or extracting, unless hammer is used
+            ReqIg = 0, // always fail linking or extracting, unless hammer is used
+            Count = 255,
+            Quality = 0
         };
 
         protected DbItem Gem_Str_Level_2 = new DbItem()
@@ -317,7 +330,9 @@ namespace Imgeneus.World.Tests
             Type = 30,
             TypeId = 2,
             ConstStr = 5,
-            ReqIg = 255 // always sucess linking or extracting.
+            ReqIg = 255, // always sucess linking or extracting.
+            Count = 255,
+            Quality = 0
         };
 
         protected DbItem Gem_Str_Level_3 = new DbItem()
@@ -325,7 +340,9 @@ namespace Imgeneus.World.Tests
             Type = 30,
             TypeId = 3,
             ConstStr = 7,
-            ReqIg = 255 // always sucess linking or extracting.
+            ReqIg = 255, // always sucess linking or extracting.
+            Count = 255,
+            Quality = 0
         };
 
         protected DbItem Gem_Str_Level_7 = new DbItem()
@@ -334,7 +351,9 @@ namespace Imgeneus.World.Tests
             TypeId = 7,
             ConstStr = 50,
             ReqVg = 1, // Will break item if linking/extracting fails
-            ReqIg = 0 // always fail linking or extracting, unless hammer is used
+            ReqIg = 0, // always fail linking or extracting, unless hammer is used
+            Count = 255,
+            Quality = 0
         };
 
         #endregion

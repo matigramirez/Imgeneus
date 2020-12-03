@@ -60,11 +60,11 @@ namespace Imgeneus.World.Tests.CharacterTests
             var character = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object, linkingMock.Object, dyeingMock.Object)
             {
                 Class = CharacterProfession.Fighter,
-                Mode = Mode.Ultimate,
-                Kills = 10
+                Mode = Mode.Ultimate
             };
             character.Client = worldClientMock.Object;
 
+            character.SetKills(10);
             Assert.NotEqual(105, character.Kills);
             character.SetKills(105);
             Assert.Equal(105, character.Kills);
@@ -83,11 +83,11 @@ namespace Imgeneus.World.Tests.CharacterTests
             var character = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object, linkingMock.Object, dyeingMock.Object)
             {
                 Class = CharacterProfession.Fighter,
-                Mode = Mode.Ultimate,
-                Deaths = 10
+                Mode = Mode.Ultimate
             };
             character.Client = worldClientMock.Object;
 
+            character.SetDeaths(10);
             Assert.NotEqual(105, character.Deaths);
             character.SetDeaths(105);
             Assert.Equal(105, character.Deaths);

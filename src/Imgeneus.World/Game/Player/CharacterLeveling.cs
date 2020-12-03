@@ -1,4 +1,5 @@
 ﻿using Imgeneus.Database.Entities;
+using Imgeneus.DatabaseBackgroundService.Handlers;
 using Imgeneus.Network.Packets.Game;
 
 namespace Imgeneus.World.Game.Player
@@ -11,7 +12,9 @@ namespace Imgeneus.World.Game.Player
         private void SetLevel(ushort newLevel)
         {
             Level = newLevel;
+
             SendAttribute(CharacterAttributeEnum.Level);
+            _taskQueue.Enqueue(ActionType.SAVE_CHARACTER_LEVEL, Level);
         }
 
         /// <summary>

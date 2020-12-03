@@ -512,7 +512,7 @@ namespace Imgeneus.World.Game.Player
                     break;
 
                 case CharacterAttributeEnum.Money:
-                    targetPlayer.SetGold(attributeValue);
+                    targetPlayer.ChangeGold(attributeValue);
                     SetAttributeAndSendCommandSuccess();
                     break;
 

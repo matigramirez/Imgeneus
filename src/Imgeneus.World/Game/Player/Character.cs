@@ -236,14 +236,6 @@ namespace Imgeneus.World.Game.Player
         }
 
         /// <summary>
-        /// Sets player gold
-        /// </summary>
-        public void SetGold(uint newGold)
-        {
-            ChangeGold(newGold);
-        }
-
-        /// <summary>
         /// Clears trade items and gold.
         /// </summary>
         public void ClearTrade()

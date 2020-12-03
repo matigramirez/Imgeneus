@@ -59,6 +59,9 @@ namespace Imgeneus.World.Game.Player
 
         private void SendAutoAttackWrongTarget(IKillable target) => _packetsHelper.SendAutoAttackWrongTarget(Client, this, target);
 
+        private void SendAutoAttackWrongEquipment(IKillable target) =>
+            _packetsHelper.SendAutoAttackWrongEquipment(Client, this, target);
+
         private void SendAutoAttackCanNotAttack(IKillable target) => _packetsHelper.SendAutoAttackCanNotAttack(Client, this, target);
 
         private void SendSkillAttackCanNotAttack(IKillable target, Skill skill) => _packetsHelper.SendSkillAttackCanNotAttack(Client, this, skill, target);

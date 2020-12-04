@@ -437,5 +437,19 @@ namespace Imgeneus.DatabaseBackgroundService.Handlers
 
             await database.SaveChangesAsync();
         }
+
+        [ActionHandler(ActionType.SAVE_IS_RENAME)]
+        internal static async Task SaveRename(object[] args)
+        {
+            int characterId = (int)args[0];
+            bool isRename = (bool)args[1];
+
+            using var database = DependencyContainer.Instance.Resolve<IDatabase>();
+            var character = database.Characters.Find(characterId);
+
+            character.IsRename = isRename;
+
+            await database.SaveChangesAsync();
+        }
     }
 }

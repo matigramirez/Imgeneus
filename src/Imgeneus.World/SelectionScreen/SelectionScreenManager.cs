@@ -61,6 +61,10 @@ namespace Imgeneus.World.SelectionScreen
                 case RestoreCharacterPacket restoreCharacterPacket:
                     HandleRestoreCharacter(restoreCharacterPacket);
                     break;
+
+                case RenameCharacterPacket renameCharacterPacket:
+                    HandleRenameCharacter(renameCharacterPacket);
+                    break;
             }
         }
 
@@ -269,6 +273,42 @@ namespace Imgeneus.World.SelectionScreen
 
             using var packet = new Packet(PacketType.RESTORE_CHARACTER);
             packet.WriteByte(0); // ok response
+            packet.Write(character.Id);
+            _client.SendPacket(packet);
+        }
+
+        /// <summary>
+        /// Changes the name of a character
+        /// </summary>
+        private async void HandleRenameCharacter(RenameCharacterPacket renameCharacterPacket)
+        {
+            var (characterId, newName) = renameCharacterPacket;
+
+            using var database = DependencyContainer.Instance.Resolve<IDatabase>();
+            var character = await database.Characters.FirstOrDefaultAsync(c => c.UserId == _client.UserID && c.Id == characterId);
+            if (character is null)
+                return;
+
+            // Check that name isn't in use
+            var characterWithNewName = await database.Characters.FirstOrDefaultAsync(c => c.UserId == _client.UserID && c.Name == newName);
+
+            using var packet = new Packet(PacketType.RENAME_CHARACTER);
+
+            if (characterWithNewName != null)
+            {
+                packet.WriteByte(2); // error response
+                packet.Write(character.Id);
+                _client.SendPacket(packet);
+                return;
+            }
+
+            // TODO: Should charname be validated somehow? for eg in case someone skips client validation for symbols or something else?
+            character.Name = newName;
+            character.IsRename = false;
+
+            await database.SaveChangesAsync();
+
+            packet.WriteByte(1); // ok response
             packet.Write(character.Id);
             _client.SendPacket(packet);
         }

@@ -523,7 +523,7 @@ namespace Imgeneus.World.Game.Player
             item.Slot = (byte)free.Slot;
 
             _taskQueue.Enqueue(ActionType.SAVE_ITEM_IN_INVENTORY,
-                               Id, item.Type, item.TypeId, item.Count, item.Bag, item.Slot,
+                               Id, item.Type, item.TypeId, item.Count, item.Quality, item.Bag, item.Slot,
                                item.Gem1 is null ? 0 : item.Gem1.TypeId,
                                item.Gem2 is null ? 0 : item.Gem2.TypeId,
                                item.Gem3 is null ? 0 : item.Gem3.TypeId,
@@ -634,7 +634,7 @@ namespace Imgeneus.World.Game.Player
             if (shouldDeleteSourceItemFromDB)
             {
                 _taskQueue.Enqueue(ActionType.SAVE_ITEM_IN_INVENTORY,
-                                   Id, destinationItem.Type, destinationItem.TypeId, destinationItem.Count, destinationItem.Bag, destinationItem.Slot,
+                                   Id, destinationItem.Type, destinationItem.TypeId, destinationItem.Count, destinationItem.Quality, destinationItem.Bag, destinationItem.Slot,
                                    destinationItem.Gem1 is null ? 0 : destinationItem.Gem1.TypeId,
                                    destinationItem.Gem2 is null ? 0 : destinationItem.Gem2.TypeId,
                                    destinationItem.Gem3 is null ? 0 : destinationItem.Gem3.TypeId,
@@ -646,7 +646,7 @@ namespace Imgeneus.World.Game.Player
             else
             {
                 _taskQueue.Enqueue(ActionType.SAVE_ITEM_IN_INVENTORY,
-                                   Id, sourceItem.Type, sourceItem.TypeId, sourceItem.Count, sourceItem.Bag, sourceItem.Slot,
+                                   Id, sourceItem.Type, sourceItem.TypeId, sourceItem.Count, sourceItem.Quality,sourceItem.Bag, sourceItem.Slot,
                                    sourceItem.Gem1 is null ? 0 : sourceItem.Gem1.TypeId,
                                    sourceItem.Gem2 is null ? 0 : sourceItem.Gem2.TypeId,
                                    sourceItem.Gem3 is null ? 0 : sourceItem.Gem3.TypeId,
@@ -655,7 +655,7 @@ namespace Imgeneus.World.Game.Player
                                    sourceItem.Gem6 is null ? 0 : sourceItem.Gem6.TypeId,
                                    sourceItem.DyeColor.IsEnabled, sourceItem.DyeColor.Alpha, sourceItem.DyeColor.Saturation, sourceItem.DyeColor.R, sourceItem.DyeColor.G, sourceItem.DyeColor.B);
                 _taskQueue.Enqueue(ActionType.SAVE_ITEM_IN_INVENTORY,
-                                   Id, destinationItem.Type, destinationItem.TypeId, destinationItem.Count, destinationItem.Bag, destinationItem.Slot,
+                                   Id, destinationItem.Type, destinationItem.TypeId, destinationItem.Count, destinationItem.Quality, destinationItem.Bag, destinationItem.Slot,
                                    destinationItem.Gem1 is null ? 0 : destinationItem.Gem1.TypeId,
                                    destinationItem.Gem2 is null ? 0 : destinationItem.Gem2.TypeId,
                                    destinationItem.Gem3 is null ? 0 : destinationItem.Gem3.TypeId,

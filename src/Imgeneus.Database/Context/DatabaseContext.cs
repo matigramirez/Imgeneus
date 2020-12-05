@@ -77,6 +77,11 @@ namespace Imgeneus.Database.Context
         /// </summary>
         public DbSet<DbQuest> Quests { get; set; }
 
+        /// <summary>
+        /// Collection of levels and required experience for them. Taken from original db.
+        /// </summary>
+        public DbSet<DbLevel> Levels { get; set; }
+
         public DatabaseContext(DbContextOptions options) : base(options)
         {
         }

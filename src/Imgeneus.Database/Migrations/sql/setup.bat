@@ -8,3 +8,4 @@ mysql -u %user_name% --password=%password% < InitMobItems.sql
 mysql -u %user_name% --password=%password% < InitNpcSkillData.sql
 mysql -u %user_name% --password=%password% < InitNpcData.sql
 mysql -u %user_name% --password=%password% < InitQuestData.sql
+mysql -u %user_name% --password=%password% < InitLevels.sql

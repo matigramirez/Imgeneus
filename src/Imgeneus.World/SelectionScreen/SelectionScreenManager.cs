@@ -290,7 +290,7 @@ namespace Imgeneus.World.SelectionScreen
                 return;
 
             // Check that name isn't in use
-            var characterWithNewName = await database.Characters.FirstOrDefaultAsync(c => c.UserId == _client.UserID && c.Name == newName);
+            var characterWithNewName = await database.Characters.FirstOrDefaultAsync(c => c.Name == newName);
 
             using var packet = new Packet(PacketType.RENAME_CHARACTER);
 

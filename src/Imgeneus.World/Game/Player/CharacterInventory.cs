@@ -959,6 +959,11 @@ namespace Imgeneus.World.Game.Player
                     // Some herbs do not have HealingPotion effect, but still they heal.
                     UseHealingPotion(item);
                     break;
+
+                case SpecialEffect.NameChange:
+                    UseNameChangeStone();
+                    break;
+
                 default:
                     _logger.LogError($"Uninplemented item effect {item.Special}.");
                     break;
@@ -987,6 +992,16 @@ namespace Imgeneus.World.Game.Player
             _taskQueue.Enqueue(ActionType.SAVE_APPEARANCE, Id, Face, Hair, Height, Gender);
 
             OnAppearanceChanged?.Invoke(this);
+        }
+
+        /// <summary>
+        /// Initiates name change process
+        /// </summary>
+        public void UseNameChangeStone()
+        {
+            IsRename = true;
+
+            _taskQueue.Enqueue(ActionType.SAVE_IS_RENAME, Id, true);
         }
 
         /// <summary>

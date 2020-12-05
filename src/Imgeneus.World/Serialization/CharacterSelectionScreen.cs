@@ -98,7 +98,10 @@ namespace Imgeneus.Network.Serialization
         public bool IsDelete;
 
         [FieldOrder(29)]
-        public byte[] UnknownBytes2 = new byte[25];
+        public bool IsRename;
+
+        [FieldOrder(30)]
+        public byte[] UnknownBytes2 = new byte[24];
 
         public CharacterSelectionScreen(DbCharacter character)
         {
@@ -121,6 +124,7 @@ namespace Imgeneus.Network.Serialization
             HealthPoints = character.HealthPoints;
             ManaPoints = character.ManaPoints;
             StaminaPoints = character.StaminaPoints;
+            IsRename = character.IsRename;
 
             var equipmentItems = character.Items.Where(item => item.Bag == 0);
             for (var i = 0; i < 17; i++)

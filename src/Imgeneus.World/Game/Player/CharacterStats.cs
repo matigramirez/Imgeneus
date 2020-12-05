@@ -34,6 +34,7 @@ namespace Imgeneus.World.Game.Player
         public ushort Victories { get; set; }
         public ushort Defeats { get; set; }
         public bool IsAdmin { get; set; }
+        public bool IsRename { get; set; }
 
         private byte[] _nameAsByteArray;
         public byte[] NameAsByteArray

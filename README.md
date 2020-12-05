@@ -33,11 +33,11 @@ This repo also uses the best parts of these repos: [Drakkus/ShaiyaGenesis](https
 * __Cups__ - the first person, that created a dummy emulator, with his source code we could understand packet structure.
 * __anton1312__ - helped with packet encryption algorithm implementation in C#.
 * __Juuf__ - helped with Dye system packet structure.
-* maybe YOU?
+* __matigramirez__ - helped with the implementation of different features.
+* maybe __YOU__?
 
 ## Uknown issues
 1. Sometimes Login server can not decrypt the first packet (with user name and password). Try to restart game.exe several times. Might be, that client caches old encryption key (not sure).
-2. When character attacks mob without weapon, character starts running to it and doesn't stop, the only way to stop is to close game.exe. Maybe can be fixed by sending not allowed to attack packet.
-3. Many others, usually marked as `// TODO: <some comment>` throughout the code base.
+2. Many others, usually marked as `// TODO: <some comment>` throughout the code base.
 
 Find the current state of development here: https://trello.com/b/lHvyQDuH/shaiya-imgeneus

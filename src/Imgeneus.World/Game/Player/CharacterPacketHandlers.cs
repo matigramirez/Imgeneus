@@ -470,5 +470,99 @@ namespace Imgeneus.World.Game.Player
             _packetsHelper.SendStatsUpdate(Client, str, dex, rec, intl, wis, luc);
             SendAdditionalStats();
         }
+
+        private void HandleGMSetAttributePacket(GMSetAttributePacket gmSetAttributePacket)
+        {
+            var (attribute, attributeValue, player) = gmSetAttributePacket;
+
+            void SendCommandError()
+            {
+                _packetsHelper.SendGmCommandError(Client, PacketType.CHARACTER_ATTRIBUTE_SET);
+            }
+
+            void SetAttributeAndSendCommandSuccess()
+            {
+                SendAttribute(attribute);
+                _packetsHelper.SendGmCommandSuccess(Client);
+            }
+
+            // TODO: This should get player from player dictionary when implemented
+            var targetPlayer = _gameWorld.Players.Values.FirstOrDefault(p => p.Name == player);
+
+            if (targetPlayer == null)
+            {
+                SendCommandError();
+                return;
+            }
+
+            switch (attribute)
+            {
+                case CharacterAttributeEnum.Grow:
+                    if(targetPlayer.TrySetMode((Mode) attributeValue))
+                        SetAttributeAndSendCommandSuccess();
+                    else
+                        SendCommandError();
+                    break;
+
+                case CharacterAttributeEnum.Level:
+                    if (targetPlayer.TrySetLevel((ushort) attributeValue))
+                        SetAttributeAndSendCommandSuccess();
+                    else
+                        SendCommandError();
+                    break;
+
+                case CharacterAttributeEnum.Money:
+                    targetPlayer.ChangeGold(attributeValue);
+                    SetAttributeAndSendCommandSuccess();
+                    break;
+
+                case CharacterAttributeEnum.StatPoint:
+                    targetPlayer.SetStatPoint((ushort)attributeValue);
+                    SetAttributeAndSendCommandSuccess();
+                    break;
+
+                case CharacterAttributeEnum.SkillPoint:
+                    targetPlayer.SetSkillPoint((ushort)attributeValue);
+                    SetAttributeAndSendCommandSuccess();
+                    break;
+
+                case CharacterAttributeEnum.Strength:
+                case CharacterAttributeEnum.Dexterity:
+                case CharacterAttributeEnum.Reaction:
+                case CharacterAttributeEnum.Intelligence:
+                case CharacterAttributeEnum.Luck:
+                case CharacterAttributeEnum.Wisdom:
+                    targetPlayer.SetStat(attribute, (ushort)attributeValue);
+                    SetAttributeAndSendCommandSuccess();
+                    break;
+
+                case CharacterAttributeEnum.Hg:
+                case CharacterAttributeEnum.Vg:
+                case CharacterAttributeEnum.Cg:
+                case CharacterAttributeEnum.Og:
+                case CharacterAttributeEnum.Ig:
+                    SendCommandError();
+                    return;
+
+                // TODO: Add experience logic
+                case CharacterAttributeEnum.Exp:
+                    SendCommandError();
+                    return;
+
+                case CharacterAttributeEnum.Kills:
+                    targetPlayer.SetKills((ushort)attributeValue);
+                    SetAttributeAndSendCommandSuccess();
+                    break;
+
+                case CharacterAttributeEnum.Deaths:
+                    targetPlayer.SetDeaths((ushort) attributeValue);
+                    SetAttributeAndSendCommandSuccess();
+                    break;
+
+                default:
+                    _packetsHelper.SendGmCommandError(Client, PacketType.CHARACTER_ATTRIBUTE_SET);
+                    return;
+            }
+        }
     }
 }

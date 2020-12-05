@@ -453,5 +453,103 @@ namespace Imgeneus.DatabaseBackgroundService.Handlers
 
             await database.SaveChangesAsync();
         }
+
+        [ActionHandler(ActionType.SAVE_CHARACTER_LEVEL)]
+        internal static async Task SaveLevel(object[] args)
+        {
+            int characterId = (int)args[0];
+            ushort level = (ushort)args[1];
+
+            using var database = DependencyContainer.Instance.Resolve<IDatabase>();
+            var character = database.Characters.Find(characterId);
+
+            character.Level = level;
+
+            await database.SaveChangesAsync();
+        }
+
+        [ActionHandler(ActionType.SAVE_CHARACTER_EXPERIENCE)]
+        internal static async Task SaveExperience(object[] args)
+        {
+            int characterId = (int)args[0];
+            uint experience = (uint)args[1];
+
+            using var database = DependencyContainer.Instance.Resolve<IDatabase>();
+            var character = database.Characters.Find(characterId);
+
+            character.Exp = experience;
+
+            await database.SaveChangesAsync();
+        }
+
+        [ActionHandler(ActionType.UPDATE_CHARACTER_MODE)]
+        internal static async Task UpdateMode(object[] args)
+        {
+            int characterId = (int)args[0];
+            Mode mode = (Mode)args[1];
+
+            using var database = DependencyContainer.Instance.Resolve<IDatabase>();
+            var character = database.Characters.Find(characterId);
+
+            character.Mode = mode;
+
+            await database.SaveChangesAsync();
+        }
+
+        [ActionHandler(ActionType.SAVE_CHARACTER_KILLS)]
+        internal static async Task SaveKills(object[] args)
+        {
+            int characterId = (int)args[0];
+            ushort kills = (ushort)args[1];
+
+            using var database = DependencyContainer.Instance.Resolve<IDatabase>();
+            var character = database.Characters.Find(characterId);
+
+            character.Kills = kills;
+
+            await database.SaveChangesAsync();
+        }
+
+        [ActionHandler(ActionType.SAVE_CHARACTER_DEATHS)]
+        internal static async Task SaveDeaths(object[] args)
+        {
+            int characterId = (int)args[0];
+            ushort deaths = (ushort)args[1];
+
+            using var database = DependencyContainer.Instance.Resolve<IDatabase>();
+            var character = database.Characters.Find(characterId);
+
+            character.Deaths = deaths;
+
+            await database.SaveChangesAsync();
+        }
+
+        [ActionHandler(ActionType.SAVE_CHARACTER_STATPOINT)]
+        internal static async Task SaveStatPoint(object[] args)
+        {
+            int characterId = (int)args[0];
+            ushort statPoint = (ushort)args[1];
+
+            using var database = DependencyContainer.Instance.Resolve<IDatabase>();
+            var character = database.Characters.Find(characterId);
+
+            character.StatPoint = statPoint;
+
+            await database.SaveChangesAsync();
+        }
+
+        [ActionHandler(ActionType.SAVE_CHARACTER_SKILLPOINT)]
+        internal static async Task SaveSkillPoint(object[] args)
+        {
+            int characterId = (int)args[0];
+            ushort skillPoint = (ushort)args[1];
+
+            using var database = DependencyContainer.Instance.Resolve<IDatabase>();
+            var character = database.Characters.Find(characterId);
+
+            character.SkillPoint = skillPoint;
+
+            await database.SaveChangesAsync();
+        }
     }
 }

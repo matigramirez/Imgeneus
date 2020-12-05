@@ -1,6 +1,7 @@
 ﻿using Imgeneus.Database.Constants;
 using Imgeneus.Database.Entities;
 using Imgeneus.DatabaseBackgroundService.Handlers;
+using Imgeneus.Network.Packets.Game;
 using System;
 using System.Linq;
 
@@ -15,22 +16,22 @@ namespace Imgeneus.World.Game.Player
         public ushort MapId { get; private set; }
         public Race Race { get; set; }
         public CharacterProfession Class { get; set; }
-        public Mode Mode { get; set; }
+        public Mode Mode { get; private set; }
         public byte Hair { get; set; }
         public byte Face { get; set; }
         public byte Height { get; set; }
         public Gender Gender { get; set; }
-        public ushort StatPoint { get; set; }
-        public ushort SkillPoint { get; set; }
-        public ushort Strength { get; set; }
-        public ushort Dexterity { get; set; }
-        public ushort Reaction { get; set; }
-        public ushort Intelligence { get; set; }
-        public ushort Luck { get; set; }
-        public ushort Wisdom { get; set; }
-        public uint Exp { get; set; }
-        public ushort Kills { get; set; }
-        public ushort Deaths { get; set; }
+        public ushort StatPoint { get; private set; }
+        public ushort SkillPoint { get; private set; }
+        public ushort Strength { get; private set; }
+        public ushort Dexterity { get; private set; }
+        public ushort Reaction { get; private set; }
+        public ushort Intelligence { get; private set; }
+        public ushort Luck { get; private set; }
+        public ushort Wisdom { get; private set; }
+        public uint Exp { get; private set; }
+        public ushort Kills { get; private set; }
+        public ushort Deaths { get; private set; }
         public ushort Victories { get; set; }
         public ushort Defeats { get; set; }
         public bool IsAdmin { get; set; }
@@ -525,6 +526,184 @@ namespace Imgeneus.World.Game.Player
             _taskQueue.Enqueue(ActionType.UPDATE_STATS, Id, Strength, Dexterity, Reaction, Intelligence, Wisdom, Luck, StatPoint);
             _packetsHelper.SendResetStats(Client, this);
             SendAdditionalStats();
+        }
+
+        #endregion
+
+        #region Attributes
+
+        /// <summary>
+        /// Gets a character's attribute.
+        /// </summary>
+        public uint GetAttributeValue(CharacterAttributeEnum attribute)
+        {
+            switch (attribute)
+            {
+                case CharacterAttributeEnum.Grow:
+                    return (uint)Mode;
+
+                case CharacterAttributeEnum.Level:
+                    return Level;
+
+                case CharacterAttributeEnum.Money:
+                    return Gold;
+
+                case CharacterAttributeEnum.StatPoint:
+                    return StatPoint;
+
+                case CharacterAttributeEnum.SkillPoint:
+                    return SkillPoint;
+
+                case CharacterAttributeEnum.Strength:
+                    return Strength;
+
+                case CharacterAttributeEnum.Dexterity:
+                    return Dexterity;
+
+                case CharacterAttributeEnum.Reaction:
+                    return Reaction;
+
+                case CharacterAttributeEnum.Intelligence:
+                    return Intelligence;
+
+                case CharacterAttributeEnum.Luck:
+                    return Luck;
+
+                case CharacterAttributeEnum.Wisdom:
+                    return Wisdom;
+
+                // TODO: Investigate what these attributes represent
+                case CharacterAttributeEnum.Hg:
+                case CharacterAttributeEnum.Vg:
+                case CharacterAttributeEnum.Cg:
+                case CharacterAttributeEnum.Og:
+                case CharacterAttributeEnum.Ig:
+                    return 0;
+
+                case CharacterAttributeEnum.Exp:
+                    return Exp;
+
+                case CharacterAttributeEnum.Kills:
+                    return Kills;
+
+                case CharacterAttributeEnum.Deaths:
+                    return Deaths;
+
+                default:
+                    return 0;
+            }
+        }
+
+        /// <summary>
+        /// Change a character's stat value.
+        /// </summary>
+        /// <param name="statAttribute">Stat to change</param>
+        /// <param name="newStatValue">New stat value</param>
+        public void SetStat(CharacterAttributeEnum statAttribute, ushort newStatValue)
+        {
+            switch (statAttribute)
+            {
+                case CharacterAttributeEnum.Strength:
+                    Strength = newStatValue;
+                    break;
+                case CharacterAttributeEnum.Dexterity:
+                    Dexterity = newStatValue;
+                    break;
+                case CharacterAttributeEnum.Reaction:
+                    Reaction = newStatValue;
+                    break;
+                case CharacterAttributeEnum.Intelligence:
+                    Intelligence = newStatValue;
+                    break;
+                case CharacterAttributeEnum.Luck:
+                    Luck = newStatValue;
+                    break;
+                case CharacterAttributeEnum.Wisdom:
+                    Wisdom = newStatValue;
+                    break;
+                default:
+                    return;
+            }
+
+            _taskQueue.Enqueue(ActionType.UPDATE_STATS, Id, Strength, Dexterity, Reaction, Intelligence, Wisdom, Luck, StatPoint);
+        }
+
+        #endregion
+
+        #region Mode
+
+        /// <summary>
+        /// Set the mode (Grow)
+        /// </summary>
+        private void SetMode(Mode mode)
+        {
+            if (mode > Mode.Ultimate) return;
+
+            Mode = mode;
+
+            _taskQueue.Enqueue(ActionType.UPDATE_CHARACTER_MODE, Id, mode);
+        }
+
+        /// <summary>
+        /// Attempts to set a new mode for a character
+        /// </summary>
+        /// <param name="mode"></param>
+        /// <returns></returns>
+        public bool TrySetMode(Mode mode)
+        {
+            if (mode > Mode.Ultimate)
+                return false;
+
+            SetMode(mode);
+            return true;
+        }
+
+        #endregion
+
+        #region Stat and Skill Points
+
+        /// <summary>
+        /// Set the stat points amount
+        /// </summary>
+        public void SetStatPoint(ushort statPoint)
+        {
+            StatPoint = statPoint;
+
+            _taskQueue.Enqueue(ActionType.SAVE_CHARACTER_STATPOINT, Id, StatPoint);
+        }
+
+        /// <summary>
+        /// Set the skill points amount
+        /// </summary>
+        public void SetSkillPoint(ushort skillPoint)
+        {
+            SkillPoint = skillPoint;
+
+            _taskQueue.Enqueue(ActionType.SAVE_CHARACTER_SKILLPOINT, Id, SkillPoint);
+        }
+
+        #endregion
+
+        #region Kills and Deaths
+
+        /// <summary>
+        /// Sets the kill count
+        /// </summary>
+        public void SetKills(ushort kills)
+        {
+            Kills = kills;
+
+            _taskQueue.Enqueue(ActionType.SAVE_CHARACTER_KILLS, Id, Kills);
+        }
+
+        /// <summary>
+        /// Sets the death count
+        /// </summary>
+        public void SetDeaths(ushort deaths)
+        {
+            Deaths = deaths;
+
+            _taskQueue.Enqueue(ActionType.SAVE_CHARACTER_DEATHS, Id, Deaths);
         }
 
         #endregion

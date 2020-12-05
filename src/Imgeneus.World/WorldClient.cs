@@ -193,6 +193,7 @@ namespace Imgeneus.World
             { PacketType.ITEM_COMPOSE, (s) => new ItemComposePacket(s) },
             { PacketType.ITEM_COMPOSE_ABSOLUTE_SELECT, (s) => new ItemComposeAbsoluteSelectPacket(s) },
             { PacketType.UPDATE_STATS, (s) => new UpdateStatsPacket(s) },
+            { PacketType.CHARACTER_ATTRIBUTE_SET, (s) => new GMSetAttributePacket(s) },
             { PacketType.RENAME_CHARACTER, (s) => new RenameCharacterPacket(s) }
         };
 

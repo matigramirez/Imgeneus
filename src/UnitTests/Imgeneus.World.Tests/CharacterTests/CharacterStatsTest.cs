@@ -14,10 +14,11 @@ namespace Imgeneus.World.Tests.CharacterTests
         {
             var character = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object, linkingMock.Object, dyeingMock.Object)
             {
-                Class = CharacterProfession.Fighter,
-                Mode = Mode.Ultimate
+                Class = CharacterProfession.Fighter
             };
             character.Client = worldClientMock.Object;
+
+            character.TrySetMode(Mode.Ultimate);
 
             ushort level = 10;
             character.TrySetLevel(level);
@@ -38,16 +39,17 @@ namespace Imgeneus.World.Tests.CharacterTests
         {
             var character = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object, linkingMock.Object, dyeingMock.Object)
             {
-                Class = CharacterProfession.Mage,
-                Mode = Mode.Ultimate,
-                Strength = 1,
-                Dexterity = 2,
-                Reaction = 3,
-                Intelligence = 4,
-                Wisdom = 5,
-                Luck = 6
+                Class = CharacterProfession.Mage
             };
             character.Client = worldClientMock.Object;
+
+            character.TrySetMode(Mode.Ultimate);
+            character.SetStat(CharacterAttributeEnum.Strength, 1);
+            character.SetStat(CharacterAttributeEnum.Dexterity, 2);
+            character.SetStat(CharacterAttributeEnum.Reaction, 3);
+            character.SetStat(CharacterAttributeEnum.Intelligence, 4);
+            character.SetStat(CharacterAttributeEnum.Wisdom, 5);
+            character.SetStat(CharacterAttributeEnum.Luck, 6);
 
             ushort newStatValue = 77;
 

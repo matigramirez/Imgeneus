@@ -14,10 +14,11 @@ namespace Imgeneus.World.Tests.CharacterTests
             var character = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object,
                 databasePreloader.Object, chatMock.Object, linkingMock.Object, dyeingMock.Object)
             {
-                Class = CharacterProfession.Fighter,
-                Mode = Mode.Ultimate,
+                Class = CharacterProfession.Fighter
             };
             character.Client = worldClientMock.Object;
+
+            character.TrySetMode(Mode.Ultimate);
 
             // TODO: MaxLevel should be a global property, change this when implemented.
             ushort maxLevel = 80;

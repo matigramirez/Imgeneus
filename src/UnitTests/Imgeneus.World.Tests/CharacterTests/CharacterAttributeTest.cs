@@ -13,11 +13,12 @@ namespace Imgeneus.World.Tests.CharacterTests
         {
             var character = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object, linkingMock.Object, dyeingMock.Object)
             {
-                Class = CharacterProfession.Mage,
-                Mode = Mode.Ultimate,
-                StatPoint = 10
+                Class = CharacterProfession.Mage
             };
             character.Client = worldClientMock.Object;
+
+            character.TrySetMode(Mode.Ultimate);
+            character.SetStatPoint(10);
 
             Assert.NotEqual(105, character.StatPoint);
             character.SetStatPoint(105);
@@ -36,11 +37,12 @@ namespace Imgeneus.World.Tests.CharacterTests
         {
             var character = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object, linkingMock.Object, dyeingMock.Object)
             {
-                Class = CharacterProfession.Mage,
-                Mode = Mode.Ultimate,
-                SkillPoint = 10
+                Class = CharacterProfession.Mage
             };
             character.Client = worldClientMock.Object;
+
+            character.TrySetMode(Mode.Ultimate);
+            character.SetStatPoint(10);
 
             Assert.NotEqual(105, character.SkillPoint);
             character.SetSkillPoint(105);
@@ -59,10 +61,11 @@ namespace Imgeneus.World.Tests.CharacterTests
         {
             var character = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object, linkingMock.Object, dyeingMock.Object)
             {
-                Class = CharacterProfession.Fighter,
-                Mode = Mode.Ultimate
+                Class = CharacterProfession.Fighter
             };
             character.Client = worldClientMock.Object;
+
+            character.TrySetMode(Mode.Ultimate);
 
             character.SetKills(10);
             Assert.NotEqual(105, character.Kills);
@@ -82,10 +85,11 @@ namespace Imgeneus.World.Tests.CharacterTests
         {
             var character = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object, linkingMock.Object, dyeingMock.Object)
             {
-                Class = CharacterProfession.Fighter,
-                Mode = Mode.Ultimate
+                Class = CharacterProfession.Fighter
             };
             character.Client = worldClientMock.Object;
+
+            character.TrySetMode(Mode.Ultimate);
 
             character.SetDeaths(10);
             Assert.NotEqual(105, character.Deaths);

@@ -192,6 +192,14 @@ namespace Imgeneus.World.Packets
             client.SendPacket(packet);
         }
 
+        internal void SendAutoAttackWrongEquipment(IWorldClient client, Character sender, IKillable target)
+        {
+            PacketType type = target is Character ? PacketType.CHARACTER_CHARACTER_AUTO_ATTACK : PacketType.CHARACTER_MOB_AUTO_ATTACK;
+            using var packet = new Packet(type);
+            packet.Write(new UsualAttack(sender.Id, 0, new AttackResult() { Success = AttackSuccess.WrongEquipment }).Serialize());
+            client.SendPacket(packet);
+        }
+
         internal void SendAutoAttackCanNotAttack(IWorldClient client, Character sender, IKillable target)
         {
             PacketType type = target is Character ? PacketType.CHARACTER_CHARACTER_AUTO_ATTACK : PacketType.CHARACTER_MOB_AUTO_ATTACK;

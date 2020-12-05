@@ -329,6 +329,12 @@ namespace Imgeneus.World.Game.Player
                 return CanUseSkill(skill, target);
             }
 
+            if (Weapon is null)
+            {
+                SendAutoAttackWrongEquipment(target);
+                return false;
+            }
+
             return true;
         }
 

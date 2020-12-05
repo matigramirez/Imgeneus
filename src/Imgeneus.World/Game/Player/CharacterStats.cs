@@ -16,20 +16,20 @@ namespace Imgeneus.World.Game.Player
         public ushort MapId { get; private set; }
         public Race Race { get; set; }
         public CharacterProfession Class { get; set; }
-        public Mode Mode { get; set; }
+        public Mode Mode { get; private set; }
         public byte Hair { get; set; }
         public byte Face { get; set; }
         public byte Height { get; set; }
         public Gender Gender { get; set; }
-        public ushort StatPoint { get; set; }
-        public ushort SkillPoint { get; set; }
-        public ushort Strength { get; set; }
-        public ushort Dexterity { get; set; }
-        public ushort Reaction { get; set; }
-        public ushort Intelligence { get; set; }
-        public ushort Luck { get; set; }
-        public ushort Wisdom { get; set; }
-        public uint Exp { get; set; }
+        public ushort StatPoint { get; private set; }
+        public ushort SkillPoint { get; private set; }
+        public ushort Strength { get; private set; }
+        public ushort Dexterity { get; private set; }
+        public ushort Reaction { get; private set; }
+        public ushort Intelligence { get; private set; }
+        public ushort Luck { get; private set; }
+        public ushort Wisdom { get; private set; }
+        public uint Exp { get; private set; }
         public ushort Kills { get; private set; }
         public ushort Deaths { get; private set; }
         public ushort Victories { get; set; }
@@ -531,6 +531,9 @@ namespace Imgeneus.World.Game.Player
 
         #region Attributes
 
+        /// <summary>
+        /// Gets a character's attribute.
+        /// </summary>
         public uint GetAttributeValue(CharacterAttributeEnum attribute)
         {
             switch (attribute)
@@ -590,6 +593,11 @@ namespace Imgeneus.World.Game.Player
             }
         }
 
+        /// <summary>
+        /// Change a character's stat value.
+        /// </summary>
+        /// <param name="statAttribute">Stat to change</param>
+        /// <param name="newStatValue">New stat value</param>
         public void SetStat(CharacterAttributeEnum statAttribute, ushort newStatValue)
         {
             switch (statAttribute)
@@ -640,7 +648,7 @@ namespace Imgeneus.World.Game.Player
         /// </summary>
         /// <param name="mode"></param>
         /// <returns></returns>
-        private bool TrySetMode(Mode mode)
+        public bool TrySetMode(Mode mode)
         {
             if (mode > Mode.Ultimate)
                 return false;

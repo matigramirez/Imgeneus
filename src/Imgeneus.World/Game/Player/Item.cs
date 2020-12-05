@@ -71,6 +71,9 @@ namespace Imgeneus.World.Game.Player
                 // Prevent Count from exceeding MaxCount and from being 0 (zero)
                 var newCount = count > MaxCount ? MaxCount : count;
                 Count = newCount < 1 ? (byte)1 : newCount;
+
+                // Set quality to maximum quality
+                Quality = _dbItem.Quality;
             }
         }
 

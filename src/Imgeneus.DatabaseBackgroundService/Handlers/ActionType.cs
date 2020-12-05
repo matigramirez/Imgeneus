@@ -46,6 +46,7 @@
 
         // Appearance
         SAVE_APPEARANCE,
+        SAVE_IS_RENAME,
 
         // Friends
         SAVE_FRIENDS,

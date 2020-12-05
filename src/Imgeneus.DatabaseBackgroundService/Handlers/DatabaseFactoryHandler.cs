@@ -34,20 +34,21 @@ namespace Imgeneus.DatabaseBackgroundService.Handlers
             byte type = (byte)args[1];
             byte typeId = (byte)args[2];
             byte count = (byte)args[3];
-            byte bag = (byte)args[4];
-            byte slot = (byte)args[5];
-            int gem1 = (int)args[6];
-            int gem2 = (int)args[7];
-            int gem3 = (int)args[8];
-            int gem4 = (int)args[9];
-            int gem5 = (int)args[10];
-            int gem6 = (int)args[11];
-            bool hasColor = (bool)args[12];
-            byte alpha = (byte)args[13];
-            byte saturation = (byte)args[14];
-            byte r = (byte)args[15];
-            byte g = (byte)args[16];
-            byte b = (byte)args[16];
+            ushort quality = (ushort) args[4];
+            byte bag = (byte)args[5];
+            byte slot = (byte)args[6];
+            int gem1 = (int)args[7];
+            int gem2 = (int)args[8];
+            int gem3 = (int)args[9];
+            int gem4 = (int)args[10];
+            int gem5 = (int)args[11];
+            int gem6 = (int)args[12];
+            bool hasColor = (bool)args[13];
+            byte alpha = (byte)args[14];
+            byte saturation = (byte)args[15];
+            byte r = (byte)args[16];
+            byte g = (byte)args[17];
+            byte b = (byte)args[18];
 
             using var database = DependencyContainer.Instance.Resolve<IDatabase>();
             var dbItem = new DbCharacterItems()
@@ -56,6 +57,7 @@ namespace Imgeneus.DatabaseBackgroundService.Handlers
                 Type = type,
                 TypeId = typeId,
                 Count = count,
+                Quality = quality,
                 Bag = bag,
                 Slot = slot,
                 GemTypeId1 = gem1,
@@ -434,6 +436,20 @@ namespace Imgeneus.DatabaseBackgroundService.Handlers
             character.Wisdom = wis;
             character.Luck = luc;
             character.StatPoint = statPoints;
+
+            await database.SaveChangesAsync();
+        }
+
+        [ActionHandler(ActionType.SAVE_IS_RENAME)]
+        internal static async Task SaveRename(object[] args)
+        {
+            int characterId = (int)args[0];
+            bool isRename = (bool)args[1];
+
+            using var database = DependencyContainer.Instance.Resolve<IDatabase>();
+            var character = database.Characters.Find(characterId);
+
+            character.IsRename = isRename;
 
             await database.SaveChangesAsync();
         }

@@ -79,6 +79,11 @@ namespace Imgeneus.Database
         public DbSet<DbQuest> Quests { get; set; }
 
         /// <summary>
+        /// Collection of levels and required experience for them. Taken from original db.
+        /// </summary>
+        public DbSet<DbLevel> Levels { get; set; }
+
+        /// <summary>
         /// Saves changes to database.
         /// </summary>
         public int SaveChanges();

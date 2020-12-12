@@ -1,12 +1,5 @@
-﻿using Org.BouncyCastle.Crypto;
-using Org.BouncyCastle.Crypto.Generators;
-using Org.BouncyCastle.Crypto.Parameters;
-using Org.BouncyCastle.Crypto.Prng;
-using Org.BouncyCastle.OpenSsl;
-using Org.BouncyCastle.Security;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Numerics;
 using System.Security.Cryptography;
@@ -17,13 +10,12 @@ namespace Imgeneus.Network.Server.Crypto
     {
         public CryptoManager()
         {
-            // GeneratePrivateKey();
-            GeneratePrivateKeyFromFile();
+            GeneratePrivateKey();
         }
 
         #region RSA
 
-        private RsaPrivateCrtKeyParameters PrivateKey;
+        private RSAParameters PrivateKey;
 
         private byte[] _rsaPublicExponent;
         /// <summary>
@@ -35,7 +27,7 @@ namespace Imgeneus.Network.Server.Crypto
             {
                 if (_rsaPublicExponent is null)
                 {
-                    var publicExponent = PrivateKey.PublicExponent.ToByteArrayUnsigned();
+                    var publicExponent = PrivateKey.Exponent;
                     Array.Reverse(publicExponent);
 
                     _rsaPublicExponent = publicExponent;
@@ -55,7 +47,7 @@ namespace Imgeneus.Network.Server.Crypto
             {
                 if (_rsaModulus is null)
                 {
-                    var modulus = PrivateKey.Modulus.ToByteArrayUnsigned();
+                    var modulus = PrivateKey.Modulus;
                     Array.Reverse(modulus);
                     _rsaModulus = modulus;
                 }
@@ -73,7 +65,7 @@ namespace Imgeneus.Network.Server.Crypto
             {
                 if (_rsaPrivateExponent is null)
                 {
-                    var privateExponent = PrivateKey.Exponent.ToByteArrayUnsigned();
+                    var privateExponent = PrivateKey.D;
                     Array.Reverse(privateExponent);
                     _rsaPrivateExponent = privateExponent;
                 }
@@ -88,27 +80,8 @@ namespace Imgeneus.Network.Server.Crypto
         /// <returns>public key, that will be sent to client</returns>
         private void GeneratePrivateKey()
         {
-            var randomGenerator = new CryptoApiRandomGenerator();
-            var secureRandom = new SecureRandom(randomGenerator);
-            var keyGenerationParameters = new KeyGenerationParameters(secureRandom, 1024);
-
-            var keyPairGenerator = new RsaKeyPairGenerator();
-            keyPairGenerator.Init(keyGenerationParameters);
-            var keyPair = keyPairGenerator.GenerateKeyPair();
-
-            PrivateKey = (RsaPrivateCrtKeyParameters)keyPair.Private;
-        }
-
-        /// <summary>
-        /// Generates rsa key from file.
-        /// </summary>
-        private void GeneratePrivateKeyFromFile()
-        {
-            AsymmetricCipherKeyPair keyPair;
-            using (var reader = File.OpenText("./config/private_key.txt"))
-                keyPair = (AsymmetricCipherKeyPair)new PemReader(reader).ReadObject();
-
-            PrivateKey = (RsaPrivateCrtKeyParameters)keyPair.Private;
+            var rsa = RSA.Create(1024);
+            PrivateKey = rsa.ExportParameters(true);
         }
 
         /// <summary>

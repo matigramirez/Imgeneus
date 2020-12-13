@@ -18,7 +18,7 @@ This repo also uses the best parts of these repos: [Drakkus/ShaiyaGenesis](https
 
 ## Details
 - Language:  `C# 8`
-- Framework:  `.NET Core 3.0`
+- Framework:  `.NET Core 3.1`
 - Application type:  `Console`
 - Database type:  `MySQL`
 - Configuration files type:  `JSON`

@@ -2,6 +2,7 @@
 using Imgeneus.Database.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using System;
 
 namespace Imgeneus.Database
 {
@@ -11,7 +12,7 @@ namespace Imgeneus.Database
 
         public static DbContextOptionsBuilder ConfigureCorrectDatabase(this DbContextOptionsBuilder optionsBuilder, DatabaseConfiguration configuration)
         {
-            optionsBuilder.UseMySql(configuration.ToString());
+            optionsBuilder.UseMySql(configuration.ToString(), new MySqlServerVersion(new Version(8, 0, 22)));
             return optionsBuilder;
         }
 

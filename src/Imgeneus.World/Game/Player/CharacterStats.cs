@@ -428,11 +428,11 @@ namespace Imgeneus.World.Game.Player
                 if (RemoveElement)
                     return Element.None;
 
-                if (Armor is null)
-                    return Element.None;
-
                 if (DefenceSkillElement != Element.None)
                     return DefenceSkillElement;
+
+                if (Armor is null)
+                    return Element.None;
 
                 return Armor.Element;
             }
@@ -443,11 +443,11 @@ namespace Imgeneus.World.Game.Player
         {
             get
             {
-                if (Weapon is null)
-                    return Element.None;
-
                 if (AttackSkillElement != Element.None)
                     return AttackSkillElement;
+
+                if (Weapon is null)
+                    return Element.None;
 
                 return Weapon.Element;
             }

@@ -75,7 +75,9 @@ namespace Imgeneus.World.Tests
                     { (15, 2), SharpenWeaponMastery_Lvl2 },
                     { (35, 1), MagicRoots_Lvl1 },
                     { (273, 100), AttributeRemove },
+                    { (732, 1), FireWeapon },
                     { (735, 1), EarthWeapon },
+                    { (762, 1), FireSkin },
                     { (765, 1), EarthSkin },
                     { (672, 1), Panic_Lvl1 },
                     { (787, 1), Dispel }
@@ -205,13 +207,34 @@ namespace Imgeneus.World.Tests
             DamageType = DamageType.FixedDamage
         };
 
+        protected DbSkill FireWeapon = new DbSkill()
+        {
+            SkillId = 732,
+            SkillLevel = 1,
+            SkillName = "Flame Weapon",
+            TypeDetail = TypeDetail.ElementalAttack,
+            Element = Element.Fire1,
+            TypeAttack = TypeAttack.ShootingAttack
+        };
+
         protected DbSkill EarthWeapon = new DbSkill()
         {
             SkillId = 735,
             SkillLevel = 1,
             SkillName = "Earth Weapon",
             TypeDetail = TypeDetail.ElementalAttack,
-            Element = Element.Earth1
+            Element = Element.Earth1,
+            TypeAttack = TypeAttack.ShootingAttack
+        };
+
+        protected DbSkill FireSkin = new DbSkill()
+        {
+            SkillId = 762,
+            SkillLevel = 1,
+            SkillName = "Flame Skin",
+            TypeDetail = TypeDetail.ElementalProtection,
+            Element = Element.Fire1,
+            TypeAttack = TypeAttack.MagicAttack
         };
 
         protected DbSkill EarthSkin = new DbSkill()
@@ -220,7 +243,8 @@ namespace Imgeneus.World.Tests
             SkillLevel = 1,
             SkillName = "Earth Skin",
             TypeDetail = TypeDetail.ElementalProtection,
-            Element = Element.Earth1
+            Element = Element.Earth1,
+            TypeAttack = TypeAttack.MagicAttack
         };
 
         protected DbSkill Panic_Lvl1 = new DbSkill()

@@ -444,10 +444,18 @@ namespace Imgeneus.World.Game
                     break;
 
                 case TypeDetail.ElementalAttack:
+                    var elementSkin = ActiveBuffs.FirstOrDefault(b => b.IsElementalWeapon && b != buff);
+                    if (elementSkin != null)
+                        elementSkin.CancelBuff();
+
                     AttackSkillElement = skill.Element;
                     break;
 
                 case TypeDetail.ElementalProtection:
+                    var elementWeapon = ActiveBuffs.FirstOrDefault(b => b.IsElementalProtection && b != buff);
+                    if (elementWeapon != null)
+                        elementWeapon.CancelBuff();
+
                     DefenceSkillElement = skill.Element;
                     break;
 

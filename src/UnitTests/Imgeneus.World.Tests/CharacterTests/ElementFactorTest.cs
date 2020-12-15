@@ -165,5 +165,33 @@ namespace Imgeneus.World.Tests
             character.AddActiveBuff(new Skill(EarthSkin, 0, 0), null);
             Assert.Equal(Element.Earth1, character.DefenceElement);
         }
+
+        [Fact]
+        [Description("Element skin buff should be cleared if new skill was used")]
+        public void ElementalSkinSkillTest()
+        {
+            var character = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object, linkingMock.Object, dyeingMock.Object);
+            character.AddActiveBuff(new Skill(EarthSkin, 0, 0), null);
+            Assert.Equal(Element.Earth1, character.DefenceElement);
+            Assert.Single(character.ActiveBuffs);
+
+            character.AddActiveBuff(new Skill(FireSkin, 0, 0), null);
+            Assert.Equal(Element.Fire1, character.DefenceElement);
+            Assert.Single(character.ActiveBuffs);
+        }
+
+        [Fact]
+        [Description("Element weapon buff should be cleared if new skill was used")]
+        public void ElementalWeaponSkillTest()
+        {
+            var character = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object, linkingMock.Object, dyeingMock.Object);
+            character.AddActiveBuff(new Skill(EarthWeapon, 0, 0), null);
+            Assert.Equal(Element.Earth1, character.AttackElement);
+            Assert.Single(character.ActiveBuffs);
+
+            character.AddActiveBuff(new Skill(FireWeapon, 0, 0), null);
+            Assert.Equal(Element.Fire1, character.AttackElement);
+            Assert.Single(character.ActiveBuffs);
+        }
     }
 }

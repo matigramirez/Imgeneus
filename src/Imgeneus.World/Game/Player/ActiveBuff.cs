@@ -77,6 +77,28 @@ namespace Imgeneus.World.Game.Player
             }
         }
 
+        /// <summary>
+        /// Is skill elemental skin buff?
+        /// </summary>
+        public bool IsElementalProtection
+        {
+            get
+            {
+                return _skill.Type == TypeDetail.ElementalProtection;
+            }
+        }
+
+        /// <summary>
+        /// Is skill elemental weapon buff?
+        /// </summary>
+        public bool IsElementalWeapon
+        {
+            get
+            {
+                return _skill.Type == TypeDetail.ElementalAttack;
+            }
+        }
+
         #endregion
 
         #region Buff reset

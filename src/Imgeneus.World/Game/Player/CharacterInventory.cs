@@ -646,7 +646,7 @@ namespace Imgeneus.World.Game.Player
             else
             {
                 _taskQueue.Enqueue(ActionType.SAVE_ITEM_IN_INVENTORY,
-                                   Id, sourceItem.Type, sourceItem.TypeId, sourceItem.Count, sourceItem.Quality,sourceItem.Bag, sourceItem.Slot,
+                                   Id, sourceItem.Type, sourceItem.TypeId, sourceItem.Count, sourceItem.Quality, sourceItem.Bag, sourceItem.Slot,
                                    sourceItem.Gem1 is null ? 0 : sourceItem.Gem1.TypeId,
                                    sourceItem.Gem2 is null ? 0 : sourceItem.Gem2.TypeId,
                                    sourceItem.Gem3 is null ? 0 : sourceItem.Gem3.TypeId,
@@ -806,7 +806,7 @@ namespace Imgeneus.World.Game.Player
         /// </summary>
         /// <param name="bag">bag, where item is situated</param>
         /// <param name="slot">slot, where item is situated</param>
-        private void UseItem(byte bag, byte slot)
+        public void UseItem(byte bag, byte slot)
         {
             InventoryItems.TryGetValue((bag, slot), out var item);
             if (item is null)
@@ -1009,8 +1009,24 @@ namespace Imgeneus.World.Game.Player
         /// </summary>
         private void UseHealingPotion(Item potion)
         {
-            if (potion.HP > 0 || potion.MP > 0 || potion.SP > 0)
-                Recover(potion.HP, potion.MP, potion.SP);
+            var hp = 0;
+            var mp = 0;
+            var sp = 0;
+            if ((potion.Type == 100 && (potion.TypeId == 1 || potion.TypeId == 91 || potion.TypeId == 123)) || // Etain potion
+                (potion.Type == 44 && (potion.TypeId == 173 || potion.TypeId == 178))) // Regnum Potion
+            {
+                hp = Convert.ToInt32(MaxHP * potion.HP / 100);
+                mp = Convert.ToInt32(MaxMP * potion.MP / 100);
+                sp = Convert.ToInt32(MaxSP * potion.SP / 100);
+            }
+            else if (potion.HP > 0 || potion.MP > 0 || potion.SP > 0)
+            {
+                hp = potion.HP;
+                mp = potion.MP;
+                sp = potion.SP;
+            }
+
+            Recover(hp, mp, sp);
         }
 
         /// <summary>

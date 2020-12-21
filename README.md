@@ -10,7 +10,7 @@ This repo also uses the best parts of these repos: [Drakkus/ShaiyaGenesis](https
 
 ## Build and run
 1. Build the solution.
-2. Create 2 files `appsettings.Development.json` in Imgeneus.Login & Imgeneus.World projects. Override default configs with your development config. E.g.
+2. Create 3 files `appsettings.Development.json` in Imgeneus.Login & Imgeneus.World & Imgeneus.Database projects. Override default configs with your development config. E.g. you can provide your password as follows:
 ```
 {
   "Database": {
@@ -18,6 +18,7 @@ This repo also uses the best parts of these repos: [Drakkus/ShaiyaGenesis](https
   }
 }
 ```
+These files are added to the ignore list, so you can be sure, that you won't commit any of your credentials.
 3. To fulfill the database with example data open `src\Imgeneus.Database\Migrations\sql` folder and run `setup.bat` file (Don't forget to set your password there). This will populate your database with ep6 original data.
 4. Run Imgeneus.Login.exe (or Imgeneus.Login project).
 5. Run Imgeneus.World.exe (or Imgeneus.World project).

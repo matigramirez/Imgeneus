@@ -9,6 +9,7 @@ using Imgeneus.World.Game;
 using Imgeneus.World.InternalServer;
 using Imgeneus.World.SelectionScreen;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -26,14 +27,14 @@ namespace Imgeneus.World
         /// </summary>
         public ISClient InterClient { get; private set; }
 
-        public WorldServer(ILogger<WorldServer> logger, WorldConfiguration configuration, IGameWorld gameWorld)
-            : base(new ServerConfiguration(configuration.Host, configuration.Port, configuration.MaximumNumberOfConnections))
+        public WorldServer(ILogger<WorldServer> logger, IOptions<WorldConfiguration> configuration, IGameWorld gameWorld)
+            : base(new ServerConfiguration(configuration.Value.Host, configuration.Value.Port, configuration.Value.MaximumNumberOfConnections))
         {
             _logger = logger;
-            _worldConfiguration = configuration;
+            _worldConfiguration = configuration.Value;
             _gameWorld = gameWorld;
-            InterClient = new ISClient(configuration);
-            InterClient.OnPacketArrived += InterClient_OnPacketArrived; ;
+            InterClient = new ISClient(new InterServerConfiguration());
+            InterClient.OnPacketArrived += InterClient_OnPacketArrived;
         }
 
         protected override void OnStart()

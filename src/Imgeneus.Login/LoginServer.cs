@@ -6,6 +6,7 @@ using Imgeneus.Network.Packets.Game;
 using Imgeneus.Network.Packets.Login;
 using Imgeneus.Network.Server;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,12 +28,12 @@ namespace Imgeneus.Login
         /// </summary>
         public IEnumerable<WorldServerInfo> ClustersConnected => this.InterServer.WorldServers;
 
-        public LoginServer(ILogger<LoginServer> logger, LoginConfiguration loginConfiguration)
-            : base(new ServerConfiguration(loginConfiguration.Host, loginConfiguration.Port, loginConfiguration.MaximumNumberOfConnections))
+        public LoginServer(ILogger<LoginServer> logger, IOptions<LoginConfiguration> loginConfiguration)
+            : base(new ServerConfiguration(loginConfiguration.Value.Host, loginConfiguration.Value.Port, loginConfiguration.Value.MaximumNumberOfConnections))
         {
             this.logger = logger;
-            this.loginConfiguration = loginConfiguration;
-            this.InterServer = new ISServer(loginConfiguration.InterServerConfiguration);
+            this.loginConfiguration = loginConfiguration.Value;
+            this.InterServer = new ISServer(new InterServerConfiguration());
         }
 
         /// <inheritdoc />

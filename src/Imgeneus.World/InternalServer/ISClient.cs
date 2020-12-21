@@ -16,17 +16,11 @@ namespace Imgeneus.World.InternalServer
     {
         private readonly ILogger<ISClient> logger;
 
-        public ISClient(WorldConfiguration worldConfiguration)
-            : base(new ClientConfiguration(worldConfiguration.InterServerConfiguration.Host, worldConfiguration.InterServerConfiguration.Port))
+        public ISClient(InterServerConfiguration config)
+            : base(new ClientConfiguration(config.Host, config.Port))
         {
-            this.WorldConfiguration = worldConfiguration;
             this.logger = DependencyContainer.Instance.Resolve<ILogger<ISClient>>();
         }
-
-        /// <summary>
-        /// Gets the world server's configuration.
-        /// </summary>
-        public WorldConfiguration WorldConfiguration { get; }
 
         public event Action<IDeserializedPacket> OnPacketArrived;
 
@@ -55,7 +49,7 @@ namespace Imgeneus.World.InternalServer
         protected override void OnConnected()
         {
             this.logger.LogInformation("Inter-Server connected to Login Server");
-            ISPacketFactory.Authenticate(this, WorldConfiguration);
+            ISPacketFactory.Authenticate(this);
         }
 
         protected override void OnDisconnected()

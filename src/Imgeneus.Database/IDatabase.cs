@@ -92,5 +92,10 @@ namespace Imgeneus.Database
         /// Saves changes to database.
         /// </summary>
         public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Migrate database.
+        /// </summary>
+        public void Migrate();
     }
 }

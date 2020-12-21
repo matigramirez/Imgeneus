@@ -8,14 +8,14 @@ namespace Imgeneus.World.InternalServer
 {
     public static class ISPacketFactory
     {
-        public static void Authenticate(IClient client, WorldConfiguration configuration)
+        public static void Authenticate(IClient client)
         {
             using var packet = new Packet(PacketType.AUTH_SERVER);
 
-            packet.Write<byte[]>(IPAddress.Parse(configuration.Host).GetAddressBytes());
-            packet.WriteString(configuration.Name, 32);
-            packet.Write<int>(configuration.BuildVersion);
-            packet.Write<ushort>((ushort)configuration.MaximumNumberOfConnections);
+            packet.Write<byte[]>(IPAddress.Parse("127.0.0.1").GetAddressBytes());
+            packet.WriteString("Imgeneus", 32);
+            packet.Write<int>(0);
+            packet.Write<ushort>(1000);
 
             client.SendPacket(packet);
         }

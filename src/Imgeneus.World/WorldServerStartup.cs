@@ -12,6 +12,7 @@ using Imgeneus.World.Game.Dyeing;
 using Imgeneus.World.Game.Linking;
 using Imgeneus.World.Game.Player;
 using Imgeneus.World.Game.Zone.MapConfig;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NLog;
@@ -23,15 +24,18 @@ namespace Imgeneus.World
 {
     public sealed class WorldServerStartup : IProgramStartup
     {
-        private const string WorldConfigFile = "config/world.json";
         private const string CharacterConfigFile = "config/character.json";
 
         /// <inheritdoc />
         public void Configure()
         {
-            DependencyContainer.Instance
-                .GetServiceCollection()
-                .RegisterDatabaseServices();
+            // Add options.
+            DependencyContainer.Instance.GetServiceCollection().AddOptions<WorldConfiguration>()
+                .Configure<IConfiguration>((settings, configuration) => configuration.GetSection("WorldServer").Bind(settings));
+            DependencyContainer.Instance.GetServiceCollection().AddOptions<DatabaseConfiguration>()
+               .Configure<IConfiguration>((settings, configuration) => configuration.GetSection("Database").Bind(settings));
+
+            DependencyContainer.Instance.GetServiceCollection().RegisterDatabaseServices();
 
             DependencyContainer.Instance.Register<ILogsDatabase, LogsDbContext>(ServiceLifetime.Transient);
 
@@ -58,9 +62,7 @@ namespace Imgeneus.World
             }));
             DependencyContainer.Instance.Configure(services =>
             {
-                var worldConfiguration = ConfigurationHelper.Load<WorldConfiguration>(WorldConfigFile);
                 var characterConfiguration = ConfigurationHelper.Load<CharacterConfiguration>(CharacterConfigFile);
-                services.AddSingleton(worldConfiguration);
                 services.AddSingleton(characterConfiguration);
             });
             DependencyContainer.Instance.Configure(services =>

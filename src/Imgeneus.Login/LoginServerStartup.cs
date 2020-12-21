@@ -1,10 +1,8 @@
 ﻿using Imgeneus.Core;
 using Imgeneus.Core.DependencyInjection;
-using Imgeneus.Core.Helpers;
 using Imgeneus.Core.Structures.Configuration;
 using Imgeneus.Database;
-using Imgeneus.Login.InternalServer;
-using Imgeneus.Network;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NLog;
@@ -16,14 +14,16 @@ namespace Imgeneus.Login
 {
     public sealed class LoginServerStartup : IProgramStartup
     {
-        private const string LoginConfigFile = "config/login.json";
-
         /// <inheritdoc />
         public void Configure()
         {
-            DependencyContainer.Instance
-                .GetServiceCollection()
-                .RegisterDatabaseServices();
+            // Add options.
+            DependencyContainer.Instance.GetServiceCollection().AddOptions<LoginConfiguration>()
+                .Configure<IConfiguration>((settings, configuration) => configuration.GetSection("LoginServer").Bind(settings));
+            DependencyContainer.Instance.GetServiceCollection().AddOptions<DatabaseConfiguration>()
+               .Configure<IConfiguration>((settings, configuration) => configuration.GetSection("Database").Bind(settings));
+
+            DependencyContainer.Instance.GetServiceCollection().RegisterDatabaseServices();
 
             DependencyContainer.Instance.Register<ILoginServer, LoginServer>(ServiceLifetime.Singleton);
             DependencyContainer.Instance.Configure(services => services.AddLogging(builder =>
@@ -40,11 +40,7 @@ namespace Imgeneus.Login
                     CaptureMessageProperties = true
                 });
             }));
-            DependencyContainer.Instance.Configure(services =>
-            {
-                var loginConfiguration = ConfigurationHelper.Load<LoginConfiguration>(LoginConfigFile);
-                services.AddSingleton(loginConfiguration);
-            });
+
             DependencyContainer.Instance.BuildServiceProvider();
         }
 

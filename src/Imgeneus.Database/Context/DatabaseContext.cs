@@ -84,6 +84,7 @@ namespace Imgeneus.Database.Context
 
         public DatabaseContext(DbContextOptions options) : base(options)
         {
+            Migrate();
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

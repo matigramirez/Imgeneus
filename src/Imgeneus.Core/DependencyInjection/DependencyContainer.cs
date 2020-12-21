@@ -1,6 +1,8 @@
 ﻿using Imgeneus.Core.Common;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.IO;
 
 namespace Imgeneus.Core.DependencyInjection
 {
@@ -8,6 +10,7 @@ namespace Imgeneus.Core.DependencyInjection
     {
         private IServiceCollection services;
         private ServiceProvider serviceProvider;
+        public IConfiguration configuration;
 
         /// <summary>
         /// Gets the number of registered services.
@@ -20,6 +23,18 @@ namespace Imgeneus.Core.DependencyInjection
         public DependencyContainer()
         {
             this.services = new ServiceCollection();
+
+            configuration = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetParent(AppContext.BaseDirectory).FullName)
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+#if DEBUG
+                .AddJsonFile($"appsettings.Development.json", optional: true)
+#else
+                .AddJsonFile($"appsettings.Release.json", optional: true)
+#endif
+                .Build();
+
+            services.AddSingleton(configuration);
         }
 
         /// <summary>

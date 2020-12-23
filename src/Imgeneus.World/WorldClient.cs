@@ -13,7 +13,7 @@ namespace Imgeneus.World
 {
     public sealed class WorldClient : ServerClient, IWorldClient
     {
-        private readonly ILogger<WorldClient> logger;
+        private readonly ILogger _logger;
 
         /// <summary>
         /// Gets the client's logged user id.
@@ -33,17 +33,17 @@ namespace Imgeneus.World
         /// <inheritdoc />
         public override event Action<ServerClient, IDeserializedPacket> OnPacketArrived;
 
-        public WorldClient(IServer server, Socket acceptedSocket)
+        public WorldClient(IServer server, Socket acceptedSocket, ILogger logger)
             : base(server, acceptedSocket)
         {
-            this.logger = DependencyContainer.Instance.Resolve<ILogger<WorldClient>>();
+            _logger = logger;
         }
 
         public override void HandlePacket(IPacketStream packet)
         {
             if (this.Socket == null)
             {
-                this.logger.LogTrace("Skip to handle packet. Reason: client is no more connected.");
+                _logger.LogTrace("Skip to handle packet. Reason: client is no more connected.");
                 return;
             }
 
@@ -60,18 +60,18 @@ namespace Imgeneus.World
                 {
                     if (Enum.IsDefined(typeof(PacketType), packet.PacketType))
                     {
-                        this.logger.LogWarning("Received an unimplemented packet {0} from {1}.", packet.PacketType, this.RemoteEndPoint);
+                        _logger.LogWarning("Received an unimplemented packet {0} from {1}.", packet.PacketType, this.RemoteEndPoint);
                     }
                     else
                     {
-                        this.logger.LogWarning("Received an unknown packet 0x{0} from {1}.", ((ushort)packet.PacketType).ToString("X2"), this.RemoteEndPoint);
+                        _logger.LogWarning("Received an unknown packet 0x{0} from {1}.", ((ushort)packet.PacketType).ToString("X2"), this.RemoteEndPoint);
                     }
                 }
             }
             catch (Exception exception)
             {
-                this.logger.LogError("Packet handle error from {0}. {1}", this.RemoteEndPoint, exception.Message);
-                this.logger.LogDebug(exception.InnerException?.StackTrace);
+                _logger.LogError("Packet handle error from {0}. {1}", this.RemoteEndPoint, exception.Message);
+                _logger.LogDebug(exception.InnerException?.StackTrace);
             }
         }
 

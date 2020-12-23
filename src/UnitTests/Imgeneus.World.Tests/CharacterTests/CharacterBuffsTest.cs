@@ -40,7 +40,7 @@ namespace Imgeneus.World.Tests
         [Description("It should be possible to add a buff.")]
         public void Character_AddActiveBuff()
         {
-            var character = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object, linkingMock.Object, dyeingMock.Object);
+            var character = CreateCharacter();
             Assert.Empty(character.ActiveBuffs);
 
             var usedSkill = new Skill(skill1_level1, 1, 0);
@@ -52,7 +52,7 @@ namespace Imgeneus.World.Tests
         [Description("Buff with lower level should not override buff with the higher level.")]
         public void Character_BuffOflowerLevelCanNotOverrideHigherLevel()
         {
-            var character = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object, linkingMock.Object, dyeingMock.Object);
+            var character = CreateCharacter();
             character.AddActiveBuff(new Skill(skill1_level2, 1, 0), character);
 
             Assert.Equal(skill1_level2.SkillId, character.ActiveBuffs[0].SkillId);
@@ -68,7 +68,7 @@ namespace Imgeneus.World.Tests
         [Description("Buff of the same level is already applied, it should change reset time.")]
         public void Character_BuffOfSameLevelShouldChangeResetTime()
         {
-            var character = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object, linkingMock.Object, dyeingMock.Object);
+            var character = CreateCharacter();
             var skill = new Skill(skill1_level2, 1, 0);
 
             character.AddActiveBuff(skill, character);

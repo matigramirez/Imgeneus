@@ -19,7 +19,7 @@ namespace Imgeneus.World.Game.Zone
     /// <summary>
     /// Zone, where users, mobs, npc are presented.
     /// </summary>
-    public class Map
+    public class Map : IMap
     {
         #region Constructor
 
@@ -27,6 +27,9 @@ namespace Imgeneus.World.Game.Zone
         private readonly MapConfiguration _config;
         private readonly ILogger<Map> _logger;
         private readonly IDatabasePreloader _databasePreloader;
+        private readonly IMobFactory _mobFactory;
+        private readonly INpcFactory _npcFactory;
+        private readonly IObeliskFactory _obeliskfactory;
 
         /// <summary>
         /// Map id.
@@ -45,13 +48,16 @@ namespace Imgeneus.World.Game.Zone
 
         public static readonly ushort TEST_MAP_ID = 9999;
 
-        public Map(ushort id, MapDefinition definition, MapConfiguration config, ILogger<Map> logger, IDatabasePreloader databasePreloader)
+        public Map(ushort id, MapDefinition definition, MapConfiguration config, ILogger<Map> logger, IDatabasePreloader databasePreloader, IMobFactory mobFactory, INpcFactory npcFactory, IObeliskFactory obeliskFactory)
         {
             Id = id;
             _definition = definition;
             _config = config;
             _logger = logger;
             _databasePreloader = databasePreloader;
+            _mobFactory = mobFactory;
+            _npcFactory = npcFactory;
+            _obeliskfactory = obeliskFactory;
 
             Init();
         }
@@ -472,13 +478,10 @@ namespace Imgeneus.World.Game.Zone
                     {
                         for (var i = 0; i < mobConf.MobCount; i++)
                         {
-                            var mob = new Mob(
-                                DependencyContainer.Instance.Resolve<ILogger<Mob>>(),
-                                _databasePreloader,
-                                mobConf.MobId,
-                                true,
-                                new MoveArea(mobArea.X1, mobArea.X2, mobArea.Y1, mobArea.Y2, mobArea.Z1, mobArea.Z2),
-                                this);
+                            var mob = _mobFactory.CreateMob(mobConf.MobId,
+                                                            true,
+                                                            new MoveArea(mobArea.X1, mobArea.X2, mobArea.Y1, mobArea.Y2, mobArea.Z1, mobArea.Z2),
+                                                            this);
                             AddMob(mob);
                             finalMobsCount++;
                         }
@@ -557,14 +560,14 @@ namespace Imgeneus.World.Game.Zone
             int finalNPCsCount = 0;
             foreach (var conf in _config.NPCs)
             {
-                if (_databasePreloader.NPCs.TryGetValue((conf.Type, conf.TypeId), out var dbNpc))
-                {
-                    var moveCoordinates = conf.Coordinates.Select(c => (c.X, c.Y, c.Z, Convert.ToUInt16(c.Angle))).ToList();
-                    var npc = new Npc(DependencyContainer.Instance.Resolve<ILogger<Npc>>(), dbNpc, moveCoordinates, this);
-                    var cellIndex = GetCellIndex(npc);
-                    AddNPC(cellIndex, npc);
-                    finalNPCsCount++;
-                }
+                var moveCoordinates = conf.Coordinates.Select(c => (c.X, c.Y, c.Z, Convert.ToUInt16(c.Angle))).ToList();
+                var npc = _npcFactory.CreateNpc((conf.Type, conf.TypeId), moveCoordinates, this);
+                if (npc is null)
+                    continue;
+
+                var cellIndex = GetCellIndex(npc);
+                AddNPC(cellIndex, npc);
+                finalNPCsCount++;
             }
 
             _logger.LogInformation($"Map {Id} created {finalNPCsCount} NPCs.");
@@ -661,7 +664,7 @@ namespace Imgeneus.World.Game.Zone
         {
             foreach (var obeliskConfig in _config.Obelisks)
             {
-                var obelisk = new Obelisk(obeliskConfig, _databasePreloader, this);
+                var obelisk = _obeliskfactory.CreateObelisk(obeliskConfig, this);
                 Obelisks.TryAdd(obelisk.Id, obelisk);
                 obelisk.OnObeliskBroken += Obelisk_OnObeliskBroken;
             }

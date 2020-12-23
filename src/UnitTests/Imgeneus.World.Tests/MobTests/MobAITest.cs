@@ -1,5 +1,4 @@
 ﻿using Imgeneus.World.Game.Monster;
-using Imgeneus.World.Game.Player;
 using Xunit;
 
 namespace Imgeneus.World.Tests.MobTests
@@ -10,10 +9,9 @@ namespace Imgeneus.World.Tests.MobTests
         public void MobCanFindPlayerOnMap()
         {
             var map = testMap;
-            var mob = new Mob(mobLoggerMock.Object, databasePreloader.Object, Wolf.Id, true, new MoveArea(0, 0, 0, 0, 0, 0), map);
+            var mob = new Mob(Wolf.Id, true, new MoveArea(0, 0, 0, 0, 0, 0), map, mobLoggerMock.Object, databasePreloader.Object);
 
-            var character = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object, linkingMock.Object, dyeingMock.Object);
-            character.Client = worldClientMock.Object;
+            var character = CreateCharacter();
 
             map.LoadPlayer(character);
             map.AddMob(mob);
@@ -26,13 +24,10 @@ namespace Imgeneus.World.Tests.MobTests
         public void MobCanKillPlayer()
         {
             var map = testMap;
-            var mob = new Mob(mobLoggerMock.Object, databasePreloader.Object, CrypticImmortal.Id, true, new MoveArea(0, 0, 0, 0, 0, 0), map);
+            var mob = new Mob(CrypticImmortal.Id, true, new MoveArea(0, 0, 0, 0, 0, 0), map, mobLoggerMock.Object, databasePreloader.Object);
 
-            var character = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object, linkingMock.Object, dyeingMock.Object)
-            {
-                Class = Database.Entities.CharacterProfession.Fighter
-            };
-            character.Client = worldClientMock.Object;
+            var character = CreateCharacter();
+
             character.IncreaseHP(1);
             Assert.True(character.CurrentHP > 0);
 

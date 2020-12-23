@@ -75,6 +75,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="5.0.0" />
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="5.0.0-alpha.2" />
     <PackageReference Include="System.Collections" Version="4.3.0" />
   </ItemGroup>
@@ -82,6 +83,12 @@
     <ProjectReference Include="..\Imgeneus.Core\Imgeneus.Core.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <None Update="appsettings.Development.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Migrations\sql\InitItemData.sql">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </None>

@@ -18,7 +18,7 @@ namespace Imgeneus.World.Game
         /// <summary>
         /// Loaded maps. Key is map id, value is map.
         /// </summary>
-        ConcurrentDictionary<ushort, Map> Maps { get; }
+        ConcurrentDictionary<ushort, IMap> Maps { get; }
 
         /// <summary>
         /// Loads player into game world.

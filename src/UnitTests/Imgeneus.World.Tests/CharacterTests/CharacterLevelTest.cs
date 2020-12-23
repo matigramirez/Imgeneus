@@ -11,12 +11,7 @@ namespace Imgeneus.World.Tests.CharacterTests
         [Description("Character level should respect boundaries.")]
         public void SetLevelTest()
         {
-            var character = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object,
-                databasePreloader.Object, chatMock.Object, linkingMock.Object, dyeingMock.Object)
-            {
-                Class = CharacterProfession.Fighter
-            };
-            character.Client = worldClientMock.Object;
+            var character = CreateCharacter();
 
             character.TrySetMode(Mode.Ultimate);
 

@@ -19,11 +19,7 @@ namespace Imgeneus.World.Tests
         [Fact]
         public void StrengthTrainingTest()
         {
-            var character = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object, linkingMock.Object, dyeingMock.Object)
-            {
-                Class = CharacterProfession.Fighter
-            };
-
+            var character = CreateCharacter();
 
             Assert.Equal(0, character.MinAttack);
             Assert.Equal(0, character.MaxAttack);
@@ -37,10 +33,7 @@ namespace Imgeneus.World.Tests
         [Fact]
         public void ManaTrainingTest()
         {
-            var character = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object, linkingMock.Object, dyeingMock.Object)
-            {
-                Class = CharacterProfession.Mage
-            };
+            var character = CreateCharacter();
 
             Assert.Equal(200, character.MaxMP);
 
@@ -52,10 +45,7 @@ namespace Imgeneus.World.Tests
         [Fact]
         public void WeaponMasteryTest()
         {
-            var character = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object, linkingMock.Object, dyeingMock.Object)
-            {
-                Class = CharacterProfession.Fighter,
-            };
+            var character = CreateCharacter();
             var sword = new Item(databasePreloader.Object, 1, 1);
             Assert.Equal(AttackSpeed.None, character.AttackSpeed);
 

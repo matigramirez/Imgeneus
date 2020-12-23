@@ -1,10 +1,18 @@
-﻿using Imgeneus.Database.Entities;
+﻿using Imgeneus.Core.Helpers;
+using Imgeneus.Database.Entities;
 using Newtonsoft.Json;
 
 namespace Imgeneus.World.Game.Player
 {
     public sealed class CharacterConfiguration : ICharacterConfiguration
     {
+        private const string CharacterConfigFile = "config/character.json";
+
+        public static CharacterConfiguration LoadFromConfigFile()
+        {
+            return ConfigurationHelper.Load<CharacterConfiguration>(CharacterConfigFile);
+        }
+
         /// <summary>
         /// Config for each job and level.
         /// </summary>

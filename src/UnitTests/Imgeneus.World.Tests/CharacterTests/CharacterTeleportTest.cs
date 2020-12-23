@@ -1,5 +1,4 @@
-﻿using Imgeneus.World.Game.Player;
-using Imgeneus.World.Game.Zone;
+﻿using Imgeneus.World.Game.Zone;
 using Imgeneus.World.Game.Zone.MapConfig;
 using System.ComponentModel;
 using Xunit;
@@ -12,8 +11,7 @@ namespace Imgeneus.World.Tests.CharacterTests
         [Description("It should be possible to teleport inside one map.")]
         public void Character_Teleport()
         {
-            var character = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object, linkingMock.Object, dyeingMock.Object);
-            character.Client = worldClientMock.Object;
+            var character = CreateCharacter();
             testMap.LoadPlayer(character);
             Assert.Equal(0, character.PosX);
             Assert.Equal(0, character.PosY);
@@ -35,16 +33,21 @@ namespace Imgeneus.World.Tests.CharacterTests
                     new MapDefinition(),
                     new MapConfiguration() { Size = 100, CellSize = 100 },
                     mapLoggerMock.Object,
-                    databasePreloader.Object);
+                    databasePreloader.Object,
+                    mobFactoryMock.Object,
+                    npcFactoryMock.Object,
+                    obeliskFactoryMock.Object);
             var map2 = new Map(
                     2,
                     new MapDefinition(),
                     new MapConfiguration() { Size = 100, CellSize = 100 },
                     mapLoggerMock.Object,
-                    databasePreloader.Object);
+                    databasePreloader.Object,
+                    mobFactoryMock.Object,
+                    npcFactoryMock.Object,
+                    obeliskFactoryMock.Object);
 
-            var character = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object, linkingMock.Object, dyeingMock.Object);
-            character.Client = worldClientMock.Object;
+            var character = CreateCharacter();
             map1.LoadPlayer(character);
             Assert.NotNull(map1.GetPlayer(0));
 

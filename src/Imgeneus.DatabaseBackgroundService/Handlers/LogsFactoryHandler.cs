@@ -1,14 +1,12 @@
-﻿using Imgeneus.Core.DependencyInjection;
-using Imgeneus.Logs;
-using Imgeneus.Logs.Entities;
+﻿using Imgeneus.Logs.Entities;
 using System.Threading.Tasks;
 
 namespace Imgeneus.DatabaseBackgroundService.Handlers
 {
-    internal static partial class FactoryHandler
+    internal partial class FactoryHandler
     {
         [ActionHandler(ActionType.LOG_SAVE_CHAT_MESSAGE)]
-        internal static async Task SaveChatMessage(object[] args)
+        internal async Task SaveChatMessage(object[] args)
         {
             int userId = (int)args[0];
             int charId = (int)args[1];
@@ -25,9 +23,8 @@ namespace Imgeneus.DatabaseBackgroundService.Handlers
 
             var chatLog = new ChatLog(userId, charId, charName, messageType, message, targetId, targetName);
 
-            using var database = DependencyContainer.Instance.Resolve<ILogsDatabase>();
-            database.ChatLogs.Add(chatLog);
-            await database.SaveChangesAsync();
+            _logs.ChatLogs.Add(chatLog);
+            await _logs.SaveChangesAsync();
         }
     }
 }

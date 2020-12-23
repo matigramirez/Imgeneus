@@ -1,9 +1,6 @@
-﻿using Imgeneus.Core.DependencyInjection;
-using Imgeneus.Database.Entities;
-using Imgeneus.Database.Preload;
+﻿using Imgeneus.Database.Entities;
 using Imgeneus.World.Game.Blessing;
 using Imgeneus.World.Game.Monster;
-using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,12 +11,12 @@ namespace Imgeneus.World.Game.Zone.Obelisks
     public class Obelisk : IMapMember
     {
         private readonly ObeliskConfiguration _config;
-        private readonly IDatabasePreloader _databasePreloader;
+        private readonly IMobFactory _mobFactory;
 
-        public Obelisk(ObeliskConfiguration config, IDatabasePreloader databasePreloader, Map map)
+        public Obelisk(ObeliskConfiguration config, Map map, IMobFactory mobFactory)
         {
             _config = config;
-            _databasePreloader = databasePreloader;
+            _mobFactory = mobFactory;
             Map = map;
 
             Init();
@@ -57,12 +54,10 @@ namespace Imgeneus.World.Game.Zone.Obelisks
             else if (ObeliskCountry == ObeliskCountry.Dark)
                 mobId = _config.DarkObeliskMobId;
 
-            ObeliskAI = new Mob(DependencyContainer.Instance.Resolve<ILogger<Mob>>(),
-                                _databasePreloader,
-                                mobId,
-                                false,
-                                new MoveArea(PosX, PosX, PosY, PosY, PosZ, PosZ),
-                                Map);
+            ObeliskAI = _mobFactory.CreateMob(mobId,
+                                    false,
+                                    new MoveArea(PosX, PosX, PosY, PosY, PosZ, PosZ),
+                                    Map);
 
             Map.AddMob(ObeliskAI);
             ObeliskAI.OnDead += ObeliskAI_OnDead;
@@ -122,9 +117,7 @@ namespace Imgeneus.World.Game.Zone.Obelisks
             if (ObeliskCountry == ObeliskCountry.Light)
             {
                 // Init new ai.
-                ObeliskAI = new Mob(DependencyContainer.Instance.Resolve<ILogger<Mob>>(),
-                                    _databasePreloader,
-                                    _config.LightObeliskMobId,
+                ObeliskAI = _mobFactory.CreateMob(_config.LightObeliskMobId,
                                     false,
                                     new MoveArea(PosX, PosX, PosY, PosY, PosZ, PosZ),
                                     Map);
@@ -132,9 +125,7 @@ namespace Imgeneus.World.Game.Zone.Obelisks
             else if (ObeliskCountry == ObeliskCountry.Dark)
             {
                 // Init new ai.
-                ObeliskAI = new Mob(DependencyContainer.Instance.Resolve<ILogger<Mob>>(),
-                                    _databasePreloader,
-                                    _config.DarkObeliskMobId,
+                ObeliskAI = _mobFactory.CreateMob(_config.DarkObeliskMobId,
                                     false,
                                     new MoveArea(PosX, PosX, PosY, PosY, PosZ, PosZ),
                                     Map);
@@ -227,9 +218,7 @@ namespace Imgeneus.World.Game.Zone.Obelisks
                 else if (ObeliskCountry == ObeliskCountry.Dark)
                     guardId = mob.DarkMobId;
 
-                var guardAI = new Mob(DependencyContainer.Instance.Resolve<ILogger<Mob>>(),
-                                      _databasePreloader,
-                                      guardId,
+                var guardAI = _mobFactory.CreateMob(guardId,
                                       false,
                                       new MoveArea(mob.PosX, mob.PosX, mob.PosY, mob.PosY, mob.PosZ, mob.PosZ),
                                       Map);

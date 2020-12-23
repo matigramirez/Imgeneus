@@ -10,6 +10,8 @@ using Imgeneus.World.Game.Chat;
 using Imgeneus.World.Game.Duel;
 using Imgeneus.World.Game.Dyeing;
 using Imgeneus.World.Game.Linking;
+using Imgeneus.World.Game.Monster;
+using Imgeneus.World.Game.NPCs;
 using Imgeneus.World.Game.Trade;
 using Imgeneus.World.Game.Zone;
 using Imgeneus.World.Packets;
@@ -30,6 +32,8 @@ namespace Imgeneus.World.Game.Player
         private readonly IChatManager _chatManager;
         private readonly ILinkingManager _linkingManager;
         private readonly IDyeingManager _dyeingManager;
+        private readonly IMobFactory _mobFactory;
+        private readonly INpcFactory _npcFactory;
 
         public Character(ILogger<Character> logger,
                          IGameWorld gameWorld,
@@ -38,7 +42,9 @@ namespace Imgeneus.World.Game.Player
                          IDatabasePreloader databasePreloader,
                          IChatManager chatManager,
                          ILinkingManager linkinManager,
-                         IDyeingManager dyeingManager) : base(databasePreloader)
+                         IDyeingManager dyeingManager,
+                         IMobFactory mobFactory,
+                         INpcFactory npcFactory) : base(databasePreloader)
         {
             _logger = logger;
             _gameWorld = gameWorld;
@@ -47,6 +53,9 @@ namespace Imgeneus.World.Game.Player
             _chatManager = chatManager;
             _linkingManager = linkinManager;
             _dyeingManager = dyeingManager;
+            _mobFactory = mobFactory;
+            _npcFactory = npcFactory;
+
             _packetsHelper = new PacketsHelper();
 
             _castTimer.Elapsed += CastTimer_Elapsed;
@@ -321,9 +330,9 @@ namespace Imgeneus.World.Game.Player
         /// <summary>
         /// Creates character from database information.
         /// </summary>
-        public static Character FromDbCharacter(DbCharacter dbCharacter, ILogger<Character> logger, IGameWorld gameWorld, ICharacterConfiguration characterConfig, IBackgroundTaskQueue taskQueue, IDatabasePreloader databasePreloader, IChatManager chatManager, ILinkingManager linkingManager, IDyeingManager dyeingManager)
+        public static Character FromDbCharacter(DbCharacter dbCharacter, ILogger<Character> logger, IGameWorld gameWorld, ICharacterConfiguration characterConfig, IBackgroundTaskQueue taskQueue, IDatabasePreloader databasePreloader, IChatManager chatManager, ILinkingManager linkingManager, IDyeingManager dyeingManager, IMobFactory mobFactory, INpcFactory npcFactory)
         {
-            var character = new Character(logger, gameWorld, characterConfig, taskQueue, databasePreloader, chatManager, linkingManager, dyeingManager)
+            var character = new Character(logger, gameWorld, characterConfig, taskQueue, databasePreloader, chatManager, linkingManager, dyeingManager, mobFactory, npcFactory)
             {
                 Id = dbCharacter.Id,
                 Name = dbCharacter.Name,
@@ -358,8 +367,6 @@ namespace Imgeneus.World.Game.Player
                 Country = dbCharacter.User.Faction
             };
 
-            ClearOutdatedValues(dbCharacter);
-
             foreach (var skill in dbCharacter.Skills.Select(s => new Skill(s.Skill, s.Number, 0)))
                 character.Skills.Add(skill.Number, skill);
 
@@ -386,9 +393,8 @@ namespace Imgeneus.World.Game.Player
         ///  TODO: maybe it's better to have db procedure for this?
         ///  For now, we will clear old values, when character is loaded.
         /// </summary>
-        private static void ClearOutdatedValues(DbCharacter dbCharacter)
+        public static void ClearOutdatedValues(IDatabase database, DbCharacter dbCharacter)
         {
-            using var database = DependencyContainer.Instance.Resolve<IDatabase>();
             var outdatedBuffs = dbCharacter.ActiveBuffs.Where(b => b.ResetTime < DateTime.UtcNow);
             database.ActiveBuffs.RemoveRange(outdatedBuffs);
 

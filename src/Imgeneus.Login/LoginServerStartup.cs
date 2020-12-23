@@ -1,32 +1,35 @@
-﻿using Imgeneus.Core;
-using Imgeneus.Core.DependencyInjection;
-using Imgeneus.Core.Helpers;
 using Imgeneus.Core.Structures.Configuration;
 using Imgeneus.Database;
-using Imgeneus.Login.InternalServer;
-using Imgeneus.Network;
+using InterServer.Server;
+using InterServer.SignalR;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using NLog;
 using NLog.Extensions.Logging;
-using System;
-using LogLevel = Microsoft.Extensions.Logging.LogLevel;
 
 namespace Imgeneus.Login
 {
-    public sealed class LoginServerStartup : IProgramStartup
+    public class LoginServerStartup
     {
-        private const string LoginConfigFile = "config/login.json";
-
-        /// <inheritdoc />
-        public void Configure()
+        public void ConfigureServices(IServiceCollection services)
         {
-            DependencyContainer.Instance
-                .GetServiceCollection()
-                .RegisterDatabaseServices();
+            // Add options.
+            services.AddOptions<LoginConfiguration>()
+                .Configure<IConfiguration>((settings, configuration) => configuration.GetSection("LoginServer").Bind(settings));
+            services.AddOptions<DatabaseConfiguration>()
+               .Configure<IConfiguration>((settings, configuration) => configuration.GetSection("Database").Bind(settings));
 
-            DependencyContainer.Instance.Register<ILoginServer, LoginServer>(ServiceLifetime.Singleton);
-            DependencyContainer.Instance.Configure(services => services.AddLogging(builder =>
+            services.RegisterDatabaseServices();
+
+            services.AddSignalR();
+
+            services.AddSingleton<IInterServer, ISServer>();
+            services.AddSingleton<ILoginServer, LoginServer>();
+            services.AddSingleton<ILoginManagerFactory, LoginManagerFactory>();
+            services.AddLogging(builder =>
             {
                 builder.AddFilter("Microsoft", LogLevel.Warning);
 #if DEBUG
@@ -39,41 +42,24 @@ namespace Imgeneus.Login
                     CaptureMessageTemplates = true,
                     CaptureMessageProperties = true
                 });
-            }));
-            DependencyContainer.Instance.Configure(services =>
-            {
-                var loginConfiguration = ConfigurationHelper.Load<LoginConfiguration>(LoginConfigFile);
-                services.AddSingleton(loginConfiguration);
             });
-            DependencyContainer.Instance.BuildServiceProvider();
         }
 
-        /// <inheritdoc />
-        public void Run()
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoginServer loginServer)
         {
-            var logger = DependencyContainer.Instance.Resolve<ILogger<LoginServerStartup>>();
-            var server = DependencyContainer.Instance.Resolve<ILoginServer>();
-            try
+            if (env.IsDevelopment())
             {
-                logger.LogInformation("Starting LoginServer...");
-                server.Start();
-
-                Console.ReadLine();
+                app.UseDeveloperExceptionPage();
             }
-            catch (Exception e)
+
+            app.UseRouting();
+
+            app.UseEndpoints(endpoints =>
             {
-                logger.LogCritical(e, $"An unexpected error occured in LoginServer.");
-#if DEBUG
-                Console.ReadLine();
-#endif
-            }
-        }
+                endpoints.MapHub<ISHub>("/inter_server");
+            });
 
-        /// <inheritdoc />
-        public void Dispose()
-        {
-            DependencyContainer.Instance.Dispose();
-            LogManager.Shutdown();
+            loginServer.Start();
         }
     }
 }

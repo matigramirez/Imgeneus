@@ -1,5 +1,4 @@
-﻿using Imgeneus.Core.DependencyInjection;
-using Imgeneus.Database.Entities;
+﻿using Imgeneus.Database.Entities;
 using Imgeneus.Network.Data;
 using Imgeneus.Network.Packets;
 using Imgeneus.Network.Packets.Login;
@@ -35,8 +34,8 @@ namespace Imgeneus.Login.Packets
         public static void SendServerList(LoginClient client)
         {
             using var packet = new Packet(PacketType.SERVER_LIST);
-            var loginServer = DependencyContainer.Instance.Resolve<ILoginServer>();
-            var worlds = loginServer.GetConnectedWorlds();
+
+            var worlds = (client.Server as LoginServer).GetConnectedWorlds();
 
             packet.Write<byte>((byte)worlds.Count());
 

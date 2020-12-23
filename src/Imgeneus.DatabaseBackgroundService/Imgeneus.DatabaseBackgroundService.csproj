@@ -13,5 +13,6 @@
     <ProjectReference Include="..\Imgeneus.Logs\Imgeneus.Logs.csproj" />
     <ProjectReference Include="..\Imgeneus.Core\Imgeneus.Core.csproj" />
     <ProjectReference Include="..\Imgeneus.Database\Imgeneus.Database.csproj" />
+    <ProjectReference Include="..\Imgeneus.Network\Imgeneus.Network.csproj" />
   </ItemGroup>
 </Project>

@@ -1,5 +1,4 @@
 ﻿using Imgeneus.World.Game.Monster;
-using Imgeneus.World.Game.Player;
 using Xunit;
 
 namespace Imgeneus.World.Tests
@@ -11,8 +10,8 @@ namespace Imgeneus.World.Tests
         public void MobCanRespawnAfterDeath()
         {
             var map = testMap;
-            var mob = new Mob(mobLoggerMock.Object, databasePreloader.Object, 1, true, new MoveArea(0, 0, 0, 0, 0, 0), map);
-            var character = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object, linkingMock.Object, dyeingMock.Object);
+            var mob = new Mob(1, true, new MoveArea(0, 0, 0, 0, 0, 0), map, mobLoggerMock.Object, databasePreloader.Object);
+            var character = CreateCharacter();
 
             map.AddMob(mob);
             Assert.NotNull(map.GetMob(mob.CellId, 1));

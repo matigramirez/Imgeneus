@@ -94,30 +94,9 @@ namespace Imgeneus.World.Game.Player
             LearnNewSkill(learnNewSkillsPacket.SkillId, learnNewSkillsPacket.SkillLevel);
         }
 
-        private async Task HandleSkillBarPacket(SkillBarPacket skillBarPacket)
+        private void HandleSkillBarPacket(SkillBarPacket skillBarPacket)
         {
-            using var database = DependencyContainer.Instance.Resolve<IDatabase>();
-
-            // Remove old items.
-            var items = database.QuickItems.Where(item => item.Character.Id == this.Id);
-            database.QuickItems.RemoveRange(items);
-
-            DbQuickSkillBarItem[] newItems = new DbQuickSkillBarItem[skillBarPacket.QuickItems.Length];
-            // Add new items.
-            for (var i = 0; i < skillBarPacket.QuickItems.Length; i++)
-            {
-                var quickItem = skillBarPacket.QuickItems[i];
-                newItems[i] = new DbQuickSkillBarItem()
-                {
-                    Bar = quickItem.Bar,
-                    Slot = quickItem.Slot,
-                    Bag = quickItem.Bag,
-                    Number = quickItem.Number
-                };
-                newItems[i].CharacterId = Id;
-            }
-            await database.QuickItems.AddRangeAsync(newItems);
-            await database.SaveChangesAsync();
+            _taskQueue.Enqueue(ActionType.SAVE_QUICK_BAR, Id, skillBarPacket.QuickItems);
         }
 
         private void HandleAutoAttackOnMob(int targetId)
@@ -498,14 +477,14 @@ namespace Imgeneus.World.Game.Player
             switch (attribute)
             {
                 case CharacterAttributeEnum.Grow:
-                    if(targetPlayer.TrySetMode((Mode) attributeValue))
+                    if (targetPlayer.TrySetMode((Mode)attributeValue))
                         SetAttributeAndSendCommandSuccess();
                     else
                         SendCommandError();
                     break;
 
                 case CharacterAttributeEnum.Level:
-                    if (targetPlayer.TrySetLevel((ushort) attributeValue))
+                    if (targetPlayer.TrySetLevel((ushort)attributeValue))
                         SetAttributeAndSendCommandSuccess();
                     else
                         SendCommandError();
@@ -555,7 +534,7 @@ namespace Imgeneus.World.Game.Player
                     break;
 
                 case CharacterAttributeEnum.Deaths:
-                    targetPlayer.SetDeaths((ushort) attributeValue);
+                    targetPlayer.SetDeaths((ushort)attributeValue);
                     SetAttributeAndSendCommandSuccess();
                     break;
 

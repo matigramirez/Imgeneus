@@ -11,7 +11,7 @@ namespace Imgeneus.World.Game.NPCs
         private readonly ILogger _logger;
         private readonly DbNpc _dbNpc;
 
-        public Npc(ILogger<Npc> logger, DbNpc dbNpc, List<(float X, float Y, float Z, ushort Angle)> moveCoordinates, Map map)
+        public Npc(List<(float X, float Y, float Z, ushort Angle)> moveCoordinates, Map map, ILogger<Npc> logger, DbNpc dbNpc)
         {
             _logger = logger;
             _dbNpc = dbNpc;

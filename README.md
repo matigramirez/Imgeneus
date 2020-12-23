@@ -9,18 +9,57 @@ It's not about playing a game or competing with any services provided by Aeriaga
 This repo also uses the best parts of these repos: [Drakkus/ShaiyaGenesis](https://github.com/Drakkus/ShaiyaGenesis), [Origin](https://github.com/aosyatnik/Origin) and original Imgeneus (removed by creator).
 
 ## Build and run
-1. Build the project.
-2. Find file in `Imgeneus.Database\config\database.json`. Update there to your values.
-3. Setup `Imgeneus.Database` as startup project. Open View -> Other Windows -> Package Manager Console and run `Update-Database`. This should create database and run migrations.
-4. To fulfill the database with example data open `src\Imgeneus.Database\Migrations\sql` folder and run `setup.bat` file (Don't forget to set your password there). This will populate your database with ep6 original data.
-5. Run Imgeneus.Login.exe (or Imgeneus.Login project).
-6. Run Imgeneus.World.exe (or Imgeneus.World project).
+1. Build the solution.
+2. Create 3 files `appsettings.Development.json` in Imgeneus.Login & Imgeneus.World & Imgeneus.Database projects. Override default configs with your development config. E.g. you can provide your password as following:
+```
+{
+  "Database": {
+    "Password": "your_password"
+  }
+}
+```
+These files are added to the ignore list, so you can be sure, that you won't commit any of your credentials.
+3. Run Imgeneus.Login & Imgeneus.World projects. For this right click on solution => Properties => Startup Project => Multiple startup projects => Imgeneus.Login - Start; Imgeneus.World - Start.
+
+## Solution description
+
+### Imgeneus.Core
+Core contains some common helpers, extensions etc.
+
+### Imgeneus.Database
+We are using EF Core for database connections and migrations. You can read more about EF [here](https://docs.microsoft.com/en-us/ef/core/).
+
+### Imgeneus.DatabaseBackgroundService
+Background service, that constantly saves changes to the database. You can read more about background services [here](https://docs.microsoft.com/en-us/aspnet/core/fundamentals/host/hosted-services?view=aspnetcore-5.0&tabs=visual-studio#queued-background-tasks).
+
+### Imgeneus.Network
+Includes packet definition from client to server and cryptography implementation.
+
+### Imgeneus.Logs
+In-game logs, that are saved via SQLite in file.
+
+### Imgeneus.InterServer
+Communication between servers (login and game) is done with the help of SignalR. You can read more about SignalR [here](https://docs.microsoft.com/en-us/aspnet/core/tutorials/signalr).
+
+### Imgeneus.Login
+Login server, that handles all packets in the login screen. Redirects to the selected game server.
+
+### Imgeneus.World
+Game server. As well as login server, it's TCP server running on top of ASP.Net Core. You can read more about ASP.Net [here](https://docs.microsoft.com/en-us/aspnet/core).
+
+### Unit tests
+Any game feature must have a corresponding unit test.
+
+### Database migrations
+* Migrations are done automatically as soon as you run world server.
+* You can also migrate manually vie Package console or .NET cli. You can read more about migrations [here](https://docs.microsoft.com/en-us/ef/core/managing-schemas/migrations/).
+* To fulfill the database with example data open `src\Imgeneus.Database\Migrations\sql` folder and run `setup.bat` file (Don't forget to set your password there). This will populate your database with ep6 original data.
 
 ## Details
 - Language:  `C# 8`
 - Framework:  `.NET Core 3.1`
 - Application type:  `Console`
-- Database type:  `MySQL`
+- Database type:  `MySQL`, Version `8.0.22`
 - Configuration files type:  `JSON`
 - Environment: `Visual Studio 2019`
 
@@ -40,4 +79,4 @@ This repo also uses the best parts of these repos: [Drakkus/ShaiyaGenesis](https
 1. Sometimes Login server can not decrypt the first packet (with user name and password). Try to restart game.exe several times. Might be, that client caches old encryption key (not sure).
 2. Many others, usually marked as `// TODO: <some comment>` throughout the code base.
 
-Find the current state of development here: https://trello.com/b/lHvyQDuH/shaiya-imgeneus
+Find the current state of development [here](https://trello.com/b/lHvyQDuH/shaiya-imgeneus).

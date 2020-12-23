@@ -120,7 +120,7 @@ namespace Imgeneus.World.Tests
         [Description("Check right element factors.")]
         public void ElementTests(Element attackElement, Element defenceElement, double expectedFactor)
         {
-            IKiller character = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object, linkingMock.Object, dyeingMock.Object);
+            IKiller character = CreateCharacter();
             Assert.Equal(expectedFactor, character.GetElementFactor(attackElement, defenceElement));
         }
 
@@ -128,7 +128,7 @@ namespace Imgeneus.World.Tests
         [Description("When debuff, that removes element is used, character element should be none.")]
         public void RemoveElementTest()
         {
-            Character character = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object, linkingMock.Object, dyeingMock.Object);
+            var character = CreateCharacter();
             Assert.Equal(Element.None, character.DefenceElement);
 
             character.Armor = new Item(databasePreloader.Object, WaterArmor.Type, WaterArmor.TypeId);
@@ -142,7 +142,7 @@ namespace Imgeneus.World.Tests
         [Description("Character should be able to change his attack element by using special skill.")]
         public void AttackElementSkillTest()
         {
-            Character character = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object, linkingMock.Object, dyeingMock.Object);
+            var character = CreateCharacter();
             Assert.Equal(Element.None, character.AttackElement);
 
             character.Weapon = new Item(databasePreloader.Object, FireSword.Type, FireSword.TypeId);
@@ -156,7 +156,7 @@ namespace Imgeneus.World.Tests
         [Description("Character should be able to change his defence element by using special skill")]
         public void ElementalProtectionTest()
         {
-            Character character = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object, linkingMock.Object, dyeingMock.Object);
+            var character = CreateCharacter();
             Assert.Equal(Element.None, character.DefenceElement);
 
             character.Armor = new Item(databasePreloader.Object, WaterArmor.Type, WaterArmor.TypeId);
@@ -170,7 +170,7 @@ namespace Imgeneus.World.Tests
         [Description("Element skin buff should be cleared if new skill was used")]
         public void ElementalSkinSkillTest()
         {
-            var character = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object, linkingMock.Object, dyeingMock.Object);
+            var character = CreateCharacter();
             character.AddActiveBuff(new Skill(EarthSkin, 0, 0), null);
             Assert.Equal(Element.Earth1, character.DefenceElement);
             Assert.Single(character.ActiveBuffs);
@@ -184,7 +184,7 @@ namespace Imgeneus.World.Tests
         [Description("Element weapon buff should be cleared if new skill was used")]
         public void ElementalWeaponSkillTest()
         {
-            var character = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object, linkingMock.Object, dyeingMock.Object);
+            var character = CreateCharacter();
             character.AddActiveBuff(new Skill(EarthWeapon, 0, 0), null);
             Assert.Equal(Element.Earth1, character.AttackElement);
             Assert.Single(character.ActiveBuffs);

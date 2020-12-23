@@ -1,16 +1,27 @@
 ﻿using Imgeneus.Core.DependencyInjection;
 using Imgeneus.Database;
 using Imgeneus.Database.Entities;
+using Imgeneus.Logs;
+using Imgeneus.World.Game.Player;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace Imgeneus.DatabaseBackgroundService.Handlers
 {
-    internal static partial class FactoryHandler
+    internal partial class FactoryHandler
     {
+        private readonly IDatabase _database;
+        private readonly ILogsDatabase _logs;
+
+        public FactoryHandler(IDatabase database, ILogsDatabase logs)
+        {
+            _database = database;
+            _logs = logs;
+        }
+
         [ActionHandler(ActionType.SAVE_CHARACTER_MOVE)]
-        internal static async Task SaveCharacterMove(object[] args)
+        internal async Task SaveCharacterMove(object[] args)
         {
             int charId = (int)args[0];
             float x = (float)args[1];
@@ -18,23 +29,22 @@ namespace Imgeneus.DatabaseBackgroundService.Handlers
             float z = (float)args[3];
             ushort angle = (ushort)args[4];
 
-            using var database = DependencyContainer.Instance.Resolve<IDatabase>();
-            var dbCharacter = database.Characters.Find(charId);
+            var dbCharacter = _database.Characters.Find(charId);
             dbCharacter.Angle = angle;
             dbCharacter.PosX = x;
             dbCharacter.PosY = y;
             dbCharacter.PosZ = z;
-            await database.SaveChangesAsync();
+            await _database.SaveChangesAsync();
         }
 
         [ActionHandler(ActionType.SAVE_ITEM_IN_INVENTORY)]
-        internal static async Task SaveItemInInventory(object[] args)
+        internal async Task SaveItemInInventory(object[] args)
         {
             int charId = (int)args[0];
             byte type = (byte)args[1];
             byte typeId = (byte)args[2];
             byte count = (byte)args[3];
-            ushort quality = (ushort) args[4];
+            ushort quality = (ushort)args[4];
             byte bag = (byte)args[5];
             byte slot = (byte)args[6];
             int gem1 = (int)args[7];
@@ -50,7 +60,6 @@ namespace Imgeneus.DatabaseBackgroundService.Handlers
             byte g = (byte)args[17];
             byte b = (byte)args[18];
 
-            using var database = DependencyContainer.Instance.Resolve<IDatabase>();
             var dbItem = new DbCharacterItems()
             {
                 CharacterId = charId,
@@ -74,51 +83,48 @@ namespace Imgeneus.DatabaseBackgroundService.Handlers
                 DyeColorB = b
             };
 
-            database.CharacterItems.Add(dbItem);
-            await database.SaveChangesAsync();
+            _database.CharacterItems.Add(dbItem);
+            await _database.SaveChangesAsync();
         }
 
         [ActionHandler(ActionType.REMOVE_ITEM_FROM_INVENTORY)]
-        internal static async Task RemoveItemInInventory(object[] args)
+        internal async Task RemoveItemInInventory(object[] args)
         {
             int charId = (int)args[0];
             byte bag = (byte)args[1];
             byte slot = (byte)args[2];
 
-            using var database = DependencyContainer.Instance.Resolve<IDatabase>();
-            var itemToRemove = database.CharacterItems.First(itm => itm.CharacterId == charId && itm.Bag == bag && itm.Slot == slot);
-            database.CharacterItems.Remove(itemToRemove);
-            await database.SaveChangesAsync();
+            var itemToRemove = _database.CharacterItems.First(itm => itm.CharacterId == charId && itm.Bag == bag && itm.Slot == slot);
+            _database.CharacterItems.Remove(itemToRemove);
+            await _database.SaveChangesAsync();
         }
 
         [ActionHandler(ActionType.UPDATE_ITEM_COUNT_IN_INVENTORY)]
-        internal static async Task UpdateItemCountInInventory(object[] args)
+        internal async Task UpdateItemCountInInventory(object[] args)
         {
             int charId = (int)args[0];
             byte bag = (byte)args[1];
             byte slot = (byte)args[2];
             byte count = (byte)args[3];
 
-            using var database = DependencyContainer.Instance.Resolve<IDatabase>();
-            var item = database.CharacterItems.First(itm => itm.CharacterId == charId && itm.Bag == bag && itm.Slot == slot);
+            var item = _database.CharacterItems.First(itm => itm.CharacterId == charId && itm.Bag == bag && itm.Slot == slot);
             item.Count = count;
-            await database.SaveChangesAsync();
+            await _database.SaveChangesAsync();
         }
 
         [ActionHandler(ActionType.UPDATE_GOLD)]
-        internal static async Task UpdateCharacterGold(object[] args)
+        internal async Task UpdateCharacterGold(object[] args)
         {
             int charId = (int)args[0];
             uint gold = (uint)args[1];
 
-            using var database = DependencyContainer.Instance.Resolve<IDatabase>();
-            var character = database.Characters.Find(charId);
+            var character = _database.Characters.Find(charId);
             character.Gold = gold;
-            await database.SaveChangesAsync();
+            await _database.SaveChangesAsync();
         }
 
         [ActionHandler(ActionType.SAVE_SKILL)]
-        internal static async Task SaveSkill(object[] args)
+        internal async Task SaveSkill(object[] args)
         {
             int charId = (int)args[0];
             ushort skillId = (ushort)args[1];
@@ -126,8 +132,7 @@ namespace Imgeneus.DatabaseBackgroundService.Handlers
             byte skillNumber = (byte)args[3];
             byte skillPoints = (byte)args[4];
 
-            using var database = DependencyContainer.Instance.Resolve<IDatabase>();
-            var dbSkill = database.Skills.First(s => s.SkillId == skillId && s.SkillLevel == skillLevel);
+            var dbSkill = _database.Skills.First(s => s.SkillId == skillId && s.SkillLevel == skillLevel);
             var skillToAdd = new DbCharacterSkill()
             {
                 CharacterId = charId,
@@ -135,121 +140,114 @@ namespace Imgeneus.DatabaseBackgroundService.Handlers
                 Number = skillNumber
             };
 
-            database.CharacterSkills.Add(skillToAdd);
+            _database.CharacterSkills.Add(skillToAdd);
 
-            var character = database.Characters.Find(charId);
+            var character = _database.Characters.Find(charId);
             character.SkillPoint -= skillPoints;
 
-            await database.SaveChangesAsync();
+            await _database.SaveChangesAsync();
         }
 
         [ActionHandler(ActionType.REMOVE_SKILL)]
-        internal static async Task RemoveSkill(object[] args)
+        internal async Task RemoveSkill(object[] args)
         {
             int charId = (int)args[0];
             ushort skillId = (ushort)args[1];
             byte skillLevel = (byte)args[2];
 
-            using var database = DependencyContainer.Instance.Resolve<IDatabase>();
-            var skillToRemove = database.CharacterSkills.First(s => s.CharacterId == charId && s.Skill.SkillId == skillId && s.Skill.SkillLevel == skillLevel);
-            database.CharacterSkills.Remove(skillToRemove);
-            await database.SaveChangesAsync();
+            var skillToRemove = _database.CharacterSkills.First(s => s.CharacterId == charId && s.Skill.SkillId == skillId && s.Skill.SkillLevel == skillLevel);
+            _database.CharacterSkills.Remove(skillToRemove);
+            await _database.SaveChangesAsync();
         }
 
         [ActionHandler(ActionType.SAVE_BUFF)]
-        internal static async Task SaveBuff(object[] args)
+        internal async Task SaveBuff(object[] args)
         {
             int charId = (int)args[0];
             ushort skillId = (ushort)args[1];
             byte skillLevel = (byte)args[2];
             DateTime resetTime = (DateTime)args[3];
 
-            using var database = DependencyContainer.Instance.Resolve<IDatabase>();
-            var dbSkill = database.Skills.First(s => s.SkillId == skillId && s.SkillLevel == skillLevel);
+            var dbSkill = _database.Skills.First(s => s.SkillId == skillId && s.SkillLevel == skillLevel);
             var dbBuff = new DbCharacterActiveBuff()
             {
                 CharacterId = charId,
                 SkillId = dbSkill.Id,
                 ResetTime = resetTime,
             };
-            database.ActiveBuffs.Add(dbBuff);
-            await database.SaveChangesAsync();
+            _database.ActiveBuffs.Add(dbBuff);
+            await _database.SaveChangesAsync();
         }
 
         [ActionHandler(ActionType.REMOVE_BUFF)]
-        internal static async Task RemoveBuff(object[] args)
+        internal async Task RemoveBuff(object[] args)
         {
             int charId = (int)args[0];
             ushort skillId = (ushort)args[1];
             byte skillLevel = (byte)args[2];
 
-            using var database = DependencyContainer.Instance.Resolve<IDatabase>();
-            var buff = database.ActiveBuffs.First(b => b.CharacterId == charId && b.Skill.SkillId == skillId && b.Skill.SkillLevel == skillLevel);
-            database.ActiveBuffs.Remove(buff);
-            await database.SaveChangesAsync();
+            var buff = _database.ActiveBuffs.First(b => b.CharacterId == charId && b.Skill.SkillId == skillId && b.Skill.SkillLevel == skillLevel);
+            _database.ActiveBuffs.Remove(buff);
+            await _database.SaveChangesAsync();
         }
 
         [ActionHandler(ActionType.REMOVE_BUFF_ALL)]
-        internal static async Task RemoveBuffAll(object[] args)
+        internal async Task RemoveBuffAll(object[] args)
         {
             int charId = (int)args[0];
 
-            using var database = DependencyContainer.Instance.Resolve<IDatabase>();
-            var buffs = database.ActiveBuffs.Where(b => b.CharacterId == charId);
-            database.ActiveBuffs.RemoveRange(buffs);
-            await database.SaveChangesAsync();
+            var buffs = _database.ActiveBuffs.Where(b => b.CharacterId == charId);
+            _database.ActiveBuffs.RemoveRange(buffs);
+            await _database.SaveChangesAsync();
         }
 
         [ActionHandler(ActionType.UPDATE_BUFF_RESET_TIME)]
-        internal static async Task UpdateBuffResetTime(object[] args)
+        internal async Task UpdateBuffResetTime(object[] args)
         {
             int charId = (int)args[0];
             ushort skillId = (ushort)args[1];
             byte skillLevel = (byte)args[2];
             DateTime resetTime = (DateTime)args[3];
 
-            using var database = DependencyContainer.Instance.Resolve<IDatabase>();
-            var dbSkill = database.Skills.First(s => s.SkillId == skillId && s.SkillLevel == skillLevel);
-            var dbBuff = database.ActiveBuffs.First(b => b.CharacterId == charId && b.SkillId == dbSkill.Id);
+            var dbSkill = _database.Skills.First(s => s.SkillId == skillId && s.SkillLevel == skillLevel);
+            var dbBuff = _database.ActiveBuffs.First(b => b.CharacterId == charId && b.SkillId == dbSkill.Id);
             dbBuff.ResetTime = resetTime;
 
-            await database.SaveChangesAsync();
+            await _database.SaveChangesAsync();
         }
 
         [ActionHandler(ActionType.SAVE_CHARACTER_HP_MP_SP)]
-        internal static async Task SaveCharacterHP_MP_SP(object[] args)
+        internal async Task SaveCharacterHP_MP_SP(object[] args)
         {
             int charId = (int)args[0];
             int hp = (int)args[1];
             int mp = (int)args[2];
             int sp = (int)args[3];
 
-            using var database = DependencyContainer.Instance.Resolve<IDatabase>();
-            var dbCharacter = database.Characters.Find(charId);
+            var dbCharacter = _database.Characters.Find(charId);
             dbCharacter.HealthPoints = (ushort)hp;
             dbCharacter.ManaPoints = (ushort)mp;
             dbCharacter.StaminaPoints = (ushort)sp;
-            await database.SaveChangesAsync();
+            await _database.SaveChangesAsync();
         }
 
         [ActionHandler(ActionType.QUEST_START)]
-        internal static async Task StartQuest(object[] args)
+        internal async Task StartQuest(object[] args)
         {
             int charId = (int)args[0];
             ushort questId = (ushort)args[1];
             ushort remainingTime = (ushort)args[2];
 
-            using var database = DependencyContainer.Instance.Resolve<IDatabase>();
             var dbCharacterQuest = new DbCharacterQuest();
             dbCharacterQuest.CharacterId = charId;
             dbCharacterQuest.QuestId = questId;
             dbCharacterQuest.Delay = remainingTime;
-            database.CharacterQuests.Add(dbCharacterQuest);
-            await database.SaveChangesAsync();
+            _database.CharacterQuests.Add(dbCharacterQuest);
+            await _database.SaveChangesAsync();
         }
 
         [ActionHandler(ActionType.QUEST_UPDATE)]
-        internal static async Task UpdateQuest(object[] args)
+        internal async Task UpdateQuest(object[] args)
         {
             int charId = (int)args[0];
             ushort questId = (ushort)args[1];
@@ -260,19 +258,18 @@ namespace Imgeneus.DatabaseBackgroundService.Handlers
             bool isFinished = (bool)args[6];
             bool isSuccessful = (bool)args[7];
 
-            using var database = DependencyContainer.Instance.Resolve<IDatabase>();
-            var dbCharacterQuest = database.CharacterQuests.First(cq => cq.CharacterId == charId && cq.QuestId == questId);
+            var dbCharacterQuest = _database.CharacterQuests.First(cq => cq.CharacterId == charId && cq.QuestId == questId);
             dbCharacterQuest.Delay = remainingTime;
             dbCharacterQuest.Count1 = count1;
             dbCharacterQuest.Count2 = count2;
             dbCharacterQuest.Count3 = count3;
             dbCharacterQuest.Finish = isFinished;
             dbCharacterQuest.Success = isSuccessful;
-            await database.SaveChangesAsync();
+            await _database.SaveChangesAsync();
         }
 
         [ActionHandler(ActionType.SAVE_APPEARANCE)]
-        internal static async Task UpdateAppearance(object[] args)
+        internal async Task UpdateAppearance(object[] args)
         {
             int charId = (int)args[0];
             byte face = (byte)args[1];
@@ -280,8 +277,7 @@ namespace Imgeneus.DatabaseBackgroundService.Handlers
             byte height = (byte)args[3];
             Gender gender = (Gender)args[4];
 
-            using var database = DependencyContainer.Instance.Resolve<IDatabase>();
-            var character = database.Characters.Find(charId);
+            var character = _database.Characters.Find(charId);
             if (character != null)
             {
                 character.Face = face;
@@ -289,51 +285,48 @@ namespace Imgeneus.DatabaseBackgroundService.Handlers
                 character.Height = height;
                 character.Gender = gender;
 
-                await database.SaveChangesAsync();
+                await _database.SaveChangesAsync();
             }
         }
 
         [ActionHandler(ActionType.SAVE_FRIENDS)]
-        internal static async Task SaveFriends(object[] args)
+        internal async Task SaveFriends(object[] args)
         {
             int charId = (int)args[0];
             int friendId = (int)args[1];
 
-            using var database = DependencyContainer.Instance.Resolve<IDatabase>();
-            database.Friends.Add(new DbCharacterFriend(charId, friendId));
-            database.Friends.Add(new DbCharacterFriend(friendId, charId));
+            _database.Friends.Add(new DbCharacterFriend(charId, friendId));
+            _database.Friends.Add(new DbCharacterFriend(friendId, charId));
 
-            await database.SaveChangesAsync();
+            await _database.SaveChangesAsync();
         }
 
         [ActionHandler(ActionType.DELETE_FRIENDS)]
-        internal static async Task DeleteFriends(object[] args)
+        internal async Task DeleteFriends(object[] args)
         {
             int charId = (int)args[0];
             int friendId = (int)args[1];
 
-            using var database = DependencyContainer.Instance.Resolve<IDatabase>();
-            var removeFriends = database.Friends.Where(f => f.CharacterId == charId && f.FriendId == friendId ||
+            var removeFriends = _database.Friends.Where(f => f.CharacterId == charId && f.FriendId == friendId ||
                                                             f.FriendId == charId && f.FriendId == charId);
-            database.Friends.RemoveRange(removeFriends);
-            await database.SaveChangesAsync();
+            _database.Friends.RemoveRange(removeFriends);
+            await _database.SaveChangesAsync();
         }
 
         [ActionHandler(ActionType.SAVE_MAP_ID)]
-        internal static async Task SaveMapId(object[] args)
+        internal async Task SaveMapId(object[] args)
         {
             int charId = (int)args[0];
             ushort mapId = (ushort)args[1];
 
-            using var database = DependencyContainer.Instance.Resolve<IDatabase>();
-            var player = database.Characters.Find(charId);
+            var player = _database.Characters.Find(charId);
             player.Map = mapId;
 
-            await database.SaveChangesAsync();
+            await _database.SaveChangesAsync();
         }
 
         [ActionHandler(ActionType.UPDATE_GEM)]
-        internal static async Task UpdateGem(object[] args)
+        internal async Task UpdateGem(object[] args)
         {
             int characterId = (int)args[0];
             byte bag = (byte)args[1];
@@ -341,8 +334,7 @@ namespace Imgeneus.DatabaseBackgroundService.Handlers
             byte gemSlot = (byte)args[3];
             int gemTypeId = (int)args[4];
 
-            using var database = DependencyContainer.Instance.Resolve<IDatabase>();
-            var item = database.CharacterItems.First(itm => itm.CharacterId == characterId && itm.Bag == bag && itm.Slot == slot);
+            var item = _database.CharacterItems.First(itm => itm.CharacterId == characterId && itm.Bag == bag && itm.Slot == slot);
 
             switch (gemSlot)
             {
@@ -371,11 +363,11 @@ namespace Imgeneus.DatabaseBackgroundService.Handlers
                     break;
             }
 
-            await database.SaveChangesAsync();
+            await _database.SaveChangesAsync();
         }
 
         [ActionHandler(ActionType.CREATE_DYE_COLOR)]
-        internal static async Task CreateDyeColor(object[] args)
+        internal async Task CreateDyeColor(object[] args)
         {
             int characterId = (int)args[0];
             byte bag = (byte)args[1];
@@ -386,8 +378,7 @@ namespace Imgeneus.DatabaseBackgroundService.Handlers
             byte g = (byte)args[6];
             byte b = (byte)args[7];
 
-            using var database = DependencyContainer.Instance.Resolve<IDatabase>();
-            var item = database.CharacterItems.First(itm => itm.CharacterId == characterId && itm.Bag == bag && itm.Slot == slot);
+            var item = _database.CharacterItems.First(itm => itm.CharacterId == characterId && itm.Bag == bag && itm.Slot == slot);
 
             item.HasDyeColor = true;
             item.DyeColorAlpha = alpha;
@@ -396,26 +387,25 @@ namespace Imgeneus.DatabaseBackgroundService.Handlers
             item.DyeColorG = g;
             item.DyeColorB = b;
 
-            await database.SaveChangesAsync();
+            await _database.SaveChangesAsync();
         }
 
         [ActionHandler(ActionType.UPDATE_CRAFT_NAME)]
-        internal static async Task UpdateCraftName(object[] args)
+        internal async Task UpdateCraftName(object[] args)
         {
             int characterId = (int)args[0];
             byte bag = (byte)args[1];
             byte slot = (byte)args[2];
             string craftName = (string)args[3];
 
-            using var database = DependencyContainer.Instance.Resolve<IDatabase>();
-            var item = database.CharacterItems.First(itm => itm.CharacterId == characterId && itm.Bag == bag && itm.Slot == slot);
+            var item = _database.CharacterItems.First(itm => itm.CharacterId == characterId && itm.Bag == bag && itm.Slot == slot);
             item.Craftname = craftName;
 
-            await database.SaveChangesAsync();
+            await _database.SaveChangesAsync();
         }
 
         [ActionHandler(ActionType.UPDATE_STATS)]
-        internal static async Task UpdateStats(object[] args)
+        internal async Task UpdateStats(object[] args)
         {
             int characterId = (int)args[0];
             ushort str = (ushort)args[1];
@@ -426,8 +416,7 @@ namespace Imgeneus.DatabaseBackgroundService.Handlers
             ushort luc = (ushort)args[6];
             ushort statPoints = (ushort)args[7];
 
-            using var database = DependencyContainer.Instance.Resolve<IDatabase>();
-            var character = database.Characters.Find(characterId);
+            var character = _database.Characters.Find(characterId);
 
             character.Strength = str;
             character.Dexterity = dex;
@@ -437,119 +426,139 @@ namespace Imgeneus.DatabaseBackgroundService.Handlers
             character.Luck = luc;
             character.StatPoint = statPoints;
 
-            await database.SaveChangesAsync();
+            await _database.SaveChangesAsync();
         }
 
         [ActionHandler(ActionType.SAVE_IS_RENAME)]
-        internal static async Task SaveRename(object[] args)
+        internal async Task SaveRename(object[] args)
         {
             int characterId = (int)args[0];
             bool isRename = (bool)args[1];
 
-            using var database = DependencyContainer.Instance.Resolve<IDatabase>();
-            var character = database.Characters.Find(characterId);
+            var character = _database.Characters.Find(characterId);
 
             character.IsRename = isRename;
 
-            await database.SaveChangesAsync();
+            await _database.SaveChangesAsync();
         }
 
         [ActionHandler(ActionType.SAVE_CHARACTER_LEVEL)]
-        internal static async Task SaveLevel(object[] args)
+        internal async Task SaveLevel(object[] args)
         {
             int characterId = (int)args[0];
             ushort level = (ushort)args[1];
 
-            using var database = DependencyContainer.Instance.Resolve<IDatabase>();
-            var character = database.Characters.Find(characterId);
+            var character = _database.Characters.Find(characterId);
 
             character.Level = level;
 
-            await database.SaveChangesAsync();
+            await _database.SaveChangesAsync();
         }
 
         [ActionHandler(ActionType.SAVE_CHARACTER_EXPERIENCE)]
-        internal static async Task SaveExperience(object[] args)
+        internal async Task SaveExperience(object[] args)
         {
             int characterId = (int)args[0];
             uint experience = (uint)args[1];
 
-            using var database = DependencyContainer.Instance.Resolve<IDatabase>();
-            var character = database.Characters.Find(characterId);
+            var character = _database.Characters.Find(characterId);
 
             character.Exp = experience;
 
-            await database.SaveChangesAsync();
+            await _database.SaveChangesAsync();
         }
 
         [ActionHandler(ActionType.UPDATE_CHARACTER_MODE)]
-        internal static async Task UpdateMode(object[] args)
+        internal async Task UpdateMode(object[] args)
         {
             int characterId = (int)args[0];
             Mode mode = (Mode)args[1];
 
-            using var database = DependencyContainer.Instance.Resolve<IDatabase>();
-            var character = database.Characters.Find(characterId);
+            var character = _database.Characters.Find(characterId);
 
             character.Mode = mode;
 
-            await database.SaveChangesAsync();
+            await _database.SaveChangesAsync();
         }
 
         [ActionHandler(ActionType.SAVE_CHARACTER_KILLS)]
-        internal static async Task SaveKills(object[] args)
+        internal async Task SaveKills(object[] args)
         {
             int characterId = (int)args[0];
             ushort kills = (ushort)args[1];
 
-            using var database = DependencyContainer.Instance.Resolve<IDatabase>();
-            var character = database.Characters.Find(characterId);
+            var character = _database.Characters.Find(characterId);
 
             character.Kills = kills;
 
-            await database.SaveChangesAsync();
+            await _database.SaveChangesAsync();
         }
 
         [ActionHandler(ActionType.SAVE_CHARACTER_DEATHS)]
-        internal static async Task SaveDeaths(object[] args)
+        internal async Task SaveDeaths(object[] args)
         {
             int characterId = (int)args[0];
             ushort deaths = (ushort)args[1];
 
-            using var database = DependencyContainer.Instance.Resolve<IDatabase>();
-            var character = database.Characters.Find(characterId);
+            var character = _database.Characters.Find(characterId);
 
             character.Deaths = deaths;
 
-            await database.SaveChangesAsync();
+            await _database.SaveChangesAsync();
         }
 
         [ActionHandler(ActionType.SAVE_CHARACTER_STATPOINT)]
-        internal static async Task SaveStatPoint(object[] args)
+        internal async Task SaveStatPoint(object[] args)
         {
             int characterId = (int)args[0];
             ushort statPoint = (ushort)args[1];
 
-            using var database = DependencyContainer.Instance.Resolve<IDatabase>();
-            var character = database.Characters.Find(characterId);
+            var character = _database.Characters.Find(characterId);
 
             character.StatPoint = statPoint;
 
-            await database.SaveChangesAsync();
+            await _database.SaveChangesAsync();
         }
 
         [ActionHandler(ActionType.SAVE_CHARACTER_SKILLPOINT)]
-        internal static async Task SaveSkillPoint(object[] args)
+        internal async Task SaveSkillPoint(object[] args)
         {
             int characterId = (int)args[0];
             ushort skillPoint = (ushort)args[1];
 
-            using var database = DependencyContainer.Instance.Resolve<IDatabase>();
-            var character = database.Characters.Find(characterId);
+            var character = _database.Characters.Find(characterId);
 
             character.SkillPoint = skillPoint;
 
-            await database.SaveChangesAsync();
+            await _database.SaveChangesAsync();
+        }
+
+        [ActionHandler(ActionType.SAVE_QUICK_BAR)]
+        internal async Task SaveQuickBar(object[] args)
+        {
+            int characterId = (int)args[0];
+            QuickSkillBarItem[] quickSkillBarItems = (QuickSkillBarItem[])args[1];
+
+            // Remove old items.
+            var items = _database.QuickItems.Where(item => item.Character.Id == characterId);
+            _database.QuickItems.RemoveRange(items);
+
+            DbQuickSkillBarItem[] newItems = new DbQuickSkillBarItem[quickSkillBarItems.Length];
+            // Add new items.
+            for (var i = 0; i < quickSkillBarItems.Length; i++)
+            {
+                var quickItem = quickSkillBarItems[i];
+                newItems[i] = new DbQuickSkillBarItem()
+                {
+                    Bar = quickItem.Bar,
+                    Slot = quickItem.Slot,
+                    Bag = quickItem.Bag,
+                    Number = quickItem.Number
+                };
+                newItems[i].CharacterId = characterId;
+            }
+            await _database.QuickItems.AddRangeAsync(newItems);
+            await _database.SaveChangesAsync();
         }
     }
 }

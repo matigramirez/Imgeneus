@@ -52,6 +52,9 @@
         SAVE_FRIENDS,
         DELETE_FRIENDS,
 
+        // Quick bar
+        SAVE_QUICK_BAR,
+
         // Map
         SAVE_MAP_ID,
 

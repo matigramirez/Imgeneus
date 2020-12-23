@@ -2,13 +2,15 @@
 using Imgeneus.Network.Data;
 using Imgeneus.Network.Packets;
 using Imgeneus.Network.Packets.Game;
-using Imgeneus.Network.Packets.InternalServer;
 using Imgeneus.Network.Server;
 using Imgeneus.Network.Server.Crypto;
 using Imgeneus.World.Game;
-using Imgeneus.World.InternalServer;
 using Imgeneus.World.SelectionScreen;
+using InterServer.Client;
+using InterServer.Common;
+using InterServer.SignalR;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -20,20 +22,30 @@ namespace Imgeneus.World
         private readonly ILogger<WorldServer> _logger;
         private readonly WorldConfiguration _worldConfiguration;
         private readonly IGameWorld _gameWorld;
+        private readonly IInterServerClient _interClient;
+        private readonly ISelectionScreenFactory _selectionScreenFactory;
 
-        /// <summary>
-        /// Gets the Inter-Server client.
-        /// </summary>
-        public ISClient InterClient { get; private set; }
-
-        public WorldServer(ILogger<WorldServer> logger, WorldConfiguration configuration, IGameWorld gameWorld)
-            : base(new ServerConfiguration(configuration.Host, configuration.Port, configuration.MaximumNumberOfConnections))
+        public WorldServer(ILogger<WorldServer> logger, IOptions<WorldConfiguration> configuration, IGameWorld gameWorld, IInterServerClient interClient, ISelectionScreenFactory selectionScreenFactory)
+            : base(new ServerConfiguration(configuration.Value.Host, configuration.Value.Port, configuration.Value.MaximumNumberOfConnections), logger)
         {
             _logger = logger;
-            _worldConfiguration = configuration;
+            _worldConfiguration = configuration.Value;
             _gameWorld = gameWorld;
-            InterClient = new ISClient(configuration);
-            InterClient.OnPacketArrived += InterClient_OnPacketArrived; ;
+            _interClient = interClient;
+            _selectionScreenFactory = selectionScreenFactory;
+        }
+
+        public override void Start()
+        {
+            try
+            {
+                _logger.LogInformation("Starting WorldServer...");
+                base.Start();
+            }
+            catch (Exception e)
+            {
+                _logger.LogCritical(e, $"An unexpected error occured in WorldServer.");
+            }
         }
 
         protected override void OnStart()
@@ -42,7 +54,16 @@ namespace Imgeneus.World
                 _worldConfiguration.Host,
                 _worldConfiguration.Port,
                 _worldConfiguration.MaximumNumberOfConnections);
-            InterClient.Connect();
+            _interClient.Connect();
+            _interClient.OnConnected += SendWorldInfo;
+        }
+
+        private void SendWorldInfo()
+        {
+            _interClient.OnConnected -= SendWorldInfo;
+            _interClient.Send(new ISMessage(ISMessageType.WORLD_INFO, _worldConfiguration));
+
+            _interClient.OnSessionResponse += LoadSelectionScreen;
         }
 
         /// <inheritdoc />
@@ -68,8 +89,21 @@ namespace Imgeneus.World
         {
             base.OnClientConnected(client);
 
-            SelectionScreenManagers.Add(client.Id, new SelectionScreenManager(client));
             client.OnPacketArrived += Client_OnPacketArrived;
+        }
+
+        private void LoadSelectionScreen(SessionResponse sessionInfo)
+        {
+            clients.TryGetValue(sessionInfo.SessionId, out var worldClient);
+            worldClient.CryptoManager.GenerateAES(sessionInfo.KeyPair.Key, sessionInfo.KeyPair.IV);
+
+            using var sendPacket = new Packet(PacketType.GAME_HANDSHAKE);
+            sendPacket.WriteByte(0); // 0 means there was no error.
+            sendPacket.WriteByte(2); // no idea what is it, it just works.
+            sendPacket.Write(CryptoManager.XorKey);
+            worldClient.SendPacket(sendPacket);
+
+            SelectionScreenManagers[worldClient.Id].SendSelectionScrenInformation(worldClient.UserID);
         }
 
         private async void Client_OnPacketArrived(ServerClient sender, IDeserializedPacket packet)
@@ -79,21 +113,17 @@ namespace Imgeneus.World
                 var handshake = (HandshakePacket)packet;
                 (sender as WorldClient).SetClientUserID(handshake.UserId);
 
-                // As soon as we change id, we should update id in dictionary.
                 clients.TryRemove(sender.Id, out var client);
-                SelectionScreenManagers.Remove(sender.Id, out var manager);
 
                 // Now give client new id.
                 client.Id = handshake.SessionId;
 
                 // Return client back to dictionary.
                 clients.TryAdd(client.Id, client);
-                SelectionScreenManagers.Add(client.Id, manager);
+                SelectionScreenManagers.Add(client.Id, _selectionScreenFactory.CreateSelectionManager(client));
 
                 // Send request to login server and get client key.
-                using var requestPacket = new Packet(PacketType.AES_KEY_REQUEST);
-                requestPacket.Write(sender.Id.ToByteArray());
-                InterClient.SendPacket(requestPacket);
+                await _interClient.Send(new ISMessage(ISMessageType.AES_KEY_REQUEST, sender.Id));
             }
 
             if (packet is PingPacket)
@@ -126,34 +156,12 @@ namespace Imgeneus.World
             }
         }
 
-        private void InterClient_OnPacketArrived(IDeserializedPacket packet)
-        {
-            // Packet, that login server sends, when user tries to connect world server.
-            if (packet is AesKeyResponsePacket)
-            {
-                var aesPacket = (AesKeyResponsePacket)packet;
-
-                clients.TryGetValue(aesPacket.Guid, out var worldClient);
-
-                worldClient.CryptoManager.GenerateAES(aesPacket.Key, aesPacket.IV);
-
-                // Maybe I need to refactor this?
-                using var sendPacket = new Packet(PacketType.GAME_HANDSHAKE);
-                sendPacket.WriteByte(0); // 0 means there was no error.
-                sendPacket.WriteByte(2); // no idea what is it, it just works.
-                sendPacket.Write(CryptoManager.XorKey);
-                worldClient.SendPacket(sendPacket);
-
-                SelectionScreenManagers[worldClient.Id].SendSelectionScrenInformation(worldClient.UserID);
-            }
-        }
-
         #region Screen selection
 
         /// <summary>
         /// Screen selection manager helps with packets, that must be sent right after gameshake.
         /// </summary>
-        private readonly Dictionary<Guid, SelectionScreenManager> SelectionScreenManagers = new Dictionary<Guid, SelectionScreenManager>();
+        private readonly Dictionary<Guid, ISelectionScreenManager> SelectionScreenManagers = new Dictionary<Guid, ISelectionScreenManager>();
 
         #endregion
     }

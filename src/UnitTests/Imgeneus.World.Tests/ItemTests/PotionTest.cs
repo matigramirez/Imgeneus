@@ -1,5 +1,4 @@
-﻿using Imgeneus.Database.Entities;
-using Imgeneus.World.Game.Player;
+﻿using Imgeneus.World.Game.Player;
 using System.ComponentModel;
 using Xunit;
 
@@ -11,13 +10,8 @@ namespace Imgeneus.World.Tests.ItemTests
         [Description("Etain Potion should recover 75% of hp, mp, sp.")]
         public void ComposedStatsAreAdded()
         {
-            var character = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object,
-                databasePreloader.Object, chatMock.Object, linkingMock.Object, dyeingMock.Object)
-            {
-                Class = CharacterProfession.Fighter,
-            };
-            var character2 = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object,
-                databasePreloader.Object, chatMock.Object, linkingMock.Object, dyeingMock.Object);
+            var character = CreateCharacter();
+            var character2 = CreateCharacter();
 
             Assert.Equal(100, character.MaxHP);
             Assert.Equal(200, character.MaxMP);

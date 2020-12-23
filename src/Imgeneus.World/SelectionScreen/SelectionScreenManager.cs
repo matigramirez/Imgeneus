@@ -1,6 +1,4 @@
-﻿using Imgeneus.Core.DependencyInjection;
-using Imgeneus.Database;
-using Imgeneus.Database.Constants;
+﻿using Imgeneus.Database;
 using Imgeneus.Database.Entities;
 using Imgeneus.Network.Data;
 using Imgeneus.Network.Packets;
@@ -16,22 +14,27 @@ using System.Linq;
 
 namespace Imgeneus.World.SelectionScreen
 {
-    /// <summary>
-    /// Manager, that handles selection screen packets.
-    /// </summary>
-    public class SelectionScreenManager : IDisposable
+    /// <inheritdoc/>
+    public class SelectionScreenManager : ISelectionScreenManager
     {
         private readonly WorldClient _client;
+        private readonly IGameWorld _gameWorld;
+        private readonly ICharacterConfiguration _characterConfiguration;
+        private readonly IDatabase _database;
 
-        public SelectionScreenManager(WorldClient client)
+        public SelectionScreenManager(WorldClient client, IGameWorld gameWorld, ICharacterConfiguration characterConfiguration, IDatabase database)
         {
             _client = client;
+            _gameWorld = gameWorld;
+            _characterConfiguration = characterConfiguration;
+            _database = database;
             _client.OnPacketArrived += Client_OnPacketArrived;
         }
 
         public void Dispose()
         {
             _client.OnPacketArrived -= Client_OnPacketArrived;
+            _database.Dispose();
         }
 
         private void Client_OnPacketArrived(ServerClient sender, IDeserializedPacket packet)
@@ -73,8 +76,7 @@ namespace Imgeneus.World.SelectionScreen
         /// </summary>
         public async void SendSelectionScrenInformation(int userId)
         {
-            using var database = DependencyContainer.Instance.Resolve<IDatabase>();
-            DbUser user = await database.Users.Include(u => u.Characters)
+            DbUser user = await _database.Users.Include(u => u.Characters)
                                         .ThenInclude(c => c.Items)
                                         .Where(u => u.Id == userId)
                                         .FirstOrDefaultAsync();
@@ -92,11 +94,10 @@ namespace Imgeneus.World.SelectionScreen
         /// </summary>
         private async void HandleChangeFraction(AccountFractionPacket accountFractionPacket)
         {
-            using var database = DependencyContainer.Instance.Resolve<IDatabase>();
-            DbUser user = database.Users.Find(_client.UserID);
+            DbUser user = _database.Users.Find(_client.UserID);
             user.Faction = accountFractionPacket.Fraction;
 
-            await database.SaveChangesAsync();
+            await _database.SaveChangesAsync();
         }
 
         /// <summary>
@@ -104,8 +105,7 @@ namespace Imgeneus.World.SelectionScreen
         /// </summary>
         private void HandleCheckName(CheckCharacterAvailableNamePacket checkNamePacket)
         {
-            using var database = DependencyContainer.Instance.Resolve<IDatabase>();
-            DbCharacter character = database.Characters.FirstOrDefault(c => c.Name == checkNamePacket.CharacterName);
+            DbCharacter character = _database.Characters.FirstOrDefault(c => c.Name == checkNamePacket.CharacterName);
 
             using var packet = new Packet(PacketType.CHECK_CHARACTER_AVAILABLE_NAME);
             packet.Write(character is null);
@@ -118,10 +118,8 @@ namespace Imgeneus.World.SelectionScreen
         /// </summary>
         private async void HandleCreateCharacter(CreateCharacterPacket createCharacterPacket)
         {
-            using var database = DependencyContainer.Instance.Resolve<IDatabase>();
-
             // Get number of user characters.
-            var characters = database.Characters.Where(x => x.UserId == _client.UserID).ToList();
+            var characters = _database.Characters.Where(x => x.UserId == _client.UserID).ToList();
 
             byte freeSlot = createCharacterPacket.Slot;
             if (characters.Any(c => c.Slot == freeSlot && !c.IsDelete))
@@ -131,8 +129,7 @@ namespace Imgeneus.World.SelectionScreen
                 return;
             }
 
-            var charConfig = DependencyContainer.Instance.Resolve<CharacterConfiguration>();
-            var defaultStats = charConfig.DefaultStats.FirstOrDefault(s => s.Job == createCharacterPacket.Class);
+            var defaultStats = _characterConfiguration.DefaultStats.FirstOrDefault(s => s.Job == createCharacterPacket.Class);
 
             if (defaultStats is null)
             {
@@ -162,8 +159,8 @@ namespace Imgeneus.World.SelectionScreen
                 UserId = _client.UserID
             };
 
-            await database.Characters.AddAsync(character);
-            if (await database.SaveChangesAsync() > 0)
+            await _database.Characters.AddAsync(character);
+            if (await _database.SaveChangesAsync() > 0)
             {
                 characters.Add(character);
                 SendCreatedCharacter(true);
@@ -220,8 +217,7 @@ namespace Imgeneus.World.SelectionScreen
         /// </summary>
         private async void HandleSelectCharacter(SelectCharacterPacket selectCharacterPacket)
         {
-            var gameWorld = DependencyContainer.Instance.Resolve<IGameWorld>();
-            var character = await gameWorld.LoadPlayer(selectCharacterPacket.CharacterId, _client);
+            var character = await _gameWorld.LoadPlayer(selectCharacterPacket.CharacterId, _client);
 
             if (character != null)
             {
@@ -240,15 +236,14 @@ namespace Imgeneus.World.SelectionScreen
         /// </summary>
         private async void HandleDeleteCharacter(DeleteCharacterPacket characterDeletePacket)
         {
-            using var database = DependencyContainer.Instance.Resolve<IDatabase>();
-            var character = await database.Characters.FirstOrDefaultAsync(c => c.UserId == _client.UserID && c.Id == characterDeletePacket.CharacterId);
+            var character = await _database.Characters.FirstOrDefaultAsync(c => c.UserId == _client.UserID && c.Id == characterDeletePacket.CharacterId);
             if (character is null)
                 return;
 
             character.IsDelete = true;
             character.DeleteTime = DateTime.UtcNow;
 
-            await database.SaveChangesAsync();
+            await _database.SaveChangesAsync();
 
             using var packet = new Packet(PacketType.DELETE_CHARACTER);
             packet.WriteByte(0); // ok response
@@ -261,15 +256,14 @@ namespace Imgeneus.World.SelectionScreen
         /// </summary>
         private async void HandleRestoreCharacter(RestoreCharacterPacket restoreCharacterPacket)
         {
-            using var database = DependencyContainer.Instance.Resolve<IDatabase>();
-            var character = await database.Characters.FirstOrDefaultAsync(c => c.UserId == _client.UserID && c.Id == restoreCharacterPacket.CharacterId);
+            var character = await _database.Characters.FirstOrDefaultAsync(c => c.UserId == _client.UserID && c.Id == restoreCharacterPacket.CharacterId);
             if (character is null)
                 return;
 
             character.IsDelete = false;
             character.DeleteTime = null;
 
-            await database.SaveChangesAsync();
+            await _database.SaveChangesAsync();
 
             using var packet = new Packet(PacketType.RESTORE_CHARACTER);
             packet.WriteByte(0); // ok response
@@ -284,13 +278,12 @@ namespace Imgeneus.World.SelectionScreen
         {
             var (characterId, newName) = renameCharacterPacket;
 
-            using var database = DependencyContainer.Instance.Resolve<IDatabase>();
-            var character = await database.Characters.FirstOrDefaultAsync(c => c.UserId == _client.UserID && c.Id == characterId);
+            var character = await _database.Characters.FirstOrDefaultAsync(c => c.UserId == _client.UserID && c.Id == characterId);
             if (character is null)
                 return;
 
             // Check that name isn't in use
-            var characterWithNewName = await database.Characters.FirstOrDefaultAsync(c => c.Name == newName);
+            var characterWithNewName = await _database.Characters.FirstOrDefaultAsync(c => c.Name == newName);
 
             using var packet = new Packet(PacketType.RENAME_CHARACTER);
 
@@ -306,7 +299,7 @@ namespace Imgeneus.World.SelectionScreen
             character.Name = newName;
             character.IsRename = false;
 
-            await database.SaveChangesAsync();
+            await _database.SaveChangesAsync();
 
             packet.WriteByte(1); // ok response
             packet.Write(character.Id);

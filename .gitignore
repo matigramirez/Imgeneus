@@ -341,3 +341,4 @@ healthchecksdb
 /src/Imgeneus.Login/appsettings.Development.json
 /src/Imgeneus.World/appsettings.Development.json
 /src/Imgeneus.Database/appsettings.Development.json
+/src/Imgeneus.World/imgeneus.logs.db

@@ -11,11 +11,7 @@ namespace Imgeneus.World.Tests.CharacterTests
         [Description("Stats Points should be updated when setting a new value.")]
         public void SetStatPointTest()
         {
-            var character = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object, linkingMock.Object, dyeingMock.Object)
-            {
-                Class = CharacterProfession.Mage
-            };
-            character.Client = worldClientMock.Object;
+            var character = CreateCharacter();
 
             character.TrySetMode(Mode.Ultimate);
             character.SetStatPoint(10);
@@ -35,11 +31,7 @@ namespace Imgeneus.World.Tests.CharacterTests
         [Description("Skill Points should be updated when setting a new value.")]
         public void SetSkillPointTest()
         {
-            var character = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object, linkingMock.Object, dyeingMock.Object)
-            {
-                Class = CharacterProfession.Mage
-            };
-            character.Client = worldClientMock.Object;
+            var character = CreateCharacter();
 
             character.TrySetMode(Mode.Ultimate);
             character.SetStatPoint(10);
@@ -59,11 +51,7 @@ namespace Imgeneus.World.Tests.CharacterTests
         [Description("Character Kills should be updated when setting a new value.")]
         public void SetKills()
         {
-            var character = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object, linkingMock.Object, dyeingMock.Object)
-            {
-                Class = CharacterProfession.Fighter
-            };
-            character.Client = worldClientMock.Object;
+            var character = CreateCharacter();
 
             character.TrySetMode(Mode.Ultimate);
 
@@ -83,11 +71,7 @@ namespace Imgeneus.World.Tests.CharacterTests
         [Description("Character Deaths should be updated when setting a new value.")]
         public void SetDeaths()
         {
-            var character = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object, linkingMock.Object, dyeingMock.Object)
-            {
-                Class = CharacterProfession.Fighter
-            };
-            character.Client = worldClientMock.Object;
+            var character = CreateCharacter();
 
             character.TrySetMode(Mode.Ultimate);
 

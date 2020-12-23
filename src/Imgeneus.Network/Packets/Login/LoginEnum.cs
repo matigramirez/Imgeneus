@@ -1,12 +1,5 @@
 ﻿namespace Imgeneus.Network.Packets.Login
 {
-    public enum WorldState : byte
-    {
-        Normal,
-        Lock,
-        Closed
-    }
-
     public enum SelectServer : sbyte
     {
         ServerSaturated = -4,

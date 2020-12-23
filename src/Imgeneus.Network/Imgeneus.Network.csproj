@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Imgeneus.Database\Imgeneus.Database.csproj" />
+    <ProjectReference Include="..\Imgeneus.InterServer\Imgeneus.InterServer.csproj" />
   </ItemGroup>
 
 </Project>

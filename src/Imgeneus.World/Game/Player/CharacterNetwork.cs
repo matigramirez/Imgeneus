@@ -53,7 +53,7 @@ namespace Imgeneus.World.Game.Player
         /// </summary>
         /// <param name="sender">TCP connection with client</param>
         /// <param name="packet">packet, that clients sends</param>
-        private async void Client_OnPacketArrived(ServerClient sender, IDeserializedPacket packet)
+        private void Client_OnPacketArrived(ServerClient sender, IDeserializedPacket packet)
         {
             switch (packet)
             {
@@ -89,7 +89,7 @@ namespace Imgeneus.World.Game.Player
                     break;
 
                 case SkillBarPacket skillBarPacket:
-                    await HandleSkillBarPacket(skillBarPacket);
+                    HandleSkillBarPacket(skillBarPacket);
                     break;
 
                 case AttackStart attackStartPacket:
@@ -330,7 +330,7 @@ namespace Imgeneus.World.Game.Player
                         return;
                     // TODO: calculate move area.
                     var moveArea = new MoveArea(PosX > 10 ? PosX - 10 : 1, PosX + 10, PosY > 10 ? PosY - 10 : PosY, PosY + 10, PosZ > 10 ? PosZ - 10 : 1, PosZ + 10);
-                    var mob = new Mob(DependencyContainer.Instance.Resolve<ILogger<Mob>>(), _databasePreloader, gMCreateMobPacket.MobId, false, moveArea, Map);
+                    var mob = _mobFactory.CreateMob(gMCreateMobPacket.MobId, false, moveArea, Map);
 
                     Map.AddMob(mob);
                     _packetsHelper.SendGmCommandSuccess(Client);
@@ -360,7 +360,7 @@ namespace Imgeneus.World.Game.Player
                         {
                             (PosX, PosY, PosZ, Angle)
                         };
-                        Map.AddNPC(CellId, new Npc(DependencyContainer.Instance.Resolve<ILogger<Npc>>(), dbNpc, moveCoordinates, Map));
+                        Map.AddNPC(CellId, _npcFactory.CreateNpc((gMCreateNpcPacket.Type, gMCreateNpcPacket.TypeId), moveCoordinates, Map));
                         _packetsHelper.SendGmCommandSuccess(Client);
                     }
                     else

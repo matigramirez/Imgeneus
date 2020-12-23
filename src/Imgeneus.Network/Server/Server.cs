@@ -1,5 +1,6 @@
 ﻿using Imgeneus.Network.Common;
 using Imgeneus.Network.Server.Internal;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -17,6 +18,7 @@ namespace Imgeneus.Network.Server
         private readonly ServerReceiver receiver;
         private readonly ServerSender sender;
         private readonly ServerAcceptor<T> acceptor;
+        private readonly ILogger _logger;
 
         /// <inheritdoc />
         public event EventHandler Started;
@@ -40,22 +42,12 @@ namespace Imgeneus.Network.Server
         public bool IsRunning { get; private set; }
 
         /// <summary>
-        /// Crestes a default <see cref="Server{T}"/> instance.
-        /// </summary>
-        /// <param name="host">The server host.</param>
-        /// <param name="port">The server listening port.</param>
-        public Server(string host, int port, int maxNumberOfConnections)
-            : this(new ServerConfiguration(host, port, maxNumberOfConnections))
-        {
-
-        }
-
-        /// <summary>
         /// Creates a new <see cref="Server{T}"/> using <see cref="Server.ServerConfiguration"/>.
         /// </summary>
         /// <param name="configuration">The <see cref="Server.ServerConfiguration"/>.</param>
-        public Server(ServerConfiguration configuration)
+        public Server(ServerConfiguration configuration, ILogger logger)
         {
+            _logger = logger;
             this.ServerConfiguration = configuration ?? throw new ArgumentNullException("Configuration can't be null.");
             this.clients = new ConcurrentDictionary<Guid, T>();
             this.acceptor = new ServerAcceptor<T>(this);
@@ -67,7 +59,7 @@ namespace Imgeneus.Network.Server
         /// <summary>
         /// Start the server.
         /// </summary>
-        public void Start()
+        public virtual void Start()
         {
             if (this.IsRunning)
             {
@@ -224,7 +216,7 @@ namespace Imgeneus.Network.Server
         {
             if (this.receiver.ReadPool.TryPop(out SocketAsyncEventArgs readSocket))
             {
-                var client = Activator.CreateInstance(typeof(T), this, acceptedSocketEvent.AcceptSocket) as T;
+                var client = Activator.CreateInstance(typeof(T), this, acceptedSocketEvent.AcceptSocket, _logger) as T;
 
                 if (this.clients.TryAdd(client.Id, client))
                 {

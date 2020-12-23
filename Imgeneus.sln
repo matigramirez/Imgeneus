@@ -21,7 +21,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Imgeneus.World.Tests", "src
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Imgeneus.DatabaseBackgroundService", "src\Imgeneus.DatabaseBackgroundService\Imgeneus.DatabaseBackgroundService.csproj", "{032CBF1D-1FB6-4E5C-B8A8-C6EE7D5D302E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Imgeneus.Logs", "src\Imgeneus.Logs\Imgeneus.Logs.csproj", "{8E34CA3C-A971-47DD-AE63-619EC76EAF15}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Imgeneus.Logs", "src\Imgeneus.Logs\Imgeneus.Logs.csproj", "{8E34CA3C-A971-47DD-AE63-619EC76EAF15}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Imgeneus.InterServer", "src\Imgeneus.InterServer\Imgeneus.InterServer.csproj", "{229BCD19-C9D4-489E-BBED-E5C2F0F31CC9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -61,6 +63,10 @@ Global
 		{8E34CA3C-A971-47DD-AE63-619EC76EAF15}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8E34CA3C-A971-47DD-AE63-619EC76EAF15}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8E34CA3C-A971-47DD-AE63-619EC76EAF15}.Release|Any CPU.Build.0 = Release|Any CPU
+		{229BCD19-C9D4-489E-BBED-E5C2F0F31CC9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{229BCD19-C9D4-489E-BBED-E5C2F0F31CC9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{229BCD19-C9D4-489E-BBED-E5C2F0F31CC9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{229BCD19-C9D4-489E-BBED-E5C2F0F31CC9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

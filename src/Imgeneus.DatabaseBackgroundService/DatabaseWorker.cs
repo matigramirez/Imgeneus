@@ -1,9 +1,11 @@
+using Imgeneus.Database;
 using Imgeneus.DatabaseBackgroundService.Handlers;
+using Imgeneus.Logs;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
@@ -19,12 +21,14 @@ namespace Imgeneus.DatabaseBackgroundService
     {
         private readonly ILogger<DatabaseWorker> _logger;
         private readonly IBackgroundTaskQueue _taskQueue;
+        private readonly IServiceProvider _provider;
         private static readonly IDictionary<object, Func<object[], Task>> _handlers = new Dictionary<object, Func<object[], Task>>();
 
-        public DatabaseWorker(ILogger<DatabaseWorker> logger, IBackgroundTaskQueue taskQueue)
+        public DatabaseWorker(ILogger<DatabaseWorker> logger, IBackgroundTaskQueue taskQueue, IServiceProvider provider)
         {
             _logger = logger;
             _taskQueue = taskQueue;
+            _provider = provider;
         }
 
         /// <summary>
@@ -41,25 +45,36 @@ namespace Imgeneus.DatabaseBackgroundService
         private void Initialize()
         {
             // Gets all public statis methods with PacketHandlerAttribute
-            IEnumerable<ActionMethodHandler[]> readHandlers = from type in typeof(DatabaseWorker).Assembly.GetTypes()
-                                                              let typeInfo = type.GetTypeInfo()
-                                                              let methodsInfo = typeInfo.GetMethods(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)
-                                                              let handler = (from x in methodsInfo
-                                                                             let attribute = x.GetCustomAttribute<ActionHandlerAttribute>()
-                                                                             where attribute != null
-                                                                             select new ActionMethodHandler(x, attribute)).ToArray()
-                                                              select handler;
-
-            // Save all packet handler in our internal dictionary
-            foreach (ActionMethodHandler[] readHandler in readHandlers)
+            var handlers = new List<ActionMethodHandler>();
+            foreach (var type in typeof(DatabaseWorker).Assembly.GetTypes())
             {
-                foreach (ActionMethodHandler methodHandler in readHandler)
+                var typeInfo = type.GetTypeInfo();
+                var methodsInfo = typeInfo.DeclaredMethods;
+                foreach (var info in methodsInfo)
                 {
-                    var action = methodHandler.Method.CreateDelegate(typeof(Func<object[], Task>)) as Func<object[], Task>;
-
-                    _handlers.Add(methodHandler.Attribute.Type, action);
+                    var attribute = info.GetCustomAttribute<ActionHandlerAttribute>();
+                    if (attribute != null)
+                    {
+                        handlers.Add(new ActionMethodHandler(info, attribute));
+                    }
                 }
             }
+
+            // Save all packet handler in our internal dictionary
+            foreach (ActionMethodHandler methodHandler in handlers)
+            {
+                _handlers.Add(methodHandler.Attribute.Type,
+                    async (object[] args) =>
+                    {
+                        using var scope = _provider.CreateScope();
+                        var database = scope.ServiceProvider.GetRequiredService<IDatabase>();
+                        var logsDatabase = scope.ServiceProvider.GetRequiredService<ILogsDatabase>();
+
+                        var action = methodHandler.Method.CreateDelegate(typeof(Func<object[], Task>), Activator.CreateInstance(methodHandler.Method.DeclaringType, database, logsDatabase)) as Func<object[], Task>;
+                        await action(args);
+                    });
+            }
+
         }
 
         /// <summary>

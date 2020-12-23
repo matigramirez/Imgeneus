@@ -7,9 +7,11 @@ using Imgeneus.World.Game.Chat;
 using Imgeneus.World.Game.Dyeing;
 using Imgeneus.World.Game.Linking;
 using Imgeneus.World.Game.Monster;
+using Imgeneus.World.Game.NPCs;
 using Imgeneus.World.Game.Player;
 using Imgeneus.World.Game.Zone;
 using Imgeneus.World.Game.Zone.MapConfig;
+using Imgeneus.World.Game.Zone.Obelisks;
 using Microsoft.Extensions.Logging;
 using Moq;
 using System.Collections.Generic;
@@ -29,13 +31,30 @@ namespace Imgeneus.World.Tests
         protected Mock<ILinkingManager> linkingMock = new Mock<ILinkingManager>();
         protected Mock<IDyeingManager> dyeingMock = new Mock<IDyeingManager>();
         protected Mock<IWorldClient> worldClientMock = new Mock<IWorldClient>();
+        protected Mock<IMobFactory> mobFactoryMock = new Mock<IMobFactory>();
+        protected Mock<INpcFactory> npcFactoryMock = new Mock<INpcFactory>();
+        protected Mock<IObeliskFactory> obeliskFactoryMock = new Mock<IObeliskFactory>();
 
         protected Map testMap => new Map(
                     Map.TEST_MAP_ID,
                     new MapDefinition(),
                     new MapConfiguration() { Size = 100, CellSize = 100 },
                     mapLoggerMock.Object,
-                    databasePreloader.Object);
+                    databasePreloader.Object,
+                    mobFactoryMock.Object,
+                    npcFactoryMock.Object,
+                    obeliskFactoryMock.Object);
+
+        protected Character CreateCharacter(Map map = null)
+        {
+            var character = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object, linkingMock.Object, dyeingMock.Object, mobFactoryMock.Object, npcFactoryMock.Object);
+            character.Client = worldClientMock.Object;
+
+            if (map != null)
+                character.Map = map;
+
+            return character;
+        }
 
         public BaseTest()
         {

@@ -19,7 +19,7 @@ namespace Imgeneus.World.Tests.MapTests
                 CellSize = 100
             };
 
-            var map = new Map(Map.TEST_MAP_ID, new MapDefinition(), mapConfig, mapLoggerMock.Object, databasePreloader.Object);
+            var map = new Map(Map.TEST_MAP_ID, new MapDefinition(), mapConfig, mapLoggerMock.Object, databasePreloader.Object, mobFactoryMock.Object, npcFactoryMock.Object, obeliskFactoryMock.Object);
             Assert.Equal(20, map.Rows);
             Assert.Equal(20, map.Columns);
         }
@@ -34,7 +34,7 @@ namespace Imgeneus.World.Tests.MapTests
                 CellSize = 100
             };
 
-            var map = new Map(Map.TEST_MAP_ID, new MapDefinition(), mapConfig, mapLoggerMock.Object, databasePreloader.Object);
+            var map = new Map(Map.TEST_MAP_ID, new MapDefinition(), mapConfig, mapLoggerMock.Object, databasePreloader.Object, mobFactoryMock.Object, npcFactoryMock.Object, obeliskFactoryMock.Object);
             Assert.Equal(21, map.Rows);
             Assert.Equal(21, map.Columns);
         }
@@ -48,7 +48,7 @@ namespace Imgeneus.World.Tests.MapTests
                 Size = 100,
                 CellSize = 100
             };
-            var map = new Map(Map.TEST_MAP_ID, new MapDefinition(), mapConfig, mapLoggerMock.Object, databasePreloader.Object);
+            var map = new Map(Map.TEST_MAP_ID, new MapDefinition(), mapConfig, mapLoggerMock.Object, databasePreloader.Object, mobFactoryMock.Object, npcFactoryMock.Object, obeliskFactoryMock.Object);
             Assert.Single(map.Cells);
         }
 
@@ -75,8 +75,8 @@ namespace Imgeneus.World.Tests.MapTests
                 Size = 1002,
                 CellSize = 100
             };
-            var map = new Map(Map.TEST_MAP_ID, new MapDefinition(), mapConfig, mapLoggerMock.Object, databasePreloader.Object);
-            var character = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object, linkingMock.Object, dyeingMock.Object);
+            var map = new Map(Map.TEST_MAP_ID, new MapDefinition(), mapConfig, mapLoggerMock.Object, databasePreloader.Object, mobFactoryMock.Object, npcFactoryMock.Object, obeliskFactoryMock.Object);
+            var character = CreateCharacter();
             character.PosX = x;
             character.PosZ = z;
 
@@ -109,7 +109,7 @@ namespace Imgeneus.World.Tests.MapTests
                 CellSize = 1
             };
 
-            var map = new Map(Map.TEST_MAP_ID, new MapDefinition(), mapConfig, mapLoggerMock.Object, databasePreloader.Object);
+            var map = new Map(Map.TEST_MAP_ID, new MapDefinition(), mapConfig, mapLoggerMock.Object, databasePreloader.Object, mobFactoryMock.Object, npcFactoryMock.Object, obeliskFactoryMock.Object);
             Assert.Equal(expectedNeigbors.OrderBy(i => i), map.GetNeighborCellIndexes(cellId).ToArray());
         }
     }

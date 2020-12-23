@@ -1,6 +1,4 @@
-﻿using Imgeneus.Network.Packets.Login;
-
-namespace Imgeneus.Network.InternalServer
+﻿namespace InterServer.Client
 {
     public sealed class WorldServerInfo
     {
@@ -41,12 +39,12 @@ namespace Imgeneus.Network.InternalServer
 
         public WorldServerInfo(byte id, byte[] host, string name, int buildVersion, ushort maxAllowedUsers)
         {
-            this.Id = id;
-            this.Host = host;
-            this.Name = name;
-            this.BuildVersion = buildVersion;
-            this.MaxAllowedUsers = maxAllowedUsers;
-            this.WorldStatus = WorldState.Normal;
+            Id = id;
+            Host = host;
+            Name = name;
+            BuildVersion = buildVersion;
+            MaxAllowedUsers = maxAllowedUsers;
+            WorldStatus = WorldState.Normal;
         }
     }
 }

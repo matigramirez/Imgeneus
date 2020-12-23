@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using Imgeneus.Core.DependencyInjection;
 using Imgeneus.Database;
 using Imgeneus.Database.Entities;
 using Imgeneus.Login.Packets;
@@ -17,16 +16,21 @@ namespace Imgeneus.Login
     public class LoginManager : IDisposable
     {
         private readonly LoginClient _client;
+        private readonly ILoginServer _server;
+        private readonly IDatabase _database;
 
-        public LoginManager(LoginClient client)
+        public LoginManager(LoginClient client, ILoginServer server, IDatabase database)
         {
             _client = client;
+            _server = server;
+            _database = database;
             _client.OnPacketArrived += Client_OnPacketArrived;
         }
 
         public void Dispose()
         {
             _client.OnPacketArrived -= Client_OnPacketArrived;
+            _database.Dispose();
         }
 
         private void Client_OnPacketArrived(ServerClient sender, IDeserializedPacket packet)
@@ -52,20 +56,17 @@ namespace Imgeneus.Login
                 return;
             }
 
-            var loginServer = DependencyContainer.Instance.Resolve<ILoginServer>();
+            DbUser dbUser = _database.Users.First(x => x.Username.Equals(authenticationPacket.Username, StringComparison.OrdinalIgnoreCase));
 
-            using var database = DependencyContainer.Instance.Resolve<IDatabase>();
-            DbUser dbUser = database.Users.First(x => x.Username.Equals(authenticationPacket.Username, StringComparison.OrdinalIgnoreCase));
-
-            if (loginServer.IsClientConnected(dbUser.Id))
+            if (_server.IsClientConnected(dbUser.Id))
             {
                 _client.Disconnect();
                 return;
             }
 
             dbUser.LastConnectionTime = DateTime.Now;
-            database.Users.Update(dbUser);
-            database.SaveChanges();
+            _database.Users.Update(dbUser);
+            _database.SaveChanges();
 
             _client.SetClientUserID(dbUser.Id);
 
@@ -74,8 +75,7 @@ namespace Imgeneus.Login
 
         private void HandleSelectServer(SelectServerPacket selectServerPacket)
         {
-            var server = DependencyContainer.Instance.Resolve<ILoginServer>();
-            var worldInfo = server.GetWorldByID(selectServerPacket.WorldId);
+            var worldInfo = _server.GetWorldByID(selectServerPacket.WorldId);
 
             if (worldInfo == null)
             {
@@ -100,11 +100,9 @@ namespace Imgeneus.Login
             LoginPacketFactory.SelectServerSuccess(_client, worldInfo.Host);
         }
 
-        public static AuthenticationResult Authentication(string username, string password)
+        public AuthenticationResult Authentication(string username, string password)
         {
-            using var database = DependencyContainer.Instance.Resolve<IDatabase>();
-
-            DbUser dbUser = database.Users.FirstOrDefault(x => x.Username.Equals(username, StringComparison.OrdinalIgnoreCase));
+            DbUser dbUser = _database.Users.FirstOrDefault(x => x.Username.Equals(username, StringComparison.OrdinalIgnoreCase));
 
             if (dbUser == null)
             {

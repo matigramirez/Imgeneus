@@ -13,12 +13,12 @@ namespace Imgeneus.World.Game.Monster
         private readonly ILogger<Mob> _logger;
         private readonly DbMob _dbMob;
 
-        public Mob(ILogger<Mob> logger,
-                   IDatabasePreloader databasePreloader,
-                   ushort mobId,
+        public Mob(ushort mobId,
                    bool shouldRebirth,
                    MoveArea moveArea,
-                   Map map) : base(databasePreloader)
+                   Map map,
+                   ILogger<Mob> logger,
+                   IDatabasePreloader databasePreloader) : base(databasePreloader)
         {
             _logger = logger;
             _dbMob = databasePreloader.Mobs[mobId];
@@ -120,7 +120,7 @@ namespace Imgeneus.World.Game.Monster
         /// </summary>
         public Mob Clone()
         {
-            return new Mob(_logger, _databasePreloader, MobId, ShouldRebirth, MoveArea, Map);
+            return new Mob(MobId, ShouldRebirth, MoveArea, Map, _logger, _databasePreloader);
         }
 
         public override void Dispose()

@@ -11,10 +11,7 @@ namespace Imgeneus.World.Tests.CharacterTests
         [Description("Dispel should clear debuffs.")]
         public void DispelTest()
         {
-            var character = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object, linkingMock.Object, dyeingMock.Object)
-            {
-                Class = CharacterProfession.Priest
-            };
+            var character = CreateCharacter();
 
             character.AddActiveBuff(new Skill(Panic_Lvl1, 0, 0), null);
             Assert.Single(character.ActiveBuffs);

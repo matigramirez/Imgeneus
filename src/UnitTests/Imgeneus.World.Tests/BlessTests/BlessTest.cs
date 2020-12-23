@@ -1,6 +1,5 @@
 ﻿using Imgeneus.Database.Entities;
 using Imgeneus.World.Game.Blessing;
-using Imgeneus.World.Game.Player;
 using System.ComponentModel;
 using Xunit;
 
@@ -12,8 +11,7 @@ namespace Imgeneus.World.Tests.BlessTests
         [Description("Amount of bless can change max HP, SP and MP.")]
         public void Bless_Max_HP_SP_MP()
         {
-            var character = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object, linkingMock.Object, dyeingMock.Object);
-            character.Client = worldClientMock.Object;
+            var character = CreateCharacter();
 
             Assert.Equal(100, character.MaxHP);
             Assert.Equal(200, character.MaxMP);

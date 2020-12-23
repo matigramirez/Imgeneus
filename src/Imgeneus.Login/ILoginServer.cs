@@ -1,5 +1,5 @@
-﻿using Imgeneus.Network.InternalServer;
-using Imgeneus.Network.Server;
+﻿using Imgeneus.Network.Server;
+using InterServer.Client;
 using System.Collections.Generic;
 
 namespace Imgeneus.Login

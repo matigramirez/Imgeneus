@@ -20,16 +20,9 @@ namespace Imgeneus.World.Tests.PartyTests
         [Description("First player, that connected party is its' leader.")]
         public void Party_Leader()
         {
-            var character1 = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object, linkingMock.Object, dyeingMock.Object)
-            {
-                Map = _map
-            };
-            character1.Client = worldClientMock.Object;
-            var character2 = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object, linkingMock.Object, dyeingMock.Object)
-            {
-                Map = _map
-            };
-            character2.Client = worldClientMock.Object;
+            var character1 = CreateCharacter(_map);
+            var character2 = CreateCharacter(_map);
+
             Assert.False(character1.IsPartyLead);
 
             var party = new Party();
@@ -44,16 +37,8 @@ namespace Imgeneus.World.Tests.PartyTests
         [Description("Party drop should be for each player, 1 by 1.")]
         public void Party_DropCalculation()
         {
-            var character1 = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object, linkingMock.Object, dyeingMock.Object)
-            {
-                Map = _map
-            };
-            character1.Client = worldClientMock.Object;
-            var character2 = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object, linkingMock.Object, dyeingMock.Object)
-            {
-                Map = _map
-            };
-            character2.Client = worldClientMock.Object;
+            var character1 = CreateCharacter(_map);
+            var character2 = CreateCharacter(_map);
 
             var party = new Party();
             character1.SetParty(party);

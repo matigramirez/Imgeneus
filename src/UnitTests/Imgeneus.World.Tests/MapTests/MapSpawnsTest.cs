@@ -49,7 +49,7 @@ namespace Imgeneus.World.Tests.MapTests
                 }
             };
 
-            var map = new Map(Map.TEST_MAP_ID, new MapDefinition(), mapConfig, mapLoggerMock.Object, databasePreloader.Object);
+            var map = new Map(Map.TEST_MAP_ID, new MapDefinition(), mapConfig, mapLoggerMock.Object, databasePreloader.Object, mobFactoryMock.Object, npcFactoryMock.Object, obeliskFactoryMock.Object);
             var spawn = map.GetNearestSpawn(x, 0, z, fraction);
             Assert.True(spawn.X >= expectedMinX && spawn.X <= expectedMaxX);
             Assert.True(spawn.Z >= expectedMinZ && spawn.Z <= expectedMaxZ);

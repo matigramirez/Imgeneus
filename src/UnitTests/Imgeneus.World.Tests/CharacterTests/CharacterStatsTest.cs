@@ -12,11 +12,7 @@ namespace Imgeneus.World.Tests.CharacterTests
         [Description("It should be possible to reset stats.")]
         public void ResetStatTest()
         {
-            var character = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object, linkingMock.Object, dyeingMock.Object)
-            {
-                Class = CharacterProfession.Fighter
-            };
-            character.Client = worldClientMock.Object;
+            var character = CreateCharacter();
 
             character.TrySetMode(Mode.Ultimate);
 
@@ -37,11 +33,7 @@ namespace Imgeneus.World.Tests.CharacterTests
         [Description("Stats should be updated when setting a new value.")]
         public void SetStatTest()
         {
-            var character = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object, linkingMock.Object, dyeingMock.Object)
-            {
-                Class = CharacterProfession.Mage
-            };
-            character.Client = worldClientMock.Object;
+            var character = CreateCharacter();
 
             character.TrySetMode(Mode.Ultimate);
             character.SetStat(CharacterAttributeEnum.Strength, 1);

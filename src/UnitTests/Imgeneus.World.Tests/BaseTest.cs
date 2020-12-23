@@ -406,7 +406,8 @@ namespace Imgeneus.World.Tests
             TypeId = 1,
             ConstHP = 75,
             ConstMP = 75,
-            ConstSP = 75
+            ConstSP = 75,
+            Special = SpecialEffect.PercentHealingPotion
         };
 
         #endregion

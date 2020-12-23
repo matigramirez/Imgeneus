@@ -845,9 +845,12 @@ namespace Imgeneus.World.Game.Player
         {
             switch (item.Special)
             {
-
                 case SpecialEffect.HealingPotion:
                     UseHealingPotion(item);
+                    break;
+
+                case SpecialEffect.PercentHealingPotion:
+                    UsePercentHealingPotion(item);
                     break;
 
                 case SpecialEffect.HypnosisCure:
@@ -955,11 +958,6 @@ namespace Imgeneus.World.Game.Player
                     // Effect is handled in dyeing manager.
                     break;
 
-                case SpecialEffect.None:
-                    // Some herbs do not have HealingPotion effect, but still they heal.
-                    UseHealingPotion(item);
-                    break;
-
                 case SpecialEffect.NameChange:
                     UseNameChangeStone();
                     break;
@@ -1009,22 +1007,18 @@ namespace Imgeneus.World.Game.Player
         /// </summary>
         private void UseHealingPotion(Item potion)
         {
-            var hp = 0;
-            var mp = 0;
-            var sp = 0;
-            if ((potion.Type == 100 && (potion.TypeId == 1 || potion.TypeId == 91 || potion.TypeId == 123)) || // Etain potion
-                (potion.Type == 44 && (potion.TypeId == 173 || potion.TypeId == 178))) // Regnum Potion
-            {
-                hp = Convert.ToInt32(MaxHP * potion.HP / 100);
-                mp = Convert.ToInt32(MaxMP * potion.MP / 100);
-                sp = Convert.ToInt32(MaxSP * potion.SP / 100);
-            }
-            else if (potion.HP > 0 || potion.MP > 0 || potion.SP > 0)
-            {
-                hp = potion.HP;
-                mp = potion.MP;
-                sp = potion.SP;
-            }
+            if (potion.HP > 0 || potion.MP > 0 || potion.SP > 0)
+                Recover(potion.HP, potion.MP, potion.SP);
+        }
+
+        /// <summary>
+        /// Uses potion, that restores % of hp,sp,mp.
+        /// </summary>
+        private void UsePercentHealingPotion(Item potion)
+        {
+            var hp = Convert.ToInt32(MaxHP * potion.HP / 100);
+            var mp = Convert.ToInt32(MaxMP * potion.MP / 100);
+            var sp = Convert.ToInt32(MaxSP * potion.SP / 100);
 
             Recover(hp, mp, sp);
         }

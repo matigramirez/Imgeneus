@@ -1,11 +1,9 @@
-﻿using Imgeneus.Core.DependencyInjection;
-using Imgeneus.Database.Constants;
+﻿using Imgeneus.Database.Constants;
 using Imgeneus.Network.Data;
 using Imgeneus.Network.Packets;
 using Imgeneus.Network.Packets.Game;
 using Imgeneus.Network.Server;
 using Imgeneus.World.Game.Monster;
-using Imgeneus.World.Game.NPCs;
 using Imgeneus.World.Game.Zone;
 using Microsoft.Extensions.Logging;
 using System;
@@ -392,6 +390,49 @@ namespace Imgeneus.World.Game.Player
                     if (!IsAdmin)
                         return;
                     HandleGMSetAttributePacket(gmSetAttributePacket);
+                    break;
+
+                case GMNoticeWorldPacket gmNoticeWorldPacket:
+                    if (!IsAdmin)
+                        return;
+
+                    _noticeManager.SendWorldNotice(gmNoticeWorldPacket.Message, gmNoticeWorldPacket.TimeInterval);
+                    _packetsHelper.SendGmCommandSuccess(Client);
+                    break;
+
+                case GMNoticePlayerPacket gmNoticePlayerPacket:
+                    if (!IsAdmin)
+                        return;
+
+                    if(_noticeManager.TrySendPlayerNotice(gmNoticePlayerPacket.Message, gmNoticePlayerPacket.TargetName,
+                        gmNoticePlayerPacket.TimeInterval))
+                        _packetsHelper.SendGmCommandSuccess(Client);
+                    else
+                        _packetsHelper.SendGmCommandError(Client, PacketType.NOTICE_PLAYER);
+                    break;
+
+                case GMNoticeFactionPacket gmNoticeFactionPacket:
+                    if (!IsAdmin)
+                        return;
+
+                    _noticeManager.SendFactionNotice(gmNoticeFactionPacket.Message, this.Country, gmNoticeFactionPacket.TimeInterval);
+                    _packetsHelper.SendGmCommandSuccess(Client);
+                    break;
+
+                case GMNoticeMapPacket gmNoticeMapPacket:
+                    if (!IsAdmin)
+                        return;
+
+                    _noticeManager.SendMapNotice(gmNoticeMapPacket.Message, this.MapId, gmNoticeMapPacket.TimeInterval);
+                    _packetsHelper.SendGmCommandSuccess(Client);
+                    break;
+
+                case GMNoticeAdminsPacket gmNoticeAdminsPacket:
+                    if (!IsAdmin)
+                        return;
+
+                    _noticeManager.SendAdminNotice(gmNoticeAdminsPacket.Message);
+                    _packetsHelper.SendGmCommandSuccess(Client);
                     break;
             }
         }

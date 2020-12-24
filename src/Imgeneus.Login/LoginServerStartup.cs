@@ -7,8 +7,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using NLog.Extensions.Logging;
 
 namespace Imgeneus.Login
 {
@@ -29,20 +27,6 @@ namespace Imgeneus.Login
             services.AddSingleton<IInterServer, ISServer>();
             services.AddSingleton<ILoginServer, LoginServer>();
             services.AddSingleton<ILoginManagerFactory, LoginManagerFactory>();
-            services.AddLogging(builder =>
-            {
-                builder.AddFilter("Microsoft", LogLevel.Warning);
-#if DEBUG
-                builder.SetMinimumLevel(LogLevel.Trace);
-#else
-                builder.SetMinimumLevel(LogLevel.Information);
-#endif
-                builder.AddNLog(new NLogProviderOptions
-                {
-                    CaptureMessageTemplates = true,
-                    CaptureMessageProperties = true
-                });
-            });
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoginServer loginServer)

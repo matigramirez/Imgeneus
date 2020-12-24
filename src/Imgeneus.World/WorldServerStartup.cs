@@ -23,8 +23,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using NLog.Extensions.Logging;
-using LogLevel = Microsoft.Extensions.Logging.LogLevel;
 
 namespace Imgeneus.World
 {
@@ -69,21 +67,6 @@ namespace Imgeneus.World
             services.AddTransient<ILogsDatabase, LogsDbContext>();
             services.AddTransient<ILinkingManager, LinkingManager>();
             services.AddTransient<IDyeingManager, DyeingManager>();
-
-            services.AddLogging(builder =>
-            {
-                builder.AddFilter("Microsoft", LogLevel.Warning);
-#if DEBUG
-                builder.SetMinimumLevel(LogLevel.Trace);
-#else
-                builder.SetMinimumLevel(LogLevel.Information);
-#endif
-                builder.AddNLog(new NLogProviderOptions
-                {
-                    CaptureMessageTemplates = true,
-                    CaptureMessageProperties = true
-                });
-            });
 
             services.AddSingleton<IBackgroundTaskQueue, BackgroundTaskQueue>();
             services.AddHostedService<DatabaseWorker>();

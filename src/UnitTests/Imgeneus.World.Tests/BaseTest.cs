@@ -15,6 +15,7 @@ using Imgeneus.World.Game.Zone.Obelisks;
 using Microsoft.Extensions.Logging;
 using Moq;
 using System.Collections.Generic;
+using Imgeneus.World.Game.Notice;
 
 namespace Imgeneus.World.Tests
 {
@@ -34,6 +35,7 @@ namespace Imgeneus.World.Tests
         protected Mock<IMobFactory> mobFactoryMock = new Mock<IMobFactory>();
         protected Mock<INpcFactory> npcFactoryMock = new Mock<INpcFactory>();
         protected Mock<IObeliskFactory> obeliskFactoryMock = new Mock<IObeliskFactory>();
+        protected Mock<INoticeManager> noticeManagerMock = new Mock<INoticeManager>();
 
         protected Map testMap => new Map(
                     Map.TEST_MAP_ID,
@@ -47,7 +49,7 @@ namespace Imgeneus.World.Tests
 
         protected Character CreateCharacter(Map map = null)
         {
-            var character = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object, linkingMock.Object, dyeingMock.Object, mobFactoryMock.Object, npcFactoryMock.Object);
+            var character = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object, linkingMock.Object, dyeingMock.Object, mobFactoryMock.Object, npcFactoryMock.Object, noticeManagerMock.Object);
             character.Client = worldClientMock.Object;
 
             if (map != null)

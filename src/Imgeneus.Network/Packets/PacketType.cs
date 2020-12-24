@@ -30,7 +30,7 @@
         SERVER_LIST = 0xA201,
         SELECT_SERVER = 0xA202,
 
-        // Game 
+        // Game
         GAME_HANDSHAKE = 0xA301,
         PING = 0xA303,
         CASH_POINT = 0x2605, // 9733
@@ -190,6 +190,13 @@
         CHAT_PARTY = 0x1105, // 4357
         CHAT_ANOUNCEMENT = 0x1108, // 4360
         CHAT_MAP = 0x1111, // 4369
+
+        // Notice
+        NOTICE_WORLD = 0xF90B, // 63755
+        NOTICE_FACTION = 0xF907, // 63751
+        NOTICE_PLAYER = 0xF908, // 63752
+        NOTICE_MAP = 0xF909, // 63753
+        NOTICE_ADMINS = 0xF906, // 63750
 
         // Duel
         DUEL_REQUEST = 0x2401, // 9217

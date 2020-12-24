@@ -194,7 +194,12 @@ namespace Imgeneus.World
             { PacketType.ITEM_COMPOSE_ABSOLUTE_SELECT, (s) => new ItemComposeAbsoluteSelectPacket(s) },
             { PacketType.UPDATE_STATS, (s) => new UpdateStatsPacket(s) },
             { PacketType.CHARACTER_ATTRIBUTE_SET, (s) => new GMSetAttributePacket(s) },
-            { PacketType.RENAME_CHARACTER, (s) => new RenameCharacterPacket(s) }
+            { PacketType.RENAME_CHARACTER, (s) => new RenameCharacterPacket(s) },
+            { PacketType.NOTICE_WORLD, (s) => new GMNoticeWorldPacket(s) },
+            { PacketType.NOTICE_PLAYER, (s) => new GMNoticePlayerPacket(s) },
+            { PacketType.NOTICE_FACTION, (s) => new GMNoticeFactionPacket(s) },
+            { PacketType.NOTICE_MAP, (s) => new GMNoticeMapPacket(s) },
+            { PacketType.NOTICE_ADMINS, (s) => new GMNoticeAdminsPacket(s) }
         };
 
         /// <inheritdoc />

@@ -12,6 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
+using Imgeneus.World.Game.Notice;
 
 namespace Imgeneus.World.Game.Player
 {
@@ -59,7 +60,8 @@ namespace Imgeneus.World.Game.Player
                                         scopedProvider.GetService<ILinkingManager>(),
                                         scopedProvider.GetService<IDyeingManager>(),
                                         scopedProvider.GetService<IMobFactory>(),
-                                        scopedProvider.GetService<INpcFactory>());
+                                        scopedProvider.GetService<INpcFactory>(),
+                                        scopedProvider.GetService<INoticeManager>());
             player.Client = client;
             return player;
         }

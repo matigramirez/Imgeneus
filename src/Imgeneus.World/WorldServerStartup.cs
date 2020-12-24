@@ -1,5 +1,4 @@
-﻿using Imgeneus.Core.Helpers;
-using Imgeneus.Core.Structures.Configuration;
+﻿using Imgeneus.Core.Structures.Configuration;
 using Imgeneus.Database;
 using Imgeneus.Database.Preload;
 using Imgeneus.DatabaseBackgroundService;
@@ -9,6 +8,7 @@ using Imgeneus.World.Game.Chat;
 using Imgeneus.World.Game.Dyeing;
 using Imgeneus.World.Game.Linking;
 using Imgeneus.World.Game.Monster;
+using Imgeneus.World.Game.Notice;
 using Imgeneus.World.Game.NPCs;
 using Imgeneus.World.Game.Player;
 using Imgeneus.World.Game.Zone;
@@ -64,6 +64,7 @@ namespace Imgeneus.World
                 }
             });
             services.AddSingleton<IChatManager, ChatManager>();
+            services.AddSingleton<INoticeManager, NoticeManager>();
 
             services.AddTransient<ILogsDatabase, LogsDbContext>();
             services.AddTransient<ILinkingManager, LinkingManager>();

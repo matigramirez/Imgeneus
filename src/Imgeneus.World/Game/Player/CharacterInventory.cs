@@ -646,7 +646,7 @@ namespace Imgeneus.World.Game.Player
             else
             {
                 _taskQueue.Enqueue(ActionType.SAVE_ITEM_IN_INVENTORY,
-                                   Id, sourceItem.Type, sourceItem.TypeId, sourceItem.Count, sourceItem.Quality,sourceItem.Bag, sourceItem.Slot,
+                                   Id, sourceItem.Type, sourceItem.TypeId, sourceItem.Count, sourceItem.Quality, sourceItem.Bag, sourceItem.Slot,
                                    sourceItem.Gem1 is null ? 0 : sourceItem.Gem1.TypeId,
                                    sourceItem.Gem2 is null ? 0 : sourceItem.Gem2.TypeId,
                                    sourceItem.Gem3 is null ? 0 : sourceItem.Gem3.TypeId,
@@ -806,7 +806,7 @@ namespace Imgeneus.World.Game.Player
         /// </summary>
         /// <param name="bag">bag, where item is situated</param>
         /// <param name="slot">slot, where item is situated</param>
-        private void UseItem(byte bag, byte slot)
+        public void UseItem(byte bag, byte slot)
         {
             InventoryItems.TryGetValue((bag, slot), out var item);
             if (item is null)
@@ -845,9 +845,12 @@ namespace Imgeneus.World.Game.Player
         {
             switch (item.Special)
             {
-
                 case SpecialEffect.HealingPotion:
                     UseHealingPotion(item);
+                    break;
+
+                case SpecialEffect.PercentHealingPotion:
+                    UsePercentHealingPotion(item);
                     break;
 
                 case SpecialEffect.HypnosisCure:
@@ -955,11 +958,6 @@ namespace Imgeneus.World.Game.Player
                     // Effect is handled in dyeing manager.
                     break;
 
-                case SpecialEffect.None:
-                    // Some herbs do not have HealingPotion effect, but still they heal.
-                    UseHealingPotion(item);
-                    break;
-
                 case SpecialEffect.NameChange:
                     UseNameChangeStone();
                     break;
@@ -1011,6 +1009,18 @@ namespace Imgeneus.World.Game.Player
         {
             if (potion.HP > 0 || potion.MP > 0 || potion.SP > 0)
                 Recover(potion.HP, potion.MP, potion.SP);
+        }
+
+        /// <summary>
+        /// Uses potion, that restores % of hp,sp,mp.
+        /// </summary>
+        private void UsePercentHealingPotion(Item potion)
+        {
+            var hp = Convert.ToInt32(MaxHP * potion.HP / 100);
+            var mp = Convert.ToInt32(MaxMP * potion.MP / 100);
+            var sp = Convert.ToInt32(MaxSP * potion.SP / 100);
+
+            Recover(hp, mp, sp);
         }
 
         /// <summary>

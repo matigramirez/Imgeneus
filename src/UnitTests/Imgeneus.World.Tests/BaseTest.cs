@@ -116,8 +116,9 @@ namespace Imgeneus.World.Tests
                     { (30, 1), Gem_Str_Level_1 },
                     { (30, 2), Gem_Str_Level_2 },
                     { (30, 3), Gem_Str_Level_3 },
-                    { (30, 7), Gem_Str_Level_7 }
-
+                    { (30, 7), Gem_Str_Level_7 },
+                    { (100, 1), EtainPotion },
+                    { (25, 1), RedApple }
                 });
 
             databasePreloader
@@ -399,6 +400,24 @@ namespace Imgeneus.World.Tests
             ReqIg = 0, // always fail linking or extracting, unless hammer is used
             Count = 255,
             Quality = 0
+        };
+
+        protected DbItem EtainPotion = new DbItem()
+        {
+            Type = 100,
+            TypeId = 1,
+            ConstHP = 75,
+            ConstMP = 75,
+            ConstSP = 75,
+            Special = SpecialEffect.PercentHealingPotion
+        };
+
+        protected DbItem RedApple = new DbItem()
+        {
+            Type = 25,
+            TypeId = 1,
+            Special = SpecialEffect.HealingPotion,
+            ConstHP = 50
         };
 
         #endregion

@@ -11,7 +11,9 @@ using Imgeneus.World.Game.Zone.MapConfig;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Concurrent;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Imgeneus.World.Game
@@ -25,6 +27,7 @@ namespace Imgeneus.World.Game
         private readonly IMapsLoader _mapsLoader;
         private readonly IMapFactory _mapFactory;
         private readonly ICharacterFactory _characterFactory;
+        private MapDefinitions _mapDefinitions;
 
         public GameWorld(ILogger<GameWorld> logger, IMapsLoader mapsLoader, IMapFactory mapFactory, ICharacterFactory characterFactory)
         {
@@ -48,8 +51,8 @@ namespace Imgeneus.World.Game
         /// </summary>
         private void InitMaps()
         {
-            var mapDefinitions = _mapsLoader.LoadMapDefinitions();
-            foreach (var mapDefinition in mapDefinitions.Maps)
+            _mapDefinitions = _mapsLoader.LoadMapDefinitions();
+            foreach (var mapDefinition in _mapDefinitions.Maps)
             {
                 var config = _mapsLoader.LoadMapConfiguration(mapDefinition.Id);
 
@@ -63,6 +66,15 @@ namespace Imgeneus.World.Game
                 }
             }
         }
+
+        #endregion
+
+        #region Party Maps
+
+        /// <summary>
+        /// Thread-safe dictionary of maps. Where key is party id.
+        /// </summary>
+        public ConcurrentDictionary<Guid, IMap> PartyMaps { get; private set; } = new ConcurrentDictionary<Guid, IMap>();
 
         #endregion
 
@@ -110,7 +122,42 @@ namespace Imgeneus.World.Game
         public void LoadPlayerInMap(int characterId)
         {
             var player = Players[characterId];
-            Maps[player.MapId].LoadPlayer(player);
+
+            if (Maps.ContainsKey(player.MapId))
+            {
+                Maps[player.MapId].LoadPlayer(player);
+            }
+            else
+            {
+                var mapDef = _mapDefinitions.Maps.FirstOrDefault(d => d.Id == player.MapId);
+
+                // Map is not found. Is it really possibe?
+                if (mapDef is null)
+                {
+                    _logger.LogWarning($"Unknown map {player.MapId} for character {player.Id}. Fallback to 0 map.");
+                    var town = Maps[0].GetNearestSpawn(player.PosX, player.PosY, player.PosZ, player.Country);
+                    player.Teleport(0, town.X, town.Y, town.Z);
+                    return;
+                }
+
+                if (mapDef.CreateType == CreateType.Party)
+                {
+                    if (player.Party != null)
+                    {
+                        var map = PartyMaps.TryGetValue();
+                        if (PartyMaps.ContainsKey(player.Party.Id))
+
+
+                        else
+
+                                    PartyMaps[player.Party.Id].LoadPlayer(player);
+                    }
+                    else // Map is for party, and player is not in party. Load player to nearest to this map.
+                    {
+                        // TODO: load to near to intance map.
+                    }
+                }
+            }
         }
 
         /// <inheritdoc />

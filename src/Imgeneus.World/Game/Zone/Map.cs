@@ -306,14 +306,7 @@ namespace Imgeneus.World.Game.Zone
             Cells[newCellId].AddPlayer(sender);
         }
 
-        /// <summary>
-        /// Finds the nearest spawn for the player.
-        /// </summary>
-        /// <param name="currentX">current player x coordinate</param>
-        /// <param name="currentY">current player y coordinate</param>
-        /// <param name="currentZ">current player z coordinate</param>
-        /// <param name="fraction">player's faction</param>
-        /// <returns>coordinate, where player shoud spawn</returns>
+        /// <inheritdoc/>
         public (float X, float Y, float Z) GetNearestSpawn(float currentX, float currentY, float currentZ, Fraction fraction)
         {
             SpawnConfiguration nearestSpawn = null;

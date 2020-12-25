@@ -1,4 +1,5 @@
-﻿using Imgeneus.World.Game.Player;
+﻿using Imgeneus.Database.Entities;
+using Imgeneus.World.Game.Player;
 
 namespace Imgeneus.World.Game.Zone
 {
@@ -18,5 +19,15 @@ namespace Imgeneus.World.Game.Zone
         /// Removes player from the map.
         /// </summary>
         public bool UnloadPlayer(Character player);
+
+        /// <summary>
+        /// Finds the nearest spawn for the player.
+        /// </summary>
+        /// <param name="currentX">current player x coordinate</param>
+        /// <param name="currentY">current player y coordinate</param>
+        /// <param name="currentZ">current player z coordinate</param>
+        /// <param name="fraction">player's faction</param>
+        /// <returns>coordinate, where player shoud spawn</returns>
+        public (float X, float Y, float Z) GetNearestSpawn(float currentX, float currentY, float currentZ, Fraction fraction)
     }
 }

@@ -11,6 +11,13 @@ namespace Imgeneus.World.Game.PartyAndRaid
     /// </summary>
     public abstract class BaseParty : IParty
     {
+        public Guid Id { get; private set; }
+
+        public BaseParty()
+        {
+            Id = Guid.NewGuid();
+        }
+
         #region Leader
 
         protected Character _leader;

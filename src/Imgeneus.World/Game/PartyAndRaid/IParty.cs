@@ -10,6 +10,11 @@ namespace Imgeneus.World.Game.PartyAndRaid
     public interface IParty
     {
         /// <summary>
+        /// Party id.
+        /// </summary>
+        public Guid Id { get; }
+
+        /// <summary>
         /// Party members.
         /// </summary>
         public IList<Character> Members { get; }

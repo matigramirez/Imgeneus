@@ -115,8 +115,8 @@ namespace Imgeneus.World.Tests
                     { (30, 2), Gem_Str_Level_2 },
                     { (30, 3), Gem_Str_Level_3 },
                     { (30, 7), Gem_Str_Level_7 },
-                    { (100, 1), EtainPotion}
-
+                    { (100, 1), EtainPotion },
+                    { (25, 1), RedApple }
                 });
 
             databasePreloader
@@ -408,6 +408,14 @@ namespace Imgeneus.World.Tests
             ConstMP = 75,
             ConstSP = 75,
             Special = SpecialEffect.PercentHealingPotion
+        };
+
+        protected DbItem RedApple = new DbItem()
+        {
+            Type = 25,
+            TypeId = 1,
+            Special = SpecialEffect.HealingPotion,
+            ConstHP = 50
         };
 
         #endregion

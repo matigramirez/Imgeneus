@@ -505,6 +505,7 @@ namespace Imgeneus.World.Game.Zone
         {
             item.Id = GenerateId();
             Cells[GetCellIndex(item)].AddItem(item);
+            item.OnRemove += Item_OnRemove;
         }
 
         /// <summary>
@@ -521,7 +522,14 @@ namespace Imgeneus.World.Game.Zone
         /// </summary>
         public void RemoveItem(int cellId, int itemId)
         {
-            Cells[cellId].RemoveItem(itemId);
+            var item = Cells[cellId].RemoveItem(itemId);
+            if (item != null)
+                item.OnRemove -= Item_OnRemove;
+        }
+
+        private void Item_OnRemove(MapItem item)
+        {
+            RemoveItem(item.CellId, item.Id);
         }
 
         #endregion

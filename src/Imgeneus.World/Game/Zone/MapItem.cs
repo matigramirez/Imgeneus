@@ -1,4 +1,5 @@
 ﻿using Imgeneus.World.Game.Player;
+using System;
 using System.Timers;
 
 namespace Imgeneus.World.Game.Zone
@@ -56,6 +57,31 @@ namespace Imgeneus.World.Game.Zone
         private void OwnerClearTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
             _owner = null;
+            _removeTimer.Start();
+        }
+
+        #endregion
+
+        #region Remove item timer
+
+        private Timer _removeTimer = new Timer();
+
+        private void RemoveTimer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            OnRemove?.Invoke(this);
+        }
+
+        /// <summary>
+        /// Event, that is fired, when it's time to remove item from map.
+        /// </summary>
+        public event Action<MapItem> OnRemove;
+
+        /// <summary>
+        /// Stops remove timer.
+        /// </summary>
+        public void StopRemoveTimer()
+        {
+            _removeTimer.Stop();
         }
 
         #endregion
@@ -71,6 +97,10 @@ namespace Imgeneus.World.Game.Zone
             _ownerClearTimer.Interval = 7000; // 7 seconds
             _ownerClearTimer.AutoReset = false;
             _ownerClearTimer.Elapsed += OwnerClearTimer_Elapsed;
+
+            _removeTimer.Interval = 20000; // 20 seconds
+            _removeTimer.AutoReset = false;
+            _removeTimer.Elapsed += RemoveTimer_Elapsed;
         }
     }
 }

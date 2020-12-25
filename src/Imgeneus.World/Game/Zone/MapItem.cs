@@ -94,11 +94,11 @@ namespace Imgeneus.World.Game.Zone
             PosY = y;
             PosZ = z;
 
-            _ownerClearTimer.Interval = 7000; // 7 seconds
+            _ownerClearTimer.Interval = 20000; // 20 seconds
             _ownerClearTimer.AutoReset = false;
             _ownerClearTimer.Elapsed += OwnerClearTimer_Elapsed;
 
-            _removeTimer.Interval = 20000; // 20 seconds
+            _removeTimer.Interval = 60000; // 60 seconds
             _removeTimer.AutoReset = false;
             _removeTimer.Elapsed += RemoveTimer_Elapsed;
         }

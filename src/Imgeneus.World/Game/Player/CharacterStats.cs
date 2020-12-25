@@ -32,8 +32,8 @@ namespace Imgeneus.World.Game.Player
         public uint Exp { get; private set; }
         public ushort Kills { get; private set; }
         public ushort Deaths { get; private set; }
-        public ushort Victories { get; set; }
-        public ushort Defeats { get; set; }
+        public ushort Victories { get; private set; }
+        public ushort Defeats { get; private set; }
         public bool IsAdmin { get; set; }
         public bool IsRename { get; set; }
 
@@ -704,6 +704,30 @@ namespace Imgeneus.World.Game.Player
             Deaths = deaths;
 
             _taskQueue.Enqueue(ActionType.SAVE_CHARACTER_DEATHS, Id, Deaths);
+        }
+
+        #endregion
+
+        #region Wins & Loses
+
+        /// <summary>
+        /// Sets the number of duel victories.
+        /// </summary>
+        public void SetVictories(ushort victories)
+        {
+            Victories = victories;
+
+            _taskQueue.Enqueue(ActionType.SAVE_CHARACTER_VICTORIES, Id, Victories);
+        }
+
+        /// <summary>
+        /// Sets the number of duel defeats.
+        /// </summary>
+        public void SetDefeats(ushort defeats)
+        {
+            Defeats = defeats;
+
+            _taskQueue.Enqueue(ActionType.SAVE_CHARACTER_DEFEATS, Id, Defeats);
         }
 
         #endregion

@@ -66,5 +66,20 @@ namespace Imgeneus.World.Tests.CharacterTests
             Assert.Equal(newStatValue, character.Wisdom);
             Assert.Equal(newStatValue, character.Luck);
         }
+
+        [Fact]
+        [Description("It should be possible to set victories and defeats.")]
+        public void SetVictoriesAndDefeatsTest()
+        {
+            var character = CreateCharacter();
+            Assert.Equal(0, character.Victories);
+            Assert.Equal(0, character.Defeats);
+
+            character.SetVictories(10);
+            character.SetDefeats(20);
+
+            Assert.Equal(10, character.Victories);
+            Assert.Equal(20, character.Defeats);
+        }
     }
 }

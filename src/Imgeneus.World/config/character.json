@@ -2582,5 +2582,45 @@
       "Luc": 9,
       "MainStat": 4
     }
+  ],
+  "DefaultMaxLevels": [
+    {
+      "Mode": 0,
+      "Level": 80
+    },
+    {
+      "Mode": 1,
+      "Level": 80
+    },
+    {
+      "Mode": 2,
+      "Level": 80
+    },
+    {
+      "Mode": 3,
+      "Level": 80
+    }
+  ],
+  "DefaultLevelStatSkillPoints": [
+    {
+      "Mode": 0,
+      "StatPoint": 5,
+      "SkillPoint": 3
+    },
+    {
+      "Mode": 1,
+      "StatPoint": 5,
+      "SkillPoint": 3
+    },
+    {
+      "Mode": 0,
+      "StatPoint": 7,
+      "SkillPoint": 4
+    },
+    {
+      "Mode": 0,
+      "StatPoint": 9,
+      "SkillPoint": 5
+    }
   ]
 }

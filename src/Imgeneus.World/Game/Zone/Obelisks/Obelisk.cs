@@ -8,7 +8,7 @@ using System.Timers;
 
 namespace Imgeneus.World.Game.Zone.Obelisks
 {
-    public class Obelisk : IMapMember
+    public class Obelisk : IMapMember, IDisposable
     {
         private readonly ObeliskConfiguration _config;
         private readonly IMobFactory _mobFactory;
@@ -249,6 +249,30 @@ namespace Imgeneus.World.Game.Zone.Obelisks
                 _guardRebirthTimers.Clear();
             }
             Guards.Clear();
+        }
+
+        #endregion
+
+        #region Dispose
+
+        private bool _isDisposed = false;
+
+        public void Dispose()
+        {
+            if (_isDisposed)
+                throw new ObjectDisposedException(nameof(Obelisk));
+
+            _isDisposed = true;
+
+            ClearGuards();
+
+            ObeliskAI.OnDead -= ObeliskAI_OnDead;
+            ObeliskAI = null;
+
+            _rebirthTimer.Elapsed -= ObeliskRebirthTimer_Elapsed;
+            _rebirthTimer.Stop();
+
+            Map = null;
         }
 
         #endregion

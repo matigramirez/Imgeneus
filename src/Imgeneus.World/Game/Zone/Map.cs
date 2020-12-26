@@ -202,7 +202,7 @@ namespace Imgeneus.World.Game.Zone
         /// <summary>
         /// Thread-safe dictionary of connected players. Key is character id, value is character.
         /// </summary>
-        private readonly ConcurrentDictionary<int, Character> Players = new ConcurrentDictionary<int, Character>();
+        protected readonly ConcurrentDictionary<int, Character> Players = new ConcurrentDictionary<int, Character>();
 
         /// <summary>
         /// Tries to get player from map.
@@ -220,8 +220,11 @@ namespace Imgeneus.World.Game.Zone
         /// </summary>
         /// <param name="character">player, that we need to load</param>
         /// <returns>returns true if we could load player to map, otherwise false</returns>
-        public bool LoadPlayer(Character character)
+        public virtual bool LoadPlayer(Character character)
         {
+            if (_isDisposed)
+                throw new ObjectDisposedException(nameof(Map));
+
             var success = Players.TryAdd(character.Id, character);
 
             if (success)
@@ -246,7 +249,7 @@ namespace Imgeneus.World.Game.Zone
         /// </summary>
         /// <param name="character">player, that we need to unload</param>
         /// <returns>returns true if we could unload player to map, otherwise false</returns>
-        public bool UnloadPlayer(Character character)
+        public virtual bool UnloadPlayer(Character character)
         {
             var success = Players.TryRemove(character.Id, out var removedCharacter);
 
@@ -283,7 +286,7 @@ namespace Imgeneus.World.Game.Zone
         /// </summary>
         private void Character_OnPositionChanged(Character sender)
         {
-            var portal = Portals.FirstOrDefault(p =>
+            /*var portal = Portals.FirstOrDefault(p =>
                         p.IsInPortalZone(sender.PosX, sender.PosY, sender.PosZ) &&
                         p.IsSameFraction(sender.Country)
                         && p.IsRightLevel(sender.Level));
@@ -293,7 +296,7 @@ namespace Imgeneus.World.Game.Zone
                 sender.Teleport(portal.MapId, portal.Destination_X, portal.Destination_Y, portal.Destination_Z);
                 sender.SendCharacterTeleport();
                 return;
-            }
+            }*/
 
             var newCellId = GetCellIndex(sender);
             var oldCellId = sender.CellId;
@@ -395,6 +398,9 @@ namespace Imgeneus.World.Game.Zone
         /// </summary>
         public void AddMob(Mob mob)
         {
+            if (_isDisposed)
+                throw new ObjectDisposedException(nameof(Map));
+
             Cells[GetCellIndex(mob)].AddMob(mob);
             //_logger.LogDebug($"Mob {mob.MobId} with global id {mob.Id} entered map {Id}");
 
@@ -496,6 +502,9 @@ namespace Imgeneus.World.Game.Zone
         /// <param name="item">new added item</param>
         public void AddItem(MapItem item)
         {
+            if (_isDisposed)
+                throw new ObjectDisposedException(nameof(Map));
+
             item.Id = GenerateId();
             Cells[GetCellIndex(item)].AddItem(item);
         }
@@ -528,6 +537,9 @@ namespace Imgeneus.World.Game.Zone
         /// <param name="npc">new npc</param>
         public void AddNPC(int cellIndex, Npc npc)
         {
+            if (_isDisposed)
+                throw new ObjectDisposedException(nameof(Map));
+
             npc.Id = GenerateId();
             Cells[cellIndex].AddNPC(npc);
         }
@@ -688,6 +700,45 @@ namespace Imgeneus.World.Game.Zone
             }
 
             _logger.LogInformation($"Map {Id} created {Portals.Count} portals.");
+        }
+
+        #endregion
+
+        #region Dispose
+
+        private bool _isDisposed = false;
+
+        public void Dispose()
+        {
+            if (_isDisposed)
+                throw new ObjectDisposedException(nameof(Map));
+
+            _isDisposed = true;
+
+            foreach (var cell in Cells)
+            {
+                var mobs = cell.GetAllMobs(false);
+                var players = cell.GetAllPlayers(false);
+
+                foreach (var m in mobs)
+                    RemoveMob(m);
+
+                foreach (var p in players)
+                    UnloadPlayer(p);
+
+                cell.Dispose();
+            }
+
+            foreach (var obelisk in Obelisks.Values)
+            {
+                obelisk.OnObeliskBroken -= Obelisk_OnObeliskBroken;
+                obelisk.Dispose();
+            }
+
+            PartySearchers.Clear();
+
+            _weatherTimer.Stop();
+            _weatherTimer.Elapsed -= WeatherTimer_Elapsed;
         }
 
         #endregion

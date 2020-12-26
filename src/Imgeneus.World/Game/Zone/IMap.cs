@@ -1,9 +1,10 @@
 ﻿using Imgeneus.Database.Entities;
 using Imgeneus.World.Game.Player;
+using System;
 
 namespace Imgeneus.World.Game.Zone
 {
-    public interface IMap
+    public interface IMap : IDisposable
     {
         /// <summary>
         /// Map must have unique id.
@@ -28,6 +29,6 @@ namespace Imgeneus.World.Game.Zone
         /// <param name="currentZ">current player z coordinate</param>
         /// <param name="fraction">player's faction</param>
         /// <returns>coordinate, where player shoud spawn</returns>
-        public (float X, float Y, float Z) GetNearestSpawn(float currentX, float currentY, float currentZ, Fraction fraction)
+        public (float X, float Y, float Z) GetNearestSpawn(float currentX, float currentY, float currentZ, Fraction fraction);
     }
 }

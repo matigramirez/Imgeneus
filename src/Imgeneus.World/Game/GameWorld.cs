@@ -74,7 +74,14 @@ namespace Imgeneus.World.Game
         /// <summary>
         /// Thread-safe dictionary of maps. Where key is party id.
         /// </summary>
-        public ConcurrentDictionary<Guid, IMap> PartyMaps { get; private set; } = new ConcurrentDictionary<Guid, IMap>();
+        public ConcurrentDictionary<Guid, IPartyMap> PartyMaps { get; private set; } = new ConcurrentDictionary<Guid, IPartyMap>();
+
+        private void PartyMap_OnAllMembersLeft(IPartyMap senser)
+        {
+            senser.OnAllMembersLeft -= PartyMap_OnAllMembersLeft;
+            PartyMaps.TryRemove(senser.PartyId, out var removed);
+            removed.Dispose();
+        }
 
         #endregion
 
@@ -144,13 +151,15 @@ namespace Imgeneus.World.Game
                 {
                     if (player.Party != null)
                     {
-                        var map = PartyMaps.TryGetValue();
-                        if (PartyMaps.ContainsKey(player.Party.Id))
+                        PartyMaps.TryGetValue(player.Party.Id, out var map);
+                        if (map is null)
+                        {
+                            map = _mapFactory.CreatePartyMap(mapDef.Id, mapDef, _mapsLoader.LoadMapConfiguration(mapDef.Id), player.Party);
+                            map.OnAllMembersLeft += PartyMap_OnAllMembersLeft;
+                            PartyMaps.TryAdd(player.Party.Id, map);
+                        }
 
-
-                        else
-
-                                    PartyMaps[player.Party.Id].LoadPlayer(player);
+                        map.LoadPlayer(player);
                     }
                     else // Map is for party, and player is not in party. Load player to nearest to this map.
                     {

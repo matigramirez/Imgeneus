@@ -1,12 +1,13 @@
 ﻿using Imgeneus.Database.Entities;
 using Imgeneus.World.Game.Zone;
 using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
 namespace Imgeneus.World.Game.NPCs
 {
-    public class Npc : IMapMember
+    public class Npc : IMapMember, IDisposable
     {
         private readonly ILogger _logger;
         private readonly DbNpc _dbNpc;
@@ -182,6 +183,26 @@ namespace Imgeneus.World.Game.NPCs
 
                 return _readonlyEndQuestIds;
             }
+        }
+
+        #endregion
+
+        #region Dispose
+
+        private bool _isDisposed = false;
+
+        public void Dispose()
+        {
+            if (_isDisposed)
+                throw new ObjectDisposedException(nameof(Npc));
+
+            _isDisposed = true;
+
+            _products.Clear();
+            _startQuestIds.Clear();
+            _endQuestIds.Clear();
+
+            Map = null;
         }
 
         #endregion

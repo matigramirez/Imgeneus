@@ -6,13 +6,14 @@ using Imgeneus.World.Game.NPCs;
 using Imgeneus.World.Game.PartyAndRaid;
 using Imgeneus.World.Game.Player;
 using Imgeneus.World.Packets;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace Imgeneus.World.Game.Zone
 {
-    public class MapCell
+    public class MapCell : IDisposable
     {
         private readonly PacketsHelper _packetsHelper = new PacketsHelper();
 
@@ -27,7 +28,7 @@ namespace Imgeneus.World.Game.Zone
 
         public IEnumerable<int> NeighborCells { get; private set; }
 
-        private readonly Map Map;
+        protected Map Map { get; private set; }
 
         /// <summary>
         /// Sets cell index to each cell member.
@@ -659,6 +660,39 @@ namespace Imgeneus.World.Game.Zone
                 foreach (var player in GetAllPlayers(true))
                     _packetsHelper.SendRemoveItem(player.Client, mapItem);
             }
+        }
+
+        #endregion
+
+        #region Dispose
+
+        private bool _isDisposed = false;
+
+        public void Dispose()
+        {
+            if (_isDisposed)
+                throw new ObjectDisposedException(nameof(Map));
+
+            _isDisposed = true;
+
+            foreach (var p in Players.Values)
+                RemoveListeners(p);
+            Players.Clear();
+
+            foreach (var m in Mobs.Values)
+            {
+                RemoveMob(m);
+                m.Dispose();
+            }
+            Mobs.Clear();
+
+            foreach (var n in NPCs.Values)
+            {
+                n.Dispose();
+            }
+            NPCs.Clear();
+
+            Map = null;
         }
 
         #endregion

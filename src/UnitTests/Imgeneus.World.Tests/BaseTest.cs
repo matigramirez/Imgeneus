@@ -50,6 +50,7 @@ namespace Imgeneus.World.Tests
         protected Character CreateCharacter(Map map = null)
         {
             var character = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object, linkingMock.Object, dyeingMock.Object, mobFactoryMock.Object, npcFactoryMock.Object, noticeManagerMock.Object);
+
             character.Client = worldClientMock.Object;
 
             if (map != null)
@@ -77,6 +78,25 @@ namespace Imgeneus.World.Tests
                           MainStat = 0
                       }
                   });
+
+            config.Setup((conf) => conf.GetMaxLevelConfig(It.IsAny<Mode>()))
+                .Returns(
+                    new DefaultMaxLevel()
+                    {
+                        Mode = Mode.Ultimate,
+                        Level = 80
+                    }
+                );
+
+            config.Setup((conf) => conf.GetLevelStatSkillPoints(It.IsAny<Mode>()))
+                .Returns(
+                    new DefaultLevelStatSkillPoints()
+                    {
+                        Mode = Mode.Ultimate,
+                        StatPoint = 9,
+                        SkillPoint = 7
+                    }
+                );
 
             databasePreloader
                 .SetupGet((preloader) => preloader.Mobs)
@@ -123,6 +143,28 @@ namespace Imgeneus.World.Tests
             databasePreloader
                 .SetupGet((preloader) => preloader.MobItems)
                 .Returns(new Dictionary<(ushort MobId, byte ItemOrder), DbMobItems>());
+
+            databasePreloader
+                .SetupGet((preloader) => preloader.Levels)
+                .Returns(new Dictionary<(Mode mode, ushort level), DbLevel>()
+                {
+                    { (Mode.Beginner, 1), Level1_Mode1 },
+                    { (Mode.Normal, 1), Level1_Mode2 },
+                    { (Mode.Hard, 1), Level1_Mode3 },
+                    { (Mode.Ultimate, 1), Level1_Mode4 },
+                    { (Mode.Beginner, 2), Level2_Mode1 },
+                    { (Mode.Normal, 2), Level2_Mode2 },
+                    { (Mode.Hard, 2), Level2_Mode3 },
+                    { (Mode.Ultimate, 2), Level2_Mode4 },
+                    { (Mode.Beginner, 79), Level79_Mode1 },
+                    { (Mode.Normal, 79), Level79_Mode2 },
+                    { (Mode.Hard, 79), Level79_Mode3 },
+                    { (Mode.Ultimate, 79), Level79_Mode4 },
+                    { (Mode.Beginner, 80), Level80_Mode1 },
+                    { (Mode.Normal, 80), Level80_Mode2 },
+                    { (Mode.Hard, 80), Level80_Mode3 },
+                    { (Mode.Ultimate, 80), Level80_Mode4 },
+                });
         }
 
         #region Test mobs
@@ -136,7 +178,8 @@ namespace Imgeneus.World.Tests
             HP = 2765,
             Element = Element.Wind1,
             AttackSpecial3 = MobRespawnTime.TestEnv,
-            NormalTime = 1
+            NormalTime = 1,
+            Exp = 70
         };
 
         protected DbMob CrypticImmortal = new DbMob()
@@ -152,7 +195,8 @@ namespace Imgeneus.World.Tests
             AttackRange1 = 5,
             AttackTime1 = 2500,
             NormalTime = 1,
-            ChaseTime = 1
+            ChaseTime = 1,
+            Exp = 3253
         };
 
         #endregion
@@ -399,6 +443,122 @@ namespace Imgeneus.World.Tests
             ReqIg = 0, // always fail linking or extracting, unless hammer is used
             Count = 255,
             Quality = 0
+        };
+
+        #endregion
+
+        #region Levels
+
+        protected DbLevel Level1_Mode1 = new DbLevel()
+        {
+            Level = 1,
+            Mode = Mode.Beginner,
+            Exp = 70
+        };
+
+        protected DbLevel Level1_Mode2 = new DbLevel()
+        {
+            Level = 1,
+            Mode = Mode.Normal,
+            Exp = 200
+        };
+
+        protected DbLevel Level1_Mode3 = new DbLevel()
+        {
+            Level = 1,
+            Mode = Mode.Hard,
+            Exp = 200
+        };
+
+        protected DbLevel Level1_Mode4 = new DbLevel()
+        {
+            Level = 1,
+            Mode = Mode.Ultimate,
+            Exp = 200
+        };
+
+        protected DbLevel Level2_Mode1 = new DbLevel()
+        {
+            Level = 2,
+            Mode = Mode.Beginner,
+            Exp = 130
+        };
+
+        protected DbLevel Level2_Mode2 = new DbLevel()
+        {
+            Level = 2,
+            Mode = Mode.Normal,
+            Exp = 400
+        };
+
+        protected DbLevel Level2_Mode3 = new DbLevel()
+        {
+            Level = 2,
+            Mode = Mode.Hard,
+            Exp = 400
+        };
+
+        protected DbLevel Level2_Mode4 = new DbLevel()
+        {
+            Level = 2,
+            Mode = Mode.Ultimate,
+            Exp = 400
+        };
+
+        protected DbLevel Level79_Mode1 = new DbLevel()
+        {
+            Level = 79,
+            Mode = Mode.Beginner,
+            Exp = 171200
+        };
+
+        protected DbLevel Level79_Mode2 = new DbLevel()
+        {
+            Level = 79,
+            Mode = Mode.Normal,
+            Exp = 214847083
+        };
+
+        protected DbLevel Level79_Mode3 = new DbLevel()
+        {
+            Level = 69,
+            Mode = Mode.Hard,
+            Exp = 214847083
+        };
+
+        protected DbLevel Level79_Mode4 = new DbLevel()
+        {
+            Level = 79,
+            Mode = Mode.Ultimate,
+            Exp = 330854048
+        };
+
+        protected DbLevel Level80_Mode1 = new DbLevel()
+        {
+            Level = 50,
+            Mode = Mode.Beginner,
+            Exp = 171200
+        };
+
+        protected DbLevel Level80_Mode2 = new DbLevel()
+        {
+            Level = 60,
+            Mode = Mode.Normal,
+            Exp = 214847083
+        };
+
+        protected DbLevel Level80_Mode3 = new DbLevel()
+        {
+            Level = 70,
+            Mode = Mode.Hard,
+            Exp = 214847083
+        };
+
+        protected DbLevel Level80_Mode4 = new DbLevel()
+        {
+            Level = 80,
+            Mode = Mode.Ultimate,
+            Exp = 330854048
         };
 
         #endregion

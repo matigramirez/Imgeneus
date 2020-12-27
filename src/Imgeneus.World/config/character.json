@@ -2613,12 +2613,12 @@
       "SkillPoint": 3
     },
     {
-      "Mode": 0,
+      "Mode": 2,
       "StatPoint": 7,
       "SkillPoint": 4
     },
     {
-      "Mode": 0,
+      "Mode": 3,
       "StatPoint": 9,
       "SkillPoint": 5
     }

@@ -26,6 +26,7 @@ namespace Imgeneus.World.Game.Monster
             Id = map.GenerateId();
             CurrentHP = _dbMob.HP;
             Level = _dbMob.Level;
+            Exp = _dbMob.Exp;
             AI = _dbMob.AI;
             ShouldRebirth = shouldRebirth;
 
@@ -60,6 +61,11 @@ namespace Imgeneus.World.Game.Monster
         /// Indicator, that shows if mob should rebirth after its' death.
         /// </summary>
         public bool ShouldRebirth { get; }
+
+        /// <summary>
+        /// Experience gained by a player who kills a mob.
+        /// </summary>
+        public short Exp { get; }
 
         #region Totel stats
 

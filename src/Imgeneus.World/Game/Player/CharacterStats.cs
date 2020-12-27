@@ -16,7 +16,7 @@ namespace Imgeneus.World.Game.Player
         public ushort MapId { get; private set; }
         public Race Race { get; set; }
         public CharacterProfession Class { get; set; }
-        public Mode Mode { get; private set; }
+        public Mode Mode { get; private set; } = Mode.Beginner;
         public byte Hair { get; set; }
         public byte Face { get; set; }
         public byte Height { get; set; }
@@ -70,6 +70,11 @@ namespace Imgeneus.World.Game.Player
         #endregion
 
         #region Max HP & SP & MP
+
+        /// <summary>
+        /// Event that's fired when max hp, mp and sp change.
+        /// </summary>
+        public event Action<Character> OnMax_HP_MP_SP_Changed;
 
         private void Character_OnMaxHPChanged(IKillable sender, int maxHP)
         {
@@ -155,6 +160,104 @@ namespace Imgeneus.World.Game.Player
             get
             {
                 return ConstSP + ExtraSP;
+            }
+        }
+
+        public CharacterAttributeEnum GetPrimaryAttribute()
+        {
+            var defaultStat = _characterConfig.DefaultStats.First(s => s.Job == Class);
+
+            switch (defaultStat.MainStat)
+            {
+                case 0:
+                    return CharacterAttributeEnum.Strength;
+
+                case 1:
+                    return CharacterAttributeEnum.Dexterity;
+
+                case 2:
+                    return CharacterAttributeEnum.Reaction;
+                case 3:
+                    return CharacterAttributeEnum.Intelligence;
+
+                case 4:
+                    return CharacterAttributeEnum.Wisdom;
+
+                case 5:
+                    return CharacterAttributeEnum.Luck;
+
+                default:
+                    throw new NotSupportedException();
+            }
+        }
+
+        public void IncrementPrimaryAttribute(ushort amount = 1)
+        {
+            var defaultStat = _characterConfig.DefaultStats.First(s => s.Job == Class);
+
+            switch (defaultStat.MainStat)
+            {
+                case 0:
+                    Strength += amount;
+                    break;
+
+                case 1:
+                    Dexterity += amount;
+                    break;
+
+                case 2:
+                    Reaction += amount;
+                    break;
+
+                case 3:
+                    Intelligence += amount;
+                    break;
+
+                case 4:
+                    Wisdom += amount;
+                    break;
+
+                case 5:
+                    Luck += amount;
+                    break;
+
+                default:
+                    break;
+            }
+        }
+
+        public void DecreasePrimaryAttribute(ushort amount = 1)
+        {
+            var defaultStat = _characterConfig.DefaultStats.First(s => s.Job == Class);
+
+            switch (defaultStat.MainStat)
+            {
+                case 0:
+                    Strength -= amount;
+                    break;
+
+                case 1:
+                    Dexterity -= amount;
+                    break;
+
+                case 2:
+                    Reaction -= amount;
+                    break;
+
+                case 3:
+                    Intelligence -= amount;
+                    break;
+
+                case 4:
+                    Wisdom -= amount;
+                    break;
+
+                case 5:
+                    Luck -= amount;
+                    break;
+
+                default:
+                    break;
             }
         }
 
@@ -673,6 +776,12 @@ namespace Imgeneus.World.Game.Player
         }
 
         /// <summary>
+        /// Increases the player's stat points by a certain amount
+        /// </summary>
+        /// <param name="amount"></param>
+        public void IncreaseStatPoint(ushort amount) => SetStatPoint(StatPoint += amount);
+
+        /// <summary>
         /// Set the skill points amount
         /// </summary>
         public void SetSkillPoint(ushort skillPoint)
@@ -681,6 +790,12 @@ namespace Imgeneus.World.Game.Player
 
             _taskQueue.Enqueue(ActionType.SAVE_CHARACTER_SKILLPOINT, Id, SkillPoint);
         }
+
+        /// <summary>
+        /// Increases the player's skill points by a certain amount
+        /// </summary>
+        /// <param name="amount"></param>
+        public void IncreaseSkillPoint(ushort amount) => SetSkillPoint(StatPoint += amount);
 
         #endregion
 

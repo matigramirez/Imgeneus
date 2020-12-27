@@ -736,7 +736,7 @@ namespace Imgeneus.World.Packets
             using var packet = new Packet(PacketType.ITEM_COMPOSE_ABSOLUTE);
             packet.Write(isFailure);
             packet.Write(new CraftName(craftName).Serialize());
-            packet.Write(true); // ? 
+            packet.Write(true); // ?
 
             client.SendPacket(packet);
         }
@@ -1107,8 +1107,29 @@ namespace Imgeneus.World.Packets
         internal void SendAttribute(IWorldClient client, CharacterAttributeEnum attribute, uint attributeValue)
         {
             using var packet = new Packet(PacketType.CHARACTER_ATTRIBUTE_SET);
-            packet.Write((byte)attribute);
-            packet.Write(attributeValue);
+            packet.Write(new CharacterAttribute(attribute, attributeValue).Serialize());
+            client.SendPacket(packet);
+        }
+
+        internal void SendExperienceGain(IWorldClient client, uint exp)
+        {
+            using var packet = new Packet(PacketType.EXPERIENCE_GAIN);
+            packet.Write(new CharacterExperienceGain(exp).Serialize());
+            client.SendPacket(packet);
+        }
+
+        internal void SendMax_HP_MP_SP(IWorldClient client, Character character)
+        {
+            using var packet = new Packet(PacketType.CHARACTER_MAX_HP_MP_SP);
+            packet.Write(new CharacterMax_HP_MP_SP(character));
+            client.SendPacket(packet);
+        }
+
+        internal void SendLevelUp(IWorldClient client, Character character, bool isAdminLevelUp = false)
+        {
+            var type = isAdminLevelUp ? PacketType.GM_CHARACTER_LEVEL_UP : PacketType.CHARACTER_LEVEL_UP;
+            using var packet = new Packet(type);
+            packet.Write(new CharacterLevelUp(character).Serialize());
             client.SendPacket(packet);
         }
     }

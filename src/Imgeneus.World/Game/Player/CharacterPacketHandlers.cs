@@ -193,7 +193,7 @@ namespace Imgeneus.World.Game.Player
                 _packetsHelper.SendPartySearchList(Client, searchers.Take(30));
         }
 
-        private async void HandleSummonPlayer(string playerName)
+        private void HandleSummonPlayer(string playerName)
         {
             if (!IsAdmin)
                 return;
@@ -208,8 +208,6 @@ namespace Imgeneus.World.Game.Player
 
                 _packetsHelper.SendGmCommandSuccess(Client);
                 _packetsHelper.SendGmSummon(player.Client, player);
-                await Task.Delay(100);
-                _packetsHelper.SendCharacterTeleport(player.Client, player);
             }
         }
 
@@ -241,7 +239,6 @@ namespace Imgeneus.World.Game.Player
                 Teleport(player.MapId, player.PosX, player.PosY, player.PosZ);
 
                 _packetsHelper.SendGmCommandSuccess(Client);
-                _packetsHelper.SendCharacterTeleport(Client, this);
                 _packetsHelper.SendGmTeleportToPlayer(Client, player);
             }
         }
@@ -542,6 +539,14 @@ namespace Imgeneus.World.Game.Player
                     _packetsHelper.SendGmCommandError(Client, PacketType.CHARACTER_ATTRIBUTE_SET);
                     return;
             }
+        }
+
+        private void HandleEnterPortalPacket(CharacterEnteredPortalPacket enterPortalPacket)
+        {
+            var success = TryTeleport(enterPortalPacket.PortalId, out var reason);
+
+            if (!success)
+                SendPortalTeleportNotAllowed(reason);
         }
     }
 }

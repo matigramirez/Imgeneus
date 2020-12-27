@@ -179,8 +179,7 @@ namespace Imgeneus.World.Game.Zone
         public void TeleportPlayer(Character character)
         {
             foreach (var p in GetAllPlayers(true))
-                if (p != character)
-                    _packetsHelper.SendCharacterTeleport(p.Client, character);
+                _packetsHelper.SendCharacterTeleport(p.Client, character);
         }
 
         /// <summary>

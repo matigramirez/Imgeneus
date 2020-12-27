@@ -49,10 +49,10 @@ namespace Imgeneus.World.Tests.CharacterTests
 
             var character = CreateCharacter();
             map1.LoadPlayer(character);
-            Assert.NotNull(map1.GetPlayer(0));
+            Assert.NotNull(map1.GetPlayer(character.Id));
 
             character.Teleport(map2.Id, 10, 20, 30);
-            Assert.Null(map1.GetPlayer(0));
+            Assert.Null(map1.GetPlayer(character.Id));
         }
     }
 }

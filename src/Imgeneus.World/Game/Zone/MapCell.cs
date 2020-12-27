@@ -651,13 +651,16 @@ namespace Imgeneus.World.Game.Zone
         /// <summary>
         /// Removes item from map.
         /// </summary>
-        public void RemoveItem(int itemId)
+        public MapItem RemoveItem(int itemId)
         {
             if (Items.TryRemove(itemId, out var mapItem))
             {
+                mapItem.StopRemoveTimer();
                 foreach (var player in GetAllPlayers(true))
                     _packetsHelper.SendRemoveItem(player.Client, mapItem);
             }
+
+            return mapItem;
         }
 
         #endregion

@@ -14,6 +14,7 @@ using Imgeneus.World.Game.PartyAndRaid;
 using Imgeneus.World.Game.Player;
 using Imgeneus.World.Game.Zone;
 using Imgeneus.World.Game.Zone.Obelisks;
+using Imgeneus.World.Game.Zone.Portals;
 using Imgeneus.World.Serialization;
 
 namespace Imgeneus.World.Packets
@@ -141,6 +142,14 @@ namespace Imgeneus.World.Packets
         {
             using var packet = new Packet(PacketType.ADD_ITEM);
             packet.Write(new AddedInventoryItem(item).Serialize());
+            client.SendPacket(packet);
+        }
+
+        internal void SendPortalTeleportNotAllowed(IWorldClient client, PortalTeleportNotAllowedReason reason)
+        {
+            using var packet = new Packet(PacketType.CHARACTER_ENTERED_PORTAL);
+            packet.Write(false); // success
+            packet.Write((byte)reason);
             client.SendPacket(packet);
         }
 

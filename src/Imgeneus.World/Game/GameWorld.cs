@@ -8,8 +8,7 @@ using Imgeneus.World.Game.Player;
 using Imgeneus.World.Game.Trade;
 using Imgeneus.World.Game.Zone;
 using Imgeneus.World.Game.Zone.MapConfig;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
+using Imgeneus.World.Game.Zone.Portals;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Concurrent;
@@ -64,6 +63,84 @@ namespace Imgeneus.World.Game
                     if (Maps.TryAdd(mapDefinition.Id, map))
                         _logger.LogInformation($"Map {map.Id} was successfully loaded.");
                 }
+            }
+        }
+
+        /// <inheritdoc />
+        public bool CanTeleport(Character player, byte portalIndex, out PortalTeleportNotAllowedReason reason)
+        {
+            reason = PortalTeleportNotAllowedReason.Unknown;
+
+            var map = player.Map;
+            if (map.Portals.Count <= portalIndex)
+            {
+                _logger.LogWarning($"Unknown portal {portalIndex} for map {map.Id}. Send from character {player.Id}.");
+                return false;
+            }
+
+            var portal = map.Portals[portalIndex];
+            if (!portal.IsInPortalZone(player.PosX, player.PosY, player.PosZ))
+            {
+                _logger.LogWarning($"Character position is not in portal, map {map.Id}. Portal index {portalIndex}. Send from character {player.Id}.");
+                return false;
+            }
+
+            if (!portal.IsSameFaction(player.Country))
+            {
+                return false;
+            }
+
+            if (!portal.IsRightLevel(player.Level))
+            {
+                return false;
+            }
+
+            if (Maps.ContainsKey(portal.MapId))
+            {
+                return true;
+            }
+            else // Not "usual" map.
+            {
+                var destinationMapId = portal.MapId;
+                var destinationMapDef = _mapDefinitions.Maps.FirstOrDefault(d => d.Id == destinationMapId);
+
+                if (destinationMapDef is null)
+                {
+                    _logger.LogWarning($"Map {destinationMapId} is not found in map definitions.");
+                    return false;
+                }
+
+                if (destinationMapDef.CreateType == CreateType.Party)
+                {
+                    if (player.Party is null)
+                    {
+                        reason = PortalTeleportNotAllowedReason.OnlyForParty;
+                        return false;
+                    }
+
+                    if (player.Party != null && (player.Party.Members.Count < destinationMapDef.MinMembersCount || (destinationMapDef.MaxMembersCount != 0 && player.Party.Members.Count > destinationMapDef.MaxMembersCount)))
+                    {
+                        reason = PortalTeleportNotAllowedReason.NotEnoughPartyMembers;
+                        return false;
+                    }
+
+                    return true;
+                }
+
+                // TODO: implement this check as soon as we have gulds.
+                if (destinationMapDef.CreateType == CreateType.Guild /*&& player.Guild is null*/)
+                {
+                    reason = PortalTeleportNotAllowedReason.OnlyForGuilds;
+                    return false;
+                }
+
+                if (!destinationMapDef.IsOpen)
+                {
+                    reason = PortalTeleportNotAllowedReason.OnlyForPartyAndOnTime;
+                    return false;
+                }
+
+                return true;
             }
         }
 
@@ -129,7 +206,6 @@ namespace Imgeneus.World.Game
         public void LoadPlayerInMap(int characterId)
         {
             var player = Players[characterId];
-
             if (Maps.ContainsKey(player.MapId))
             {
                 Maps[player.MapId].LoadPlayer(player);
@@ -138,7 +214,7 @@ namespace Imgeneus.World.Game
             {
                 var mapDef = _mapDefinitions.Maps.FirstOrDefault(d => d.Id == player.MapId);
 
-                // Map is not found. Is it really possibe?
+                // Map is not found.
                 if (mapDef is null)
                 {
                     _logger.LogWarning($"Unknown map {player.MapId} for character {player.Id}. Fallback to 0 map.");

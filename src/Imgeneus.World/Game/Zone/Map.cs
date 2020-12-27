@@ -42,6 +42,11 @@ namespace Imgeneus.World.Game.Zone
         public bool IsDungeon { get => _definition.MapType == MapType.Dungeon; }
 
         /// <summary>
+        /// Is this map created for party, guild etc. ?
+        /// </summary>
+        public virtual bool IsInstance { get => _definition.CreateType == CreateType.Default; }
+
+        /// <summary>
         /// How map was created.
         /// </summary>
         public CreateType MapCreationType { get => _definition.CreateType; }
@@ -278,7 +283,7 @@ namespace Imgeneus.World.Game.Zone
             }
 
             var player = Players[playerId];
-            Cells[GetCellIndex(player)].TeleportPlayer(player);
+            Cells[player.CellId].TeleportPlayer(player);
         }
 
         /// <summary>
@@ -286,18 +291,6 @@ namespace Imgeneus.World.Game.Zone
         /// </summary>
         private void Character_OnPositionChanged(Character sender)
         {
-            /*var portal = Portals.FirstOrDefault(p =>
-                        p.IsInPortalZone(sender.PosX, sender.PosY, sender.PosZ) &&
-                        p.IsSameFraction(sender.Country)
-                        && p.IsRightLevel(sender.Level));
-
-            if (portal != null)
-            {
-                sender.Teleport(portal.MapId, portal.Destination_X, portal.Destination_Y, portal.Destination_Z);
-                sender.SendCharacterTeleport();
-                return;
-            }*/
-
             var newCellId = GetCellIndex(sender);
             var oldCellId = sender.CellId;
             if (oldCellId == newCellId) // All is fine, character is in the right cell
@@ -687,7 +680,7 @@ namespace Imgeneus.World.Game.Zone
 
         #region Portals
 
-        private readonly List<Portal> Portals = new List<Portal>();
+        public IList<Portal> Portals { get; private set; } = new List<Portal>();
 
         /// <summary>
         /// Creates portals to another maps.

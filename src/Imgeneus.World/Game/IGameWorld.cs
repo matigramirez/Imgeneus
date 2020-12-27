@@ -1,5 +1,6 @@
 ﻿using Imgeneus.World.Game.Player;
 using Imgeneus.World.Game.Zone;
+using Imgeneus.World.Game.Zone.Portals;
 using System.Collections.Concurrent;
 using System.Threading.Tasks;
 
@@ -37,5 +38,14 @@ namespace Imgeneus.World.Game
         /// Removes player from game world.
         /// </summary>
         void RemovePlayer(int characterId);
+
+        /// <summary>
+        /// Checks, if player can be teleported with this portal. I.e. checks level, money, if map is open etc.
+        /// </summary>
+        /// <param name="player">player to teleport</param>
+        /// <param name="portalIndex">portal index</param>
+        /// <param name="reason">optional out param, that indicates the reason why teleport is not allowed for this character</param>
+        /// <returns>true, if it can teleport</returns>
+        bool CanTeleport(Character player, byte portalIndex, out PortalTeleportNotAllowedReason reason);
     }
 }

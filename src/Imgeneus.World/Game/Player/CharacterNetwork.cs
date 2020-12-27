@@ -127,6 +127,10 @@ namespace Imgeneus.World.Game.Player
                     HandleCharacterShape(characterShapePacket.CharacterId);
                     break;
 
+                case CharacterEnteredPortalPacket enterPortalPacket:
+                    HandleEnterPortalPacket(enterPortalPacket);
+                    break;
+
                 case UseItemPacket useItemPacket:
                     UseItem(useItemPacket.Bag, useItemPacket.Slot);
                     break;

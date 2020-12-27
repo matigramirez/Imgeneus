@@ -1,5 +1,7 @@
 ﻿using Imgeneus.DatabaseBackgroundService.Handlers;
 using Imgeneus.World.Game.Duel;
+using Imgeneus.World.Game.Zone;
+using Imgeneus.World.Game.Zone.Portals;
 
 namespace Imgeneus.World.Game.Player
 {
@@ -28,6 +30,23 @@ namespace Imgeneus.World.Game.Player
                 if (IsDuelApproved)
                     FinishDuel(DuelCancelReason.TooFarAway);
                 Map.UnloadPlayer(this);
+            }
+        }
+
+        /// <summary>
+        /// Teleports character with the help of the portal, if it's possible.
+        /// </summary>
+        public bool TryTeleport(byte portalIndex, out PortalTeleportNotAllowedReason reason)
+        {
+            if (_gameWorld.CanTeleport(this, portalIndex, out reason))
+            {
+                var portal = Map.Portals[portalIndex];
+                Teleport(portal.MapId, portal.Destination_X, portal.Destination_Y, portal.Destination_Z);
+                return true;
+            }
+            else
+            {
+                return false;
             }
         }
     }

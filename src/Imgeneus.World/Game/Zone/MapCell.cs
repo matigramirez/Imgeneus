@@ -650,6 +650,23 @@ namespace Imgeneus.World.Game.Zone
         }
 
         /// <summary>
+        /// Tries to get all items from map cell.
+        /// </summary>
+        /// <param name="includeNeighborCells"></param>
+        public IEnumerable<MapItem> GetAllItems(bool includeNeighborCells)
+        {
+            List<MapItem> mapItems = new List<MapItem>();
+            if (includeNeighborCells)
+            {
+                foreach (var cellId in NeighborCells)
+                {
+                    mapItems.AddRange(Map.Cells[cellId].GetAllItems(false));
+                }
+            }
+            return Items.Values.Concat(mapItems);
+        }
+
+        /// <summary>
         /// Removes item from map.
         /// </summary>
         public MapItem RemoveItem(int itemId)

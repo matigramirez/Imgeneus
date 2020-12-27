@@ -708,6 +708,9 @@ namespace Imgeneus.World.Game.Zone
 
         public void Dispose()
         {
+            if (!Players.IsEmpty)
+                throw new Exception("Cannot dispose map, until at least one player is connected to this map!");
+
             if (_isDisposed)
                 throw new ObjectDisposedException(nameof(Map));
 
@@ -716,10 +719,13 @@ namespace Imgeneus.World.Game.Zone
             foreach (var cell in Cells)
             {
                 var mobs = cell.GetAllMobs(false);
-                var players = cell.GetAllPlayers(false);
+                var items = cell.GetAllItems(false);
 
                 foreach (var m in mobs)
                     RemoveMob(m);
+
+                foreach (var itm in items)
+                    RemoveItem(itm.CellId, itm.Id);
 
                 cell.Dispose();
             }
@@ -730,6 +736,9 @@ namespace Imgeneus.World.Game.Zone
                 obelisk.Dispose();
             }
 
+            Cells.Clear();
+            Portals.Clear();
+            Obelisks.Clear();
             PartySearchers.Clear();
 
             _weatherTimer.Stop();

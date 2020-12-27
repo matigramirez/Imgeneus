@@ -14,6 +14,7 @@
         CHARACTER_ATTACK_MOVEMENT_SPEED = 0x051C, // 1308
         CHARACTER_SHAPE_UPDATE = 0x051D, // 1309
         CHARACTER_ATTRIBUTE_SET = 0xF701, // 63233
+        CHARACTER_MAX_HP_MP_SP = 0x051F, // 1311
 
         // Common
         LOGOUT = 0x0107, // 263
@@ -260,5 +261,10 @@
         DYE_CONFIRM = 0x055B, // 1371
         DYE_REROLL = 0x055C, // 1372
         DYE_SELECT_ITEM = 0x055D, // 1373
+
+        // Experience and Leveling
+        EXPERIENCE_GAIN = 0x0207, // 519
+        CHARACTER_LEVEL_UP = 0x0508, // 1288
+        GM_CHARACTER_LEVEL_UP = 0x051E // 1310
     }
 }

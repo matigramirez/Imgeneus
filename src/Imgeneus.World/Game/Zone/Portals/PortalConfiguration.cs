@@ -5,7 +5,7 @@ namespace Imgeneus.World.Game.Zone.Portals
     public class PortalConfiguration
     {
         [JsonPropertyName("faction")]
-        public byte Faction { get; set; }
+        public ushort Faction { get; set; }
 
         [JsonPropertyName("minLvl")]
         public ushort MinLvl { get; set; }

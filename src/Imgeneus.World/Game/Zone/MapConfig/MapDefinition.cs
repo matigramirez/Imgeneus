@@ -49,5 +49,27 @@ namespace Imgeneus.World.Game.Zone.MapConfig
         /// For party, guild etc.
         /// </summary>
         public CreateType CreateType { get; set; }
+
+        /// <summary>
+        /// Minimum members needed to enter map.
+        /// </summary>
+        public int MinMembersCount { get; set; }
+
+        /// <summary>
+        /// Maximum members needed to enter map.
+        /// </summary>
+        public int MaxMembersCount { get; set; }
+
+        /// <summary>
+        /// Checks if map is open at that time.
+        /// </summary>
+        public bool IsOpen
+        {
+            get
+            {
+                // TODO: implement maps, that are open based on date time.
+                return true;
+            }
+        }
     }
 }

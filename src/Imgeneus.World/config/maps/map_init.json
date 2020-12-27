@@ -17,6 +17,14 @@
       "NoneWeatherDuration": 60
     },
     {
+      "MapId": 19,
+      "MapType": "Field",
+      "WeatherState": "Rain",
+      "WeatherPower": "Light",
+      "WeatherDuration": 30,
+      "NoneWeatherDuration": 60
+    },
+    {
       "MapId": 35,
       "MapType": "Field"
     }

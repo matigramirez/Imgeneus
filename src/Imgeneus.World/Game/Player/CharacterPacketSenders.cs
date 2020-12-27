@@ -1,6 +1,8 @@
 ﻿using Imgeneus.Network.Packets.Game;
 using Imgeneus.World.Game.Monster;
+using Imgeneus.World.Game.Zone;
 using Imgeneus.World.Game.Zone.Obelisks;
+using Imgeneus.World.Game.Zone.Portals;
 using System.Linq;
 
 namespace Imgeneus.World.Game.Player
@@ -98,7 +100,7 @@ namespace Imgeneus.World.Game.Player
 
         public void SendObeliskBroken(Obelisk obelisk) => _packetsHelper.SendObeliskBroken(Client, obelisk);
 
-        public void SendCharacterTeleport() => _packetsHelper.SendCharacterTeleport(Client, this);
+        public void SendPortalTeleportNotAllowed(PortalTeleportNotAllowedReason reason) => _packetsHelper.SendPortalTeleportNotAllowed(Client, reason);
 
         public void SendUseVehicle(bool success, bool status) => _packetsHelper.SendUseVehicle(Client, success, status);
 

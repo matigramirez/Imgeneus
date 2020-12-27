@@ -7,7 +7,7 @@ namespace Imgeneus.World.Game.Zone
     /// <summary>
     /// Wrapper for inventory item, when it's added to map.
     /// </summary>
-    public class MapItem : IMapMember
+    public class MapItem : IMapMember, IDisposable
     {
         public int Id { get; set; }
 
@@ -102,6 +102,12 @@ namespace Imgeneus.World.Game.Zone
             _removeTimer.Elapsed += RemoveTimer_Elapsed;
 
             _removeTimer.Start();
+        }
+
+        public void Dispose()
+        {
+            _ownerClearTimer.Elapsed -= OwnerClearTimer_Elapsed;
+            _removeTimer.Elapsed -= RemoveTimer_Elapsed;
         }
     }
 }

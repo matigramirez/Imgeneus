@@ -524,7 +524,10 @@ namespace Imgeneus.World.Game.Zone
         {
             var item = Cells[cellId].RemoveItem(itemId);
             if (item != null)
+            {
                 item.OnRemove -= Item_OnRemove;
+                item.Dispose();
+            }
         }
 
         private void Item_OnRemove(MapItem item)

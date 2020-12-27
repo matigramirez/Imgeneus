@@ -104,17 +104,17 @@ namespace Imgeneus.World.Game.Player
                 var levelDifference = newLevel - previousLevel;
 
                 if (levelDifference > 0)
-                    IncrementPrimaryAttribute((ushort) levelDifference);
+                    IncreasePrimaryStat((ushort) levelDifference);
                 else
-                    DecreasePrimaryAttribute((ushort) Math.Abs(levelDifference));
+                    DecreasePrimaryStat((ushort) Math.Abs(levelDifference));
             }
             else
             {
-                IncrementPrimaryAttribute(1);
+                IncreasePrimaryStat(1);
             }
 
             // Send primary attribute
-            SendAttribute(GetPrimaryAttribute());
+            SendAttribute(GetAttributeByStat(GetPrimaryStat()));
 
             // Send new level
             SendAttribute(CharacterAttributeEnum.Level);

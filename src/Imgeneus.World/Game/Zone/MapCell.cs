@@ -231,8 +231,9 @@ namespace Imgeneus.World.Game.Zone
             character.OnSkillCastStarted -= Character_OnSkillCastStarted;
             character.OnUsedItem -= Character_OnUsedItem;
             character.OnMaxHPChanged -= Character_OnMaxHPChanged;
+            character.OnMax_HP_MP_SP_Changed -= Character_OnMax_HP_SP_MP_Changed;
             character.OnRecover -= Character_OnRecover;
-            character.OnFullRecover += Character_OnFullRecover;
+            character.OnFullRecover -= Character_OnFullRecover;
             character.OnSkillKeep -= Character_OnSkillKeep;
             character.OnShapeChange -= Character_OnShapeChange;
             character.OnUsedRangeSkill -= Character_OnUsedRangeSkill;

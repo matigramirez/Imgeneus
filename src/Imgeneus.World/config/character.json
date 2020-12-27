@@ -2586,11 +2586,11 @@
   "DefaultMaxLevels": [
     {
       "Mode": 0,
-      "Level": 80
+      "Level": 30
     },
     {
       "Mode": 1,
-      "Level": 80
+      "Level": 30
     },
     {
       "Mode": 2,

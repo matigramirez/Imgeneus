@@ -603,8 +603,6 @@ namespace Imgeneus.World.Game.Player
 
             // TODO: Use fixed xz coordinates per map?
             Teleport(gmTeleportMapPacket.MapId, 100, PosY, 100, true);
-
-            // _packetsHelper.SendGmTeleport(Client, this);
         }
 
         private void HandleGMTeleportToMapCoordinates(GMTeleportMapCoordinatesPacket gmTeleportMapCoordinatesPacket)
@@ -620,7 +618,6 @@ namespace Imgeneus.World.Game.Player
             _packetsHelper.SendGmCommandSuccess(Client);
 
             Teleport(mapId, newPosX, PosY, newPosZ, true);
-            // _packetsHelper.SendGmTeleport(Client, this);
         }
 
         private void HandleGMTeleportPlayer(GMTeleportPlayerPacket gmTeleportPlayerPacket)
@@ -641,7 +638,6 @@ namespace Imgeneus.World.Game.Player
             _packetsHelper.SendGmCommandSuccess(Client);
 
             target?.Teleport(mapId, newPosX, PosY, newPosZ, true);
-            // _packetsHelper.SendGmTeleport(target?.Client, this);
         }
     }
 }

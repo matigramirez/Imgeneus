@@ -1,6 +1,5 @@
 ﻿using Imgeneus.Database.Entities;
 using Imgeneus.World.Game.Player;
-<<<<<<< HEAD
 using System;
 using System.Collections.Generic;
 using Imgeneus.World.Game.Zone.Portals;

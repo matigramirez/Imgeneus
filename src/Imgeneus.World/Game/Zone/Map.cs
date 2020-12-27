@@ -1,5 +1,4 @@
-﻿using Imgeneus.Core.DependencyInjection;
-using Imgeneus.Core.Extensions;
+﻿using Imgeneus.Core.Extensions;
 using Imgeneus.Database.Entities;
 using Imgeneus.Database.Preload;
 using Imgeneus.World.Game.Monster;
@@ -237,11 +236,6 @@ namespace Imgeneus.World.Game.Zone
                 character.Map = this;
                 Cells[GetCellIndex(character)].AddPlayer(character);
 
-                // Send map values.
-                character.SendWeather();
-                character.SendObelisks();
-                character.SendMyShape(); // SHould fix the issue with dye color, when first connection.
-
                 character.OnPositionChanged += Character_OnPositionChanged;
                 _logger.LogDebug($"Player {character.Id} connected to map {Id}, cell index {character.CellId}.");
             }
@@ -260,7 +254,7 @@ namespace Imgeneus.World.Game.Zone
 
             if (success)
             {
-                Cells[GetCellIndex(character)].RemovePlayer(character, true);
+                Cells[character.CellId].RemovePlayer(character, true);
                 UnregisterSearchForParty(character);
                 character.OnPositionChanged -= Character_OnPositionChanged;
                 character.OldCellId = -1;
@@ -715,9 +709,6 @@ namespace Imgeneus.World.Game.Zone
 
                 foreach (var m in mobs)
                     RemoveMob(m);
-
-                foreach (var p in players)
-                    UnloadPlayer(p);
 
                 cell.Dispose();
             }

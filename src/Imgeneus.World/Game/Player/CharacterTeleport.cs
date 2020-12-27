@@ -8,6 +8,21 @@ namespace Imgeneus.World.Game.Player
     public partial class Character
     {
         /// <summary>
+        /// Indicator if character is teleporting between maps.
+        /// </summary>
+        public bool IsTeleporting { get; private set; }
+
+        protected override void OnMapSet()
+        {
+            IsTeleporting = false;
+
+            // Send map values.
+            SendWeather();
+            SendObelisks();
+            SendMyShape(); // SHould fix the issue with dye color, when first connection.
+        }
+
+        /// <summary>
         /// Teleports character inside one map or to another map.
         /// </summary>
         /// <param name="mapId">map id, where to teleport</param>
@@ -16,6 +31,8 @@ namespace Imgeneus.World.Game.Player
         /// <param name="Z">z coordinate, where to teleport</param>
         public void Teleport(ushort mapId, float x, float y, float z)
         {
+            IsTeleporting = true;
+
             var prevMapId = MapId;
             MapId = mapId;
             PosX = x;
@@ -30,6 +47,10 @@ namespace Imgeneus.World.Game.Player
                 if (IsDuelApproved)
                     FinishDuel(DuelCancelReason.TooFarAway);
                 Map.UnloadPlayer(this);
+            }
+            else
+            {
+                IsTeleporting = false;
             }
         }
 

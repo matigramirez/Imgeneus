@@ -31,11 +31,15 @@ namespace Imgeneus.World.Game.Zone
 
         public override bool UnloadPlayer(Character character)
         {
-            if (_party.Members.Count == 0 && Players.Count == 1)
+            var result = base.UnloadPlayer(character);
+
+            if (_party.Members.Count == 0 && Players.Count == 0)
             {
                 OnAllMembersLeft?.Invoke(this);
+                Dispose();
             }
-            return base.UnloadPlayer(character);
+
+            return result;
         }
     }
 }

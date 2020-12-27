@@ -47,13 +47,15 @@ namespace Imgeneus.World.Tests
                     npcFactoryMock.Object,
                     obeliskFactoryMock.Object);
 
+        private static int CharacterId;
         protected Character CreateCharacter(Map map = null)
         {
             var character = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object, linkingMock.Object, dyeingMock.Object, mobFactoryMock.Object, npcFactoryMock.Object, noticeManagerMock.Object);
             character.Client = worldClientMock.Object;
+            character.Id = CharacterId++;
 
             if (map != null)
-                character.Map = map;
+                map.LoadPlayer(character);
 
             return character;
         }

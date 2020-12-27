@@ -56,7 +56,24 @@ namespace Imgeneus.World.Game
 
         #region Map
 
-        public Map Map { get; set; }
+        private Map _map;
+        public Map Map
+        {
+            get => _map;
+
+            set
+            {
+                _map = value;
+                OnMapSet();
+            }
+        }
+
+        /// <summary>
+        /// Call it as soon as map set.
+        /// </summary>
+        protected virtual void OnMapSet()
+        {
+        }
 
         public int CellId { get; set; } = -1;
 

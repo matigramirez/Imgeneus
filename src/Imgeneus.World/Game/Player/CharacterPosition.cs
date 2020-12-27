@@ -24,6 +24,11 @@ namespace Imgeneus.World.Game.Player
         /// <param name="saveChangesToDB">set it to true, if this change should be saved to database</param>
         private void UpdatePosition(float x, float y, float z, ushort angle, bool saveChangesToDB)
         {
+            if (IsTeleporting)
+            {
+                return;
+            }
+
             if (ActiveBuffs.Any(b => b.StateType == StateType.Immobilize || b.StateType == StateType.Sleep || b.StateType == StateType.Stun))
             {
                 OnPositionChanged?.Invoke(this);

@@ -481,7 +481,7 @@ namespace Imgeneus.World.Game.Player
                     break;
 
                 case CharacterAttributeEnum.Level:
-                    if (targetPlayer.TrySetLevel((ushort)attributeValue))
+                    if (targetPlayer.TryChangeLevel((ushort)attributeValue, true))
                         SetAttributeAndSendCommandSuccess();
                     else
                         SendCommandError();
@@ -520,10 +520,12 @@ namespace Imgeneus.World.Game.Player
                     SendCommandError();
                     return;
 
-                // TODO: Add experience logic
                 case CharacterAttributeEnum.Exp:
-                    SendCommandError();
-                    return;
+                    if (targetPlayer.TryChangeExperience((ushort)attributeValue, true))
+                        SetAttributeAndSendCommandSuccess();
+                    else
+                        SendCommandError();
+                    break;
 
                 case CharacterAttributeEnum.Kills:
                     targetPlayer.SetKills((ushort)attributeValue);

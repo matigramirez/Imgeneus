@@ -120,5 +120,7 @@ namespace Imgeneus.World.Game.Player
 
         public void SendAttribute(CharacterAttributeEnum attribute) =>
             _packetsHelper.SendAttribute(Client, attribute, GetAttributeValue(attribute));
+
+        public void SendExperienceGain(ushort expAmount) => _packetsHelper.SendExperienceGain(Client, expAmount);
     }
 }

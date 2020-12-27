@@ -52,7 +52,7 @@ namespace Imgeneus.World.Game
         }
 
         /// <inheritdoc />
-        public ushort Level { get; protected set; }
+        public ushort Level { get; protected set; } = 1;
 
         #region Map
 

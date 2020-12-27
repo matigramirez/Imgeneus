@@ -16,17 +16,17 @@ namespace Imgeneus.World.Tests.CharacterTests
 
             character.TrySetMode(Mode.Ultimate);
 
-            ushort level = 10;
-            character.TrySetLevel(level);
+            ushort level = 80;
+            character.TryChangeLevel(level);
             character.ResetStats();
 
-            Assert.Equal(12 + 9, character.Strength); // 12 is default + 9 str per each level
+            Assert.Equal(12 + 79, character.Strength); // 12 is default + 1 str per each level
             Assert.Equal(11, character.Dexterity);
             Assert.Equal(10, character.Reaction);
             Assert.Equal(8, character.Intelligence);
             Assert.Equal(9, character.Wisdom);
             Assert.Equal(10, character.Luck);
-            Assert.Equal(81, character.StatPoint);
+            Assert.Equal(711, character.StatPoint);
         }
 
         [Fact]

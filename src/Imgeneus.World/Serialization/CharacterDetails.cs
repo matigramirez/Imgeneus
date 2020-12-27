@@ -42,13 +42,13 @@ namespace Imgeneus.Network.Serialization
         public ushort Angle { get; }
 
         [FieldOrder(12)]
-        public uint StartLvlExp { get => 100; } // EXP Values are multiplied by 10
+        public uint StartLvlExp { get; }
 
         [FieldOrder(13)]
-        public uint EndLvlExp { get => 250; } // Next EXP is at 2500. Client takes the previous value, calculates the difference = 1500
+        public uint EndLvlExp { get; }
 
         [FieldOrder(14)]
-        public uint CurrentExp { get => 120; } //_character.Exp; } Current EXP is at 1200
+        public uint CurrentExp { get; }
 
         [FieldOrder(15)]
         public uint Gold { get; }
@@ -88,6 +88,9 @@ namespace Imgeneus.Network.Serialization
             StatPoint = character.StatPoint;
             SkillPoint = character.SkillPoint;
             Angle = character.Angle;
+            StartLvlExp = character.MinLevelExp / 10; // Normalize experience for ep8 game
+            EndLvlExp = character.NextLevelExp / 10; // Normalize experience for ep8 game
+            CurrentExp = character.Exp / 10; // Normalize experience for ep8 game
             Gold = character.Gold;
             PosX = character.PosX;
             PosY = character.PosY;

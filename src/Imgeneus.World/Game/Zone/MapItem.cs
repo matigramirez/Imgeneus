@@ -57,7 +57,6 @@ namespace Imgeneus.World.Game.Zone
         private void OwnerClearTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
             _owner = null;
-            _removeTimer.Start();
         }
 
         #endregion
@@ -101,6 +100,8 @@ namespace Imgeneus.World.Game.Zone
             _removeTimer.Interval = 60000; // 60 seconds
             _removeTimer.AutoReset = false;
             _removeTimer.Elapsed += RemoveTimer_Elapsed;
+
+            _removeTimer.Start();
         }
     }
 }

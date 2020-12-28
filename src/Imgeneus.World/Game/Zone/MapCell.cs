@@ -538,9 +538,12 @@ namespace Imgeneus.World.Game.Zone
             foreach (var player in GetAllPlayers(true))
                 _packetsHelper.SendMobDead(player.Client, sender, killer);
 
-            // Add experience to killer
+            // Add experience to killer character/party
             if (killer is Character killerCharacter)
-                killerCharacter.TryAddExperience((ushort)mob.Exp);
+                if (killerCharacter.HasParty)
+                    killerCharacter.AddPartyExperience((ushort) mob.Exp);
+                else
+                    killerCharacter.TryAddExperience((ushort)mob.Exp);
         }
 
         private void Mob_OnMove(Mob sender)

@@ -1141,5 +1141,12 @@ namespace Imgeneus.World.Packets
             packet.Write(new CharacterLevelUp(character).Serialize());
             client.SendPacket(packet);
         }
+
+        internal void SendPartyMemberLevelChange(IWorldClient client, Character partyMember)
+        {
+            using var packet = new Packet(PacketType.PARTY_MEMBER_LEVEL);
+            packet.Write(new PartyMemberLevelChange(partyMember).Serialize());
+            client.SendPacket(packet);
+        }
     }
 }

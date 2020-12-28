@@ -159,6 +159,7 @@
         PARTY_SET_MAX = 0x0C02, // 3074
         PARTY_ADDED_BUFF = 0x0C04, // 3076
         MAP_PARTY_SET = 0x0520, // 1312
+        PARTY_MEMBER_LEVEL = 0x0C09, // 3081
 
         // Raid
         RAID_LIST = 0x0B0B, // 2827

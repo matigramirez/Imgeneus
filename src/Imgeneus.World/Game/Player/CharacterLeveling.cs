@@ -2,6 +2,7 @@
 using System.Linq;
 using Imgeneus.DatabaseBackgroundService.Handlers;
 using Imgeneus.Network.Packets.Game;
+using Imgeneus.World.Game.PartyAndRaid;
 
 namespace Imgeneus.World.Game.Player
 {
@@ -119,6 +120,15 @@ namespace Imgeneus.World.Game.Player
             // Send new level
             SendAttribute(CharacterAttributeEnum.Level);
 
+            // Send new level to party members
+            if (HasParty)
+            {
+                foreach (var partyMember in Party.Members)
+                {
+                    partyMember.SendPartyMemberLevelChange(this);
+                }
+            }
+
             return true;
         }
 
@@ -212,6 +222,35 @@ namespace Imgeneus.World.Game.Player
                 .First();
 
             return levelInfo.Level;
+        }
+
+        /// <summary>
+        /// Splits an experience amount among party members
+        /// </summary>
+        /// <param name="exp">Experience amount</param>
+        public void AddPartyExperience(ushort exp)
+        {
+            if (!HasParty)
+                return;
+
+            var partyMemberCount = Party.Members.Count;
+
+            ushort memberExp = 0;
+
+            // If there are 7 party members, party is perfect party and experience is given as if there were only 2 party members
+            if (partyMemberCount == 7)
+            {
+                memberExp = (ushort)(exp / 2);
+            }
+            else
+            {
+                memberExp = (ushort)(exp / partyMemberCount);
+            }
+
+            foreach (var partyMember in Party.Members)
+            {
+                partyMember.TryAddExperience(memberExp);
+            }
         }
     }
 }

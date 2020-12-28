@@ -263,8 +263,19 @@ namespace Imgeneus.World.Game
 
                 player.Client.OnPacketArrived -= Client_OnPacketArrived;
 
-                var map = Maps[player.MapId];
-                map.UnloadPlayer(player);
+                IMap map = null;
+
+                // Try find player's map.
+                if (Maps.ContainsKey(player.MapId))
+                    map = Maps[player.MapId];
+                else if (player.Party != null && PartyMaps.ContainsKey(player.Party.Id))
+                    map = PartyMaps[player.Party.Id];
+
+                if (map is null)
+                    _logger.LogError($"Couldn't find character's {characterId} map {player.MapId}.");
+                else
+                    map.UnloadPlayer(player);
+
                 player.Dispose();
             }
             else
@@ -279,7 +290,6 @@ namespace Imgeneus.World.Game
         }
 
         #endregion
-
 
         #region Bless
 

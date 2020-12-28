@@ -272,8 +272,8 @@ namespace Imgeneus.World.Game.Player
                     break;
 
                 case RebirthPacket rebirthPacket:
-                    var spawnCoordinate = Map.GetNearestSpawn(PosX, PosY, PosZ, Country);
-                    Rebirth(spawnCoordinate.X, spawnCoordinate.Y, spawnCoordinate.Z);
+                    var rebirthCoordinate = Map.GetRebirthMap(this);
+                    Rebirth(rebirthCoordinate.MapId, rebirthCoordinate.X, rebirthCoordinate.Y, rebirthCoordinate.Z);
                     break;
 
                 case PartySearchRegistrationPacket searchPartyPacket:

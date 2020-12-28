@@ -19,7 +19,13 @@
     {
       "MapId": 5,
       "MapType": "Dungeon",
-      "CreateType": "Party"
+      "CreateType": "Party",
+      "RebirthMap": {
+        "MapId": 1,
+        "PosX": 236,
+        "PosY": 19,
+        "PosZ": 612
+      }
     },
     {
       "MapId": 19,

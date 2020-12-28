@@ -1215,8 +1215,10 @@ namespace Imgeneus.World.Game
         public event Action<IKillable> OnRebirthed;
 
         /// <inheritdoc />
-        public void Rebirth(float x, float y, float z)
+        public void Rebirth(ushort mapId, float x, float y, float z)
         {
+            // TODO: rebirth to another map.
+
             CurrentHP = MaxHP;
             CurrentMP = MaxMP;
             CurrentSP = MaxSP;

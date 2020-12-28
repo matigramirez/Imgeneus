@@ -43,7 +43,7 @@ namespace Imgeneus.World.Game.Zone
         /// <summary>
         /// Is this map created for party, guild etc. ?
         /// </summary>
-        public virtual bool IsInstance { get => _definition.CreateType == CreateType.Default; }
+        public virtual bool IsInstance { get => false; }
 
         /// <summary>
         /// How map was created.
@@ -317,7 +317,7 @@ namespace Imgeneus.World.Game.Zone
 
             if (nearestSpawn is null)
             {
-                // TODO: spawn on another map.
+                _logger.LogError($"Spawn for map {Id} is not found.");
             }
 
             var random = new Random();
@@ -325,6 +325,23 @@ namespace Imgeneus.World.Game.Zone
             var y = random.NextFloat(nearestSpawn.Y1, nearestSpawn.Y2);
             var z = random.NextFloat(nearestSpawn.Z1, nearestSpawn.Z2);
             return (x, y, z);
+        }
+
+        /// <inheritdoc/>
+        public (ushort MapId, float X, float Y, float Z) GetRebirthMap(Character player)
+        {
+            if (_definition.RebirthMap != null)
+                return (_definition.RebirthMap.MapId, _definition.RebirthMap.PosX, _definition.RebirthMap.PosY, _definition.RebirthMap.PosZ);
+
+            if (_definition.LightRebirthMap != null && player.Country == Fraction.Light)
+                return (_definition.LightRebirthMap.MapId, _definition.LightRebirthMap.PosX, _definition.LightRebirthMap.PosY, _definition.LightRebirthMap.PosZ);
+
+            if (_definition.DarkRebirthMap != null && player.Country == Fraction.Dark)
+                return (_definition.DarkRebirthMap.MapId, _definition.DarkRebirthMap.PosX, _definition.DarkRebirthMap.PosY, _definition.DarkRebirthMap.PosZ);
+
+            // There is no rebirth map, use the nearest spawn.
+            var spawn = GetNearestSpawn(player.PosX, player.PosY, player.PosZ, player.Country);
+            return (Id, spawn.X, spawn.Y, spawn.Z);
         }
 
         #region Party search

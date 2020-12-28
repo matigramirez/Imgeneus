@@ -39,6 +39,12 @@ namespace Imgeneus.World.Game.Zone
         public (float X, float Y, float Z) GetNearestSpawn(float currentX, float currentY, float currentZ, Fraction fraction);
 
         /// <summary>
+        ///Gets map, where the character must appear after death or disconnect.
+        /// </summary>
+        /// <returns>map id and coordinate, where player shoud spawn</returns>
+        public (ushort MapId, float X, float Y, float Z) GetRebirthMap(Character player);
+
+        /// <summary>
         /// Is this map created for party, guild etc. ?
         /// </summary>
         public bool IsInstance { get; }

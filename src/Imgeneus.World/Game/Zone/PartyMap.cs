@@ -18,6 +18,9 @@ namespace Imgeneus.World.Game.Zone
         private readonly IParty _party;
 
         /// <inheritdoc/>
+        public override bool IsInstance { get => true; }
+
+        /// <inheritdoc/>
         public Guid PartyId => _party.Id;
 
         /// <inheritdoc/>

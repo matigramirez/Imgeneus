@@ -113,7 +113,7 @@ namespace Imgeneus.World.Game.Player
         {
             get
             {
-                return ConstHP + ExtraHP;
+                return ConstHP + ExtraHP + ReactionExtraHP;
             }
         }
 
@@ -136,7 +136,7 @@ namespace Imgeneus.World.Game.Player
         {
             get
             {
-                return ConstMP + ExtraMP;
+                return ConstMP + ExtraMP + WisdomExtraMP;
             }
         }
 
@@ -159,7 +159,7 @@ namespace Imgeneus.World.Game.Player
         {
             get
             {
-                return ConstSP + ExtraSP;
+                return ConstSP + ExtraSP + DexterityExtraSP;
             }
         }
 
@@ -302,6 +302,19 @@ namespace Imgeneus.World.Game.Player
                     break;
             }
         }
+        /// Extra HP given by Reaction formula
+        /// </summary>
+        public int ReactionExtraHP => Reaction * 5;
+
+        /// <summary>
+        /// Extra MP given by Wisdom formula
+        /// </summary>
+        public int WisdomExtraMP => Wisdom * 5;
+
+        /// <summary>
+        /// Extra SP given by Dexterity formula
+        /// </summary>
+        public int DexterityExtraSP => Dexterity * 5;
 
         #endregion
 
@@ -699,26 +712,75 @@ namespace Imgeneus.World.Game.Player
             switch (statAttribute)
             {
                 case CharacterAttributeEnum.Strength:
-                    Strength = newStatValue;
+                    SetStat(CharacterStatEnum.Strength, newStatValue);
                     break;
+
                 case CharacterAttributeEnum.Dexterity:
-                    Dexterity = newStatValue;
+                    SetStat(CharacterStatEnum.Dexterity, newStatValue);
                     break;
+
                 case CharacterAttributeEnum.Reaction:
-                    Reaction = newStatValue;
+                    SetStat(CharacterStatEnum.Reaction, newStatValue);
                     break;
+
                 case CharacterAttributeEnum.Intelligence:
-                    Intelligence = newStatValue;
+                    SetStat(CharacterStatEnum.Intelligence, newStatValue);
                     break;
+
                 case CharacterAttributeEnum.Luck:
-                    Luck = newStatValue;
+                    SetStat(CharacterStatEnum.Luck, newStatValue);
                     break;
+
                 case CharacterAttributeEnum.Wisdom:
-                    Wisdom = newStatValue;
+                    SetStat(CharacterStatEnum.Wisdom, newStatValue);
                     break;
+
                 default:
                     return;
             }
+        }
+
+        /// <summary>
+        /// Change a character's stat value.
+        /// </summary>
+        /// <param name="stat">Stat to change</param>
+        /// <param name="value">New stat value</param>
+        public void SetStat(CharacterStatEnum stat, ushort value)
+        {
+            switch (stat)
+            {
+                case CharacterStatEnum.Strength:
+                    Strength = value;
+                    break;
+
+                case CharacterStatEnum.Dexterity:
+                    Dexterity = value;
+                    SendMaxSP();
+                    break;
+
+                case CharacterStatEnum.Reaction:
+                    Reaction = value;
+                    SendMaxHP();
+                    break;
+
+                case CharacterStatEnum.Intelligence:
+                    Intelligence = value;
+                    break;
+
+                case CharacterStatEnum.Luck:
+                    Luck = value;
+                    break;
+
+                case CharacterStatEnum.Wisdom:
+                    Wisdom = value;
+                    SendMaxMP();
+                    break;
+
+                default:
+                    return;
+            }
+
+            SendAdditionalStats();
 
             _taskQueue.Enqueue(ActionType.UPDATE_STATS, Id, Strength, Dexterity, Reaction, Intelligence, Wisdom, Luck, StatPoint);
         }

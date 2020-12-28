@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Imgeneus.Core.Extensions;
 using Imgeneus.DatabaseBackgroundService.Handlers;
 using Imgeneus.Network.Packets.Game;
 using Imgeneus.World.Game.PartyAndRaid;
@@ -248,23 +249,13 @@ namespace Imgeneus.World.Game.Player
                 memberExp = (ushort)(exp / partyMemberCount);
             }
 
-            // Get players that are near the character who got the experience
-            var nearbyPlayers = Map.Cells[CellId].GetPlayers(PosX, PosZ, 50, Country, includeNeighborCells: true)
-                .ToList();
-
-            // If there are no players nearby, give experience only to killer
-            if (!nearbyPlayers.Any())
-            {
-                TryAddExperience(memberExp);
-                return;
-            }
-
             // Get party members who are near the player who got experience
-            var nearbyPartyMembers = Party.Members.Intersect(nearbyPlayers);
+            var nearbyPartyMembers = Party.Members.Where(m => m.MapId == MapId &&
+                                                             MathExtensions.Distance(PosX, m.PosX, PosZ, m.PosZ) < 50);
 
             foreach (var partyMember in nearbyPartyMembers)
             {
-                ((Character)partyMember).TryAddExperience(memberExp);
+                partyMember.TryAddExperience(memberExp);
             }
         }
     }

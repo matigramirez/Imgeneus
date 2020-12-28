@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Imgeneus.DatabaseBackgroundService.Handlers;
 using Imgeneus.Network.Packets.Game;
@@ -11,7 +12,7 @@ namespace Imgeneus.World.Game.Player
         /// <summary>
         /// Minimum experience needed for current player's level
         /// </summary>
-        public uint MinLevelExp => Level > 1 ? _databasePreloader.Levels[(Mode, (ushort) (Level - 1))].Exp : 0;
+        public uint MinLevelExp => Level > 1 ? _databasePreloader.Levels[(Mode, (ushort)(Level - 1))].Exp : 0;
 
         /// <summary>
         /// Experience needed to level up to next level
@@ -105,9 +106,9 @@ namespace Imgeneus.World.Game.Player
                 var levelDifference = newLevel - previousLevel;
 
                 if (levelDifference > 0)
-                    IncreasePrimaryStat((ushort) levelDifference);
+                    IncreasePrimaryStat((ushort)levelDifference);
                 else
-                    DecreasePrimaryStat((ushort) Math.Abs(levelDifference));
+                    DecreasePrimaryStat((ushort)Math.Abs(levelDifference));
             }
             else
             {
@@ -162,7 +163,7 @@ namespace Imgeneus.World.Game.Player
 
             if (Level > 1)
             {
-                lowerLevelExp = _databasePreloader.Levels[(Mode, (ushort) (Level - 1))].Exp;
+                lowerLevelExp = _databasePreloader.Levels[(Mode, (ushort)(Level - 1))].Exp;
             }
 
             if (Exp >= currentLevelExp || Exp < lowerLevelExp)
@@ -247,9 +248,23 @@ namespace Imgeneus.World.Game.Player
                 memberExp = (ushort)(exp / partyMemberCount);
             }
 
-            foreach (var partyMember in Party.Members)
+            // Get players that are near the character who got the experience
+            var nearbyPlayers = Map.Cells[CellId].GetPlayers(PosX, PosZ, 50, Country, includeNeighborCells: true)
+                .ToList();
+
+            // If there are no players nearby, give experience only to killer
+            if (!nearbyPlayers.Any())
             {
-                partyMember.TryAddExperience(memberExp);
+                TryAddExperience(memberExp);
+                return;
+            }
+
+            // Get party members who are near the player who got experience
+            var nearbyPartyMembers = Party.Members.Intersect(nearbyPlayers);
+
+            foreach (var partyMember in nearbyPartyMembers)
+            {
+                ((Character)partyMember).TryAddExperience(memberExp);
             }
         }
     }

@@ -176,10 +176,20 @@ namespace Imgeneus.World.Game.Zone
         /// <summary>
         /// Teleports player to new position.
         /// </summary>
-        public void TeleportPlayer(Character character)
+        /// <param name="character">Player to teleport</param>
+        /// <param name="teleportedByAdmin">Indicates whether the teleport was issued by an admin or not</param>
+        public void TeleportPlayer(Character character, bool teleportedByAdmin)
         {
-            foreach (var p in GetAllPlayers(true))
-                _packetsHelper.SendCharacterTeleport(p.Client, character);
+            if (teleportedByAdmin)
+            {
+                foreach (var p in GetAllPlayers(true))
+                    _packetsHelper.SendGmTeleport(p.Client, character);
+            }
+            else
+            {
+                foreach (var p in GetAllPlayers(true))
+                    _packetsHelper.SendCharacterTeleport(p.Client, character);
+            }
         }
 
         /// <summary>

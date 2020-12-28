@@ -2,6 +2,7 @@
 using System.Linq;
 using Imgeneus.Database.Constants;
 using Imgeneus.Database.Entities;
+using Imgeneus.Network.Client;
 using Imgeneus.Network.Data;
 using Imgeneus.Network.Packets;
 using Imgeneus.Network.Packets.Game;
@@ -306,7 +307,7 @@ namespace Imgeneus.World.Packets
 
         internal void SendGmTeleport(IWorldClient client, Character character)
         {
-            using var packet = new Packet(PacketType.GM_TELEPORT_MAP);
+            using var packet = new Packet(PacketType.GM_TELEPORT_MAP_COORDINATES);
             packet.Write(character.Id);
             packet.Write(character.MapId);
             packet.Write(character.PosX);
@@ -1139,6 +1140,15 @@ namespace Imgeneus.World.Packets
             var type = isAdminLevelUp ? PacketType.GM_CHARACTER_LEVEL_UP : PacketType.CHARACTER_LEVEL_UP;
             using var packet = new Packet(type);
             packet.Write(new CharacterLevelUp(character).Serialize());
+            client.SendPacket(packet);
+        }
+
+        internal void SendWarning(IWorldClient client, string message)
+        {
+            using var packet = new Packet(PacketType.GM_WARNING_PLAYER);
+            packet.WriteByte((byte)(message.Length + 1));
+            packet.Write(message);
+            packet.WriteByte(0);
             client.SendPacket(packet);
         }
     }

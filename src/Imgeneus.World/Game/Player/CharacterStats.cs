@@ -712,29 +712,67 @@ namespace Imgeneus.World.Game.Player
             switch (statAttribute)
             {
                 case CharacterAttributeEnum.Strength:
-                    Strength = newStatValue;
+                    SetStat(CharacterStatEnum.Strength, newStatValue);
                     break;
 
                 case CharacterAttributeEnum.Dexterity:
-                    Dexterity = newStatValue;
-                    SendMaxSP();
+                    SetStat(CharacterStatEnum.Dexterity, newStatValue);
                     break;
 
                 case CharacterAttributeEnum.Reaction:
-                    Reaction = newStatValue;
-                    SendMaxHP();
+                    SetStat(CharacterStatEnum.Reaction, newStatValue);
                     break;
 
                 case CharacterAttributeEnum.Intelligence:
-                    Intelligence = newStatValue;
+                    SetStat(CharacterStatEnum.Intelligence, newStatValue);
                     break;
 
                 case CharacterAttributeEnum.Luck:
-                    Luck = newStatValue;
+                    SetStat(CharacterStatEnum.Luck, newStatValue);
                     break;
 
                 case CharacterAttributeEnum.Wisdom:
-                    Wisdom = newStatValue;
+                    SetStat(CharacterStatEnum.Wisdom, newStatValue);
+                    break;
+
+                default:
+                    return;
+            }
+        }
+
+        /// <summary>
+        /// Change a character's stat value.
+        /// </summary>
+        /// <param name="stat">Stat to change</param>
+        /// <param name="value">New stat value</param>
+        public void SetStat(CharacterStatEnum stat, ushort value)
+        {
+            switch (stat)
+            {
+                case CharacterStatEnum.Strength:
+                    Strength = value;
+                    break;
+
+                case CharacterStatEnum.Dexterity:
+                    Dexterity = value;
+                    SendMaxSP();
+                    break;
+
+                case CharacterStatEnum.Reaction:
+                    Reaction = value;
+                    SendMaxHP();
+                    break;
+
+                case CharacterStatEnum.Intelligence:
+                    Intelligence = value;
+                    break;
+
+                case CharacterStatEnum.Luck:
+                    Luck = value;
+                    break;
+
+                case CharacterStatEnum.Wisdom:
+                    Wisdom = value;
                     SendMaxMP();
                     break;
 

@@ -551,8 +551,11 @@ namespace Imgeneus.World.Game.Player
 
         private void HandleGMCreateMob(GMCreateMobPacket gmCreateMobPacket)
         {
-            if(!_databasePreloader.Mobs.ContainsKey(gmCreateMobPacket.MobId))
+            if (!_databasePreloader.Mobs.ContainsKey(gmCreateMobPacket.MobId))
+            {
                 _packetsHelper.SendGmCommandError(Client, PacketType.GM_CREATE_MOB);
+                return;
+            }
 
             for (int i = 0; i < gmCreateMobPacket.NumberOfMobs; i++)
             {
@@ -571,8 +574,11 @@ namespace Imgeneus.World.Game.Player
         {
             var target = _gameWorld.Players.FirstOrDefault(p => p.Value.Name == gmCurePlayerPacket.Name).Value;
 
-            if(target == null)
+            if (target == null)
+            {
                 _packetsHelper.SendGmCommandError(Client, PacketType.GM_CURE_PLAYER);
+                return;
+            }
 
             target?.FullRecover();
 
@@ -583,8 +589,11 @@ namespace Imgeneus.World.Game.Player
         {
             var target = _gameWorld.Players.FirstOrDefault(p => p.Value.Name == gmWarningPacket.Name).Value;
 
-            if(target == null)
+            if (target == null)
+            {
                 _packetsHelper.SendGmCommandError(Client, PacketType.GM_WARNING_PLAYER);
+                return;
+            }
 
             target?.SendWarning(gmWarningPacket.Message);
 
@@ -626,8 +635,11 @@ namespace Imgeneus.World.Game.Player
 
             var target = _gameWorld.Players.FirstOrDefault(p => p.Value.Name == name).Value;
 
-            if(target == null)
+            if (target == null)
+            {
                 _packetsHelper.SendGmCommandError(Client, PacketType.GM_TELEPORT_PLAYER);
+                return;
+            }
 
             if (!_gameWorld.Maps.ContainsKey(mapId))
             {

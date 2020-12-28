@@ -62,12 +62,21 @@ namespace Imgeneus.World.Tests.PartyTests
         }
 
         [Fact]
-        [Description("Experience should be split among party members.")]
+        [Description("Experience should be split among party members who are within range of mob killer player.")]
         public void Party_Experience()
         {
             var character1 = CreateCharacter(_map);
             var character2 = CreateCharacter(_map);
             var character3 = CreateCharacter(_map);
+
+            character1.PosX = 0;
+            character1.PosZ = 0;
+
+            character2.PosX = 0;
+            character2.PosZ = 0;
+
+            character3.PosX = 1000;
+            character3.PosZ = 1000;
 
             character1.TryChangeExperience(0);
             character2.TryChangeExperience(0);
@@ -78,7 +87,8 @@ namespace Imgeneus.World.Tests.PartyTests
             character2.SetParty(party);
             character3.SetParty(party);
 
-            var mob = new Mob(Wolf.Id, true, new MoveArea(0, 0, 0, 0, 0, 0), _map, mobLoggerMock.Object, databasePreloader.Object);
+            var mob = new Mob(Wolf.Id, true, new MoveArea(0, 0, 0, 0, 0, 0), _map, mobLoggerMock.Object,
+                              databasePreloader.Object);
 
             _map.LoadPlayer(character1);
             _map.LoadPlayer(character2);
@@ -94,7 +104,7 @@ namespace Imgeneus.World.Tests.PartyTests
             Assert.True(mob.IsDead);
             Assert.Equal((uint)(mob.Exp / 3), character1.Exp);
             Assert.Equal((uint)(mob.Exp / 3), character2.Exp);
-            Assert.Equal((uint)(mob.Exp / 3), character3.Exp);
+            Assert.Equal((uint)0, character3.Exp);
         }
 
         [Fact]
@@ -126,7 +136,8 @@ namespace Imgeneus.World.Tests.PartyTests
             character6.SetParty(party);
             character7.SetParty(party);
 
-            var mob = new Mob(Wolf.Id, true, new MoveArea(0, 0, 0, 0, 0, 0), _map, mobLoggerMock.Object, databasePreloader.Object);
+            var mob = new Mob(Wolf.Id, true, new MoveArea(0, 0, 0, 0, 0, 0), _map, mobLoggerMock.Object,
+                              databasePreloader.Object);
 
             _map.LoadPlayer(character1);
             _map.LoadPlayer(character2);

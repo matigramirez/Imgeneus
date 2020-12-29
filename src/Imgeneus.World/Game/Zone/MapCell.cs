@@ -431,7 +431,8 @@ namespace Imgeneus.World.Game.Zone
         private void Character_OnLevelUp(Character sender)
         {
             foreach (var player in GetAllPlayers(true))
-                _packetsHelper.SendLevelUp(player.Client, sender);
+                // If sender has party, send admin level up
+                _packetsHelper.SendLevelUp(player.Client, sender, sender.HasParty);
         }
 
         /// <summary>

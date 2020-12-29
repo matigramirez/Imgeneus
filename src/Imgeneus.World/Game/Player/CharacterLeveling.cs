@@ -65,8 +65,9 @@ namespace Imgeneus.World.Game.Player
         /// </summary>
         /// <param name="newLevel">New player level</param>
         /// <param name="changedByAdmin">Indicates whether the level change was issued by an admin or not.</param>
+        /// <param name="resetExp">Indicates whether the experience should be set to the minimum new level experience or not. It's only used when the level is changed by an admin, not on normal level up.</param>
         /// <returns>Success status indicating whether it's possible to set the new level or not.</returns>
-        public bool TryChangeLevel(ushort newLevel, bool changedByAdmin = false)
+        public bool TryChangeLevel(ushort newLevel, bool changedByAdmin = false, bool resetExp = false)
         {
             var previousLevel = Level;
 
@@ -76,8 +77,9 @@ namespace Imgeneus.World.Game.Player
 
             if (changedByAdmin)
             {
-                // Change player experience to 0% of current level
-                SetExperience(MinLevelExp);
+                if (resetExp)
+                    // Change player experience to 0% of current level
+                    SetExperience(MinLevelExp);
 
                 // Send player experience
                 SendAttribute(CharacterAttributeEnum.Exp);
@@ -87,14 +89,14 @@ namespace Imgeneus.World.Game.Player
             else
             {
                 // Check that experience is at least the minimum experience for the level
-                if (Exp > MinLevelExp)
+                if (Exp < MinLevelExp)
                 {
                     // Change player experience to 0% of current level
                     SetExperience(MinLevelExp);
-
-                    // Send player experience
-                    SendAttribute(CharacterAttributeEnum.Exp);
                 }
+
+                // Send player experience
+                SendAttribute(CharacterAttributeEnum.Exp);
 
                 // Increase stats and skill points based on character's mode
                 var levelStats = _characterConfig.GetLevelStatSkillPoints(Mode);
@@ -157,6 +159,9 @@ namespace Imgeneus.World.Game.Player
         /// <returns>Success status indicating whether it's possible to set the new level or not.</returns>
         public bool TryChangeExperience(uint exp, bool changedByAdmin = false)
         {
+            // Round exp to nearest multiple of 10
+            exp = MathExtensions.RoundToTenMultiple(exp);
+
             // Validate the new experience value
             if (!CanSetExperience(exp)) return false;
 
@@ -184,7 +189,7 @@ namespace Imgeneus.World.Game.Player
             // TODO: Multiply exp by global exp multiplier
             // TODO: Multiply exp by exp buff multipliers
 
-            // Round to nearest multiple of 10
+            // Round exp to nearest multiple of 10
             expAmount = (ushort)MathExtensions.RoundToTenMultiple(expAmount);
 
             // Prevent sending 0 exp to client
@@ -197,16 +202,11 @@ namespace Imgeneus.World.Game.Player
             if (!CanSetExperience(newExp))
                 return false;
 
-            // Set the character's experience attribute
-            SetExperience(newExp);
-
             // Send experience gain to client
             SendExperienceGain(expAmount);
 
-            // If new experience requires a level change, do it
-            if (Exp >= NextLevelExp)
-                // Update level to value that matches the new experience value
-                TryChangeLevel(GetLevelByExperience(Exp));
+            // Update experience
+            TryChangeExperience(newExp);
 
             return true;
         }

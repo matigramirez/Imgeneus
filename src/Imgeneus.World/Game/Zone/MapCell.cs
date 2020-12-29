@@ -551,9 +551,10 @@ namespace Imgeneus.World.Game.Zone
             // Add experience to killer character/party
             if (killer is Character killerCharacter)
                 if (killerCharacter.HasParty)
-                    killerCharacter.AddPartyExperience((ushort) mob.Exp);
+                    killerCharacter.AddPartyMobExperience(mob.Level, (ushort)mob.Exp);
                 else
-                    killerCharacter.TryAddExperience((ushort)mob.Exp);
+                    killerCharacter.AddMobExperience(mob.Level, (ushort)mob.Exp);
+
         }
 
         private void Mob_OnMove(Mob sender)

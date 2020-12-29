@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using Imgeneus.Core.Extensions;
 using Imgeneus.DatabaseBackgroundService.Handlers;
 using Imgeneus.Network.Packets.Game;
-using Imgeneus.World.Game.PartyAndRaid;
 
 namespace Imgeneus.World.Game.Player
 {
@@ -72,6 +70,7 @@ namespace Imgeneus.World.Game.Player
         {
             var previousLevel = Level;
 
+            // Set character's new level
             if (!TrySetLevel(newLevel))
                 return false;
 
@@ -87,7 +86,7 @@ namespace Imgeneus.World.Game.Player
             }
             else
             {
-                // Increase stats and skill points
+                // Increase stats and skill points based on character's mode
                 var levelStats = _characterConfig.GetLevelStatSkillPoints(Mode);
                 IncreaseStatPoint(levelStats.StatPoint);
                 IncreaseSkillPoint(levelStats.SkillPoint);
@@ -124,12 +123,8 @@ namespace Imgeneus.World.Game.Player
 
             // Send new level to party members
             if (HasParty)
-            {
                 foreach (var partyMember in Party.Members)
-                {
                     partyMember.SendPartyMemberLevelChange(this);
-                }
-            }
 
             return true;
         }
@@ -152,25 +147,19 @@ namespace Imgeneus.World.Game.Player
         /// <returns>Success status indicating whether it's possible to set the new level or not.</returns>
         public bool TryChangeExperience(uint exp, bool changedByAdmin = false)
         {
+            // Validate the new experience value
             if (!CanSetExperience(exp)) return false;
 
+            // Set the character's experience attribute
             SetExperience(exp);
 
+            // Send experience attribute to client
             SendAttribute(CharacterAttributeEnum.Exp);
 
-            var currentLevelExp = _databasePreloader.Levels[(Mode, Level)].Exp;
-
-            uint lowerLevelExp = 0;
-
-            if (Level > 1)
-            {
-                lowerLevelExp = _databasePreloader.Levels[(Mode, (ushort)(Level - 1))].Exp;
-            }
-
-            if (Exp >= currentLevelExp || Exp < lowerLevelExp)
-            {
+            // Check current level experience boundaries and change level if necessary
+            if (Exp < MinLevelExp || Exp >= NextLevelExp)
+                // Update level to value that matches the new experience value
                 TryChangeLevel(GetLevelByExperience(Exp), changedByAdmin);
-            }
 
             return true;
         }
@@ -178,22 +167,36 @@ namespace Imgeneus.World.Game.Player
         /// <summary>
         /// Attempts to add experience to a player.
         /// </summary>
-        /// <param name="expAmount"></param>
-        /// <returns></returns>
+        /// <param name="expAmount">Experience amount</param>
+        /// <returns>Success status indicating whether it's possible to add the experience or not.</returns>
         public bool TryAddExperience(ushort expAmount)
         {
-            var newExp = Exp + expAmount;
+            // TODO: Multiply exp by global exp multiplier
+            // TODO: Multiply exp by exp buff multipliers
 
-            if (!CanSetExperience(newExp)) return false;
+            // Round to nearest multiple of 10
+            expAmount = (ushort)MathExtensions.RoundToTenMultiple(expAmount);
 
+            // Prevent sending 0 exp to client
+            if (expAmount == 0)
+                return false;
+
+            var newExp = (ushort)(Exp + expAmount);
+
+            // Validate the new experience value
+            if (!CanSetExperience(newExp))
+                return false;
+
+            // Set the character's experience attribute
             SetExperience(newExp);
 
+            // Send experience gain to client
             SendExperienceGain(expAmount);
 
+            // If new experience requires a level change, do it
             if (Exp >= NextLevelExp)
-            {
+                // Update level to value that matches the new experience value
                 TryChangeLevel(GetLevelByExperience(Exp));
-            }
 
             return true;
         }
@@ -205,8 +208,10 @@ namespace Imgeneus.World.Game.Player
         /// <returns>Success status indicating whether it is possible to set an experience value or not.</returns>
         private bool CanSetExperience(uint exp)
         {
+            // Get max level from config file
             var maxLevel = _characterConfig.GetMaxLevelConfig(Mode).Level;
 
+            // Get max level info
             var maxLevelInfo = _databasePreloader.Levels[(Mode, maxLevel)];
 
             // Exp can't be superior than max level's experience
@@ -227,10 +232,28 @@ namespace Imgeneus.World.Game.Player
         }
 
         /// <summary>
-        /// Splits an experience amount among party members
+        /// Gives a player the experience gained by killing a mob
         /// </summary>
-        /// <param name="exp">Experience amount</param>
-        public void AddPartyExperience(ushort exp)
+        /// <param name="mobLevel">Killed mob's level</param>
+        /// <param name="mobExp">Killed mob's experience</param>
+        public void AddMobExperience(ushort mobLevel, ushort mobExp)
+        {
+            // Calculate the experience the player should get from the mob
+            var exp = CalculateExperienceFromMob(mobLevel, mobExp);
+
+            if (exp == 0)
+                return;
+
+            // Add experience to character
+            TryAddExperience(exp);
+        }
+
+        /// <summary>
+        /// Splits the experience given by a mob among party members
+        /// </summary>
+        /// <param name="mobLevel">Killed mob's level</param>
+        /// <param name="mobExp">Killed mob's experience</param>
+        public void AddPartyMobExperience(ushort mobLevel, ushort mobExp)
         {
             if (!HasParty)
                 return;
@@ -241,22 +264,38 @@ namespace Imgeneus.World.Game.Player
 
             // If there are 7 party members, party is perfect party and experience is given as if there were only 2 party members
             if (partyMemberCount == 7)
-            {
-                memberExp = (ushort)(exp / 2);
-            }
+                memberExp = (ushort)(mobExp / 2);
+
             else
-            {
-                memberExp = (ushort)(exp / partyMemberCount);
-            }
+                memberExp = (ushort)(mobExp / partyMemberCount);
 
             // Get party members who are near the player who got experience
             var nearbyPartyMembers = Party.Members.Where(m => m.MapId == MapId &&
                                                              MathExtensions.Distance(PosX, m.PosX, PosZ, m.PosZ) < 50);
 
+            // Give experience to every party member
             foreach (var partyMember in nearbyPartyMembers)
-            {
-                partyMember.TryAddExperience(memberExp);
-            }
+                partyMember.AddMobExperience(mobLevel, memberExp);
+        }
+
+        /// <summary>
+        /// Calculates the experience a player should get from killing a mob based on his level.
+        /// </summary>
+        /// <param name="mobLevel">Killed mob's level</param>
+        /// <param name="mobExp">Killed mob's experience</param>
+        /// <returns>Experience value</returns>
+        private ushort CalculateExperienceFromMob(ushort mobLevel, ushort mobExp)
+        {
+            var levelDifference = Level - mobLevel;
+
+            // Character can't get experience from mob that's more than 8 levels above him or more than 6 levels below him
+            if (levelDifference < -8 || levelDifference > 6)
+                return 0;
+
+            // Calculate experience based on exp formula
+            var exp = (ushort)((-24 * levelDifference + 167) / 100f * mobExp);
+
+            return exp;
         }
     }
 }

@@ -19,9 +19,9 @@ namespace Imgeneus.World.Tests.CharacterTests
 
             Assert.Equal((uint)0, character.Exp);
 
-            character.TryAddExperience(201);
+            character.TryAddExperience(200);
 
-            Assert.Equal((uint)201, character.Exp);
+            Assert.Equal((uint)200, character.Exp);
             Assert.Equal(2, character.Level);
         }
 
@@ -46,7 +46,7 @@ namespace Imgeneus.World.Tests.CharacterTests
         }
 
         [Fact]
-        [Description("Character should receive experience by killing a mob")]
+        [Description("Character should receive experience by killing a mob according to the level difference.")]
         public void ExperienceGainFromMobTest()
         {
             var map = testMap;
@@ -54,15 +54,20 @@ namespace Imgeneus.World.Tests.CharacterTests
 
             var character = CreateCharacter();
 
-            character.TryChangeExperience(40);
-            Assert.Equal((uint)40, character.Exp);
+            character.TrySetMode(Mode.Ultimate);
+            character.TryChangeLevel(mob.Level, true);
+
+            var previousExp = character.Exp;
 
             map.LoadPlayer(character);
             map.AddMob(mob);
             mob.DecreaseHP(20000000, character);
 
             Assert.True(mob.IsDead);
-            Assert.Equal((uint)(40 + mob.Exp), character.Exp);
+
+            var expectedExperience = previousExp + 120;
+
+            Assert.Equal(expectedExperience, character.Exp);
         }
     }
 }

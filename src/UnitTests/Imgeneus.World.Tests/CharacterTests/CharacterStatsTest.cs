@@ -1,7 +1,6 @@
-﻿using Imgeneus.Database.Entities;
-using Imgeneus.Network.Packets.Game;
+﻿using System.ComponentModel;
+using Imgeneus.Database.Entities;
 using Imgeneus.World.Game.Player;
-using System.ComponentModel;
 using Xunit;
 
 namespace Imgeneus.World.Tests.CharacterTests
@@ -88,6 +87,21 @@ namespace Imgeneus.World.Tests.CharacterTests
             Assert.Equal(previousHP + 25, character.MaxHP);
             Assert.Equal(previousMP + 50, character.MaxMP);
             Assert.Equal(previousSP + 75, character.MaxSP);
+        }
+
+        [Fact]
+        [Description("It should be possible to set victories and defeats.")]
+        public void SetVictoriesAndDefeatsTest()
+        {
+            var character = CreateCharacter();
+            Assert.Equal(0, character.Victories);
+            Assert.Equal(0, character.Defeats);
+
+            character.SetVictories(10);
+            character.SetDefeats(20);
+
+            Assert.Equal(10, character.Victories);
+            Assert.Equal(20, character.Defeats);
         }
     }
 }

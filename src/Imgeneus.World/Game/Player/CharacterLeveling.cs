@@ -81,6 +81,13 @@ namespace Imgeneus.World.Game.Player
                     // Change player experience to 0% of current level
                     SetExperience(MinLevelExp);
 
+                // Check that experience is at least the minimum experience for the level
+                if (Exp < MinLevelExp)
+                {
+                    // Change player experience to 0% of current level
+                    SetExperience(MinLevelExp);
+                }
+
                 // Send player experience
                 SendAttribute(CharacterAttributeEnum.Exp);
 

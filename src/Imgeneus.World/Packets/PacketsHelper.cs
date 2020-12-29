@@ -1158,5 +1158,19 @@ namespace Imgeneus.World.Packets
             packet.WriteByte(0);
             client.SendPacket(packet);
         }
+
+        internal void SendPartyMember_HP_SP_MP(IWorldClient client, Character partyMember)
+        {
+            using var packet = new Packet(PacketType.PARTY_MEMBER_HP_SP_MP);
+            packet.Write(new PartyMember_HP_SP_MP(partyMember).Serialize());
+            client.SendPacket(packet);
+        }
+
+        internal void SendPartyMemberMax_HP_SP_MP(IWorldClient client, Character partyMember)
+        {
+            using var packet = new Packet(PacketType.PARTY_MEMBER_MAX_HP_SP_MP);
+            packet.Write(new PartyMemberMax_HP_SP_MP((partyMember)).Serialize());
+            client.SendPacket(packet);
+        }
     }
 }

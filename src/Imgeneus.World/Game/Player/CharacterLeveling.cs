@@ -90,10 +90,8 @@ namespace Imgeneus.World.Game.Player
             {
                 // Check that experience is at least the minimum experience for the level
                 if (Exp < MinLevelExp)
-                {
                     // Change player experience to 0% of current level
                     SetExperience(MinLevelExp);
-                }
 
                 // Send player experience
                 SendAttribute(CharacterAttributeEnum.Exp);
@@ -132,11 +130,6 @@ namespace Imgeneus.World.Game.Player
 
             // Send new level
             SendAttribute(CharacterAttributeEnum.Level);
-
-            // Send new level to party members
-            if (HasParty)
-                foreach (var partyMember in Party.Members)
-                    partyMember.SendPartyMemberLevelChange(this);
 
             return true;
         }

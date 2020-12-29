@@ -41,7 +41,7 @@ namespace Imgeneus.World.Tests.CharacterTests
             var maxLevelExp = databasePreloader.Object.Levels[(character.Mode, character.Level)].Exp;
 
             Assert.Equal(maxLevelExp, character.Exp);
-            Assert.False(character.TryAddExperience(1));
+            Assert.False(character.TryAddExperience(10));
             Assert.Equal(maxLevelExp, character.Exp);
         }
 

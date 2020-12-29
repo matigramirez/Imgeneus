@@ -16,7 +16,7 @@ namespace Imgeneus.World.Game.Player
         public ushort MapId { get; private set; }
         public Race Race { get; set; }
         public CharacterProfession Class { get; set; }
-        public Mode Mode { get; private set; }
+        public Mode Mode { get; private set; } = Mode.Beginner;
         public byte Hair { get; set; }
         public byte Face { get; set; }
         public byte Height { get; set; }
@@ -71,6 +71,11 @@ namespace Imgeneus.World.Game.Player
 
         #region Max HP & SP & MP
 
+        /// <summary>
+        /// Event that's fired when max hp, mp and sp change.
+        /// </summary>
+        public event Action<Character> OnMax_HP_MP_SP_Changed;
+
         private void Character_OnMaxHPChanged(IKillable sender, int maxHP)
         {
             if (Client != null)
@@ -108,7 +113,7 @@ namespace Imgeneus.World.Game.Player
         {
             get
             {
-                return ConstHP + ExtraHP;
+                return ConstHP + ExtraHP + ReactionExtraHP;
             }
         }
 
@@ -131,7 +136,7 @@ namespace Imgeneus.World.Game.Player
         {
             get
             {
-                return ConstMP + ExtraMP;
+                return ConstMP + ExtraMP + WisdomExtraMP;
             }
         }
 
@@ -154,9 +159,162 @@ namespace Imgeneus.World.Game.Player
         {
             get
             {
-                return ConstSP + ExtraSP;
+                return ConstSP + ExtraSP + DexterityExtraSP;
             }
         }
+
+        /// <summary>
+        /// Gets the character's primary stat
+        /// </summary>
+        public CharacterStatEnum GetPrimaryStat()
+        {
+            var defaultStat = _characterConfig.DefaultStats.First(s => s.Job == Class);
+
+            switch (defaultStat.MainStat)
+            {
+                case 0:
+                    return CharacterStatEnum.Strength;
+
+                case 1:
+                    return CharacterStatEnum.Dexterity;
+
+                case 2:
+                    return CharacterStatEnum.Reaction;
+
+                case 3:
+                    return CharacterStatEnum.Intelligence;
+
+                case 4:
+                    return CharacterStatEnum.Wisdom;
+
+                case 5:
+                    return CharacterStatEnum.Luck;
+
+                default:
+                    throw new NotSupportedException();
+            }
+        }
+
+        /// <summary>
+        /// Gets the character's primary stat
+        /// </summary>
+        public CharacterAttributeEnum GetAttributeByStat(CharacterStatEnum stat)
+        {
+            switch (stat)
+            {
+                case CharacterStatEnum.Strength:
+                    return CharacterAttributeEnum.Strength;
+
+                case CharacterStatEnum.Dexterity:
+                    return CharacterAttributeEnum.Dexterity;
+
+                case CharacterStatEnum.Reaction:
+                    return CharacterAttributeEnum.Reaction;
+
+                case CharacterStatEnum.Intelligence:
+                    return CharacterAttributeEnum.Intelligence;
+
+                case CharacterStatEnum.Wisdom:
+                    return CharacterAttributeEnum.Wisdom;
+
+                case CharacterStatEnum.Luck:
+                    return CharacterAttributeEnum.Luck;
+
+                default:
+                    throw new NotSupportedException();
+            }
+        }
+
+        /// <summary>
+        /// Increases a character's main stat by a certain amount
+        /// </summary>
+        /// <param name="amount">Decrease amount</param>
+        public void IncreasePrimaryStat(ushort amount = 1)
+        {
+            var primaryAttribute = GetPrimaryStat();
+
+            switch (primaryAttribute)
+            {
+                case CharacterStatEnum.Strength:
+                    Strength += amount;
+                    break;
+
+                case CharacterStatEnum.Dexterity:
+                    Dexterity += amount;
+                    break;
+
+                case CharacterStatEnum.Reaction:
+                    Reaction += amount;
+                    break;
+
+                case CharacterStatEnum.Intelligence:
+                    Intelligence += amount;
+                    break;
+
+                case CharacterStatEnum.Wisdom:
+                    Wisdom += amount;
+                    break;
+
+                case CharacterStatEnum.Luck:
+                    Luck += amount;
+                    break;
+
+                default:
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// Decreases a character's main stat by a certain amount
+        /// </summary>
+        /// <param name="amount">Decrease amount</param>
+        public void DecreasePrimaryStat(ushort amount = 1)
+        {
+            var primaryAttribute = GetPrimaryStat();
+
+            switch (primaryAttribute)
+            {
+                case CharacterStatEnum.Strength:
+                    Strength -= amount;
+                    break;
+
+                case CharacterStatEnum.Dexterity:
+                    Dexterity -= amount;
+                    break;
+
+                case CharacterStatEnum.Reaction:
+                    Reaction -= amount;
+                    break;
+
+                case CharacterStatEnum.Intelligence:
+                    Intelligence -= amount;
+                    break;
+
+                case CharacterStatEnum.Wisdom:
+                    Wisdom -= amount;
+                    break;
+
+                case CharacterStatEnum.Luck:
+                    Luck -= amount;
+                    break;
+
+                default:
+                    break;
+            }
+        }
+        /// Extra HP given by Reaction formula
+        /// </summary>
+        public int ReactionExtraHP => Reaction * 5;
+
+        /// <summary>
+        /// Extra MP given by Wisdom formula
+        /// </summary>
+        public int WisdomExtraMP => Wisdom * 5;
+
+        /// <summary>
+        /// Extra SP given by Dexterity formula
+        /// </summary>
+        public int DexterityExtraSP => Dexterity * 5;
 
         #endregion
 
@@ -467,61 +625,11 @@ namespace Imgeneus.World.Game.Player
             Wisdom = defaultStat.Wis;
             Luck = defaultStat.Luc;
 
-            ushort statPerLevel;
-            switch (Mode)
-            {
-                case Mode.Beginner:
-                    statPerLevel = 3;
-                    break;
+            var statPerLevel = _characterConfig.GetLevelStatSkillPoints(Mode).StatPoint;
 
-                case Mode.Normal:
-                    statPerLevel = 5;
-                    break;
+            SetStatPoint((ushort)((Level - 1) * statPerLevel)); // Level - 1, because we are starting with 1 level.
 
-                case Mode.Hard:
-                    statPerLevel = 7;
-                    break;
-
-                case Mode.Ultimate:
-                    statPerLevel = 9;
-                    break;
-
-                default:
-                    statPerLevel = 0;
-                    break;
-            }
-
-            StatPoint = (ushort)((Level - 1) * statPerLevel); // Level - 1, because we are starting with 1 level.
-
-            switch (defaultStat.MainStat)
-            {
-                case 0:
-                    Strength += (ushort)(Level - 1);
-                    break;
-
-                case 1:
-                    Dexterity += (ushort)(Level - 1);
-                    break;
-
-                case 2:
-                    Reaction += (ushort)(Level - 1);
-                    break;
-
-                case 3:
-                    Intelligence += (ushort)(Level - 1);
-                    break;
-
-                case 4:
-                    Wisdom += (ushort)(Level - 1);
-                    break;
-
-                case 5:
-                    Luck += (ushort)(Level - 1);
-                    break;
-
-                default:
-                    break;
-            }
+            IncreasePrimaryStat((ushort)(Level - 1));
 
             _taskQueue.Enqueue(ActionType.UPDATE_STATS, Id, Strength, Dexterity, Reaction, Intelligence, Wisdom, Luck, StatPoint);
             _packetsHelper.SendResetStats(Client, this);
@@ -604,26 +712,75 @@ namespace Imgeneus.World.Game.Player
             switch (statAttribute)
             {
                 case CharacterAttributeEnum.Strength:
-                    Strength = newStatValue;
+                    SetStat(CharacterStatEnum.Strength, newStatValue);
                     break;
+
                 case CharacterAttributeEnum.Dexterity:
-                    Dexterity = newStatValue;
+                    SetStat(CharacterStatEnum.Dexterity, newStatValue);
                     break;
+
                 case CharacterAttributeEnum.Reaction:
-                    Reaction = newStatValue;
+                    SetStat(CharacterStatEnum.Reaction, newStatValue);
                     break;
+
                 case CharacterAttributeEnum.Intelligence:
-                    Intelligence = newStatValue;
+                    SetStat(CharacterStatEnum.Intelligence, newStatValue);
                     break;
+
                 case CharacterAttributeEnum.Luck:
-                    Luck = newStatValue;
+                    SetStat(CharacterStatEnum.Luck, newStatValue);
                     break;
+
                 case CharacterAttributeEnum.Wisdom:
-                    Wisdom = newStatValue;
+                    SetStat(CharacterStatEnum.Wisdom, newStatValue);
                     break;
+
                 default:
                     return;
             }
+        }
+
+        /// <summary>
+        /// Change a character's stat value.
+        /// </summary>
+        /// <param name="stat">Stat to change</param>
+        /// <param name="value">New stat value</param>
+        public void SetStat(CharacterStatEnum stat, ushort value)
+        {
+            switch (stat)
+            {
+                case CharacterStatEnum.Strength:
+                    Strength = value;
+                    break;
+
+                case CharacterStatEnum.Dexterity:
+                    Dexterity = value;
+                    SendMaxSP();
+                    break;
+
+                case CharacterStatEnum.Reaction:
+                    Reaction = value;
+                    SendMaxHP();
+                    break;
+
+                case CharacterStatEnum.Intelligence:
+                    Intelligence = value;
+                    break;
+
+                case CharacterStatEnum.Luck:
+                    Luck = value;
+                    break;
+
+                case CharacterStatEnum.Wisdom:
+                    Wisdom = value;
+                    SendMaxMP();
+                    break;
+
+                default:
+                    return;
+            }
+
+            SendAdditionalStats();
 
             _taskQueue.Enqueue(ActionType.UPDATE_STATS, Id, Strength, Dexterity, Reaction, Intelligence, Wisdom, Luck, StatPoint);
         }
@@ -673,6 +830,12 @@ namespace Imgeneus.World.Game.Player
         }
 
         /// <summary>
+        /// Increases the player's stat points by a certain amount
+        /// </summary>
+        /// <param name="amount"></param>
+        public void IncreaseStatPoint(ushort amount) => SetStatPoint(StatPoint += amount);
+
+        /// <summary>
         /// Set the skill points amount
         /// </summary>
         public void SetSkillPoint(ushort skillPoint)
@@ -681,6 +844,12 @@ namespace Imgeneus.World.Game.Player
 
             _taskQueue.Enqueue(ActionType.SAVE_CHARACTER_SKILLPOINT, Id, SkillPoint);
         }
+
+        /// <summary>
+        /// Increases the player's skill points by a certain amount
+        /// </summary>
+        /// <param name="amount"></param>
+        public void IncreaseSkillPoint(ushort amount) => SetSkillPoint(StatPoint += amount);
 
         #endregion
 

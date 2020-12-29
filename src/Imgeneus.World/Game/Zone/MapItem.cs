@@ -1,4 +1,5 @@
 ﻿using Imgeneus.World.Game.Player;
+using System;
 using System.Timers;
 
 namespace Imgeneus.World.Game.Zone
@@ -6,7 +7,7 @@ namespace Imgeneus.World.Game.Zone
     /// <summary>
     /// Wrapper for inventory item, when it's added to map.
     /// </summary>
-    public class MapItem : IMapMember
+    public class MapItem : IMapMember, IDisposable
     {
         public int Id { get; set; }
 
@@ -60,6 +61,30 @@ namespace Imgeneus.World.Game.Zone
 
         #endregion
 
+        #region Remove item timer
+
+        private Timer _removeTimer = new Timer();
+
+        private void RemoveTimer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            OnRemove?.Invoke(this);
+        }
+
+        /// <summary>
+        /// Event, that is fired, when it's time to remove item from map.
+        /// </summary>
+        public event Action<MapItem> OnRemove;
+
+        /// <summary>
+        /// Stops remove timer.
+        /// </summary>
+        public void StopRemoveTimer()
+        {
+            _removeTimer.Stop();
+        }
+
+        #endregion
+
         public MapItem(Item item, Character owner, float x, float y, float z)
         {
             Item = item;
@@ -68,9 +93,21 @@ namespace Imgeneus.World.Game.Zone
             PosY = y;
             PosZ = z;
 
-            _ownerClearTimer.Interval = 7000; // 7 seconds
+            _ownerClearTimer.Interval = 20000; // 20 seconds
             _ownerClearTimer.AutoReset = false;
             _ownerClearTimer.Elapsed += OwnerClearTimer_Elapsed;
+
+            _removeTimer.Interval = 60000; // 60 seconds
+            _removeTimer.AutoReset = false;
+            _removeTimer.Elapsed += RemoveTimer_Elapsed;
+
+            _removeTimer.Start();
+        }
+
+        public void Dispose()
+        {
+            _ownerClearTimer.Elapsed -= OwnerClearTimer_Elapsed;
+            _removeTimer.Elapsed -= RemoveTimer_Elapsed;
         }
     }
 }

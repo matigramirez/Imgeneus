@@ -176,11 +176,20 @@ namespace Imgeneus.World.Game.Zone
         /// <summary>
         /// Teleports player to new position.
         /// </summary>
-        public void TeleportPlayer(Character character)
+        /// <param name="character">Player to teleport</param>
+        /// <param name="teleportedByAdmin">Indicates whether the teleport was issued by an admin or not</param>
+        public void TeleportPlayer(Character character, bool teleportedByAdmin)
         {
-            foreach (var p in GetAllPlayers(true))
-                if (p != character)
+            if (teleportedByAdmin)
+            {
+                foreach (var p in GetAllPlayers(true))
+                    _packetsHelper.SendGmTeleport(p.Client, character);
+            }
+            else
+            {
+                foreach (var p in GetAllPlayers(true))
                     _packetsHelper.SendCharacterTeleport(p.Client, character);
+            }
         }
 
         /// <summary>
@@ -202,13 +211,17 @@ namespace Imgeneus.World.Game.Zone
             character.OnSkillCastStarted += Character_OnSkillCastStarted;
             character.OnUsedItem += Character_OnUsedItem;
             character.OnMaxHPChanged += Character_OnMaxHPChanged;
+            character.OnMax_HP_MP_SP_Changed += Character_OnMax_HP_SP_MP_Changed;
             character.OnRecover += Character_OnRecover;
+            character.OnFullRecover += Character_OnFullRecover;
             character.OnSkillKeep += Character_OnSkillKeep;
             character.OnShapeChange += Character_OnShapeChange;
             character.OnUsedRangeSkill += Character_OnUsedRangeSkill;
             character.OnRebirthed += Character_OnRebirthed;
             character.OnAppearanceChanged += Character_OnAppearanceChanged;
             character.OnStartSummonVehicle += Character_OnStartSummonVehicle;
+            character.OnLevelUp += Character_OnLevelUp;
+            character.OnAdminLevelUp += Character_OnAdminLevelUp;
         }
 
         /// <summary>
@@ -227,13 +240,17 @@ namespace Imgeneus.World.Game.Zone
             character.OnSkillCastStarted -= Character_OnSkillCastStarted;
             character.OnUsedItem -= Character_OnUsedItem;
             character.OnMaxHPChanged -= Character_OnMaxHPChanged;
+            character.OnMax_HP_MP_SP_Changed -= Character_OnMax_HP_SP_MP_Changed;
             character.OnRecover -= Character_OnRecover;
+            character.OnFullRecover -= Character_OnFullRecover;
             character.OnSkillKeep -= Character_OnSkillKeep;
             character.OnShapeChange -= Character_OnShapeChange;
             character.OnUsedRangeSkill -= Character_OnUsedRangeSkill;
             character.OnRebirthed -= Character_OnRebirthed;
             character.OnAppearanceChanged -= Character_OnAppearanceChanged;
             character.OnStartSummonVehicle -= Character_OnStartSummonVehicle;
+            character.OnLevelUp -= Character_OnLevelUp;
+            character.OnAdminLevelUp -= Character_OnAdminLevelUp;
         }
 
         #region Character listeners
@@ -347,10 +364,25 @@ namespace Imgeneus.World.Game.Zone
                 _packetsHelper.SendRecoverCharacter(player.Client, sender, hp, mp, sp);
         }
 
+        private void Character_OnFullRecover(IKillable sender)
+        {
+            foreach (var player in GetAllPlayers(true))
+                _packetsHelper.SendRecoverCharacter(player.Client, sender, sender.CurrentHP, sender.CurrentMP, sender.CurrentSP);
+        }
+
         private void Character_OnMaxHPChanged(IKillable sender, int maxHP)
         {
             foreach (var player in GetAllPlayers(true))
                 _packetsHelper.Send_Max_HP(player.Client, sender.Id, maxHP);
+        }
+
+        /// <summary>
+        /// Notifies other players that player's max HP, MP and SP changed
+        /// </summary>
+        private void Character_OnMax_HP_SP_MP_Changed(Character sender)
+        {
+            foreach (var player in GetAllPlayers(true))
+                _packetsHelper.SendMax_HP_MP_SP(player.Client, sender);
         }
 
         private void Character_OnSkillKeep(IKillable sender, ActiveBuff buff, AttackResult result)
@@ -391,6 +423,24 @@ namespace Imgeneus.World.Game.Zone
         {
             foreach (var player in GetAllPlayers(true))
                 _packetsHelper.SendStartSummoningVehicle(player.Client, sender);
+        }
+
+        /// <summary>
+        /// Notifies other players that player levelled up
+        /// </summary>
+        private void Character_OnLevelUp(Character sender)
+        {
+            foreach (var player in GetAllPlayers(true))
+                _packetsHelper.SendLevelUp(player.Client, sender);
+        }
+
+        /// <summary>
+        /// Notifies other players that an admin levelled up a player
+        /// </summary>
+        private void Character_OnAdminLevelUp(Character sender)
+        {
+            foreach (var player in GetAllPlayers(true))
+                _packetsHelper.SendLevelUp(player.Client, sender, true);
         }
 
         #endregion
@@ -497,6 +547,10 @@ namespace Imgeneus.World.Game.Zone
 
             foreach (var player in GetAllPlayers(true))
                 _packetsHelper.SendMobDead(player.Client, sender, killer);
+
+            // Add experience to killer
+            if (killer is Character killerCharacter)
+                killerCharacter.TryAddExperience((ushort)mob.Exp);
         }
 
         private void Mob_OnMove(Mob sender)
@@ -652,13 +706,16 @@ namespace Imgeneus.World.Game.Zone
         /// <summary>
         /// Removes item from map.
         /// </summary>
-        public void RemoveItem(int itemId)
+        public MapItem RemoveItem(int itemId)
         {
             if (Items.TryRemove(itemId, out var mapItem))
             {
+                mapItem.StopRemoveTimer();
                 foreach (var player in GetAllPlayers(true))
                     _packetsHelper.SendRemoveItem(player.Client, mapItem);
             }
+
+            return mapItem;
         }
 
         #endregion

@@ -1,4 +1,5 @@
-﻿using Imgeneus.Core.Helpers;
+﻿using System.Linq;
+using Imgeneus.Core.Helpers;
 using Imgeneus.Database.Entities;
 using Newtonsoft.Json;
 
@@ -24,6 +25,16 @@ namespace Imgeneus.World.Game.Player
         public DefaultStat[] DefaultStats { get; set; }
 
         /// <summary>
+        /// Default maximum level for each mode
+        /// </summary>
+        public DefaultMaxLevel[] DefaultMaxLevels { get; set; }
+
+        /// <summary>
+        /// Default stat and skill points received per level
+        /// </summary>
+        public DefaultLevelStatSkillPoints[] DefaultLevelStatSkillPoints { get; set; }
+
+        /// <summary>
         /// Gets hp, mp, sp config by index calculation.
         /// </summary>
         public Character_HP_SP_MP GetConfig(int index)
@@ -37,6 +48,10 @@ namespace Imgeneus.World.Game.Player
                 return Configs[Configs.Length - 1];
             }
         }
+
+        public DefaultMaxLevel GetMaxLevelConfig(Mode mode) => DefaultMaxLevels.FirstOrDefault(dml => dml.Mode == mode);
+
+        public DefaultLevelStatSkillPoints GetLevelStatSkillPoints(Mode mode) => DefaultLevelStatSkillPoints.FirstOrDefault(dsp => dsp.Mode == mode);
     }
 
     public interface ICharacterConfiguration
@@ -51,7 +66,21 @@ namespace Imgeneus.World.Game.Player
         /// </summary>
         public DefaultStat[] DefaultStats { get; set; }
 
+        /// <summary>
+        /// Default maximum level for each mode
+        /// </summary>
+        public DefaultMaxLevel[] DefaultMaxLevels { get; set; }
+
+        /// <summary>
+        /// Default stat and skill points received per level
+        /// </summary>
+        public DefaultLevelStatSkillPoints[] DefaultLevelStatSkillPoints { get; set; }
+
         public Character_HP_SP_MP GetConfig(int index);
+
+        public DefaultMaxLevel GetMaxLevelConfig(Mode mode);
+
+        public DefaultLevelStatSkillPoints GetLevelStatSkillPoints(Mode mode);
     }
 
     public sealed class Character_HP_SP_MP

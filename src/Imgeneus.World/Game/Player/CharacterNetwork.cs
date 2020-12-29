@@ -127,6 +127,10 @@ namespace Imgeneus.World.Game.Player
                     HandleCharacterShape(characterShapePacket.CharacterId);
                     break;
 
+                case CharacterEnteredPortalPacket enterPortalPacket:
+                    HandleEnterPortalPacket(enterPortalPacket);
+                    break;
+
                 case UseItemPacket useItemPacket:
                     UseItem(useItemPacket.Bag, useItemPacket.Slot);
                     break;
@@ -326,26 +330,22 @@ namespace Imgeneus.World.Game.Player
                 case GMCreateMobPacket gMCreateMobPacket:
                     if (!IsAdmin)
                         return;
-                    // TODO: calculate move area.
-                    var moveArea = new MoveArea(PosX > 10 ? PosX - 10 : 1, PosX + 10, PosY > 10 ? PosY - 10 : PosY, PosY + 10, PosZ > 10 ? PosZ - 10 : 1, PosZ + 10);
-                    var mob = _mobFactory.CreateMob(gMCreateMobPacket.MobId, false, moveArea, Map);
 
-                    Map.AddMob(mob);
-                    _packetsHelper.SendGmCommandSuccess(Client);
+                    HandleGMCreateMob(gMCreateMobPacket);
                     break;
 
-                case GMTeleportMapPacket gMMovePacket:
+                case GMTeleportMapCoordinatesPacket gmTeleportMapCoordinatesPacket:
                     if (!IsAdmin)
                         return;
 
-                    if (!_gameWorld.Maps.ContainsKey(gMMovePacket.MapId))
-                    {
-                        _packetsHelper.SendGmCommandError(Client, PacketType.GM_TELEPORT_MAP);
+                    HandleGMTeleportToMapCoordinates(gmTeleportMapCoordinatesPacket);
+                    break;
+
+                case GMTeleportMapPacket gmTeleportMapPacket:
+                    if (!IsAdmin)
                         return;
-                    }
-                    Teleport(gMMovePacket.MapId, gMMovePacket.X, PosY, gMMovePacket.Z);
-                    _packetsHelper.SendGmCommandSuccess(Client);
-                    _packetsHelper.SendGmTeleport(Client, this);
+
+                    HandleGMTeleportToMap(gmTeleportMapPacket);
                     break;
 
                 case GMCreateNpcPacket gMCreateNpcPacket:
@@ -433,6 +433,27 @@ namespace Imgeneus.World.Game.Player
 
                     _noticeManager.SendAdminNotice(gmNoticeAdminsPacket.Message);
                     _packetsHelper.SendGmCommandSuccess(Client);
+                    break;
+
+                case GMCurePlayerPacket gmCurePlayerPacket:
+                    if (!IsAdmin)
+                        return;
+
+                    HandleGMCurePlayerPacket(gmCurePlayerPacket);
+                    break;
+
+                case GMWarningPacket gmWarningPacket:
+                    if (!IsAdmin)
+                        return;
+
+                    HandleGMWarningPlayer(gmWarningPacket);
+                    break;
+
+                case GMTeleportPlayerPacket gmTeleportPlayerPacket:
+                    if (!IsAdmin)
+                        return;
+
+                    HandleGMTeleportPlayer(gmTeleportPlayerPacket);
                     break;
             }
         }

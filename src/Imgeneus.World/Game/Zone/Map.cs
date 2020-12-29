@@ -42,6 +42,11 @@ namespace Imgeneus.World.Game.Zone
         public bool IsDungeon { get => _definition.MapType == MapType.Dungeon; }
 
         /// <summary>
+        /// Is this map created for party, guild etc. ?
+        /// </summary>
+        public virtual bool IsInstance { get => _definition.CreateType == CreateType.Default; }
+
+        /// <summary>
         /// How map was created.
         /// </summary>
         public CreateType MapCreationType { get => _definition.CreateType; }
@@ -267,7 +272,8 @@ namespace Imgeneus.World.Game.Zone
         /// Teleports player to selected position on map.
         /// </summary>
         /// <param name="playerId">Id of player</param>
-        public void TeleportPlayer(int playerId)
+        /// <param name="teleportedByAdmin">Indicates whether the teleport was issued by an admin or not</param>
+        public void TeleportPlayer(int playerId, bool teleportedByAdmin)
         {
             if (!Players.ContainsKey(playerId))
             {
@@ -275,7 +281,7 @@ namespace Imgeneus.World.Game.Zone
             }
 
             var player = Players[playerId];
-            Cells[GetCellIndex(player)].TeleportPlayer(player);
+            Cells[player.CellId].TeleportPlayer(player, teleportedByAdmin);
         }
 
         /// <summary>
@@ -283,18 +289,6 @@ namespace Imgeneus.World.Game.Zone
         /// </summary>
         private void Character_OnPositionChanged(Character sender)
         {
-            var portal = Portals.FirstOrDefault(p =>
-                        p.IsInPortalZone(sender.PosX, sender.PosY, sender.PosZ) &&
-                        p.IsSameFraction(sender.Country)
-                        && p.IsRightLevel(sender.Level));
-
-            if (portal != null)
-            {
-                sender.Teleport(portal.MapId, portal.Destination_X, portal.Destination_Y, portal.Destination_Z);
-                sender.SendCharacterTeleport();
-                return;
-            }
-
             var newCellId = GetCellIndex(sender);
             var oldCellId = sender.CellId;
             if (oldCellId == newCellId) // All is fine, character is in the right cell
@@ -306,14 +300,7 @@ namespace Imgeneus.World.Game.Zone
             Cells[newCellId].AddPlayer(sender);
         }
 
-        /// <summary>
-        /// Finds the nearest spawn for the player.
-        /// </summary>
-        /// <param name="currentX">current player x coordinate</param>
-        /// <param name="currentY">current player y coordinate</param>
-        /// <param name="currentZ">current player z coordinate</param>
-        /// <param name="fraction">player's faction</param>
-        /// <returns>coordinate, where player shoud spawn</returns>
+        /// <inheritdoc />
         public (float X, float Y, float Z) GetNearestSpawn(float currentX, float currentY, float currentZ, Fraction fraction)
         {
             SpawnConfiguration nearestSpawn = null;
@@ -505,6 +492,7 @@ namespace Imgeneus.World.Game.Zone
         {
             item.Id = GenerateId();
             Cells[GetCellIndex(item)].AddItem(item);
+            item.OnRemove += Item_OnRemove;
         }
 
         /// <summary>
@@ -521,7 +509,17 @@ namespace Imgeneus.World.Game.Zone
         /// </summary>
         public void RemoveItem(int cellId, int itemId)
         {
-            Cells[cellId].RemoveItem(itemId);
+            var item = Cells[cellId].RemoveItem(itemId);
+            if (item != null)
+            {
+                item.OnRemove -= Item_OnRemove;
+                item.Dispose();
+            }
+        }
+
+        private void Item_OnRemove(MapItem item)
+        {
+            RemoveItem(item.CellId, item.Id);
         }
 
         #endregion
@@ -682,7 +680,7 @@ namespace Imgeneus.World.Game.Zone
 
         #region Portals
 
-        private readonly List<Portal> Portals = new List<Portal>();
+        public IList<Portal> Portals { get; private set; } = new List<Portal>();
 
         /// <summary>
         /// Creates portals to another maps.

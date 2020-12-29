@@ -26,12 +26,18 @@ namespace Imgeneus.World.Game.Zone.Portals
         /// <summary>
         /// Checks if character of some fraction can use this portal.
         /// </summary>
-        public bool IsSameFraction(Fraction fraction)
+        public bool IsSameFaction(Fraction faction)
         {
-            if (fraction == Fraction.Light && _config.Faction == 1)
+            if (_config.Faction == 0)
                 return true;
 
-            if (fraction == Fraction.Dark && _config.Faction == 2)
+            if (faction == Fraction.Light && _config.Faction == 1)
+                return true;
+
+            if (faction == Fraction.Dark && _config.Faction == 2)
+                return true;
+
+            if (_config.Faction > 2) // TODO: portal activated with boss death.
                 return true;
 
             return false;

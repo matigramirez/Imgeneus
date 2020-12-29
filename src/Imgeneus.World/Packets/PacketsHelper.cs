@@ -2,6 +2,7 @@
 using System.Linq;
 using Imgeneus.Database.Constants;
 using Imgeneus.Database.Entities;
+using Imgeneus.Network.Client;
 using Imgeneus.Network.Data;
 using Imgeneus.Network.Packets;
 using Imgeneus.Network.Packets.Game;
@@ -14,6 +15,7 @@ using Imgeneus.World.Game.PartyAndRaid;
 using Imgeneus.World.Game.Player;
 using Imgeneus.World.Game.Zone;
 using Imgeneus.World.Game.Zone.Obelisks;
+using Imgeneus.World.Game.Zone.Portals;
 using Imgeneus.World.Serialization;
 
 namespace Imgeneus.World.Packets
@@ -141,6 +143,14 @@ namespace Imgeneus.World.Packets
         {
             using var packet = new Packet(PacketType.ADD_ITEM);
             packet.Write(new AddedInventoryItem(item).Serialize());
+            client.SendPacket(packet);
+        }
+
+        internal void SendPortalTeleportNotAllowed(IWorldClient client, PortalTeleportNotAllowedReason reason)
+        {
+            using var packet = new Packet(PacketType.CHARACTER_ENTERED_PORTAL);
+            packet.Write(false); // success
+            packet.Write((byte)reason);
             client.SendPacket(packet);
         }
 
@@ -297,7 +307,7 @@ namespace Imgeneus.World.Packets
 
         internal void SendGmTeleport(IWorldClient client, Character character)
         {
-            using var packet = new Packet(PacketType.GM_TELEPORT_MAP);
+            using var packet = new Packet(PacketType.GM_TELEPORT_MAP_COORDINATES);
             packet.Write(character.Id);
             packet.Write(character.MapId);
             packet.Write(character.PosX);
@@ -736,7 +746,7 @@ namespace Imgeneus.World.Packets
             using var packet = new Packet(PacketType.ITEM_COMPOSE_ABSOLUTE);
             packet.Write(isFailure);
             packet.Write(new CraftName(craftName).Serialize());
-            packet.Write(true); // ? 
+            packet.Write(true); // ?
 
             client.SendPacket(packet);
         }
@@ -1107,8 +1117,38 @@ namespace Imgeneus.World.Packets
         internal void SendAttribute(IWorldClient client, CharacterAttributeEnum attribute, uint attributeValue)
         {
             using var packet = new Packet(PacketType.CHARACTER_ATTRIBUTE_SET);
-            packet.Write((byte)attribute);
-            packet.Write(attributeValue);
+            packet.Write(new CharacterAttribute(attribute, attributeValue).Serialize());
+            client.SendPacket(packet);
+        }
+
+        internal void SendExperienceGain(IWorldClient client, uint exp)
+        {
+            using var packet = new Packet(PacketType.EXPERIENCE_GAIN);
+            packet.Write(new CharacterExperienceGain(exp).Serialize());
+            client.SendPacket(packet);
+        }
+
+        internal void SendMax_HP_MP_SP(IWorldClient client, Character character)
+        {
+            using var packet = new Packet(PacketType.CHARACTER_MAX_HP_MP_SP);
+            packet.Write(new CharacterMax_HP_MP_SP(character));
+            client.SendPacket(packet);
+        }
+
+        internal void SendLevelUp(IWorldClient client, Character character, bool isAdminLevelUp = false)
+        {
+            var type = isAdminLevelUp ? PacketType.GM_CHARACTER_LEVEL_UP : PacketType.CHARACTER_LEVEL_UP;
+            using var packet = new Packet(type);
+            packet.Write(new CharacterLevelUp(character).Serialize());
+            client.SendPacket(packet);
+        }
+
+        internal void SendWarning(IWorldClient client, string message)
+        {
+            using var packet = new Packet(PacketType.GM_WARNING_PLAYER);
+            packet.WriteByte((byte)(message.Length + 1));
+            packet.Write(message);
+            packet.WriteByte(0);
             client.SendPacket(packet);
         }
     }

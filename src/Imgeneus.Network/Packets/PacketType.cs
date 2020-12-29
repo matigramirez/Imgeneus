@@ -14,6 +14,7 @@
         CHARACTER_ATTACK_MOVEMENT_SPEED = 0x051C, // 1308
         CHARACTER_SHAPE_UPDATE = 0x051D, // 1309
         CHARACTER_ATTRIBUTE_SET = 0xF701, // 63233
+        CHARACTER_MAX_HP_MP_SP = 0x051F, // 1311
 
         // Common
         LOGOUT = 0x0107, // 263
@@ -107,17 +108,22 @@
         // GM commands
         GM_COMMAND_GET_ITEM = 0xF702,
         GM_CREATE_MOB = 0xF704, // 63236
-        GM_TELEPORT_MAP = 0xFA0A, // 64010
+        GM_TELEPORT_MAP_COORDINATES = 0xFA0A, // 64010
+        GM_TELEPORT_MAP = 0xFA11, // 64017
         GM_CMD_ERROR = 0xF501, // -2815
         GM_CREATE_NPC = 0xF70C, // 63244, -2292
         GM_REMOVE_NPC = 0xF70D, // 63245, -2291FA
         GM_FIND_PLAYER = 0xFA08, // 64008, -1528
         GM_TELEPORT_TO_PLAYER = 0xFA09, // 64009
         GM_SUMMON_PLAYER = 0xF904, //63748
+        GM_TELEPORT_PLAYER = 0xF905, // 63749
+        GM_CURE_PLAYER = 0xF801, // 63489
+        GM_WARNING_PLAYER = 0xFA07, // 64007
 
         // Map
         CHARACTER_ENTERED_MAP = 0x0201, // 513
         CHARACTER_LEFT_MAP = 0x0202,  // 514
+        CHARACTER_ENTERED_PORTAL = 0x020A, // 522
         CHARACTER_MAP_TELEPORT = 0x020B, // 523
         MAP_NPC_ENTER = 0x0E01, // 3585
         MAP_NPC_LEAVE = 0x0E02, // 3586
@@ -259,5 +265,10 @@
         DYE_CONFIRM = 0x055B, // 1371
         DYE_REROLL = 0x055C, // 1372
         DYE_SELECT_ITEM = 0x055D, // 1373
+
+        // Experience and Leveling
+        EXPERIENCE_GAIN = 0x0207, // 519
+        CHARACTER_LEVEL_UP = 0x0508, // 1288
+        GM_CHARACTER_LEVEL_UP = 0x051E // 1310
     }
 }

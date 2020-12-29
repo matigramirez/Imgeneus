@@ -7,10 +7,10 @@ namespace Imgeneus.World.Serialization
     public class PartyMemberLevelChange : BaseSerializable
     {
         [FieldOrder(0)]
-        public int CharacterId;
+        public int CharacterId { get; }
 
         [FieldOrder(1)]
-        public ushort Level;
+        public ushort Level { get; }
 
         public PartyMemberLevelChange(Character character)
         {

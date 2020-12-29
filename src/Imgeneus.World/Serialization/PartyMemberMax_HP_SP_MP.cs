@@ -7,16 +7,16 @@ namespace Imgeneus.World.Serialization
     public class PartyMemberMax_HP_SP_MP : BaseSerializable
     {
         [FieldOrder(0)]
-        public int CharacterId;
+        public int CharacterId { get; }
 
         [FieldOrder(1)]
-        public int MaxHP;
-
-        [FieldOrder(1)]
-        public int MaxSP;
+        public int MaxHP { get; }
 
         [FieldOrder(2)]
-        public int MaxMP;
+        public int MaxSP { get; }
+
+        [FieldOrder(3)]
+        public int MaxMP { get; }
 
         public PartyMemberMax_HP_SP_MP(Character partyMember)
         {

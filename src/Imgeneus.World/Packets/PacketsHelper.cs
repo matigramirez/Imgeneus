@@ -1169,7 +1169,7 @@ namespace Imgeneus.World.Packets
         internal void SendPartyMemberMax_HP_SP_MP(IWorldClient client, Character partyMember)
         {
             using var packet = new Packet(PacketType.PARTY_MEMBER_MAX_HP_SP_MP);
-            packet.Write(new PartyMemberMax_HP_SP_MP((partyMember)).Serialize());
+            packet.Write(new PartyMemberMax_HP_SP_MP(partyMember).Serialize());
             client.SendPacket(packet);
         }
     }

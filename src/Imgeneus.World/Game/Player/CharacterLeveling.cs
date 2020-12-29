@@ -23,8 +23,8 @@ namespace Imgeneus.World.Game.Player
         /// </summary>
         public event Action<Character> OnLevelUp;
 
-        // Event that's fired when an admin set's a player's level
-        public event Action<Character> OnAdminLevelUp;
+        // Event that's fired when an admin changes a player's level
+        public event Action<Character> OnAdminLevelChange;
 
         /// <summary>
         /// Sets character's new level.
@@ -82,10 +82,20 @@ namespace Imgeneus.World.Game.Player
                 // Send player experience
                 SendAttribute(CharacterAttributeEnum.Exp);
 
-                OnAdminLevelUp?.Invoke(this);
+                OnAdminLevelChange?.Invoke(this);
             }
             else
             {
+                // Check that experience is at least the minimum experience for the level
+                if (Exp > MinLevelExp)
+                {
+                    // Change player experience to 0% of current level
+                    SetExperience(MinLevelExp);
+
+                    // Send player experience
+                    SendAttribute(CharacterAttributeEnum.Exp);
+                }
+
                 // Increase stats and skill points based on character's mode
                 var levelStats = _characterConfig.GetLevelStatSkillPoints(Mode);
                 IncreaseStatPoint(levelStats.StatPoint);
@@ -181,7 +191,7 @@ namespace Imgeneus.World.Game.Player
             if (expAmount == 0)
                 return false;
 
-            var newExp = (ushort)(Exp + expAmount);
+            var newExp = Exp + expAmount;
 
             // Validate the new experience value
             if (!CanSetExperience(newExp))
@@ -265,7 +275,6 @@ namespace Imgeneus.World.Game.Player
             // If there are 7 party members, party is perfect party and experience is given as if there were only 2 party members
             if (partyMemberCount == 7)
                 memberExp = (ushort)(mobExp / 2);
-
             else
                 memberExp = (ushort)(mobExp / partyMemberCount);
 

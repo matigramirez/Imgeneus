@@ -221,7 +221,7 @@ namespace Imgeneus.World.Game.Zone
             character.OnAppearanceChanged += Character_OnAppearanceChanged;
             character.OnStartSummonVehicle += Character_OnStartSummonVehicle;
             character.OnLevelUp += Character_OnLevelUp;
-            character.OnAdminLevelUp += Character_OnAdminLevelUp;
+            character.OnAdminLevelChange += Character_OnAdminLevelChange;
         }
 
         /// <summary>
@@ -250,7 +250,7 @@ namespace Imgeneus.World.Game.Zone
             character.OnAppearanceChanged -= Character_OnAppearanceChanged;
             character.OnStartSummonVehicle -= Character_OnStartSummonVehicle;
             character.OnLevelUp -= Character_OnLevelUp;
-            character.OnAdminLevelUp -= Character_OnAdminLevelUp;
+            character.OnAdminLevelChange -= Character_OnAdminLevelChange;
         }
 
         #region Character listeners
@@ -435,9 +435,9 @@ namespace Imgeneus.World.Game.Zone
         }
 
         /// <summary>
-        /// Notifies other players that an admin levelled up a player
+        /// Notifies other players that an admin changed a player's level
         /// </summary>
-        private void Character_OnAdminLevelUp(Character sender)
+        private void Character_OnAdminLevelChange(Character sender)
         {
             foreach (var player in GetAllPlayers(true))
                 _packetsHelper.SendLevelUp(player.Client, sender, true);

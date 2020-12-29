@@ -140,7 +140,8 @@ namespace Imgeneus.World.Tests
                     { (30, 3), Gem_Str_Level_3 },
                     { (30, 7), Gem_Str_Level_7 },
                     { (100, 1), EtainPotion },
-                    { (25, 1), RedApple }
+                    { (25, 1), RedApple },
+                    { (42, 1), HorseSummonStone }
                 });
 
             databasePreloader
@@ -464,6 +465,12 @@ namespace Imgeneus.World.Tests
             TypeId = 1,
             Special = SpecialEffect.HealingPotion,
             ConstHP = 50
+        };
+
+        protected DbItem HorseSummonStone = new DbItem()
+        {
+            Type = 42,
+            TypeId = 1
         };
 
         #endregion

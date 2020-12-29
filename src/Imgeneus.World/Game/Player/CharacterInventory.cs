@@ -310,6 +310,10 @@ namespace Imgeneus.World.Game.Player
             set
             {
                 TakeOffItem(_mount);
+
+                // Remove mount if user was mounted while switching mount
+                RemoveVehicle();
+
                 _mount = value;
                 TakeOnItem(_mount);
 
@@ -465,7 +469,9 @@ namespace Imgeneus.World.Game.Player
 
             if (item != Weapon && item != Mount)
                 SetAttackSpeedModifier(-1 * item.AttackSpeed);
-            MoveSpeed -= item.MoveSpeed;
+
+            if(item != Mount)
+                MoveSpeed -= item.MoveSpeed;
         }
 
         /// <summary>
@@ -490,7 +496,9 @@ namespace Imgeneus.World.Game.Player
 
             if (item != Weapon && item != Mount)
                 SetAttackSpeedModifier(item.AttackSpeed);
-            MoveSpeed += item.MoveSpeed;
+
+            if(item != Mount)
+                MoveSpeed += item.MoveSpeed;
         }
 
         #endregion

@@ -2,7 +2,7 @@
 {
     public enum SpecialEffect : byte
     {
-        HealingPotion = 0,
+        Multipurpose = 0,
         HypnosisCure = 1,
         StunCure = 2,
         SilenceCure = 3,

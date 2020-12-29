@@ -845,8 +845,8 @@ namespace Imgeneus.World.Game.Player
         {
             switch (item.Special)
             {
-                case SpecialEffect.HealingPotion:
-                    UseHealingPotion(item);
+                case SpecialEffect.Multipurpose:
+                    HandleMultipurposeEffect(item);
                     break;
 
                 case SpecialEffect.PercentHealingPotion:
@@ -1172,6 +1172,23 @@ namespace Imgeneus.World.Game.Player
             return (bagSlot, freeSlot);
         }
 
+        /// <summary>
+        /// Defines the behavior of items with multipurpose effect
+        /// </summary>
+        private void HandleMultipurposeEffect(Item item)
+        {
+            // Spell group
+            if (item.ReqIg > 0)
+            {
+                // Healing potion
+                if (item.HP > 0 || item.MP > 0 || item.SP > 0)
+                {
+                    UseHealingPotion(item);
+                }
+            }
+
+            // TODO: Handle items with skills, etc.
+        }
 
         #endregion
     }

@@ -533,6 +533,32 @@ namespace Imgeneus.DatabaseBackgroundService.Handlers
             await _database.SaveChangesAsync();
         }
 
+        [ActionHandler(ActionType.SAVE_CHARACTER_VICTORIES)]
+        internal async Task SaveVictories(object[] args)
+        {
+            int characterId = (int)args[0];
+            ushort victories = (ushort)args[1];
+
+            var character = _database.Characters.Find(characterId);
+
+            character.Victories = victories;
+
+            await _database.SaveChangesAsync();
+        }
+
+        [ActionHandler(ActionType.SAVE_CHARACTER_DEFEATS)]
+        internal async Task SaveDefeats(object[] args)
+        {
+            int characterId = (int)args[0];
+            ushort defeats = (ushort)args[1];
+
+            var character = _database.Characters.Find(characterId);
+
+            character.Defeats = defeats;
+
+            await _database.SaveChangesAsync();
+        }
+
         [ActionHandler(ActionType.SAVE_QUICK_BAR)]
         internal async Task SaveQuickBar(object[] args)
         {

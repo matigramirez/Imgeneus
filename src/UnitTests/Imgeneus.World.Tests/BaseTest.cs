@@ -462,8 +462,9 @@ namespace Imgeneus.World.Tests
         {
             Type = 25,
             TypeId = 1,
-            Special = SpecialEffect.HealingPotion,
-            ConstHP = 50
+            Special = SpecialEffect.Multipurpose,
+            ConstHP = 50,
+            ReqIg = 3
         };
 
         #endregion

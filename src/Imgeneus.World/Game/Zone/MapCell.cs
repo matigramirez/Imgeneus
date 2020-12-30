@@ -379,10 +379,10 @@ namespace Imgeneus.World.Game.Zone
         /// <summary>
         /// Notifies other players that player's max HP, MP and SP changed
         /// </summary>
-        private void Character_OnMax_HP_MP_SP_Changed(Character sender)
+        private void Character_OnMax_HP_MP_SP_Changed(IKillable sender)
         {
             foreach (var player in GetAllPlayers(true))
-                _packetsHelper.SendMax_HP_MP_SP(player.Client, sender);
+                _packetsHelper.SendMax_HP_MP_SP(player.Client, (Character)sender);
         }
 
         private void Character_OnSkillKeep(IKillable sender, ActiveBuff buff, AttackResult result)

@@ -112,7 +112,7 @@ namespace Imgeneus.World.Game.Player
             }
 
             // Send max hp mp and sp
-            OnMax_HP_MP_SP_Changed?.Invoke(this);
+            InvokeMax_HP_MP_SP_Changed();
 
             // Recover
             FullRecover();

@@ -212,7 +212,6 @@ namespace Imgeneus.World.Game.Zone
             character.OnUsedItem += Character_OnUsedItem;
             character.OnMaxHPChanged += Character_OnMaxHPChanged;
             character.OnMax_HP_MP_SP_Changed += Character_OnMax_HP_MP_SP_Changed;
-            character.OnMax_HP_MP_SP_Changed += Character_OnMax_HP_SP_MP_Changed_Party;
             character.OnRecover += Character_OnRecover;
             character.OnFullRecover += Character_OnFullRecover;
             character.OnSkillKeep += Character_OnSkillKeep;
@@ -222,9 +221,7 @@ namespace Imgeneus.World.Game.Zone
             character.OnAppearanceChanged += Character_OnAppearanceChanged;
             character.OnStartSummonVehicle += Character_OnStartSummonVehicle;
             character.OnLevelUp += Character_OnLevelUp;
-            character.OnLevelUp += Character_OnLevelChange_Party;
             character.OnAdminLevelChange += Character_OnAdminLevelChange;
-            character.OnAdminLevelChange += Character_OnLevelChange_Party;
         }
 
         /// <summary>
@@ -244,7 +241,6 @@ namespace Imgeneus.World.Game.Zone
             character.OnUsedItem -= Character_OnUsedItem;
             character.OnMaxHPChanged -= Character_OnMaxHPChanged;
             character.OnMax_HP_MP_SP_Changed -= Character_OnMax_HP_MP_SP_Changed;
-            character.OnMax_HP_MP_SP_Changed -= Character_OnMax_HP_SP_MP_Changed_Party;
             character.OnRecover -= Character_OnRecover;
             character.OnFullRecover -= Character_OnFullRecover;
             character.OnSkillKeep -= Character_OnSkillKeep;
@@ -254,9 +250,7 @@ namespace Imgeneus.World.Game.Zone
             character.OnAppearanceChanged -= Character_OnAppearanceChanged;
             character.OnStartSummonVehicle -= Character_OnStartSummonVehicle;
             character.OnLevelUp -= Character_OnLevelUp;
-            character.OnLevelUp -= Character_OnLevelChange_Party;
             character.OnAdminLevelChange -= Character_OnAdminLevelChange;
-            character.OnAdminLevelChange -= Character_OnLevelChange_Party;
         }
 
         #region Character listeners
@@ -391,19 +385,6 @@ namespace Imgeneus.World.Game.Zone
                 _packetsHelper.SendMax_HP_MP_SP(player.Client, sender);
         }
 
-        /// <summary>
-        /// Notifies party members that player's max HP, MP and SP changed
-        /// </summary>
-        /// <param name="sender"></param>
-        private void Character_OnMax_HP_SP_MP_Changed_Party(Character sender)
-        {
-            if (!sender.HasParty)
-                return;
-
-            foreach(var partyMember in sender.Party.Members)
-                _packetsHelper.SendPartyMemberMax_HP_SP_MP(partyMember.Client, sender);
-        }
-
         private void Character_OnSkillKeep(IKillable sender, ActiveBuff buff, AttackResult result)
         {
             foreach (var player in GetAllPlayers(true))
@@ -461,19 +442,6 @@ namespace Imgeneus.World.Game.Zone
         {
             foreach (var player in GetAllPlayers(true))
                 _packetsHelper.SendLevelUp(player.Client, sender, true);
-        }
-
-        /// <summary>
-        /// Notifies player's party members that player's level changed
-        /// </summary>
-        /// <param name="sender"></param>
-        private void Character_OnLevelChange_Party(Character sender)
-        {
-            if (!sender.HasParty)
-                return;
-
-            foreach(var partyMember in sender.Party.Members)
-                _packetsHelper.SendPartyMemberLevelChange(partyMember.Client, sender);
         }
 
         #endregion

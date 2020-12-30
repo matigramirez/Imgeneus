@@ -207,7 +207,7 @@ namespace Imgeneus.World.Game.PartyAndRaid
             client.SendPacket(packet);
         }
 
-        protected override void Send_HP_SP_MP(IWorldClient client, int id, int value, byte type)
+        protected override void Send_Single_HP_SP_MP(IWorldClient client, int id, int value, byte type)
         {
             using var packet = new Packet(PacketType.PARTY_CHARACTER_SP_MP);
             packet.Write(id);
@@ -216,12 +216,26 @@ namespace Imgeneus.World.Game.PartyAndRaid
             client.SendPacket(packet);
         }
 
-        protected override void Send_Max_HP_SP_MP(IWorldClient client, int id, int value, byte type)
+        protected override void Send_Single_Max_HP_SP_MP(IWorldClient client, int id, int value, byte type)
         {
             using var packet = new Packet(PacketType.PARTY_SET_MAX);
             packet.Write(id);
             packet.Write(type);
             packet.Write(value);
+            client.SendPacket(packet);
+        }
+
+        protected override void Send_HP_SP_MP(IWorldClient client, Character partyMember)
+        {
+            using var packet = new Packet(PacketType.PARTY_MEMBER_HP_SP_MP);
+            packet.Write(new PartyMember_HP_SP_MP(partyMember).Serialize());
+            client.SendPacket(packet);
+        }
+
+        protected override void Send_Max_HP_SP_MP(IWorldClient client, Character partyMember)
+        {
+            using var packet = new Packet(PacketType.PARTY_MEMBER_MAX_HP_SP_MP);
+            packet.Write(new PartyMemberMax_HP_SP_MP(partyMember).Serialize());
             client.SendPacket(packet);
         }
 
@@ -240,6 +254,13 @@ namespace Imgeneus.World.Game.PartyAndRaid
             packet.Write(characterId);
             packet.Write(item.Type);
             packet.Write(item.TypeId);
+            client.SendPacket(packet);
+        }
+
+        protected override void SendLevel(IWorldClient client, Character sender)
+        {
+            using var packet = new Packet(PacketType.PARTY_MEMBER_LEVEL);
+            packet.Write(new PartyMemberLevelChange(sender).Serialize());
             client.SendPacket(packet);
         }
 

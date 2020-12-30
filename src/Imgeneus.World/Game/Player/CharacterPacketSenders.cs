@@ -123,9 +123,6 @@ namespace Imgeneus.World.Game.Player
 
         public void SendExperienceGain(ushort expAmount) => _packetsHelper.SendExperienceGain(Client, expAmount);
 
-        public void SendPartyMemberLevelChange(Character partyMember) =>
-            _packetsHelper.SendPartyMemberLevelChange(Client, partyMember);
-
         public void SendWarning(string message) => _packetsHelper.SendWarning(Client, message);
     }
 }

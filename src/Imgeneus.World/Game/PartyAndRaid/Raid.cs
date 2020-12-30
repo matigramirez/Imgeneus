@@ -505,7 +505,7 @@ namespace Imgeneus.World.Game.PartyAndRaid
             client.SendPacket(packet);
         }
 
-        protected override void Send_HP_SP_MP(IWorldClient client, int id, int value, byte type)
+        protected override void Send_Single_HP_SP_MP(IWorldClient client, int id, int value, byte type)
         {
             using var packet = new Packet(PacketType.RAID_CHARACTER_SP_MP);
             packet.Write(id);
@@ -514,13 +514,23 @@ namespace Imgeneus.World.Game.PartyAndRaid
             client.SendPacket(packet);
         }
 
-        protected override void Send_Max_HP_SP_MP(IWorldClient client, int id, int value, byte type)
+        protected override void Send_Single_Max_HP_SP_MP(IWorldClient client, int id, int value, byte type)
         {
             using var packet = new Packet(PacketType.RAID_SET_MAX);
             packet.Write(id);
             packet.Write(type);
             packet.Write(value);
             client.SendPacket(packet);
+        }
+
+        protected override void Send_HP_SP_MP(IWorldClient client, Character partyMember)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override void Send_Max_HP_SP_MP(IWorldClient client, Character partyMember)
+        {
+            throw new NotImplementedException();
         }
 
         protected override void SendNewLeader(IWorldClient client, Character character)
@@ -561,6 +571,11 @@ namespace Imgeneus.World.Game.PartyAndRaid
             packet.Write(item.Type);
             packet.Write(item.TypeId);
             client.SendPacket(packet);
+        }
+
+        protected override void SendLevel(IWorldClient client, Character sender)
+        {
+            throw new NotImplementedException();
         }
 
         #endregion

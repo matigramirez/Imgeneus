@@ -1143,33 +1143,12 @@ namespace Imgeneus.World.Packets
             client.SendPacket(packet);
         }
 
-        internal void SendPartyMemberLevelChange(IWorldClient client, Character partyMember)
-        {
-            using var packet = new Packet(PacketType.PARTY_MEMBER_LEVEL);
-            packet.Write(new PartyMemberLevelChange(partyMember).Serialize());
-            client.SendPacket(packet);
-        }
-
         internal void SendWarning(IWorldClient client, string message)
         {
             using var packet = new Packet(PacketType.GM_WARNING_PLAYER);
             packet.WriteByte((byte)(message.Length + 1));
             packet.Write(message);
             packet.WriteByte(0);
-            client.SendPacket(packet);
-        }
-
-        internal void SendPartyMember_HP_SP_MP(IWorldClient client, Character partyMember)
-        {
-            using var packet = new Packet(PacketType.PARTY_MEMBER_HP_SP_MP);
-            packet.Write(new PartyMember_HP_SP_MP(partyMember).Serialize());
-            client.SendPacket(packet);
-        }
-
-        internal void SendPartyMemberMax_HP_SP_MP(IWorldClient client, Character partyMember)
-        {
-            using var packet = new Packet(PacketType.PARTY_MEMBER_MAX_HP_SP_MP);
-            packet.Write(new PartyMemberMax_HP_SP_MP(partyMember).Serialize());
             client.SendPacket(packet);
         }
     }

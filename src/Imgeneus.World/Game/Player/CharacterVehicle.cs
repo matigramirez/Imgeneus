@@ -35,7 +35,7 @@ namespace Imgeneus.World.Game.Player
         }
 
         /// <summary>
-        /// Event, that is fired, when the player starts summoning mount. 
+        /// Event, that is fired, when the player starts summoning mount.
         /// </summary>
         public event Action<Character> OnStartSummonVehicle;
 
@@ -61,12 +61,16 @@ namespace Imgeneus.World.Game.Player
         /// <summary>
         /// Tries to summon vehicle(mount).
         /// </summary>
-        public void CallVehicle()
+        /// <param name="skipSummoning">Indicates whether the summon casting time should be skipped or not.</param>
+        public void CallVehicle(bool skipSummoning = false)
         {
             if (Mount is null || IsStealth)
                 return;
 
-            IsSummmoningVehicle = true;
+            if (skipSummoning)
+                IsOnVehicle = true;
+            else
+                IsSummmoningVehicle = true;
         }
 
         /// <summary>

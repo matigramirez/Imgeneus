@@ -77,7 +77,6 @@ Any game feature must have a corresponding unit test.
 * maybe __YOU__?
 
 ## Uknown issues
-1. Sometimes Login server can not decrypt the first packet (with user name and password). Try to restart game.exe several times. Might be, that client caches old encryption key (not sure).
-2. Many others, usually marked as `// TODO: <some comment>` throughout the code base.
+Issues are usually marked as `// TODO: <some comment>` throughout the code base.
 
 Find the current state of development [here](https://trello.com/b/lHvyQDuH/shaiya-imgeneus).

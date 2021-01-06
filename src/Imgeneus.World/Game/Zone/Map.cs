@@ -433,6 +433,9 @@ namespace Imgeneus.World.Game.Zone
         /// <returns>either mob or null if mob is not presented</returns>
         public Mob GetMob(int cellId, int mobId)
         {
+            if (_isDisposed)
+                throw new ObjectDisposedException(nameof(Map));
+
             return Cells[cellId].GetMob(mobId, true);
         }
 

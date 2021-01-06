@@ -741,20 +741,23 @@ namespace Imgeneus.World.Game.Zone
 
             foreach (var p in Players.Values)
                 RemoveListeners(p);
-            Players.Clear();
 
             foreach (var m in Mobs.Values)
             {
                 RemoveMob(m);
                 m.Dispose();
             }
-            Mobs.Clear();
 
             foreach (var n in NPCs.Values)
-            {
                 n.Dispose();
-            }
+
+            foreach (var i in Items.Values)
+                i.Dispose();
+
+            Players.Clear();
+            Mobs.Clear();
             NPCs.Clear();
+            Items.Clear();
 
             Map = null;
         }

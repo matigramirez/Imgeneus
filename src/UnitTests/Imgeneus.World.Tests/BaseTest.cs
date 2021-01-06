@@ -28,6 +28,7 @@ namespace Imgeneus.World.Tests
         protected Mock<ICharacterConfiguration> config = new Mock<ICharacterConfiguration>();
         protected Mock<ILogger<Map>> mapLoggerMock = new Mock<ILogger<Map>>();
         protected Mock<ILogger<Mob>> mobLoggerMock = new Mock<ILogger<Mob>>();
+        protected Mock<ILogger<Npc>> npcLoggerMock = new Mock<ILogger<Npc>>();
         protected Mock<IChatManager> chatMock = new Mock<IChatManager>();
         protected Mock<ILinkingManager> linkingMock = new Mock<ILinkingManager>();
         protected Mock<IDyeingManager> dyeingMock = new Mock<IDyeingManager>();
@@ -167,6 +168,14 @@ namespace Imgeneus.World.Tests
                     { (Mode.Normal, 80), Level80_Mode2 },
                     { (Mode.Hard, 80), Level80_Mode3 },
                     { (Mode.Ultimate, 80), Level80_Mode4 },
+                });
+
+
+            databasePreloader
+                .SetupGet((preloader) => preloader.NPCs)
+                .Returns(new Dictionary<(byte Type, ushort TypeId), DbNpc>()
+                {
+                    { (1, 1), WeaponMerchant }
                 });
         }
 
@@ -580,6 +589,18 @@ namespace Imgeneus.World.Tests
             Level = 80,
             Mode = Mode.Ultimate,
             Exp = 330854048
+        };
+
+        #endregion
+
+        #region NPC
+
+        protected DbNpc WeaponMerchant = new DbNpc()
+        {
+            Type = 1,
+            TypeId = 1,
+            Name = "Erina Probicio",
+            MerchantType = MerchantType.WeaponSeller
         };
 
         #endregion

@@ -1,6 +1,9 @@
-﻿using Imgeneus.World.Game.Player;
+﻿using Imgeneus.World.Game.Monster;
+using Imgeneus.World.Game.NPCs;
+using Imgeneus.World.Game.Player;
 using Imgeneus.World.Game.Zone;
 using Imgeneus.World.Game.Zone.MapConfig;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using Xunit;
@@ -111,6 +114,48 @@ namespace Imgeneus.World.Tests.MapTests
 
             var map = new Map(Map.TEST_MAP_ID, new MapDefinition(), mapConfig, mapLoggerMock.Object, databasePreloader.Object, mobFactoryMock.Object, npcFactoryMock.Object, obeliskFactoryMock.Object);
             Assert.Equal(expectedNeigbors.OrderBy(i => i), map.GetNeighborCellIndexes(cellId).ToArray());
+        }
+
+        [Fact]
+        [Description("Mobs are removed as soon as the map cell is destroyed.")]
+        public void MapCell_Mob_Dispose()
+        {
+            var map = testMap;
+            var cell = new MapCell(0, new List<int>(), map);
+            cell.AddMob(new Mob(Wolf.Id, false, new MoveArea(), map, mobLoggerMock.Object, databasePreloader.Object));
+
+            Assert.NotEmpty(cell.GetAllMobs(false));
+
+            cell.Dispose();
+            Assert.Empty(cell.GetAllMobs(false));
+        }
+
+        [Fact]
+        [Description("NPCs are removed as soon as the map cell is destroyed.")]
+        public void MapCell_Npc_Dispose()
+        {
+            var map = testMap;
+            var cell = new MapCell(0, new List<int>(), map);
+            cell.AddNPC(new Npc(new List<(float X, float Y, float Z, ushort Angle)>() { (0, 0, 0, 0) }, map, npcLoggerMock.Object, WeaponMerchant));
+
+            Assert.NotEmpty(cell.GetAllNPCs(false));
+
+            cell.Dispose();
+            Assert.Empty(cell.GetAllNPCs(false));
+        }
+
+        [Fact]
+        [Description("Items are removed as soon as the map cell is destroyed.")]
+        public void MapCell_Item_Dispose()
+        {
+            var map = testMap;
+            var cell = new MapCell(0, new List<int>(), map);
+            cell.AddItem(new MapItem(new Item(databasePreloader.Object, FireSword.Type, FireSword.TypeId), null, 0, 0, 0));
+
+            Assert.NotEmpty(cell.GetAllItems(false));
+
+            cell.Dispose();
+            Assert.Empty(cell.GetAllItems(false));
         }
     }
 }

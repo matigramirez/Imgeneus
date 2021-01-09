@@ -2,7 +2,6 @@
 using System.Linq;
 using Imgeneus.Database.Constants;
 using Imgeneus.Database.Entities;
-using Imgeneus.Network.Client;
 using Imgeneus.Network.Data;
 using Imgeneus.Network.Packets;
 using Imgeneus.Network.Packets.Game;
@@ -17,6 +16,14 @@ using Imgeneus.World.Game.Zone;
 using Imgeneus.World.Game.Zone.Obelisks;
 using Imgeneus.World.Game.Zone.Portals;
 using Imgeneus.World.Serialization;
+
+#if EP8_V1
+using Imgeneus.World.Serialization.EP_8_V1;
+#elif EP8_V2
+using Imgeneus.World.Serialization.EP_8_V2;
+#else
+using Imgeneus.World.Serialization.EP_8_V1;
+#endif
 
 namespace Imgeneus.World.Packets
 {

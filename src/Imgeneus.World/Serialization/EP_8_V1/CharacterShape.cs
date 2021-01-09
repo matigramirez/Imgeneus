@@ -4,7 +4,7 @@ using Imgeneus.Database.Entities;
 using Imgeneus.Network.Serialization;
 using Imgeneus.World.Game.Player;
 
-namespace Imgeneus.World.Serialization
+namespace Imgeneus.World.Serialization.EP_8_V1
 {
     public class CharacterShape : BaseSerializable
     {
@@ -66,7 +66,13 @@ namespace Imgeneus.World.Serialization
         public byte[] Name;
 
         [FieldOrder(19)]
-        public byte[] Dummy = new byte[31]; // Probably guild name... Or I'm out of ideas.
+        public bool HasGuild = false;
+
+        [FieldOrder(20)]
+        public byte[] UnknownBytes3 = new byte[23];
+
+        [FieldOrder(21)]
+        public byte[] GuildName = new byte[25];
 
         public CharacterShape(Character character)
         {
@@ -111,6 +117,12 @@ namespace Imgeneus.World.Serialization
             else
             {
                 PartyDefinition = 0;
+            }
+
+            var chars = "0123456789012345678901234".ToCharArray();
+            for (var i = 0; i < chars.Length; i++)
+            {
+                GuildName[i] = (byte)chars[i];
             }
         }
     }

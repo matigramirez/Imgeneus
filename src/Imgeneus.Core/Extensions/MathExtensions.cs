@@ -16,5 +16,15 @@ namespace Imgeneus.Core.Extensions
         {
             return Math.Sqrt(Math.Pow(x2 - x1, 2) + Math.Pow(z2 - z1, 2));
         }
+
+        /// <summary>
+        /// Rounds a number to the nearest multiple of 10.
+        /// </summary>
+        /// <param name="number">Number to round</param>
+        public static uint RoundToTenMultiple(uint number)
+        {
+            var remaining = number % 10;
+            return remaining >= 5 ? (number - remaining + 10) : (number - remaining);
+        }
     }
 }

@@ -71,11 +71,6 @@ namespace Imgeneus.World.Game.Player
 
         #region Max HP & SP & MP
 
-        /// <summary>
-        /// Event that's fired when max hp, mp and sp change.
-        /// </summary>
-        public event Action<Character> OnMax_HP_MP_SP_Changed;
-
         private void Character_OnMaxHPChanged(IKillable sender, int maxHP)
         {
             if (Client != null)
@@ -755,12 +750,12 @@ namespace Imgeneus.World.Game.Player
 
                 case CharacterStatEnum.Dexterity:
                     Dexterity = value;
-                    SendMaxSP();
+                    InvokeMaxSPChanged();
                     break;
 
                 case CharacterStatEnum.Reaction:
                     Reaction = value;
-                    SendMaxHP();
+                    InvokeMaxHPChanged();
                     break;
 
                 case CharacterStatEnum.Intelligence:
@@ -773,7 +768,7 @@ namespace Imgeneus.World.Game.Player
 
                 case CharacterStatEnum.Wisdom:
                     Wisdom = value;
-                    SendMaxMP();
+                    InvokeMaxMPChanged();
                     break;
 
                 default:

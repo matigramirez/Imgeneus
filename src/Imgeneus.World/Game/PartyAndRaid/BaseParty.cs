@@ -93,6 +93,12 @@ namespace Imgeneus.World.Game.PartyAndRaid
             character.OnMaxHPChanged += Member_MaxHP_Changed;
             character.OnMaxMPChanged += Member_MaxMP_Changed;
             character.OnMaxSPChanged += Member_MaxSP_Changed;
+            character.OnLevelUp += Member_OnLevelChange;
+            character.OnLevelUp += Member_Max_HP_SP_MP_Changed;
+            character.OnLevelUp += Member_HP_SP_MP_Changed;
+            character.OnAdminLevelChange += Member_OnLevelChange;
+            character.OnAdminLevelChange += Member_Max_HP_SP_MP_Changed;
+            character.OnAdminLevelChange += Member_HP_SP_MP_Changed;
         }
 
         /// <summary>
@@ -107,6 +113,12 @@ namespace Imgeneus.World.Game.PartyAndRaid
             character.OnMaxHPChanged -= Member_MaxHP_Changed;
             character.OnMaxMPChanged -= Member_MaxMP_Changed;
             character.OnMaxSPChanged -= Member_MaxSP_Changed;
+            character.OnLevelUp -= Member_OnLevelChange;
+            character.OnLevelUp -= Member_Max_HP_SP_MP_Changed;
+            character.OnLevelUp -= Member_HP_SP_MP_Changed;
+            character.OnAdminLevelChange -= Member_OnLevelChange;
+            character.OnAdminLevelChange -= Member_Max_HP_SP_MP_Changed;
+            character.OnAdminLevelChange -= Member_HP_SP_MP_Changed;
         }
         #endregion
 
@@ -129,7 +141,7 @@ namespace Imgeneus.World.Game.PartyAndRaid
         private void Member_HP_Changed(IKillable sender, HitpointArgs args)
         {
             foreach (var member in Members)
-                Send_HP_SP_MP(member.Client, sender.Id, args.NewValue, 0);
+                Send_Single_HP_SP_MP(member.Client, sender.Id, args.NewValue, 0);
         }
 
         /// <summary>
@@ -138,7 +150,7 @@ namespace Imgeneus.World.Game.PartyAndRaid
         private void Member_SP_Changed(IKillable sender, HitpointArgs args)
         {
             foreach (var member in Members.Where(m => m != sender))
-                Send_HP_SP_MP(member.Client, sender.Id, args.NewValue, 1);
+                Send_Single_HP_SP_MP(member.Client, sender.Id, args.NewValue, 1);
         }
 
         /// <summary>
@@ -147,7 +159,16 @@ namespace Imgeneus.World.Game.PartyAndRaid
         private void Member_MP_Changed(IKillable sender, HitpointArgs args)
         {
             foreach (var member in Members.Where(m => m != sender))
-                Send_HP_SP_MP(member.Client, sender.Id, args.NewValue, 2);
+                Send_Single_HP_SP_MP(member.Client, sender.Id, args.NewValue, 2);
+        }
+
+        /// <summary>
+        /// Notifies party member, that member has new hp, sp and mp values.
+        /// </summary>
+        private void Member_HP_SP_MP_Changed(Character sender)
+        {
+            foreach (var member in Members.Where(m => m != sender))
+                Send_HP_SP_MP(member.Client, sender);
         }
 
         /// <summary>
@@ -156,7 +177,7 @@ namespace Imgeneus.World.Game.PartyAndRaid
         private void Member_MaxHP_Changed(IKillable sender, int newMaxHP)
         {
             foreach (var member in Members.Where(m => m != sender))
-                Send_Max_HP_SP_MP(member.Client, sender.Id, newMaxHP, 0);
+                Send_Single_Max_HP_SP_MP(member.Client, sender.Id, newMaxHP, 0);
         }
 
         /// <summary>
@@ -165,7 +186,7 @@ namespace Imgeneus.World.Game.PartyAndRaid
         private void Member_MaxSP_Changed(IKillable sender, int newMaxSP)
         {
             foreach (var member in Members.Where(m => m != sender))
-                Send_Max_HP_SP_MP(member.Client, sender.Id, newMaxSP, 1);
+                Send_Single_Max_HP_SP_MP(member.Client, sender.Id, newMaxSP, 1);
         }
 
         /// <summary>
@@ -174,7 +195,16 @@ namespace Imgeneus.World.Game.PartyAndRaid
         private void Member_MaxMP_Changed(IKillable sender, int newMaxMP)
         {
             foreach (var member in Members.Where(m => m != sender))
-                Send_Max_HP_SP_MP(member.Client, sender.Id, newMaxMP, 2);
+                Send_Single_Max_HP_SP_MP(member.Client, sender.Id, newMaxMP, 2);
+        }
+
+        /// <summary>
+        /// Notifies party member, that member has new max hp, max sp and max mp values.
+        /// </summary>
+        private void Member_Max_HP_SP_MP_Changed(Character sender)
+        {
+            foreach (var member in Members.Where(m => m != sender))
+                Send_Max_HP_SP_MP(member.Client, sender);
         }
 
         #endregion
@@ -198,6 +228,20 @@ namespace Imgeneus.World.Game.PartyAndRaid
 
         #endregion
 
+        #region Level changes
+
+        /// <summary>
+        /// Notifies party member that a member's level changed
+        /// </summary>
+        /// <param name="sender">Character whose level changed</param>
+        private void Member_OnLevelChange(Character sender)
+        {
+            foreach (var member in Members.Where(m => m != sender))
+                SendLevel(member.Client, sender);
+        }
+
+        #endregion
+
         #region Absctracts
 
         public abstract bool EnterParty(Character player);
@@ -208,9 +252,13 @@ namespace Imgeneus.World.Game.PartyAndRaid
 
         protected abstract void SendAddBuff(IWorldClient client, int senderId, ushort skillId, byte skillLevel);
 
-        protected abstract void Send_HP_SP_MP(IWorldClient client, int id, int value, byte type);
+        protected abstract void Send_Single_HP_SP_MP(IWorldClient client, int id, int value, byte type);
 
-        protected abstract void Send_Max_HP_SP_MP(IWorldClient client, int id, int value, byte type);
+        protected abstract void Send_Single_Max_HP_SP_MP(IWorldClient client, int id, int value, byte type);
+
+        protected abstract void Send_HP_SP_MP(IWorldClient client, Character sender);
+
+        protected abstract void Send_Max_HP_SP_MP(IWorldClient client, Character sender);
 
         protected abstract void SendNewLeader(IWorldClient client, Character leader);
 
@@ -221,6 +269,8 @@ namespace Imgeneus.World.Game.PartyAndRaid
         public abstract IList<Item> DistributeDrop(IList<Item> items, Character dropCreator);
 
         public abstract void MemberGetItem(Character player, Item item);
+
+        protected abstract void SendLevel(IWorldClient client, Character sender);
 
         #endregion
     }

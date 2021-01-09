@@ -24,31 +24,31 @@ These files are added to the ignore list, so you can be sure, that you won't com
 
 ## Solution description
 
-### Imgeneus.Core
+##### Imgeneus.Core
 Core contains some common helpers, extensions etc.
 
-### Imgeneus.Database
+##### Imgeneus.Database
 We are using EF Core for database connections and migrations. You can read more about EF [here](https://docs.microsoft.com/en-us/ef/core/).
 
-### Imgeneus.DatabaseBackgroundService
+##### Imgeneus.DatabaseBackgroundService
 Background service, that constantly saves changes to the database. You can read more about background services [here](https://docs.microsoft.com/en-us/aspnet/core/fundamentals/host/hosted-services?view=aspnetcore-5.0&tabs=visual-studio#queued-background-tasks).
 
-### Imgeneus.Network
+##### Imgeneus.Network
 Includes packet definition from client to server and cryptography implementation.
 
-### Imgeneus.Logs
+##### Imgeneus.Logs
 In-game logs, that are saved via SQLite in file.
 
-### Imgeneus.InterServer
+##### Imgeneus.InterServer
 Communication between servers (login and game) is done with the help of SignalR. You can read more about SignalR [here](https://docs.microsoft.com/en-us/aspnet/core/tutorials/signalr).
 
-### Imgeneus.Login
+##### Imgeneus.Login
 Login server, that handles all packets in the login screen. Redirects to the selected game server.
 
-### Imgeneus.World
+##### Imgeneus.World
 Game server. As well as login server, it's TCP server running on top of ASP.Net Core. You can read more about ASP.Net [here](https://docs.microsoft.com/en-us/aspnet/core).
 
-### Unit tests
+##### Unit tests
 Any game feature must have a corresponding unit test.
 
 ### Database migrations
@@ -74,9 +74,10 @@ Any game feature must have a corresponding unit test.
 * __anton1312__ - helped with packet encryption algorithm implementation in C#.
 * __Juuf__ - helped with Dye system packet structure.
 * __matigramirez__ - helped with the implementation of different features.
+* __Bowie__ - provided us with the newest version of game.exe.
 * maybe __YOU__?
 
-## Uknown issues
+## Known issues
 Issues are usually marked as `// TODO: <some comment>` throughout the code base.
 
 Find the current state of development [here](https://trello.com/b/lHvyQDuH/shaiya-imgeneus).

@@ -3,7 +3,7 @@ using Imgeneus.Database.Entities;
 using Imgeneus.World.Serialization;
 using System.Linq;
 
-namespace Imgeneus.Network.Serialization
+namespace Imgeneus.Network.Serialization.EP_8_V2
 {
     /// <summary>
     /// Serializer for character selection screen.
@@ -71,10 +71,10 @@ namespace Imgeneus.Network.Serialization
         public ushort StaminaPoints;
 
         [FieldOrder(20)]
-        public byte[] EquipmentItemsType = new byte[17];
+        public byte[] EquipmentItemsType = new byte[20];
 
         [FieldOrder(21)]
-        public byte[] EquipmentItemsTypeId = new byte[17];
+        public byte[] EquipmentItemsTypeId = new byte[20];
 
         [FieldOrder(22)]
         public bool[] EquipmentItemHasColor = new bool[17];

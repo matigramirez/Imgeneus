@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
+    <Configurations>Debug;Release;EP8_V1;EP8_V2</Configurations>
   </PropertyGroup>
 
   <ItemGroup>

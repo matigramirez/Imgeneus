@@ -57,7 +57,7 @@ namespace Imgeneus.Database.Entities
         /// Gets or sets the user current maximum mode allowed.
         /// </summary>
         [DefaultValue(0)]
-        public byte MaxMode { get; set; }
+        public Mode MaxMode { get; set; }
 
         /// <summary>
         /// Gets the user's creation time.

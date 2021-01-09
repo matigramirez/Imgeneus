@@ -3,7 +3,15 @@ using Imgeneus.Database.Entities;
 using Imgeneus.Network.Data;
 using Imgeneus.Network.Packets;
 using Imgeneus.Network.Packets.Game;
-using Imgeneus.Network.Serialization;
+
+#if EP8_V1
+using Imgeneus.Network.Serialization.EP_8_V1;
+#elif EP8_V2
+using Imgeneus.Network.Serialization.EP_8_V2;
+#else
+using Imgeneus.Network.Serialization.EP_8_V1;
+#endif
+
 using Imgeneus.Network.Server;
 using Imgeneus.World.Game;
 using Imgeneus.World.Game.Player;
@@ -17,6 +25,15 @@ namespace Imgeneus.World.SelectionScreen
     /// <inheritdoc/>
     public class SelectionScreenManager : ISelectionScreenManager
     {
+#if EP8_V1
+        public const byte MaxCharacterNumber = 5;
+#elif EP8_V2
+        public const byte MaxCharacterNumber = 6;
+#else
+        public const byte MaxCharacterNumber = 5;
+#endif
+
+
         private readonly WorldClient _client;
         private readonly IGameWorld _gameWorld;
         private readonly ICharacterConfiguration _characterConfiguration;
@@ -80,13 +97,14 @@ namespace Imgeneus.World.SelectionScreen
                                         .ThenInclude(c => c.Items)
                                         .Where(u => u.Id == userId)
                                         .FirstOrDefaultAsync();
-
+            Mode maxMode = Mode.Normal;
+#if EP8_V1
+            maxMode = user.MaxMode;
+#elif EP8_V2
+            maxMode = Mode.Ultimate;
+#endif
             SendCharacterList(user.Characters);
-
-            using var packet = new Packet(PacketType.ACCOUNT_FACTION);
-            packet.Write((byte)user.Faction);
-            packet.Write(user.MaxMode);
-            _client.SendPacket(packet);
+            SendFaction(user.Faction, maxMode);
         }
 
         /// <summary>
@@ -120,6 +138,12 @@ namespace Imgeneus.World.SelectionScreen
         {
             // Get number of user characters.
             var characters = _database.Characters.Where(x => x.UserId == _client.UserID).ToList();
+            if (characters.Where(c => !c.IsDelete).Count() == MaxCharacterNumber)
+            {
+                // Max number of characters reached.
+                SendCreatedCharacter(false);
+                return;
+            }
 
             byte freeSlot = createCharacterPacket.Slot;
             if (characters.Any(c => c.Slot == freeSlot && !c.IsDelete))
@@ -173,23 +197,44 @@ namespace Imgeneus.World.SelectionScreen
         /// </summary>
         private void SendCharacterList(ICollection<DbCharacter> characters)
         {
-            for (byte i = 0; i < 5; i++)
+            var nonExistingCharacters = new List<Packet>();
+            var existingCharacters = new List<Packet>();
+
+            for (byte i = 0; i < MaxCharacterNumber; i++)
             {
-                using var packet = new Packet(PacketType.CHARACTER_LIST);
+                var packet = new Packet(PacketType.CHARACTER_LIST);
                 packet.Write(i);
                 var character = characters.FirstOrDefault(c => c.Slot == i && (!c.IsDelete || c.IsDelete && c.DeleteTime != null && DateTime.UtcNow.Subtract((DateTime)c.DeleteTime) < TimeSpan.FromHours(2)));
                 if (character is null)
                 {
                     // No char at this slot.
                     packet.Write(0);
+                    nonExistingCharacters.Add(packet);
                 }
                 else
                 {
-                    packet.Write(new CharacterSelectionScreen(character).Serialize());
-                }
 
-                _client.SendPacket(packet);
+                    packet.Write(new CharacterSelectionScreen(character).Serialize());
+                    existingCharacters.Add(packet);
+                }
             }
+
+            foreach (var p in nonExistingCharacters)
+                _client.SendPacket(p);
+
+            foreach (var p in existingCharacters)
+                _client.SendPacket(p);
+        }
+
+        /// <summary>
+        /// Sends faction to selection screen.
+        /// </summary>
+        private void SendFaction(Fraction faction, Mode maxMode)
+        {
+            using var packet = new Packet(PacketType.ACCOUNT_FACTION);
+            packet.Write((byte)faction);
+            packet.Write((byte)maxMode);
+            _client.SendPacket(packet);
         }
 
         /// <summary>

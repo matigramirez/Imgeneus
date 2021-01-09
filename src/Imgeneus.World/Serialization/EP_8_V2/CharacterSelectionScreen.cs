@@ -1,9 +1,9 @@
 ﻿using BinarySerialization;
 using Imgeneus.Database.Entities;
-using Imgeneus.World.Serialization;
+using Imgeneus.Network.Serialization;
 using System.Linq;
 
-namespace Imgeneus.Network.Serialization.EP_8_V2
+namespace Imgeneus.World.Serialization.EP_8_V2
 {
     /// <summary>
     /// Serializer for character selection screen.

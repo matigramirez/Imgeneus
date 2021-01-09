@@ -5,11 +5,11 @@ using Imgeneus.Network.Packets;
 using Imgeneus.Network.Packets.Game;
 
 #if EP8_V1
-using Imgeneus.Network.Serialization.EP_8_V1;
+using Imgeneus.World.Serialization.EP_8_V1;
 #elif EP8_V2
-using Imgeneus.Network.Serialization.EP_8_V2;
+using Imgeneus.World.Serialization.EP_8_V2;
 #else
-using Imgeneus.Network.Serialization.EP_8_V1;
+using Imgeneus.World.Serialization.EP_8_V1;
 #endif
 
 using Imgeneus.Network.Server;

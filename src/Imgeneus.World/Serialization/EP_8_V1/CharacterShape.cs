@@ -66,12 +66,9 @@ namespace Imgeneus.World.Serialization.EP_8_V1
         public byte[] Name;
 
         [FieldOrder(19)]
-        public bool HasGuild = false;
+        public byte[] UnknownBytes3 = new byte[24];
 
         [FieldOrder(20)]
-        public byte[] UnknownBytes3 = new byte[23];
-
-        [FieldOrder(21)]
         public byte[] GuildName = new byte[25];
 
         public CharacterShape(Character character)

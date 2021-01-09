@@ -3,6 +3,7 @@ using System.Linq;
 using Imgeneus.Core.Extensions;
 using Imgeneus.DatabaseBackgroundService.Handlers;
 using Imgeneus.Network.Packets.Game;
+using Microsoft.Extensions.Logging;
 
 namespace Imgeneus.World.Game.Player
 {
@@ -65,9 +66,8 @@ namespace Imgeneus.World.Game.Player
         /// </summary>
         /// <param name="newLevel">New player level</param>
         /// <param name="changedByAdmin">Indicates whether the level change was issued by an admin or not.</param>
-        /// <param name="resetExp">Indicates whether the experience should be set to the minimum new level experience or not. It's only used when the level is changed by an admin, not on normal level up.</param>
         /// <returns>Success status indicating whether it's possible to set the new level or not.</returns>
-        public bool TryChangeLevel(ushort newLevel, bool changedByAdmin = false, bool resetExp = false)
+        public bool TryChangeLevel(ushort newLevel, bool changedByAdmin = false)
         {
             var previousLevel = Level;
 
@@ -77,10 +77,6 @@ namespace Imgeneus.World.Game.Player
 
             if (changedByAdmin)
             {
-                if (resetExp)
-                    // Change player experience to 0% of current level
-                    SetExperience(MinLevelExp);
-
                 // Check that experience is at least the minimum experience for the level
                 if (Exp < MinLevelExp)
                 {
@@ -163,7 +159,8 @@ namespace Imgeneus.World.Game.Player
             exp = MathExtensions.RoundToTenMultiple(exp);
 
             // Validate the new experience value
-            if (!CanSetExperience(exp)) return false;
+            if (!CanSetExperience(exp))
+                return false;
 
             // Set the character's experience attribute
             SetExperience(exp);
@@ -266,7 +263,10 @@ namespace Imgeneus.World.Game.Player
         public void AddPartyMobExperience(ushort mobLevel, ushort mobExp)
         {
             if (!HasParty)
+            {
+                _logger.LogWarning($"Attempted to add party exp to player {Id} who isn't a member of a party.");
                 return;
+            }
 
             var partyMemberCount = Party.Members.Count;
 
@@ -279,7 +279,7 @@ namespace Imgeneus.World.Game.Player
                 memberExp = (ushort)(mobExp / partyMemberCount);
 
             // Get party members who are near the player who got experience
-            var nearbyPartyMembers = Party.Members.Where(m => m.MapId == MapId &&
+            var nearbyPartyMembers = Party.Members.Where(m => m.Map == Map &&
                                                              MathExtensions.Distance(PosX, m.PosX, PosZ, m.PosZ) < 50);
 
             // Give experience to every party member

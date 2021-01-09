@@ -479,7 +479,7 @@ namespace Imgeneus.World.Game.Player
                     break;
 
                 case CharacterAttributeEnum.Level:
-                    if (targetPlayer.TryChangeLevel((ushort)attributeValue, true, true))
+                    if (targetPlayer.TryChangeLevel((ushort)attributeValue, true))
                         SetAttributeAndSendCommandSuccess();
                     else
                         SendCommandError();

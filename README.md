@@ -64,6 +64,11 @@ Any game feature must have a corresponding unit test.
 - Configuration files type:  `JSON`
 - Environment: `Visual Studio 2019`
 
+#### Client versions support
+Our main goal is learning, client are used only for testing. We are not trying to harm any server or dev team. That's why we are not exposing any clients or server name, where these clients are used. Next versions supported:
+* EP 8, you can find it on e**rs.com. In code marked as EP8_V1.
+* EP 8, the newest version of private server. In code marked as EP8_V2.
+
 ## Results
 ![image1](images/image1.JPG?raw=true "Title")
 ![image2](images/image2.JPG?raw=true "Title")

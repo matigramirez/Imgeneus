@@ -79,12 +79,14 @@ namespace Imgeneus.Network.Serialization
 
         public CharacterDetails(Character character)
         {
+#if EP8_V1 // ep8 V2 crashes if these values are set.
             Strength = character.Strength;
             Dexterity = character.Dexterity;
             Rec = character.Reaction;
             Intelligence = character.Intelligence;
             Wisdom = character.Wisdom;
             Luck = character.Luck;
+#endif
             StatPoint = character.StatPoint;
             SkillPoint = character.SkillPoint;
             Angle = character.Angle;

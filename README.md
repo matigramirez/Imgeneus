@@ -79,7 +79,7 @@ Our main goal is learning, clients are used only for testing. We are not trying 
 * __anton1312__ - helped with packet encryption algorithm implementation in C#.
 * __Juuf__ - helped with Dye system packet structure.
 * __matigramirez__ - helped with the implementation of different features.
-* __Bowie__ - provided us with the newest version of game.exe.
+* __Bowie__ - provided solid asm support.
 * maybe __YOU__?
 
 ## Known issues

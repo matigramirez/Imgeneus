@@ -84,7 +84,7 @@ namespace Imgeneus.Network.Data
         }
 
         /// <inheritdoc />
-        public string ReadString(int size)
+        public string ReadString(int size, Encoding encoding = null)
         {
             if (this.State != PacketStateType.Read)
             {
@@ -96,7 +96,13 @@ namespace Imgeneus.Network.Data
                 return string.Empty;
             }
 
-            var value = Encoding.Default.GetString(this.reader.ReadBytes(size));
+            if (encoding is null)
+                encoding = Encoding.Default;
+
+            if (encoding == Encoding.Unicode)
+                size *= 2; // unicode is 2-byte per character encoding
+
+            var value = encoding.GetString(this.reader.ReadBytes(size));
 
             if (value.IndexOf('\0', StringComparison.Ordinal) < 0)
             {
@@ -140,7 +146,7 @@ namespace Imgeneus.Network.Data
         }
 
         /// <inheritdoc />
-        public void WriteString(string value, int count)
+        public void WriteString(string value, int count, Encoding encoding = null)
         {
             if (this.State != PacketStateType.Write)
             {
@@ -157,18 +163,28 @@ namespace Imgeneus.Network.Data
                 throw new InvalidOperationException("The string is too big.");
             }
 
+            if (encoding is null)
+                encoding = Encoding.UTF8;
+
+            var length = value.Length;
+            if (encoding == Encoding.Unicode)
+            {
+                count *= 2; // unicode is 2-byte per character encoding
+                length *= 2;
+            }
+
             byte[] buffer = new byte[count];
 
-            byte[] stuff = Encoding.UTF8.GetBytes(value);
+            byte[] stuff = encoding.GetBytes(value);
 
-            System.Buffer.BlockCopy(stuff, 0, buffer, 0, value.Length);
+            System.Buffer.BlockCopy(stuff, 0, buffer, 0, length);
 
             this.Write<byte[]>(buffer);
         }
 
-        public void WriteString(string value)
+        public void WriteString(string value, Encoding encoding = null)
         {
-            WriteString(value, value.Length);
+            WriteString(value, value.Length, encoding);
         }
 
         /// <inheritdoc />

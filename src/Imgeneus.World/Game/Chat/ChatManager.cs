@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Text;
 using Imgeneus.Database.Entities;
 using Imgeneus.DatabaseBackgroundService;
 using Imgeneus.DatabaseBackgroundService.Handlers;
@@ -93,11 +94,7 @@ namespace Imgeneus.World.Game.Chat
         /// <param name="message">Message text.</param>
         private void SendNormal(Character character, int senderId, string message)
         {
-            using var packet = new Packet(PacketType.CHAT_NORMAL_ADMIN);
-            packet.Write(senderId);
-            packet.WriteByte((byte)message.Length);
-            packet.Write(message);
-            character.Client.SendPacket(packet);
+            SendMessage(PacketType.CHAT_NORMAL_ADMIN, character, senderId, message);
         }
 
         /// <summary>
@@ -108,12 +105,7 @@ namespace Imgeneus.World.Game.Chat
         /// <param name="message">Message text.</param>
         private void SendWhisper(Character character, string senderName, string message)
         {
-            using var packet = new Packet(PacketType.CHAT_WHISPER_ADMIN);
-            packet.Write(false); // false == use sender name, if set to true, sender name will be ignored
-            packet.WriteString(senderName, 21);
-            packet.WriteByte((byte)message.Length);
-            packet.Write(message);
-            character.Client.SendPacket(packet);
+            SendMessage(PacketType.CHAT_WHISPER_ADMIN, character, senderName, message, true);
         }
 
         /// <summary>
@@ -124,11 +116,7 @@ namespace Imgeneus.World.Game.Chat
         /// <param name="message">Message text.</param>
         private void SendParty(Character character, int senderId, string message)
         {
-            using var packet = new Packet(PacketType.CHAT_PARTY);
-            packet.Write(senderId);
-            packet.WriteByte((byte)message.Length);
-            packet.Write(message);
-            character.Client.SendPacket(packet);
+            SendMessage(PacketType.CHAT_PARTY, character, senderId, message);
         }
 
         /// <summary>
@@ -139,11 +127,7 @@ namespace Imgeneus.World.Game.Chat
         /// <param name="message">Message text.</param>
         private void SendMap(Character character, string senderName, string message)
         {
-            using var packet = new Packet(PacketType.CHAT_MAP);
-            packet.WriteString(senderName, 21);
-            packet.WriteByte((byte)message.Length);
-            packet.Write(message);
-            character.Client.SendPacket(packet);
+            SendMessage(PacketType.CHAT_MAP, character, senderName, message);
         }
 
         /// <summary>
@@ -154,10 +138,49 @@ namespace Imgeneus.World.Game.Chat
         /// <param name="message">Message text</param>
         private void SendWorld(Character character, string senderName, string message)
         {
-            using var packet = new Packet(PacketType.CHAT_WORLD);
+            SendMessage(PacketType.CHAT_WORLD, character, senderName, message);
+        }
+
+        private void SendMessage(PacketType packetType, Character character, string senderName, string message, bool includeNameFlag = false)
+        {
+            using var packet = new Packet(packetType);
+
+            if (includeNameFlag)
+                packet.Write(false); // false == use sender name, if set to true, sender name will be ignored
+
             packet.WriteString(senderName, 21);
+
+#if EP8_V2
+            packet.WriteByte((byte)(message.Length + 1));
+#endif
+
             packet.WriteByte((byte)message.Length);
-            packet.Write(message);
+
+#if EP8_V2
+            packet.WriteString(message, Encoding.Unicode);
+#else
+            packet.WriteString(message);
+#endif
+            character.Client.SendPacket(packet);
+        }
+
+        private void SendMessage(PacketType packetType, Character character, int senderId, string message)
+        {
+            using var packet = new Packet(packetType);
+            packet.Write(senderId);
+
+#if EP8_V2
+            packet.WriteByte((byte)(message.Length + 1));
+#endif
+
+            packet.WriteByte((byte)message.Length);
+
+#if EP8_V2
+            packet.WriteString(message, Encoding.Unicode);
+#else
+            packet.WriteString(message);
+#endif
+
             character.Client.SendPacket(packet);
         }
 

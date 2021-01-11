@@ -1,4 +1,5 @@
-﻿using Imgeneus.Database.Constants;
+﻿using System;
+using Imgeneus.Database.Constants;
 using Imgeneus.Database.Entities;
 using Imgeneus.Database.Preload;
 using Imgeneus.World.Game.Dyeing;
@@ -32,30 +33,33 @@ namespace Imgeneus.World.Game.Player
 
         public byte Count;
 
-        public Item(IDatabasePreloader databasePreloader, DbCharacterItems dbItem) : this(databasePreloader, dbItem.Type, dbItem.TypeId, dbItem.Count)
+        public Item(IDatabasePreloader databasePreloader, DbCharacterItems dbCharacterItem) : this(databasePreloader, dbCharacterItem.Type, dbCharacterItem.TypeId, dbCharacterItem.Count)
         {
-            Bag = dbItem.Bag;
-            Slot = dbItem.Slot;
-            Quality = dbItem.Quality;
+            Bag = dbCharacterItem.Bag;
+            Slot = dbCharacterItem.Slot;
+            Quality = dbCharacterItem.Quality;
 
-            if (!string.IsNullOrWhiteSpace(dbItem.Craftname))
-                ParseCraftname(dbItem.Craftname);
+            CreationTime = dbCharacterItem.CreationTime;
+            ExpirationTime = dbCharacterItem.CreationTime.AddSeconds(_dbItem.Duration);
 
-            if (dbItem.HasDyeColor)
-                DyeColor = new DyeColor(dbItem.DyeColorAlpha, dbItem.DyeColorSaturation, dbItem.DyeColorR, dbItem.DyeColorG, dbItem.DyeColorB);
+            if (!string.IsNullOrWhiteSpace(dbCharacterItem.Craftname))
+                ParseCraftname(dbCharacterItem.Craftname);
 
-            if (dbItem.GemTypeId1 != 0)
-                Gem1 = new Gem(databasePreloader, dbItem.GemTypeId1, 0);
-            if (dbItem.GemTypeId2 != 0)
-                Gem2 = new Gem(databasePreloader, dbItem.GemTypeId2, 1);
-            if (dbItem.GemTypeId3 != 0)
-                Gem3 = new Gem(databasePreloader, dbItem.GemTypeId3, 2);
-            if (dbItem.GemTypeId4 != 0)
-                Gem4 = new Gem(databasePreloader, dbItem.GemTypeId4, 3);
-            if (dbItem.GemTypeId5 != 0)
-                Gem5 = new Gem(databasePreloader, dbItem.GemTypeId5, 4);
-            if (dbItem.GemTypeId6 != 0)
-                Gem6 = new Gem(databasePreloader, dbItem.GemTypeId6, 5);
+            if (dbCharacterItem.HasDyeColor)
+                DyeColor = new DyeColor(dbCharacterItem.DyeColorAlpha, dbCharacterItem.DyeColorSaturation, dbCharacterItem.DyeColorR, dbCharacterItem.DyeColorG, dbCharacterItem.DyeColorB);
+
+            if (dbCharacterItem.GemTypeId1 != 0)
+                Gem1 = new Gem(databasePreloader, dbCharacterItem.GemTypeId1, 0);
+            if (dbCharacterItem.GemTypeId2 != 0)
+                Gem2 = new Gem(databasePreloader, dbCharacterItem.GemTypeId2, 1);
+            if (dbCharacterItem.GemTypeId3 != 0)
+                Gem3 = new Gem(databasePreloader, dbCharacterItem.GemTypeId3, 2);
+            if (dbCharacterItem.GemTypeId4 != 0)
+                Gem4 = new Gem(databasePreloader, dbCharacterItem.GemTypeId4, 3);
+            if (dbCharacterItem.GemTypeId5 != 0)
+                Gem5 = new Gem(databasePreloader, dbCharacterItem.GemTypeId5, 4);
+            if (dbCharacterItem.GemTypeId6 != 0)
+                Gem6 = new Gem(databasePreloader, dbCharacterItem.GemTypeId6, 5);
         }
 
         public Item(IDatabasePreloader databasePreloader, byte type, byte typeId, byte count = 1)
@@ -64,16 +68,20 @@ namespace Imgeneus.World.Game.Player
             Type = type;
             TypeId = typeId;
             Count = count;
+            CreationTime = DateTime.Now;
 
             if (Type != 0 && TypeId != 0 && Type != MONEY_ITEM_TYPE)
             {
                 _dbItem = _databasePreloader.Items[(Type, TypeId)];
+
                 // Prevent Count from exceeding MaxCount and from being 0 (zero)
                 var newCount = count > MaxCount ? MaxCount : count;
                 Count = newCount < 1 ? (byte)1 : newCount;
 
                 // Set quality to maximum quality
                 Quality = _dbItem.Quality;
+
+                ExpirationTime = CreationTime.AddSeconds(_dbItem.Duration);
             }
         }
 
@@ -739,6 +747,14 @@ namespace Imgeneus.World.Game.Player
         /// Unique color.
         /// </summary>
         public DyeColor DyeColor { get; set; }
+
+        #endregion
+
+        #region Duration
+
+        public DateTime CreationTime { get; }
+
+        public DateTime? ExpirationTime { get; }
 
         #endregion
 

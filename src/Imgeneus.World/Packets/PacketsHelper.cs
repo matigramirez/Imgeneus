@@ -172,6 +172,13 @@ namespace Imgeneus.World.Packets
             client.SendPacket(packet);
         }
 
+        internal void SendItemExpiration(IWorldClient client, Item item)
+        {
+            using var packet = new Packet(PacketType.ITEM_EXPIRATION);
+            packet.Write(new InventoryItemExpiration(item).Serialize());
+            client.SendPacket(packet);
+        }
+
         internal void SendAdditionalStats(IWorldClient client, Character character)
         {
             using var packet = new Packet(PacketType.CHARACTER_ADDITIONAL_STATS);

@@ -141,7 +141,8 @@ namespace Imgeneus.World.Tests
                     { (30, 7), Gem_Str_Level_7 },
                     { (100, 1), EtainPotion },
                     { (25, 1), RedApple },
-                    { (42, 1), HorseSummonStone }
+                    { (42, 1), HorseSummonStone },
+                    { (42, 136), Nimbus1d }
                 });
 
             databasePreloader
@@ -479,6 +480,13 @@ namespace Imgeneus.World.Tests
         {
             Type = 42,
             TypeId = 1
+        };
+
+        protected DbItem Nimbus1d = new DbItem()
+        {
+            Type = 42,
+            TypeId = 136,
+            Duration = 86400
         };
 
         #endregion

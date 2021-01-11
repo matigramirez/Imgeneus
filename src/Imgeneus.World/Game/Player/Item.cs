@@ -103,7 +103,13 @@ namespace Imgeneus.World.Game.Player
 
             if (IsExpirable)
             {
-                _expirationTimer.Interval = ((DateTime)ExpirationTime - DateTime.UtcNow).TotalMilliseconds;
+                var interval = ((DateTime)ExpirationTime - DateTime.UtcNow);
+
+                // Don't start timer for items that have more than 12 hours left
+                if (interval.TotalHours > 12)
+                    return;
+
+                _expirationTimer.Interval = interval.TotalMilliseconds;
                 _expirationTimer.AutoReset = false;
                 _expirationTimer.Elapsed += ExpirationTimer_Elapsed;
 

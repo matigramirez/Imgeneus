@@ -5,10 +5,11 @@ using Imgeneus.Database.Preload;
 using Imgeneus.World.Game.Dyeing;
 using System.Collections.Generic;
 using System.Text;
+using System.Timers;
 
 namespace Imgeneus.World.Game.Player
 {
-    public class Item
+    public class Item : IDisposable
     {
         private readonly IDatabasePreloader _databasePreloader;
         private readonly DbItem _dbItem;
@@ -85,6 +86,15 @@ namespace Imgeneus.World.Game.Player
                 var dbItemExpirationTime = CreationTime.AddSeconds(_dbItem.Duration);
                 // Validate ExpirationTime based on DbItem's expiration
                 ExpirationTime = ExpirationTime != dbItemExpirationTime ? dbItemExpirationTime : ExpirationTime;
+            }
+
+            if (ExpirationTime != null)
+            {
+                _expirationTimer.Interval = (ExpirationTime - DateTime.UtcNow).Value.Seconds * 1000;
+                _expirationTimer.AutoReset = false;
+                _expirationTimer.Elapsed += ExpirationTimer_Elapsed;
+
+                _expirationTimer.Start();
             }
         }
 
@@ -753,11 +763,31 @@ namespace Imgeneus.World.Game.Player
 
         #endregion
 
-        #region Duration
+        #region Expiration
 
         public DateTime CreationTime { get; }
 
         public DateTime? ExpirationTime { get; }
+
+        private Timer _expirationTimer = new Timer();
+
+        private void ExpirationTimer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            OnExpiration?.Invoke(this);
+        }
+
+        /// <summary>
+        /// Event that's fired when an item has expired.
+        /// </summary>
+        public event Action<Item> OnExpiration;
+
+        /// <summary>
+        /// Stops expiration timer.
+        /// </summary>
+        public void StopExpirationTimer()
+        {
+            _expirationTimer.Stop();
+        }
 
         #endregion
 
@@ -982,6 +1012,14 @@ namespace Imgeneus.World.Game.Player
                 Count = Count,
                 DyeColor = DyeColor
             };
+        }
+
+        public void Dispose()
+        {
+            if (ExpirationTime != null)
+            {
+                _expirationTimer.Elapsed -= ExpirationTimer_Elapsed;
+            }
         }
     }
 }

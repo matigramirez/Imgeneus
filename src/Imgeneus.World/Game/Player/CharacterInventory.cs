@@ -541,6 +541,12 @@ namespace Imgeneus.World.Game.Player
                                item.DyeColor.IsEnabled, item.DyeColor.Alpha, item.DyeColor.Saturation, item.DyeColor.R, item.DyeColor.G, item.DyeColor.B);
 
             InventoryItems.TryAdd((item.Bag, item.Slot), item);
+
+            if (item.ExpirationTime != null)
+            {
+                item.OnExpiration += CharacterItem_OnExpiration;
+            }
+
             _logger.LogDebug($"Character {Id} got item {item.Type} {item.TypeId}");
             return item;
         }
@@ -570,6 +576,13 @@ namespace Imgeneus.World.Game.Player
                                Id, item.Bag, item.Slot);
 
             InventoryItems.TryRemove((item.Bag, item.Slot), out var removedItem);
+
+            if (item.ExpirationTime != null)
+            {
+                item.StopExpirationTimer();
+                item.OnExpiration -= CharacterItem_OnExpiration;
+            }
+
             _logger.LogDebug($"Character {Id} lost item {item.Type} {item.TypeId}");
             return item;
         }
@@ -1130,6 +1143,16 @@ namespace Imgeneus.World.Game.Player
             item.TradeQuantity = count > item.Count ? item.Count : count;
             ChangeGold((uint)(Gold + item.Sell * item.TradeQuantity));
             return RemoveItemFromInventory(item);
+        }
+
+        #endregion
+
+        #region Item Expiration
+
+        public void CharacterItem_OnExpiration(Item item)
+        {
+            RemoveItemFromInventory(item);
+            SendRemoveItemFromInventory(item, true);
         }
 
         #endregion

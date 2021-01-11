@@ -40,7 +40,7 @@ namespace Imgeneus.World.Game.Player
             Quality = dbCharacterItem.Quality;
 
             CreationTime = dbCharacterItem.CreationTime;
-            ExpirationTime = dbCharacterItem.CreationTime.AddSeconds(_dbItem.Duration);
+            ExpirationTime = dbCharacterItem.ExpirationTime;
 
             if (!string.IsNullOrWhiteSpace(dbCharacterItem.Craftname))
                 ParseCraftname(dbCharacterItem.Craftname);
@@ -68,7 +68,7 @@ namespace Imgeneus.World.Game.Player
             Type = type;
             TypeId = typeId;
             Count = count;
-            CreationTime = DateTime.Now;
+            CreationTime = DateTime.UtcNow;
 
             if (Type != 0 && TypeId != 0 && Type != MONEY_ITEM_TYPE)
             {
@@ -81,7 +81,10 @@ namespace Imgeneus.World.Game.Player
                 // Set quality to maximum quality
                 Quality = _dbItem.Quality;
 
-                ExpirationTime = CreationTime.AddSeconds(_dbItem.Duration);
+                // Get ExpirationTime based on DbItem
+                var dbItemExpirationTime = CreationTime.AddSeconds(_dbItem.Duration);
+                // Validate ExpirationTime based on DbItem's expiration
+                ExpirationTime = ExpirationTime != dbItemExpirationTime ? dbItemExpirationTime : ExpirationTime;
             }
         }
 

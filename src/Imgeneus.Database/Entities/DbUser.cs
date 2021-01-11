@@ -87,7 +87,7 @@ namespace Imgeneus.Database.Entities
         /// </summary>
         public DbUser()
         {
-            this.CreateTime = DateTime.Now;
+            this.CreateTime = DateTime.UtcNow;
             this.Characters = new HashSet<DbCharacter>();
         }
 

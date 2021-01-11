@@ -1,4 +1,5 @@
-﻿using Imgeneus.Network.Packets.Game;
+﻿using System;
+using Imgeneus.Network.Packets.Game;
 using Imgeneus.World.Game.Monster;
 using Imgeneus.World.Game.Zone.Obelisks;
 using Imgeneus.World.Game.Zone.Portals;
@@ -35,8 +36,8 @@ namespace Imgeneus.World.Game.Player
             var inventoryItems = InventoryItems.Values.ToList();
             _packetsHelper.SendInventoryItems(Client, inventoryItems);
 
-            foreach(var inventoryItem in inventoryItems.Where(i => i.ExpirationTime != null))
-                _packetsHelper.SendItemExpiration(Client, inventoryItem);
+            foreach (var item in inventoryItems.Where(i => i.ExpirationTime != null))
+                _packetsHelper.SendItemExpiration(Client, item);
         }
 
         private void SendLearnedSkills() => _packetsHelper.SendLearnedSkills(Client, this);

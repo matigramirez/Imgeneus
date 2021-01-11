@@ -27,7 +27,7 @@ namespace Imgeneus.World.Serialization
         {
             Bag = item.Bag;
             Slot = item.Slot;
-            CreationTime = item.CreationTime.ToShaiyaTime();
+            CreationTime = ((DateTime)item.CreationTime).ToShaiyaTime();
             ExpirationTime = ((DateTime)item.ExpirationTime).ToShaiyaTime();
         }
     }

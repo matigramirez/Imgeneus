@@ -69,7 +69,8 @@ namespace Imgeneus.World.Game.Player
             Type = type;
             TypeId = typeId;
             Count = count;
-            CreationTime = DateTime.UtcNow;
+
+            CreationTime ??= DateTime.UtcNow;
 
             if (Type != 0 && TypeId != 0 && Type != MONEY_ITEM_TYPE)
             {
@@ -82,15 +83,27 @@ namespace Imgeneus.World.Game.Player
                 // Set quality to maximum quality
                 Quality = _dbItem.Quality;
 
-                // Get ExpirationTime based on DbItem
-                var dbItemExpirationTime = CreationTime.AddSeconds(_dbItem.Duration);
-                // Validate ExpirationTime based on DbItem's expiration
-                ExpirationTime = ExpirationTime != dbItemExpirationTime ? dbItemExpirationTime : ExpirationTime;
+                // Temporary item check
+                if (_dbItem.Duration > 0)
+                {
+                    // Get ExpirationTime based on DbItem
+                    var dbItemExpirationTime = ((DateTime)CreationTime).AddSeconds(_dbItem.Duration);
+
+                    if (IsExpirable)
+                    {
+                        // Validate ExpirationTime based on DbItem's expiration
+                        ExpirationTime = ExpirationTime != dbItemExpirationTime ? dbItemExpirationTime : ExpirationTime;
+                    }
+                    else
+                    {
+                        ExpirationTime = dbItemExpirationTime;
+                    }
+                }
             }
 
-            if (ExpirationTime != null)
+            if (IsExpirable)
             {
-                _expirationTimer.Interval = (ExpirationTime - DateTime.UtcNow).Value.Seconds * 1000;
+                _expirationTimer.Interval = ((DateTime)ExpirationTime - DateTime.UtcNow).TotalMilliseconds;
                 _expirationTimer.AutoReset = false;
                 _expirationTimer.Elapsed += ExpirationTimer_Elapsed;
 
@@ -765,10 +778,24 @@ namespace Imgeneus.World.Game.Player
 
         #region Expiration
 
-        public DateTime CreationTime { get; }
+        /// <summary>
+        /// Time at which the item was created.
+        /// </summary>
+        public DateTime? CreationTime { get; }
 
+        /// <summary>
+        /// Time at which the item expires.
+        /// </summary>
         public DateTime? ExpirationTime { get; }
 
+        /// <summary>
+        /// Item has a fixed duration and is removed from the player's inventory after that duration has passed.
+        /// </summary>
+        public bool IsExpirable => ExpirationTime != null;
+
+        /// <summary>
+        /// Timer used by expirable items.
+        /// </summary>
         private Timer _expirationTimer = new Timer();
 
         private void ExpirationTimer_Elapsed(object sender, ElapsedEventArgs e)

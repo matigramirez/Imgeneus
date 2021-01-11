@@ -398,15 +398,14 @@ namespace Imgeneus.World.Game.Player
         public static void ClearOutdatedValues(IDatabase database, DbCharacter dbCharacter)
         {
             // Clear outdated buffs
-            var outdatedBuffs = dbCharacter.ActiveBuffs.Where(b => b.ResetTime < DateTime.UtcNow);
+            var outdatedBuffs = dbCharacter.ActiveBuffs.Where(b => b.ResetTime < DateTime.UtcNow.AddSeconds(30));
             database.ActiveBuffs.RemoveRange(outdatedBuffs);
 
             // Clear expired items
-            var expiredItems = dbCharacter.Items.Where(i => i.ExpirationTime >= DateTime.UtcNow);
+            var expiredItems = dbCharacter.Items.Where(i => i.ExpirationTime < DateTime.UtcNow.AddSeconds(30));
             database.CharacterItems.RemoveRange(expiredItems);
 
             database.SaveChanges();
         }
-
     }
 }

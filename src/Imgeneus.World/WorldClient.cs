@@ -204,7 +204,8 @@ namespace Imgeneus.World
             { PacketType.NOTICE_MAP, (s) => new GMNoticeMapPacket(s) },
             { PacketType.NOTICE_ADMINS, (s) => new GMNoticeAdminsPacket(s) },
             { PacketType.GM_CURE_PLAYER, (s) => new GMCurePlayerPacket(s) },
-            { PacketType.GM_WARNING_PLAYER, (s) => new GMWarningPacket(s) }
+            { PacketType.GM_WARNING_PLAYER, (s) => new GMWarningPacket(s) },
+            { PacketType.BANK_CLAIM_ITEM, (s) => new BankClaimItemPacket(s) }
         };
 
         /// <inheritdoc />

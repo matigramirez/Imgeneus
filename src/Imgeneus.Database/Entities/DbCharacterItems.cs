@@ -90,7 +90,6 @@ namespace Imgeneus.Database.Entities
 
         public DbCharacterItems()
         {
-            CreationTime = DateTime.UtcNow;
             Craftname = string.Empty;
         }
     }

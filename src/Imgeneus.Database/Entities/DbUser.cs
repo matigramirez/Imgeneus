@@ -77,6 +77,11 @@ namespace Imgeneus.Database.Entities
         public ICollection<DbCharacter> Characters { get; set; }
 
         /// <summary>
+        /// User bank items
+        /// </summary>
+        public ICollection<DbBankItem> BankItems { get; set; }
+
+        /// <summary>
         /// Gets or sets a flag that indicates if the user is deleted.
         /// </summary>
         [DefaultValue(false)]

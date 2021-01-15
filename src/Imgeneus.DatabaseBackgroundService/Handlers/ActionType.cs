@@ -61,6 +61,10 @@
         SAVE_MAP_ID,
 
         // Logs
-        LOG_SAVE_CHAT_MESSAGE
+        LOG_SAVE_CHAT_MESSAGE,
+
+        // Bank
+        SAVE_BANK_ITEM,
+        CLAIM_BANK_ITEM
     }
 }

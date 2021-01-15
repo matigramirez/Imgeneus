@@ -82,9 +82,13 @@ namespace Imgeneus.Database.Context
         /// </summary>
         public DbSet<DbLevel> Levels { get; set; }
 
+        /// <summary>
+        /// Collection of user's bank items.
+        /// </summary>
+        public DbSet<DbBankItem> BankItems { get; set; }
+
         public DatabaseContext(DbContextOptions options) : base(options)
         {
-            Migrate();
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -98,6 +102,7 @@ namespace Imgeneus.Database.Context
             modelBuilder.Entity<DbMobItems>().HasKey(x => new { x.MobId, x.ItemOrder });
 
             modelBuilder.Entity<DbCharacter>().HasMany(x => x.QuickItems).WithOne(x => x.Character).IsRequired();
+
             modelBuilder.Entity<DbCharacter>().HasMany(x => x.Friends).WithOne(x => x.Character);
 
             modelBuilder.Entity<DbCharacterFriend>().HasKey(x => new { x.CharacterId, x.FriendId });
@@ -115,6 +120,10 @@ namespace Imgeneus.Database.Context
 
             // Quests
             modelBuilder.Entity<DbCharacterQuest>().HasOne(pt => pt.Character).WithMany(p => p.Quests).HasForeignKey(pt => pt.CharacterId);
+
+            // Bank Items
+            modelBuilder.Entity<DbBankItem>().HasOne(x => x.User).WithMany(x => x.BankItems);
+
             #endregion
         }
 

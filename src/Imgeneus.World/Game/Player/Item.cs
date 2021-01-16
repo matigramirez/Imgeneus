@@ -796,6 +796,7 @@ namespace Imgeneus.World.Game.Player
         private void ExpirationTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
             OnExpiration?.Invoke(this);
+            _expirationTimer.Elapsed -= ExpirationTimer_Elapsed;
         }
 
         /// <summary>

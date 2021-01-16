@@ -77,6 +77,17 @@ namespace Imgeneus.World.Game.PartyAndRaid
         /// </summary>
         protected abstract IList<Character> _members { get; set; }
 
+        /// <inheritdoc/>
+        public event Action AllMembersLeft;
+
+        /// <summary>
+        /// Invoke <see cref="AllMembersLeft"/> event.
+        /// </summary>
+        protected void CallAllMembersLeft()
+        {
+            AllMembersLeft?.Invoke();
+        }
+
         /// <summary>
         /// Party members.
         /// </summary>

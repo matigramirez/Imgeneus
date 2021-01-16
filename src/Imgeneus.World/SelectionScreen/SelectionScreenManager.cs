@@ -213,7 +213,7 @@ namespace Imgeneus.World.SelectionScreen
                 }
                 else
                 {
-
+                    _gameWorld.EnsureMap(character);
                     packet.Write(new CharacterSelectionScreen(character).Serialize());
                     existingCharacters.Add(packet);
                 }

@@ -64,7 +64,9 @@ namespace Imgeneus.World.Game
             set
             {
                 _map = value;
-                OnMapSet();
+
+                if (_map != null) // Map is set to null, when character is disposed.
+                    OnMapSet();
             }
         }
 

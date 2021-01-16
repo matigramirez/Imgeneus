@@ -76,7 +76,7 @@ namespace Imgeneus.World.Game.Player
         /// <summary>
         /// Bool indicator, shows if player is in party/raid.
         /// </summary>
-        public bool HasParty { get => Party != null; }
+        public bool HasParty { get => Party != null && !(Party is OneMemberParty); }
 
         /// <summary>
         /// Bool indicator, shows if player is the party/raid leader.

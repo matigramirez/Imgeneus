@@ -52,7 +52,7 @@ namespace Imgeneus.World.Game.PartyAndRaid
                         {
                             if (_gameWorld.Players.TryGetValue(partyResponser.PartyInviterId, out var partyRequester))
                             {
-                                if (partyRequester.Party is null)
+                                if (partyRequester.Party is null || partyRequester.Party is OneMemberParty)
                                 {
                                     var party = new Party();
                                     partyRequester.SetParty(party);

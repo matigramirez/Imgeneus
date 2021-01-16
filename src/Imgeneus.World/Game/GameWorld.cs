@@ -1,4 +1,5 @@
 ﻿using Imgeneus.Database;
+using Imgeneus.Database.Entities;
 using Imgeneus.Network.Packets.Game;
 using Imgeneus.Network.Server;
 using Imgeneus.World.Game.Blessing;
@@ -12,6 +13,7 @@ using Imgeneus.World.Game.Zone.Portals;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -40,6 +42,9 @@ namespace Imgeneus.World.Game
 
         #region Maps 
 
+        /// <inheritdoc/>
+        public IList<ushort> AvailableMapIds { get; private set; } = new List<ushort>();
+
         /// <summary>
         /// Thread-safe dictionary of maps. Where key is map id.
         /// </summary>
@@ -63,6 +68,8 @@ namespace Imgeneus.World.Game
                     if (Maps.TryAdd(mapDefinition.Id, map))
                         _logger.LogInformation($"Map {map.Id} was successfully loaded.");
                 }
+
+                AvailableMapIds.Add(mapDefinition.Id);
             }
         }
 
@@ -144,6 +151,60 @@ namespace Imgeneus.World.Game
             }
         }
 
+        /// <inheritdoc/>
+        public void EnsureMap(DbCharacter dbCharacter)
+        {
+            if (Maps.ContainsKey(dbCharacter.Map)) // All fine, map is presented on server.
+                return;
+
+            // Map was completely deleted from the server. Fallback to map 0.
+            if (!AvailableMapIds.Contains(dbCharacter.Map))
+            {
+                var coordinates = Maps[0].GetNearestSpawn(0, 0, 0, dbCharacter.User.Faction);
+                dbCharacter.Map = 0;
+                dbCharacter.PosX = coordinates.X;
+                dbCharacter.PosY = coordinates.Y;
+                dbCharacter.PosZ = coordinates.Z;
+                return;
+            }
+
+            // Map is an instance map. Likely for guild or party. Find out what is the rebirth map.
+            if (!Maps.ContainsKey(dbCharacter.Map))
+            {
+                var definition = _mapDefinitions.Maps.First(m => m.Id == dbCharacter.Map);
+
+                if (definition.RebirthMap != null) // Rebirth map for both factions set.
+                {
+                    dbCharacter.Map = definition.RebirthMap.MapId;
+                    dbCharacter.PosX = definition.RebirthMap.PosX;
+                    dbCharacter.PosY = definition.RebirthMap.PosY;
+                    dbCharacter.PosZ = definition.RebirthMap.PosZ;
+                    return;
+                }
+
+                if (dbCharacter.User.Faction == Fraction.Light)
+                {
+                    dbCharacter.Map = definition.LightRebirthMap.MapId;
+                    dbCharacter.PosX = definition.LightRebirthMap.PosX;
+                    dbCharacter.PosY = definition.LightRebirthMap.PosY;
+                    dbCharacter.PosZ = definition.LightRebirthMap.PosZ;
+                    return;
+                }
+
+                if (dbCharacter.User.Faction == Fraction.Dark)
+                {
+                    dbCharacter.Map = definition.DarkRebirthMap.MapId;
+                    dbCharacter.PosX = definition.DarkRebirthMap.PosX;
+                    dbCharacter.PosY = definition.DarkRebirthMap.PosY;
+                    dbCharacter.PosZ = definition.DarkRebirthMap.PosZ;
+                    return;
+                }
+            }
+
+            _logger.LogError($"Couldn't ensure map {dbCharacter.Map} for player {dbCharacter.Id}! Check it manually!");
+        }
+
+
         #endregion
 
         #region Party Maps
@@ -224,22 +285,27 @@ namespace Imgeneus.World.Game
 
                 if (mapDef.CreateType == CreateType.Party)
                 {
-                    if (player.Party != null)
-                    {
-                        PartyMaps.TryGetValue(player.Party.Id, out var map);
-                        if (map is null)
-                        {
-                            map = _mapFactory.CreatePartyMap(mapDef.Id, mapDef, _mapsLoader.LoadMapConfiguration(mapDef.Id), player.Party);
-                            map.OnAllMembersLeft += PartyMap_OnAllMembersLeft;
-                            PartyMaps.TryAdd(player.Party.Id, map);
-                        }
+                    IPartyMap map;
 
-                        map.LoadPlayer(player);
-                    }
-                    else // Map is for party, and player is not in party. Load player to nearest to this map.
+                    if (player.Party is null)
+                    // This is very uncommon, but if:
+                    // * player is an admin he can load into map even without party.
+                    // * player entered portal, while being in party, but while he was loading, all party members left.
                     {
-                        // TODO: load to near to intance map.
+                        var dummyParty = new OneMemberParty();
+                        player.SetParty(dummyParty);
                     }
+
+                    PartyMaps.TryGetValue(player.Party.Id, out map);
+                    if (map is null)
+                    {
+                        map = _mapFactory.CreatePartyMap(mapDef.Id, mapDef, _mapsLoader.LoadMapConfiguration(mapDef.Id), player.Party);
+                        map.OnAllMembersLeft += PartyMap_OnAllMembersLeft;
+                        PartyMaps.TryAdd(player.Party.Id, map);
+                    }
+
+                    map.LoadPlayer(player);
+
                 }
             }
         }

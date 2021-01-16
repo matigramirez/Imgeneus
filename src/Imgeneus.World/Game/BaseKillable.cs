@@ -6,6 +6,7 @@ using System.Linq;
 using Imgeneus.Database.Constants;
 using Imgeneus.Database.Preload;
 using Imgeneus.World.Game.Monster;
+using Imgeneus.World.Game.PartyAndRaid;
 using Imgeneus.World.Game.Player;
 using Imgeneus.World.Game.Zone;
 using MvvmHelpers;
@@ -908,7 +909,7 @@ namespace Imgeneus.World.Game
                     if (dropItems.Count > 0 && killer is Character)
                     {
                         var dropOwner = killer as Character;
-                        if (dropOwner.Party is null)
+                        if (dropOwner.Party is null || dropOwner.Party is OneMemberParty)
                         {
                             AddItemsDropOnMap(dropItems, dropOwner);
                         }

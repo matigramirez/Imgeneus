@@ -59,6 +59,8 @@ namespace Imgeneus.DatabaseBackgroundService.Handlers
             byte r = (byte)args[16];
             byte g = (byte)args[17];
             byte b = (byte)args[18];
+            DateTime creationTime = (DateTime)args[19];
+            DateTime? expirationTime = (DateTime?)args[20];
 
             var dbItem = new DbCharacterItems()
             {
@@ -80,7 +82,9 @@ namespace Imgeneus.DatabaseBackgroundService.Handlers
                 DyeColorSaturation = saturation,
                 DyeColorR = r,
                 DyeColorG = g,
-                DyeColorB = b
+                DyeColorB = b,
+                CreationTime = creationTime,
+                ExpirationTime = expirationTime
             };
 
             _database.CharacterItems.Add(dbItem);

@@ -137,6 +137,7 @@
         ADD_ITEM = 0x0205, // 517
         REMOVE_ITEM = 0x0206, // 518
         SEND_EQUIPMENT = 0x0507, // 1287
+        ITEM_EXPIRATION = 0x22E, // 558
 
         // Trade
         TRADE_REQUEST = 0x0A01, // 2561

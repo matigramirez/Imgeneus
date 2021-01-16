@@ -305,5 +305,11 @@ namespace Imgeneus.Database.Entities
         /// </summary>
         [Required]
         public byte Count { get; set; }
+
+        /// <summary>
+        /// Duration time in seconds for items that can expire
+        /// </summary>
+        [Required]
+        public uint Duration { get; set; }
     }
 }

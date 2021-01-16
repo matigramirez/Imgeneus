@@ -1,6 +1,6 @@
-﻿using Imgeneus.Network.Packets.Game;
+﻿using System;
+using Imgeneus.Network.Packets.Game;
 using Imgeneus.World.Game.Monster;
-using Imgeneus.World.Game.Zone;
 using Imgeneus.World.Game.Zone.Obelisks;
 using Imgeneus.World.Game.Zone.Portals;
 using System.Linq;
@@ -31,7 +31,14 @@ namespace Imgeneus.World.Game.Player
 
         protected override void SendCurrentHitpoints() => _packetsHelper.SendCurrentHitpoints(Client, this);
 
-        private void SendInventoryItems() => _packetsHelper.SendInventoryItems(Client, InventoryItems.Values.ToList());
+        private void SendInventoryItems()
+        {
+            var inventoryItems = InventoryItems.Values.ToList();
+            _packetsHelper.SendInventoryItems(Client, inventoryItems);
+
+            foreach (var item in inventoryItems.Where(i => i.ExpirationTime != null))
+                _packetsHelper.SendItemExpiration(Client, item);
+        }
 
         private void SendLearnedSkills() => _packetsHelper.SendLearnedSkills(Client, this);
 
@@ -108,7 +115,13 @@ namespace Imgeneus.World.Game.Player
 
         private void SendTargetRemoveBuff(IKillable target, ActiveBuff buff) => _packetsHelper.SendTargetRemoveBuff(Client, target, buff);
 
-        public void SendAddItemToInventory(Item item) => _packetsHelper.SendAddItem(Client, item);
+        public void SendAddItemToInventory(Item item)
+        {
+            _packetsHelper.SendAddItem(Client, item);
+
+            if(item.ExpirationTime != null)
+                _packetsHelper.SendItemExpiration(Client, item);
+        }
 
         public void SendRemoveItemFromInventory(Item item, bool fullRemove) => _packetsHelper.SendRemoveItem(Client, item, fullRemove);
 

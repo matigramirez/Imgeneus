@@ -27,7 +27,7 @@ namespace Imgeneus.World.Game.Player
                 var item = AddItemToInventory(newItem);
                 if (item != null)
                 {
-                    _packetsHelper.SendAddItem(Client, item);
+                    SendAddItemToInventory(item);
                     _packetsHelper.SendGmCommandSuccess(Client);
                 }
                 else

@@ -90,6 +90,11 @@ namespace Imgeneus.World.Game
         /// </summary>
         public event Action<IKillable, int> OnMaxHPChanged;
 
+        public void InvokeMaxHPChanged()
+        {
+            OnMaxHPChanged?.Invoke(this, MaxHP);
+        }
+
         public abstract int MaxSP { get; }
 
         /// <summary>
@@ -97,12 +102,22 @@ namespace Imgeneus.World.Game
         /// </summary>
         public event Action<IKillable, int> OnMaxSPChanged;
 
+        public void InvokeMaxSPChanged()
+        {
+            OnMaxSPChanged?.Invoke(this, MaxSP);
+        }
+
         public abstract int MaxMP { get; }
 
         /// <summary>
         /// Event, that is fired, when max mp changes.
         /// </summary>
         public event Action<IKillable, int> OnMaxMPChanged;
+
+        public void InvokeMaxMPChanged()
+        {
+            OnMaxMPChanged?.Invoke(this, MaxMP);
+        }
 
         /// <summary>
         /// Event, that is fired, when hp changes.
@@ -180,6 +195,26 @@ namespace Imgeneus.World.Game
                 _currentSP = value;
                 SP_Changed?.Invoke(this, args);
             }
+        }
+
+        /// <summary>
+        /// Event that's fired when hp, mp and sp change.
+        /// </summary>
+        public event Action<IKillable> On_HP_MP_SP_Changed;
+
+        public void Invoke_HP_MP_SP_Changed()
+        {
+            On_HP_MP_SP_Changed?.Invoke(this);
+        }
+
+        /// <summary>
+        /// Event that's fired when max hp, mp and sp change.
+        /// </summary>
+        public event Action<IKillable> OnMax_HP_MP_SP_Changed;
+
+        public void InvokeMax_HP_MP_SP_Changed()
+        {
+            OnMax_HP_MP_SP_Changed?.Invoke(this);
         }
 
         /// <inheritdoc />

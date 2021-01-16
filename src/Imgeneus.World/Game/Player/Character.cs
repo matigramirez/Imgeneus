@@ -316,8 +316,8 @@ namespace Imgeneus.World.Game.Player
             {
                 if (reason == DuelCancelReason.Lose || reason == DuelCancelReason.AdmitDefeat)
                 {
-                    Defeats++;
-                    DuelOpponent.Victories++;
+                    SetDefeats(++Defeats);
+                    DuelOpponent.SetVictories(++DuelOpponent.Victories);
                 }
                 OnDuelFinish?.Invoke(reason);
             }

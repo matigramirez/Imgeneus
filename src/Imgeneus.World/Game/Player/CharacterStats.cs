@@ -32,8 +32,8 @@ namespace Imgeneus.World.Game.Player
         public uint Exp { get; private set; }
         public ushort Kills { get; private set; }
         public ushort Deaths { get; private set; }
-        public ushort Victories { get; set; }
-        public ushort Defeats { get; set; }
+        public ushort Victories { get; private set; }
+        public ushort Defeats { get; private set; }
         public bool IsAdmin { get; set; }
         public bool IsRename { get; set; }
 
@@ -70,11 +70,6 @@ namespace Imgeneus.World.Game.Player
         #endregion
 
         #region Max HP & SP & MP
-
-        /// <summary>
-        /// Event that's fired when max hp, mp and sp change.
-        /// </summary>
-        public event Action<Character> OnMax_HP_MP_SP_Changed;
 
         private void Character_OnMaxHPChanged(IKillable sender, int maxHP)
         {
@@ -113,7 +108,7 @@ namespace Imgeneus.World.Game.Player
         {
             get
             {
-                return ConstHP + ExtraHP;
+                return ConstHP + ExtraHP + ReactionExtraHP;
             }
         }
 
@@ -136,7 +131,7 @@ namespace Imgeneus.World.Game.Player
         {
             get
             {
-                return ConstMP + ExtraMP;
+                return ConstMP + ExtraMP + WisdomExtraMP;
             }
         }
 
@@ -159,7 +154,7 @@ namespace Imgeneus.World.Game.Player
         {
             get
             {
-                return ConstSP + ExtraSP;
+                return ConstSP + ExtraSP + DexterityExtraSP;
             }
         }
 
@@ -302,6 +297,19 @@ namespace Imgeneus.World.Game.Player
                     break;
             }
         }
+        /// Extra HP given by Reaction formula
+        /// </summary>
+        public int ReactionExtraHP => Reaction * 5;
+
+        /// <summary>
+        /// Extra MP given by Wisdom formula
+        /// </summary>
+        public int WisdomExtraMP => Wisdom * 5;
+
+        /// <summary>
+        /// Extra SP given by Dexterity formula
+        /// </summary>
+        public int DexterityExtraSP => Dexterity * 5;
 
         #endregion
 
@@ -699,26 +707,75 @@ namespace Imgeneus.World.Game.Player
             switch (statAttribute)
             {
                 case CharacterAttributeEnum.Strength:
-                    Strength = newStatValue;
+                    SetStat(CharacterStatEnum.Strength, newStatValue);
                     break;
+
                 case CharacterAttributeEnum.Dexterity:
-                    Dexterity = newStatValue;
+                    SetStat(CharacterStatEnum.Dexterity, newStatValue);
                     break;
+
                 case CharacterAttributeEnum.Reaction:
-                    Reaction = newStatValue;
+                    SetStat(CharacterStatEnum.Reaction, newStatValue);
                     break;
+
                 case CharacterAttributeEnum.Intelligence:
-                    Intelligence = newStatValue;
+                    SetStat(CharacterStatEnum.Intelligence, newStatValue);
                     break;
+
                 case CharacterAttributeEnum.Luck:
-                    Luck = newStatValue;
+                    SetStat(CharacterStatEnum.Luck, newStatValue);
                     break;
+
                 case CharacterAttributeEnum.Wisdom:
-                    Wisdom = newStatValue;
+                    SetStat(CharacterStatEnum.Wisdom, newStatValue);
                     break;
+
                 default:
                     return;
             }
+        }
+
+        /// <summary>
+        /// Change a character's stat value.
+        /// </summary>
+        /// <param name="stat">Stat to change</param>
+        /// <param name="value">New stat value</param>
+        public void SetStat(CharacterStatEnum stat, ushort value)
+        {
+            switch (stat)
+            {
+                case CharacterStatEnum.Strength:
+                    Strength = value;
+                    break;
+
+                case CharacterStatEnum.Dexterity:
+                    Dexterity = value;
+                    InvokeMaxSPChanged();
+                    break;
+
+                case CharacterStatEnum.Reaction:
+                    Reaction = value;
+                    InvokeMaxHPChanged();
+                    break;
+
+                case CharacterStatEnum.Intelligence:
+                    Intelligence = value;
+                    break;
+
+                case CharacterStatEnum.Luck:
+                    Luck = value;
+                    break;
+
+                case CharacterStatEnum.Wisdom:
+                    Wisdom = value;
+                    InvokeMaxMPChanged();
+                    break;
+
+                default:
+                    return;
+            }
+
+            SendAdditionalStats();
 
             _taskQueue.Enqueue(ActionType.UPDATE_STATS, Id, Strength, Dexterity, Reaction, Intelligence, Wisdom, Luck, StatPoint);
         }
@@ -811,6 +868,30 @@ namespace Imgeneus.World.Game.Player
             Deaths = deaths;
 
             _taskQueue.Enqueue(ActionType.SAVE_CHARACTER_DEATHS, Id, Deaths);
+        }
+
+        #endregion
+
+        #region Wins & Loses
+
+        /// <summary>
+        /// Sets the number of duel victories.
+        /// </summary>
+        public void SetVictories(ushort victories)
+        {
+            Victories = victories;
+
+            _taskQueue.Enqueue(ActionType.SAVE_CHARACTER_VICTORIES, Id, Victories);
+        }
+
+        /// <summary>
+        /// Sets the number of duel defeats.
+        /// </summary>
+        public void SetDefeats(ushort defeats)
+        {
+            Defeats = defeats;
+
+            _taskQueue.Enqueue(ActionType.SAVE_CHARACTER_DEFEATS, Id, Defeats);
         }
 
         #endregion

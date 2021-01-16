@@ -17,6 +17,14 @@ using Imgeneus.World.Game.Zone.Obelisks;
 using Imgeneus.World.Game.Zone.Portals;
 using Imgeneus.World.Serialization;
 
+#if EP8_V1
+using Imgeneus.World.Serialization.EP_8_V1;
+#elif EP8_V2
+using Imgeneus.World.Serialization.EP_8_V2;
+#else
+using Imgeneus.World.Serialization.EP_8_V1;
+#endif
+
 namespace Imgeneus.World.Packets
 {
     /// <summary>
@@ -95,6 +103,10 @@ namespace Imgeneus.World.Packets
         {
             // Send move item.
             using var packet = new Packet(PacketType.INVENTORY_MOVE_ITEM);
+
+#if EP8_V2
+            packet.Write(0); // Unknown int in V2.
+#endif
 
             var bytes = new MovedItem(sourceItem).Serialize();
             packet.Write(bytes);
@@ -306,7 +318,7 @@ namespace Imgeneus.World.Packets
 
         internal void SendGmTeleport(IWorldClient client, Character character)
         {
-            using var packet = new Packet(PacketType.GM_TELEPORT_MAP);
+            using var packet = new Packet(PacketType.GM_TELEPORT_MAP_COORDINATES);
             packet.Write(character.Id);
             packet.Write(character.MapId);
             packet.Write(character.PosX);
@@ -1139,6 +1151,15 @@ namespace Imgeneus.World.Packets
             var type = isAdminLevelUp ? PacketType.GM_CHARACTER_LEVEL_UP : PacketType.CHARACTER_LEVEL_UP;
             using var packet = new Packet(type);
             packet.Write(new CharacterLevelUp(character).Serialize());
+            client.SendPacket(packet);
+        }
+
+        internal void SendWarning(IWorldClient client, string message)
+        {
+            using var packet = new Packet(PacketType.GM_WARNING_PLAYER);
+            packet.WriteByte((byte)(message.Length + 1));
+            packet.Write(message);
+            packet.WriteByte(0);
             client.SendPacket(packet);
         }
     }

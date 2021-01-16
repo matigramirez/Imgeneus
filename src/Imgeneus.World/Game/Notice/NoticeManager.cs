@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Text;
 using Imgeneus.Database.Entities;
 using Imgeneus.Network.Data;
 using Imgeneus.Network.Packets;
@@ -96,8 +97,15 @@ namespace Imgeneus.World.Game.Notice
         private void SendNoticeToPlayer(Character character, PacketType noticeType, string message)
         {
             using var packet = new Packet(noticeType);
-            packet.WriteByte((byte) message.Length);
-            packet.Write(message);
+
+            packet.WriteByte((byte)message.Length);
+
+#if EP8_V2
+            packet.WriteString(message, Encoding.Unicode);
+#else
+            packet.WriteString(message);
+#endif
+
             character.Client.SendPacket(packet);
         }
 

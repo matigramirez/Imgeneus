@@ -165,6 +165,7 @@ namespace Imgeneus.World
             { PacketType.RAID_CHANGE_SUBLEADER, (s) => new RaidChangeSubLeaderPacket(s) },
             { PacketType.RAID_KICK, (s) => new RaidKickPacket(s) },
             { PacketType.RAID_MOVE_PLAYER, (s) => new RaidMovePlayerPacket(s) },
+            { PacketType.GM_TELEPORT_MAP_COORDINATES, (s) => new GMTeleportMapCoordinatesPacket(s) },
             { PacketType.GM_TELEPORT_MAP, (s) => new GMTeleportMapPacket(s) },
             { PacketType.GM_CREATE_NPC, (s) => new GMCreateNpcPacket(s) },
             { PacketType.GM_REMOVE_NPC, (s) => new GMRemoveNpcPacket(s) },
@@ -181,6 +182,7 @@ namespace Imgeneus.World
             { PacketType.PARTY_SEARCH_INVITE, (s) => new PartySearchInvitePacket(s) },
             { PacketType.GM_FIND_PLAYER, (s) => new GMFindPlayerPacket(s) },
             { PacketType.GM_SUMMON_PLAYER, (s) => new GMSummonPlayerPacket(s) },
+            { PacketType.GM_TELEPORT_PLAYER, (s) => new GMTeleportPlayerPacket(s)},
             { PacketType.GM_TELEPORT_TO_PLAYER, (s) => new GMTeleportToPlayerPacket(s) },
             { PacketType.USE_VEHICLE, (s) => new UseVehiclePacket(s) },
             { PacketType.GEM_ADD, (s) => new GemAddPacket(s) },
@@ -200,7 +202,9 @@ namespace Imgeneus.World
             { PacketType.NOTICE_PLAYER, (s) => new GMNoticePlayerPacket(s) },
             { PacketType.NOTICE_FACTION, (s) => new GMNoticeFactionPacket(s) },
             { PacketType.NOTICE_MAP, (s) => new GMNoticeMapPacket(s) },
-            { PacketType.NOTICE_ADMINS, (s) => new GMNoticeAdminsPacket(s) }
+            { PacketType.NOTICE_ADMINS, (s) => new GMNoticeAdminsPacket(s) },
+            { PacketType.GM_CURE_PLAYER, (s) => new GMCurePlayerPacket(s) },
+            { PacketType.GM_WARNING_PLAYER, (s) => new GMWarningPacket(s) }
         };
 
         /// <inheritdoc />

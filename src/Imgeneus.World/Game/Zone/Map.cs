@@ -269,7 +269,8 @@ namespace Imgeneus.World.Game.Zone
         /// Teleports player to selected position on map.
         /// </summary>
         /// <param name="playerId">Id of player</param>
-        public void TeleportPlayer(int playerId)
+        /// <param name="teleportedByAdmin">Indicates whether the teleport was issued by an admin or not</param>
+        public void TeleportPlayer(int playerId, bool teleportedByAdmin)
         {
             if (!Players.ContainsKey(playerId))
             {
@@ -277,7 +278,7 @@ namespace Imgeneus.World.Game.Zone
             }
 
             var player = Players[playerId];
-            Cells[player.CellId].TeleportPlayer(player);
+            Cells[player.CellId].TeleportPlayer(player, teleportedByAdmin);
         }
 
         /// <summary>

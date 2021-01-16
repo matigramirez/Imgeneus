@@ -1,6 +1,7 @@
 ﻿using Imgeneus.Network.Packets;
 using System;
 using System.IO;
+using System.Text;
 
 namespace Imgeneus.Network.Data
 {
@@ -59,8 +60,9 @@ namespace Imgeneus.Network.Data
         /// Reads a string from the packet.
         /// </summary>
         /// <param name="amount">The size of the string.</param>
-        /// <returns></returns>
-        string ReadString(int size);
+        /// <param name="encoding">In old eps 1 byte per character, in new ep 2 bytes per character. If set to null will use 1 byte per char</param>
+        /// <returns>parsed string</returns>
+        string ReadString(int size, Encoding encoding = null);
 
         /// <summary>
         /// Writes a T value in the packet stream.

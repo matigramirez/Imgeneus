@@ -1,7 +1,6 @@
-﻿using Imgeneus.Database.Entities;
-using Imgeneus.Network.Packets.Game;
+﻿using System.ComponentModel;
+using Imgeneus.Database.Entities;
 using Imgeneus.World.Game.Player;
-using System.ComponentModel;
 using Xunit;
 
 namespace Imgeneus.World.Tests.CharacterTests
@@ -36,12 +35,12 @@ namespace Imgeneus.World.Tests.CharacterTests
             var character = CreateCharacter();
 
             character.TrySetMode(Mode.Ultimate);
-            character.SetStat(CharacterAttributeEnum.Strength, 1);
-            character.SetStat(CharacterAttributeEnum.Dexterity, 2);
-            character.SetStat(CharacterAttributeEnum.Reaction, 3);
-            character.SetStat(CharacterAttributeEnum.Intelligence, 4);
-            character.SetStat(CharacterAttributeEnum.Wisdom, 5);
-            character.SetStat(CharacterAttributeEnum.Luck, 6);
+            character.SetStat(CharacterStatEnum.Strength, 1);
+            character.SetStat(CharacterStatEnum.Dexterity, 2);
+            character.SetStat(CharacterStatEnum.Reaction, 3);
+            character.SetStat(CharacterStatEnum.Intelligence, 4);
+            character.SetStat(CharacterStatEnum.Wisdom, 5);
+            character.SetStat(CharacterStatEnum.Luck, 6);
 
             ushort newStatValue = 77;
 
@@ -52,12 +51,12 @@ namespace Imgeneus.World.Tests.CharacterTests
             Assert.NotEqual(newStatValue, character.Wisdom);
             Assert.NotEqual(newStatValue, character.Luck);
 
-            character.SetStat(CharacterAttributeEnum.Strength, newStatValue);
-            character.SetStat(CharacterAttributeEnum.Dexterity, newStatValue);
-            character.SetStat(CharacterAttributeEnum.Intelligence, newStatValue);
-            character.SetStat(CharacterAttributeEnum.Reaction, newStatValue);
-            character.SetStat(CharacterAttributeEnum.Wisdom, newStatValue);
-            character.SetStat(CharacterAttributeEnum.Luck, newStatValue);
+            character.SetStat(CharacterStatEnum.Strength, newStatValue);
+            character.SetStat(CharacterStatEnum.Dexterity, newStatValue);
+            character.SetStat(CharacterStatEnum.Intelligence, newStatValue);
+            character.SetStat(CharacterStatEnum.Reaction, newStatValue);
+            character.SetStat(CharacterStatEnum.Wisdom, newStatValue);
+            character.SetStat(CharacterStatEnum.Luck, newStatValue);
 
             Assert.Equal(newStatValue, character.Strength);
             Assert.Equal(newStatValue, character.Dexterity);
@@ -65,6 +64,44 @@ namespace Imgeneus.World.Tests.CharacterTests
             Assert.Equal(newStatValue, character.Reaction);
             Assert.Equal(newStatValue, character.Wisdom);
             Assert.Equal(newStatValue, character.Luck);
+        }
+
+        [Fact]
+        [Description("Character's max HP, MP and SP should be incremented with REC, WIS and DEX")]
+        public void VitalityTest()
+        {
+            var character = CreateCharacter();
+
+            character.SetStat(CharacterStatEnum.Reaction, 0);
+            character.SetStat(CharacterStatEnum.Wisdom, 0);
+            character.SetStat(CharacterStatEnum.Dexterity, 0);
+
+            var previousHP = character.MaxHP;
+            var previousMP = character.MaxMP;
+            var previousSP = character.MaxSP;
+
+            character.SetStat(CharacterStatEnum.Reaction, 5);
+            character.SetStat(CharacterStatEnum.Wisdom, 10);
+            character.SetStat(CharacterStatEnum.Dexterity, 15);
+
+            Assert.Equal(previousHP + 25, character.MaxHP);
+            Assert.Equal(previousMP + 50, character.MaxMP);
+            Assert.Equal(previousSP + 75, character.MaxSP);
+        }
+
+        [Fact]
+        [Description("It should be possible to set victories and defeats.")]
+        public void SetVictoriesAndDefeatsTest()
+        {
+            var character = CreateCharacter();
+            Assert.Equal(0, character.Victories);
+            Assert.Equal(0, character.Defeats);
+
+            character.SetVictories(10);
+            character.SetDefeats(20);
+
+            Assert.Equal(10, character.Victories);
+            Assert.Equal(20, character.Defeats);
         }
     }
 }

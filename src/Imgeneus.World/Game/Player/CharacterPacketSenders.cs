@@ -9,6 +9,24 @@ namespace Imgeneus.World.Game.Player
 {
     public partial class Character
     {
+        /// <summary>
+        /// Sends to client character start-up information.
+        /// </summary>
+        private void SendCharacterInfo()
+        {
+            SendDetails();
+            SendAdditionalStats();
+            SendCurrentHitpoints();
+            SendInventoryItems(); // TODO: game.exe crashes, when number of items >= 80. Investigate why?
+            SendLearnedSkills();
+            SendOpenQuests();
+            SendFinishedQuests();
+            SendActiveBuffs();
+            SendMoveAndAttackSpeed();
+            SendFriends();
+            SendBlessAmount();
+        }
+
         private void SendDetails() => _packetsHelper.SendDetails(Client, this);
 
         protected override void SendCurrentHitpoints() => _packetsHelper.SendCurrentHitpoints(Client, this);
@@ -122,5 +140,7 @@ namespace Imgeneus.World.Game.Player
             _packetsHelper.SendAttribute(Client, attribute, GetAttributeValue(attribute));
 
         public void SendExperienceGain(ushort expAmount) => _packetsHelper.SendExperienceGain(Client, expAmount);
+
+        public void SendWarning(string message) => _packetsHelper.SendWarning(Client, message);
     }
 }

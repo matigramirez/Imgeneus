@@ -1,6 +1,4 @@
-﻿using Imgeneus.Core.DependencyInjection;
-using Imgeneus.Database;
-using Imgeneus.Database.Constants;
+﻿using Imgeneus.Database.Constants;
 using Imgeneus.Database.Entities;
 using Imgeneus.DatabaseBackgroundService.Handlers;
 using Imgeneus.Network.Packets;
@@ -8,30 +6,12 @@ using Imgeneus.Network.Packets.Game;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
-using System.Threading.Tasks;
+using Imgeneus.World.Game.Monster;
 
 namespace Imgeneus.World.Game.Player
 {
     public partial class Character
     {
-        /// <summary>
-        /// Sends to client character start-up information.
-        /// </summary>
-        private void SendCharacterInfo()
-        {
-            SendDetails();
-            SendAdditionalStats();
-            SendCurrentHitpoints();
-            SendInventoryItems(); // TODO: game.exe crashes, when number of items >= 80. Investigate why?
-            SendLearnedSkills();
-            SendOpenQuests();
-            SendFinishedQuests();
-            SendActiveBuffs();
-            SendMoveAndAttackSpeed();
-            SendFriends();
-            SendBlessAmount();
-        }
-
         private void HandleGMGetItemPacket(GMGetItemPacket gMGetItemPacket)
         {
             if (!IsAdmin)
@@ -549,6 +529,109 @@ namespace Imgeneus.World.Game.Player
 
             if (!success)
                 SendPortalTeleportNotAllowed(reason);
+        }
+
+        private void HandleGMCreateMob(GMCreateMobPacket gmCreateMobPacket)
+        {
+            if (!_databasePreloader.Mobs.ContainsKey(gmCreateMobPacket.MobId))
+            {
+                _packetsHelper.SendGmCommandError(Client, PacketType.GM_CREATE_MOB);
+                return;
+            }
+
+            for (int i = 0; i < gmCreateMobPacket.NumberOfMobs; i++)
+            {
+                // TODO: calculate move area.
+                var moveArea = new MoveArea(PosX > 10 ? PosX - 10 : 1, PosX + 10, PosY > 10 ? PosY - 10 : PosY, PosY + 10, PosZ > 10 ? PosZ - 10 : 1, PosZ + 10);
+
+                var mob = _mobFactory.CreateMob(gmCreateMobPacket.MobId, false, moveArea, Map);
+
+                Map.AddMob(mob);
+            }
+
+            _packetsHelper.SendGmCommandSuccess(Client);
+        }
+
+        private void HandleGMCurePlayerPacket(GMCurePlayerPacket gmCurePlayerPacket)
+        {
+            var target = _gameWorld.Players.FirstOrDefault(p => p.Value.Name == gmCurePlayerPacket.Name).Value;
+
+            if (target == null)
+            {
+                _packetsHelper.SendGmCommandError(Client, PacketType.GM_CURE_PLAYER);
+                return;
+            }
+
+            target?.FullRecover();
+
+            _packetsHelper.SendGmCommandSuccess(Client);
+        }
+
+        private void HandleGMWarningPlayer(GMWarningPacket gmWarningPacket)
+        {
+            var target = _gameWorld.Players.FirstOrDefault(p => p.Value.Name == gmWarningPacket.Name).Value;
+
+            if (target == null)
+            {
+                _packetsHelper.SendGmCommandError(Client, PacketType.GM_WARNING_PLAYER);
+                return;
+            }
+
+            target?.SendWarning(gmWarningPacket.Message);
+
+            _packetsHelper.SendGmCommandSuccess(Client);
+        }
+
+        private void HandleGMTeleportToMap(GMTeleportMapPacket gmTeleportMapPacket)
+        {
+            if (!_gameWorld.Maps.ContainsKey(gmTeleportMapPacket.MapId))
+            {
+                _packetsHelper.SendGmCommandError(Client, PacketType.GM_TELEPORT_MAP);
+                return;
+            }
+
+            _packetsHelper.SendGmCommandSuccess(Client);
+
+            // TODO: Use fixed xz coordinates per map?
+            Teleport(gmTeleportMapPacket.MapId, 100, PosY, 100, true);
+        }
+
+        private void HandleGMTeleportToMapCoordinates(GMTeleportMapCoordinatesPacket gmTeleportMapCoordinatesPacket)
+        {
+            var (newPosX, newPosZ, mapId) = gmTeleportMapCoordinatesPacket;
+
+            if (!_gameWorld.Maps.ContainsKey(mapId))
+            {
+                _packetsHelper.SendGmCommandError(Client, PacketType.GM_TELEPORT_MAP_COORDINATES);
+                return;
+            }
+
+            _packetsHelper.SendGmCommandSuccess(Client);
+
+            Teleport(mapId, newPosX, PosY, newPosZ, true);
+        }
+
+        private void HandleGMTeleportPlayer(GMTeleportPlayerPacket gmTeleportPlayerPacket)
+        {
+            var (name, newPosX, newPosZ, mapId) = gmTeleportPlayerPacket;
+
+            var target = _gameWorld.Players.FirstOrDefault(p => p.Value.Name == name).Value;
+
+            if (target == null)
+            {
+                _packetsHelper.SendGmCommandError(Client, PacketType.GM_TELEPORT_PLAYER);
+                return;
+            }
+
+            if (!_gameWorld.Maps.ContainsKey(mapId))
+            {
+                _packetsHelper.SendGmCommandError(Client, PacketType.GM_TELEPORT_MAP_COORDINATES);
+                return;
+            }
+
+            _packetsHelper.SendGmCommandSuccess(Client);
+
+            target?.Teleport(mapId, newPosX, PosY, newPosZ, true);
         }
     }
 }

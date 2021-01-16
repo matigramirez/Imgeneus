@@ -1,7 +1,6 @@
 ﻿using Imgeneus.World.Game.PartyAndRaid;
 using Imgeneus.World.Game.Zone;
 using Imgeneus.World.Game.Zone.MapConfig;
-using System;
 using System.ComponentModel;
 using Xunit;
 
@@ -10,7 +9,7 @@ namespace Imgeneus.World.Tests.MapTests
     public class PartyMapTest : BaseTest
     {
         [Fact]
-        [Description("The Party map should be disposed as soon as all party members left the map and the party was destroyed.")]
+        [Description("The Party map should notify as soon as all party members left the map and the party was destroyed.")]
         public void PartyMapDestroy()
         {
             var usualMap = testMap;
@@ -45,7 +44,6 @@ namespace Imgeneus.World.Tests.MapTests
             partyMap.UnloadPlayer(character2);
 
             Assert.True(allLeftWasCalled);
-            Assert.Throws<ObjectDisposedException>(() => partyMap.LoadPlayer(character1));
         }
     }
 }

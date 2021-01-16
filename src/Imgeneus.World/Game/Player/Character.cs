@@ -113,7 +113,7 @@ namespace Imgeneus.World.Game.Player
 
                 if (IsDead)
                 {
-                    // TODO: Recover HP, MP, SP and save new number od deathes.
+                    // TODO: Recover HP, MP, SP and save new number of deathes.
                 }
 
                 _taskQueue.Enqueue(ActionType.SAVE_MAP_ID, Id, rebirthCoordinate.MapId);

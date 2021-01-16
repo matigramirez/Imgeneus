@@ -25,9 +25,7 @@ namespace Imgeneus.World.Game.Player
         private void UpdatePosition(float x, float y, float z, ushort angle, bool saveChangesToDB)
         {
             if (IsTeleporting)
-            {
                 return;
-            }
 
             if (ActiveBuffs.Any(b => b.StateType == StateType.Immobilize || b.StateType == StateType.Sleep || b.StateType == StateType.Stun))
             {

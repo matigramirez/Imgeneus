@@ -218,6 +218,7 @@ namespace Imgeneus.World.Game
         {
             senser.OnAllMembersLeft -= PartyMap_OnAllMembersLeft;
             PartyMaps.TryRemove(senser.PartyId, out var removed);
+            removed.Dispose();
         }
 
         #endregion

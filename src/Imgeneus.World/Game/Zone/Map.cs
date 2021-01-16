@@ -418,7 +418,7 @@ namespace Imgeneus.World.Game.Zone
         /// <param name="mob"></param>
         public void RemoveMob(Mob mob)
         {
-            Cells[GetCellIndex(mob)].RemoveMob(mob);
+            Cells[mob.CellId].RemoveMob(mob);
 
             mob.OnDead -= Mob_OnDead;
             mob.TimeToRebirth -= RebirthMob;

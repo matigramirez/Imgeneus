@@ -39,7 +39,6 @@ namespace Imgeneus.World.Game.Zone
             if (Players.Count == 0)
             {
                 OnAllMembersLeft?.Invoke(this);
-                Dispose();
             }
         }
 
@@ -50,7 +49,6 @@ namespace Imgeneus.World.Game.Zone
             if (_party.Members.Count <= 1 && Players.Count == 0)
             {
                 OnAllMembersLeft?.Invoke(this);
-                Dispose();
             }
 
             return result;

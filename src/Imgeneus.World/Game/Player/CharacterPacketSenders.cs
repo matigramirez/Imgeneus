@@ -25,6 +25,7 @@ namespace Imgeneus.World.Game.Player
             SendMoveAndAttackSpeed();
             SendFriends();
             SendBlessAmount();
+            SendBankItems();
         }
 
         private void SendDetails() => _packetsHelper.SendDetails(Client, this);
@@ -37,8 +38,10 @@ namespace Imgeneus.World.Game.Player
             _packetsHelper.SendInventoryItems(Client, inventoryItems);
 
             foreach (var item in inventoryItems.Where(i => i.ExpirationTime != null))
-                _packetsHelper.SendItemExpiration(Client, item);
+                SendItemExpiration(item);
         }
+
+        private void SendItemExpiration(Item item) => _packetsHelper.SendItemExpiration(Client, item);
 
         private void SendLearnedSkills() => _packetsHelper.SendLearnedSkills(Client, this);
 
@@ -155,5 +158,9 @@ namespace Imgeneus.World.Game.Player
         public void SendExperienceGain(ushort expAmount) => _packetsHelper.SendExperienceGain(Client, expAmount);
 
         public void SendWarning(string message) => _packetsHelper.SendWarning(Client, message);
+
+        public void SendBankItems() => _packetsHelper.SendBankItems(Client, BankItems.Values.ToList());
+
+        public void SendBankItemClaim(byte bankSlot, Item item) => _packetsHelper.SendBankItemClaim(Client, bankSlot, item);
     }
 }

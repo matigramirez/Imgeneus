@@ -455,6 +455,12 @@ namespace Imgeneus.World.Game.Player
 
                     HandleGMTeleportPlayer(gmTeleportPlayerPacket);
                     break;
+
+                case BankClaimItemPacket bankClaimItemPacket:
+                    var result = TryClaimBankItem(bankClaimItemPacket.Slot, out _);
+                    if(!result)
+                        _packetsHelper.SendFullInventory(Client);
+                    break;
             }
         }
     }

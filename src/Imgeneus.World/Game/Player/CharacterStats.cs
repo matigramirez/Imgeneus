@@ -11,6 +11,7 @@ namespace Imgeneus.World.Game.Player
     {
         #region Character info
 
+        public int UserId { get; private set; }
         public string Name { get; set; } = "";
         public Fraction Country { get; set; }
         public ushort MapId { get; private set; }

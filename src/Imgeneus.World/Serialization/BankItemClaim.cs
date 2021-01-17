@@ -15,11 +15,15 @@ namespace Imgeneus.World.Serialization
         [FieldOrder(2)]
         public byte Slot { get; }
 
+        [FieldOrder(3)]
+        public byte Count { get; }
+
         public BankItemClaim(byte bankSlot, Item item)
         {
             BankSlot = bankSlot;
             Bag = item.Bag;
             Slot = item.Slot;
+            Count = item.Count;
         }
     }
 }

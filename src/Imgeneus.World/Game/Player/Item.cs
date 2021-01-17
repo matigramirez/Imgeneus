@@ -73,8 +73,7 @@ namespace Imgeneus.World.Game.Player
             Type = type;
             TypeId = typeId;
             Count = count;
-
-            CreationTime ??= DateTime.UtcNow;
+            CreationTime = DateTime.UtcNow;
 
             if (Type != 0 && TypeId != 0 && Type != MONEY_ITEM_TYPE)
             {
@@ -91,23 +90,13 @@ namespace Imgeneus.World.Game.Player
                 if (_dbItem.Duration > 0)
                 {
                     // Get ExpirationTime based on DbItem
-                    var dbItemExpirationTime = ((DateTime)CreationTime).AddSeconds(_dbItem.Duration);
-
-                    if (IsExpirable)
-                    {
-                        // Validate ExpirationTime based on DbItem's expiration
-                        ExpirationTime = ExpirationTime != dbItemExpirationTime ? dbItemExpirationTime : ExpirationTime;
-                    }
-                    else
-                    {
-                        ExpirationTime = dbItemExpirationTime;
-                    }
+                    ExpirationTime = CreationTime.AddSeconds(_dbItem.Duration);
                 }
             }
 
             if (IsExpirable)
             {
-                var interval = ((DateTime)ExpirationTime - DateTime.UtcNow);
+                var interval = (DateTime)ExpirationTime - DateTime.UtcNow;
 
                 // Don't start timer for items that have more than 12 hours left
                 if (interval.TotalHours > 12)
@@ -791,7 +780,7 @@ namespace Imgeneus.World.Game.Player
         /// <summary>
         /// Time at which the item was created.
         /// </summary>
-        public DateTime? CreationTime { get; }
+        public DateTime CreationTime { get; }
 
         /// <summary>
         /// Time at which the item expires.
@@ -811,6 +800,7 @@ namespace Imgeneus.World.Game.Player
         private void ExpirationTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
             OnExpiration?.Invoke(this);
+            _expirationTimer.Elapsed -= ExpirationTimer_Elapsed;
         }
 
         /// <summary>

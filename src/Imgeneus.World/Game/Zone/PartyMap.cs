@@ -30,23 +30,24 @@ namespace Imgeneus.World.Game.Zone
             : base(id, definition, config, logger, databasePreloader, mobFactory, npcFactory, obeliskFactory)
         {
             _party = party;
-            _party.AllMembersLeft += Party_AllMembersLeft;
+
+            if (_party != null)
+                _party.AllMembersLeft += Party_AllMembersLeft;
         }
 
         private void Party_AllMembersLeft()
         {
             _party.AllMembersLeft -= Party_AllMembersLeft;
+
             if (Players.Count == 0)
-            {
                 OnAllMembersLeft?.Invoke(this);
-            }
         }
 
         public override bool UnloadPlayer(Character character)
         {
             var result = base.UnloadPlayer(character);
 
-            if (_party.Members.Count <= 1 && Players.Count == 0)
+            if (_party is null || (_party.Members.Count <= 1 && Players.Count == 0))
             {
                 OnAllMembersLeft?.Invoke(this);
             }

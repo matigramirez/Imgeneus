@@ -287,22 +287,26 @@ namespace Imgeneus.World.Game
                 if (mapDef.CreateType == CreateType.Party)
                 {
                     IPartyMap map;
+                    Guid partyId;
 
                     if (player.Party is null)
                     // This is very uncommon, but if:
                     // * player is an admin he can load into map even without party.
                     // * player entered portal, while being in party, but while he was loading, all party members left.
                     {
-                        var dummyParty = new OneMemberParty();
-                        player.SetParty(dummyParty);
+                        partyId = player.PreviousPartyId;
+                    }
+                    else
+                    {
+                        partyId = player.Party.Id;
                     }
 
-                    PartyMaps.TryGetValue(player.Party.Id, out map);
+                    PartyMaps.TryGetValue(partyId, out map);
                     if (map is null)
                     {
                         map = _mapFactory.CreatePartyMap(mapDef.Id, mapDef, _mapsLoader.LoadMapConfiguration(mapDef.Id), player.Party);
                         map.OnAllMembersLeft += PartyMap_OnAllMembersLeft;
-                        PartyMaps.TryAdd(player.Party.Id, map);
+                        PartyMaps.TryAdd(partyId, map);
                     }
 
                     map.LoadPlayer(player);
@@ -337,6 +341,8 @@ namespace Imgeneus.World.Game
                     map = Maps[player.MapId];
                 else if (player.Party != null && PartyMaps.ContainsKey(player.Party.Id))
                     map = PartyMaps[player.Party.Id];
+                else if (PartyMaps.ContainsKey(player.PreviousPartyId))
+                    map = PartyMaps[player.PreviousPartyId];
 
                 if (map is null)
                     _logger.LogError($"Couldn't find character's {characterId} map {player.MapId}.");

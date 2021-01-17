@@ -909,7 +909,7 @@ namespace Imgeneus.World.Game
                     if (dropItems.Count > 0 && killer is Character)
                     {
                         var dropOwner = killer as Character;
-                        if (dropOwner.Party is null || dropOwner.Party is OneMemberParty)
+                        if (dropOwner.Party is null)
                         {
                             AddItemsDropOnMap(dropItems, dropOwner);
                         }

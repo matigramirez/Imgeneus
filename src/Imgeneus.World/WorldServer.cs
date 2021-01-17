@@ -152,7 +152,8 @@ namespace Imgeneus.World
 
                 sender.CryptoManager.UseExpandedKey = false;
 
-                SelectionScreenManagers[sender.Id].SendSelectionScrenInformation(((WorldClient)sender).UserID);
+                if (SelectionScreenManagers.ContainsKey(sender.Id))
+                    SelectionScreenManagers[sender.Id].SendSelectionScrenInformation(((WorldClient)sender).UserID);
             }
         }
 

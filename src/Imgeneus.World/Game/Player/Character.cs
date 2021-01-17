@@ -336,7 +336,6 @@ namespace Imgeneus.World.Game.Player
         {
             var character = new Character(logger, gameWorld, characterConfig, taskQueue, databasePreloader, chatManager, linkingManager, dyeingManager, mobFactory, npcFactory, noticeManager)
             {
-                UserId = dbCharacter.UserId,
                 Id = dbCharacter.Id,
                 Name = dbCharacter.Name,
                 Level = dbCharacter.Level,

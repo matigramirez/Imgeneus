@@ -14,8 +14,7 @@ namespace Imgeneus.World.Game.Player
         /// <summary>
         /// Adds an item to a player's bank
         /// </summary>
-        /// <param name="item">Item to add.</param>
-        public BankItem AddBankItem(BankItem item)
+        public BankItem AddBankItem(byte type, byte typeId, byte count)
         {
             var freeSlot = FindFreeBankSlot();
 
@@ -25,11 +24,13 @@ namespace Imgeneus.World.Game.Player
                 return null;
             }
 
-            BankItems.TryAdd(item.Slot, item);
+            var bankItem = new BankItem((byte)freeSlot, type, typeId, count);
 
-            _taskQueue.Enqueue(ActionType.SAVE_BANK_ITEM, UserId, DateTime.UtcNow, null, false, item.Type, item.TypeId, item.Count, item.Slot, false);
+            BankItems.TryAdd(bankItem.Slot, bankItem);
 
-            return item;
+            _taskQueue.Enqueue(ActionType.SAVE_BANK_ITEM, Client.UserID, DateTime.UtcNow, null, false, bankItem.Type, bankItem.TypeId, bankItem.Count, bankItem.Slot, false);
+
+            return bankItem;
         }
 
         /// <summary>
@@ -58,7 +59,7 @@ namespace Imgeneus.World.Game.Player
             if (item.IsExpirable)
                 SendItemExpiration(item);
 
-            _taskQueue.Enqueue(ActionType.CLAIM_BANK_ITEM, UserId, bankItem.Slot, DateTime.UtcNow, true);
+            _taskQueue.Enqueue(ActionType.CLAIM_BANK_ITEM, Client.UserID, bankItem.Slot, DateTime.UtcNow, true);
 
             return true;
         }

@@ -1,3 +1,4 @@
+using System.Transactions;
 using Imgeneus.Database.Entities;
 
 namespace Imgeneus.World.Game.Player
@@ -12,12 +13,20 @@ namespace Imgeneus.World.Game.Player
 
         public byte Count { get; set; }
 
-        public BankItem(DbBankItem dbBankItem)
+        public BankItem(byte slot, byte type, byte typeId, byte count) : this(type, typeId, count)
         {
-            Slot = dbBankItem.Slot;
-            Type = dbBankItem.Type;
-            TypeId = dbBankItem.TypeId;
-            Count = dbBankItem.Count;
+            Slot = slot;
+        }
+
+        public BankItem(byte type, byte typeId, byte count)
+        {
+            Type = type;
+            TypeId = typeId;
+            Count = count;
+        }
+
+        public BankItem(DbBankItem dbBankItem) : this (dbBankItem.Slot, dbBankItem.Type, dbBankItem.TypeId, dbBankItem.Count)
+        {
         }
     }
 }

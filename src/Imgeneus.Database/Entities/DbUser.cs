@@ -45,7 +45,7 @@ namespace Imgeneus.Database.Entities
         /// <summary>
         /// Gets or sets the users's current points.
         /// </summary>
-        public int Points { get; set; }
+        public uint Points { get; set; }
 
         /// <summary>
         /// Gets or sets the user current faction.

@@ -37,6 +37,11 @@ namespace Imgeneus.World.Game.Player
         public bool IsAdmin { get; set; }
         public bool IsRename { get; set; }
 
+        /// <summary>
+        /// Account points, used for item mall or online shop purchases.
+        /// </summary>
+        public uint Points { get; private set; }
+
         private byte[] _nameAsByteArray;
         public byte[] NameAsByteArray
         {
@@ -892,6 +897,22 @@ namespace Imgeneus.World.Game.Player
             Defeats = defeats;
 
             _taskQueue.Enqueue(ActionType.SAVE_CHARACTER_DEFEATS, Id, Defeats);
+        }
+
+        #endregion
+
+        #region Account Points
+
+        /// <summary>
+        /// Attempts to set the player's account points.
+        /// </summary>
+        /// <param name="points">Points to set.</param>
+        public void SetPoints(uint points)
+        {
+            Points = points;
+
+            _taskQueue.Enqueue(ActionType.SAVE_ACCOUNT_POINTS, Client.UserID, Points);
+            SendAccountPoints();
         }
 
         #endregion

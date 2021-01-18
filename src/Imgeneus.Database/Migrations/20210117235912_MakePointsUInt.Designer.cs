@@ -3,61 +3,21 @@ using System;
 using Imgeneus.Database.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Imgeneus.Database.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20210117235912_MakePointsUInt")]
+    partial class MakePointsUInt
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("Relational:MaxIdentifierLength", 64)
                 .HasAnnotation("ProductVersion", "5.0.1");
-
-            modelBuilder.Entity("Imgeneus.Database.Entities.DbBankItem", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("ClaimTime")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<byte>("Count")
-                        .HasColumnType("tinyint unsigned");
-
-                    b.Property<bool>("IsClaimed")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<DateTime>("ObtainmentTime")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<byte>("Slot")
-                        .HasColumnType("tinyint unsigned");
-
-                    b.Property<byte>("Type")
-                        .HasColumnType("tinyint unsigned");
-
-                    b.Property<byte>("TypeId")
-                        .HasColumnType("tinyint unsigned");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.HasIndex("Type", "TypeId");
-
-                    b.ToTable("BankItems");
-                });
 
             modelBuilder.Entity("Imgeneus.Database.Entities.DbCharacter", b =>
                 {
@@ -1434,25 +1394,6 @@ namespace Imgeneus.Database.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("Imgeneus.Database.Entities.DbBankItem", b =>
-                {
-                    b.HasOne("Imgeneus.Database.Entities.DbUser", "User")
-                        .WithMany("BankItems")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Imgeneus.Database.Entities.DbItem", "Item")
-                        .WithMany()
-                        .HasForeignKey("Type", "TypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Item");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("Imgeneus.Database.Entities.DbCharacter", b =>
                 {
                     b.HasOne("Imgeneus.Database.Entities.DbUser", "User")
@@ -1587,8 +1528,6 @@ namespace Imgeneus.Database.Migrations
 
             modelBuilder.Entity("Imgeneus.Database.Entities.DbUser", b =>
                 {
-                    b.Navigation("BankItems");
-
                     b.Navigation("Characters");
                 });
 #pragma warning restore 612, 618

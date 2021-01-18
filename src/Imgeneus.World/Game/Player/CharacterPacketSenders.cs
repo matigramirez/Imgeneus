@@ -26,6 +26,9 @@ namespace Imgeneus.World.Game.Player
             SendFriends();
             SendBlessAmount();
             SendBankItems();
+#if EP8_V1
+            SendAccountPoints(); // WARNING: This is necessary if you have an in-game item mall.
+#endif
         }
 
         private void SendDetails() => _packetsHelper.SendDetails(Client, this);
@@ -162,5 +165,6 @@ namespace Imgeneus.World.Game.Player
         public void SendBankItems() => _packetsHelper.SendBankItems(Client, BankItems.Values.ToList());
 
         public void SendBankItemClaim(byte bankSlot, Item item) => _packetsHelper.SendBankItemClaim(Client, bankSlot, item);
+        public void SendAccountPoints() => _packetsHelper.SendAccountPoints(Client, Points);
     }
 }

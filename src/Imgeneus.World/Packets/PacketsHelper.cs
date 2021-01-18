@@ -1183,5 +1183,11 @@ namespace Imgeneus.World.Packets
             packet.Write(new BankItemClaim(bankSlot, item).Serialize());
             client.SendPacket(packet);
         }
+        internal void SendAccountPoints(IWorldClient client, uint points)
+        {
+            using var packet = new Packet(PacketType.ACCOUNT_POINTS);
+            packet.Write(new AccountPoints(points).Serialize());
+            client.SendPacket(packet);
+        }
     }
 }

@@ -36,7 +36,7 @@ namespace Imgeneus.Core.Extensions
             // Don't allow more than 6 I and l because cheaters usually use names that look like "||||||||" in-game so that it's harder for them to get banned.
             var combinationCount = name.Count(c => c == 'l' || c == 'I');
 
-            if (combinationCount > 6)
+            if (combinationCount > 6 || name.Length == combinationCount)
                 return false;
 
             // Validate prohibited starting tags

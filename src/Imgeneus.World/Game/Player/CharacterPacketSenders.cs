@@ -25,7 +25,10 @@ namespace Imgeneus.World.Game.Player
             SendMoveAndAttackSpeed();
             SendFriends();
             SendBlessAmount();
-            // SendAccountPoints(); WARNING: Uncomment this if you have an in-game item mall.
+
+#if EP8_V1
+            SendAccountPoints(); // WARNING: This is necessary if you have an in-game item mall.
+#endif
         }
 
         private void SendDetails() => _packetsHelper.SendDetails(Client, this);

@@ -19,7 +19,6 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Imgeneus.Core.Extensions;
 
 namespace Imgeneus.World.SelectionScreen
 {
@@ -126,10 +125,9 @@ namespace Imgeneus.World.SelectionScreen
         {
             DbCharacter character = _database.Characters.FirstOrDefault(c => c.Name == checkNamePacket.CharacterName);
 
-            var isAvailable = character is null && checkNamePacket.CharacterName.IsValidCharacterName();
-
             using var packet = new Packet(PacketType.CHECK_CHARACTER_AVAILABLE_NAME);
-            packet.Write(isAvailable);
+            packet.Write(character is null);
+
             _client.SendPacket(packet);
         }
 
@@ -160,13 +158,6 @@ namespace Imgeneus.World.SelectionScreen
             if (defaultStats is null)
             {
                 // Something went very wrong. No default stats for this job.
-                SendCreatedCharacter(false);
-                return;
-            }
-
-            // Validate CharacterName
-            if (!createCharacterPacket.CharacterName.IsValidCharacterName())
-            {
                 SendCreatedCharacter(false);
                 return;
             }
@@ -336,15 +327,12 @@ namespace Imgeneus.World.SelectionScreen
             if (character is null)
                 return;
 
-            // Validate the new name
-            var nameIsValid = newName.IsValidCharacterName();
-
             // Check that name isn't in use
             var characterWithNewName = await _database.Characters.FirstOrDefaultAsync(c => c.Name == newName);
 
             using var packet = new Packet(PacketType.RENAME_CHARACTER);
 
-            if (!nameIsValid || characterWithNewName != null)
+            if (characterWithNewName != null)
             {
                 packet.WriteByte(2); // error response
                 packet.Write(character.Id);
@@ -352,6 +340,7 @@ namespace Imgeneus.World.SelectionScreen
                 return;
             }
 
+            // TODO: Should charname be validated somehow? for eg in case someone skips client validation for symbols or something else?
             character.Name = newName;
             character.IsRename = false;
 

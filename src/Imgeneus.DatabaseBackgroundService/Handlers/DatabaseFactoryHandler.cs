@@ -590,5 +590,17 @@ namespace Imgeneus.DatabaseBackgroundService.Handlers
             await _database.QuickItems.AddRangeAsync(newItems);
             await _database.SaveChangesAsync();
         }
+
+        [ActionHandler(ActionType.SAVE_ACCOUNT_POINTS)]
+        internal async Task SaveAccountPoints(object[] args)
+        {
+            int userId = (int)args[0];
+            uint points = (uint)args[1];
+
+            var user = _database.Users.Find(userId);
+            user.Points = points;
+
+            await _database.SaveChangesAsync();
+        }
     }
 }

@@ -5,6 +5,9 @@
     /// </summary>
     public enum ActionType
     {
+        // Account
+        SAVE_ACCOUNT_POINTS,
+
         // Character
         SAVE_CHARACTER_MOVE,
         SAVE_CHARACTER_HP_MP_SP,

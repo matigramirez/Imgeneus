@@ -273,6 +273,9 @@
         // Experience and Leveling
         EXPERIENCE_GAIN = 0x0207, // 519
         CHARACTER_LEVEL_UP = 0x0508, // 1288
-        GM_CHARACTER_LEVEL_UP = 0x051E // 1310
+        GM_CHARACTER_LEVEL_UP = 0x051E, // 1310
+
+        // Account
+        ACCOUNT_POINTS = 0x2601 // 9729
     }
 }

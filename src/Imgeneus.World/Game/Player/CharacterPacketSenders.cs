@@ -25,6 +25,10 @@ namespace Imgeneus.World.Game.Player
             SendMoveAndAttackSpeed();
             SendFriends();
             SendBlessAmount();
+
+#if EP8_V1
+            SendAccountPoints(); // WARNING: This is necessary if you have an in-game item mall.
+#endif
         }
 
         private void SendDetails() => _packetsHelper.SendDetails(Client, this);
@@ -155,5 +159,7 @@ namespace Imgeneus.World.Game.Player
         public void SendExperienceGain(ushort expAmount) => _packetsHelper.SendExperienceGain(Client, expAmount);
 
         public void SendWarning(string message) => _packetsHelper.SendWarning(Client, message);
+
+        public void SendAccountPoints() => _packetsHelper.SendAccountPoints(Client, Points);
     }
 }

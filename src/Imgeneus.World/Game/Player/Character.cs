@@ -366,7 +366,8 @@ namespace Imgeneus.World.Game.Player
                 Victories = dbCharacter.Victories,
                 Defeats = dbCharacter.Defeats,
                 IsAdmin = dbCharacter.User.Authority == 0,
-                Country = dbCharacter.User.Faction
+                Country = dbCharacter.User.Faction,
+                Points = dbCharacter.User.Points
             };
 
             foreach (var skill in dbCharacter.Skills.Select(s => new Skill(s.Skill, s.Number, 0)))

@@ -895,5 +895,55 @@ namespace Imgeneus.World.Game.Player
         }
 
         #endregion
+
+        #region Account Points
+
+        private uint _points;
+
+        /// <summary>
+        /// Account points, used for item mall or online shop purchases.
+        /// </summary>
+        public uint Points
+        {
+            get => _points;
+            set
+            {
+                _points = value;
+                _taskQueue.Enqueue(ActionType.SAVE_ACCOUNT_POINTS, Client.UserID, Points);
+                SendAccountPoints();
+            }
+        }
+
+        /// <summary>
+        /// Attempts to add points to the player's account.
+        /// </summary>
+        /// <param name="points">Points to add.</param>
+        public bool TryAddPoints(uint points)
+        {
+            bool canAdd = Convert.ToUInt64(Points) + Convert.ToUInt64(points) < uint.MaxValue;
+
+            if (!canAdd)
+                return false;
+
+            Points += points;
+            return true;
+        }
+
+        /// <summary>
+        /// Attempts to subtract points from the player's account.
+        /// </summary>
+        /// <param name="points">Points to subtract.</param>
+        public bool TrySubtractPoints(uint points)
+        {
+            bool canSubtract = Convert.ToInt64(Points) - Convert.ToInt64(points) > 0;
+
+            if (!canSubtract)
+                return false;
+
+            Points -= points;
+            return true;
+        }
+
+        #endregion
     }
 }

@@ -35,6 +35,8 @@ namespace Imgeneus.Database.Entities
 
         public DateTime CreationTime { get; set; }
 
+        public DateTime? ExpirationTime { get; set; }
+
         public char MakeType { get; set; }
 
         /// <summary>
@@ -88,7 +90,6 @@ namespace Imgeneus.Database.Entities
 
         public DbCharacterItems()
         {
-            CreationTime = DateTime.Now;
             Craftname = string.Empty;
         }
     }

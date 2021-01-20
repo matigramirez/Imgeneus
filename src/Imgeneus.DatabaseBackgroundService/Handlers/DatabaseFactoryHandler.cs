@@ -59,6 +59,8 @@ namespace Imgeneus.DatabaseBackgroundService.Handlers
             byte r = (byte)args[16];
             byte g = (byte)args[17];
             byte b = (byte)args[18];
+            DateTime creationTime = (DateTime)args[19];
+            DateTime? expirationTime = (DateTime?)args[20];
 
             var dbItem = new DbCharacterItems()
             {
@@ -80,7 +82,9 @@ namespace Imgeneus.DatabaseBackgroundService.Handlers
                 DyeColorSaturation = saturation,
                 DyeColorR = r,
                 DyeColorG = g,
-                DyeColorB = b
+                DyeColorB = b,
+                CreationTime = creationTime,
+                ExpirationTime = expirationTime
             };
 
             _database.CharacterItems.Add(dbItem);
@@ -533,6 +537,32 @@ namespace Imgeneus.DatabaseBackgroundService.Handlers
             await _database.SaveChangesAsync();
         }
 
+        [ActionHandler(ActionType.SAVE_CHARACTER_VICTORIES)]
+        internal async Task SaveVictories(object[] args)
+        {
+            int characterId = (int)args[0];
+            ushort victories = (ushort)args[1];
+
+            var character = _database.Characters.Find(characterId);
+
+            character.Victories = victories;
+
+            await _database.SaveChangesAsync();
+        }
+
+        [ActionHandler(ActionType.SAVE_CHARACTER_DEFEATS)]
+        internal async Task SaveDefeats(object[] args)
+        {
+            int characterId = (int)args[0];
+            ushort defeats = (ushort)args[1];
+
+            var character = _database.Characters.Find(characterId);
+
+            character.Defeats = defeats;
+
+            await _database.SaveChangesAsync();
+        }
+
         [ActionHandler(ActionType.SAVE_QUICK_BAR)]
         internal async Task SaveQuickBar(object[] args)
         {
@@ -558,6 +588,18 @@ namespace Imgeneus.DatabaseBackgroundService.Handlers
                 newItems[i].CharacterId = characterId;
             }
             await _database.QuickItems.AddRangeAsync(newItems);
+            await _database.SaveChangesAsync();
+        }
+
+        [ActionHandler(ActionType.SAVE_ACCOUNT_POINTS)]
+        internal async Task SaveAccountPoints(object[] args)
+        {
+            int userId = (int)args[0];
+            uint points = (uint)args[1];
+
+            var user = _database.Users.Find(userId);
+            user.Points = points;
+
             await _database.SaveChangesAsync();
         }
     }

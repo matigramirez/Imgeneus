@@ -14,8 +14,8 @@ namespace Imgeneus.Database.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "3.1.0")
-                .HasAnnotation("Relational:MaxIdentifierLength", 64);
+                .HasAnnotation("Relational:MaxIdentifierLength", 64)
+                .HasAnnotation("ProductVersion", "5.0.1");
 
             modelBuilder.Entity("Imgeneus.Database.Entities.DbCharacter", b =>
                 {
@@ -94,8 +94,8 @@ namespace Imgeneus.Database.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("varchar(16) CHARACTER SET utf8mb4")
-                        .HasMaxLength(16);
+                        .HasMaxLength(16)
+                        .HasColumnType("varchar(16) CHARACTER SET utf8mb4");
 
                     b.Property<float>("PosX")
                         .HasColumnType("float");
@@ -199,8 +199,8 @@ namespace Imgeneus.Database.Migrations
 
                     b.Property<string>("Craftname")
                         .IsRequired()
-                        .HasColumnType("varchar(20) CHARACTER SET utf8mb4")
-                        .HasMaxLength(20);
+                        .HasMaxLength(20)
+                        .HasColumnType("varchar(20) CHARACTER SET utf8mb4");
 
                     b.Property<DateTime>("CreationTime")
                         .HasColumnType("datetime(6)");
@@ -219,6 +219,9 @@ namespace Imgeneus.Database.Migrations
 
                     b.Property<byte>("DyeColorSaturation")
                         .HasColumnType("tinyint unsigned");
+
+                    b.Property<DateTime?>("ExpirationTime")
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int>("GemTypeId1")
                         .HasColumnType("int");
@@ -335,8 +338,8 @@ namespace Imgeneus.Database.Migrations
                         .HasColumnType("tinyint unsigned");
 
                     b.Property<byte>("TypeId")
-                        .HasColumnName("TypeID")
-                        .HasColumnType("tinyint unsigned");
+                        .HasColumnType("tinyint unsigned")
+                        .HasColumnName("TypeID");
 
                     b.Property<byte>("AttackTime")
                         .HasColumnType("tinyint unsigned");
@@ -384,8 +387,8 @@ namespace Imgeneus.Database.Migrations
                         .HasColumnType("tinyint unsigned");
 
                     b.Property<ushort>("Defense")
-                        .HasColumnName("Effect3")
-                        .HasColumnType("smallint unsigned");
+                        .HasColumnType("smallint unsigned")
+                        .HasColumnName("Effect3");
 
                     b.Property<byte>("Defensefighter")
                         .HasColumnType("tinyint unsigned");
@@ -396,9 +399,12 @@ namespace Imgeneus.Database.Migrations
                     b.Property<ushort>("Drop")
                         .HasColumnType("smallint unsigned");
 
+                    b.Property<uint>("Duration")
+                        .HasColumnType("int unsigned");
+
                     b.Property<byte>("Element")
-                        .HasColumnName("Attrib")
-                        .HasColumnType("tinyint unsigned");
+                        .HasColumnType("tinyint unsigned")
+                        .HasColumnName("Attrib");
 
                     b.Property<byte>("Exp")
                         .HasColumnType("tinyint unsigned");
@@ -410,23 +416,23 @@ namespace Imgeneus.Database.Migrations
                         .HasColumnType("tinyint unsigned");
 
                     b.Property<int>("Id")
-                        .HasColumnName("ItemID")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("ItemID");
 
                     b.Property<string>("ItemName")
                         .IsRequired()
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
 
                     b.Property<ushort>("MinAttack")
-                        .HasColumnName("Effect1")
-                        .HasColumnType("smallint unsigned");
+                        .HasColumnType("smallint unsigned")
+                        .HasColumnName("Effect1");
 
                     b.Property<byte>("Patrolrogue")
                         .HasColumnType("tinyint unsigned");
 
                     b.Property<ushort>("PlusAttack")
-                        .HasColumnName("Effect2")
-                        .HasColumnType("smallint unsigned");
+                        .HasColumnType("smallint unsigned")
+                        .HasColumnName("Effect2");
 
                     b.Property<ushort>("Quality")
                         .HasColumnType("smallint unsigned");
@@ -465,8 +471,8 @@ namespace Imgeneus.Database.Migrations
                         .HasColumnType("smallint");
 
                     b.Property<ushort>("Resistance")
-                        .HasColumnName("Effect4")
-                        .HasColumnType("smallint unsigned");
+                        .HasColumnType("smallint unsigned")
+                        .HasColumnName("Effect4");
 
                     b.Property<int>("Sell")
                         .HasColumnType("int");
@@ -515,8 +521,8 @@ namespace Imgeneus.Database.Migrations
                 {
                     b.Property<ushort>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnName("MobID")
-                        .HasColumnType("smallint unsigned");
+                        .HasColumnType("smallint unsigned")
+                        .HasColumnName("MobID");
 
                     b.Property<byte>("AI")
                         .HasColumnType("tinyint unsigned");
@@ -615,8 +621,8 @@ namespace Imgeneus.Database.Migrations
                         .HasColumnType("smallint");
 
                     b.Property<byte>("Fraction")
-                        .HasColumnName("AttackAttrib3")
-                        .HasColumnType("tinyint unsigned");
+                        .HasColumnType("tinyint unsigned")
+                        .HasColumnName("AttackAttrib3");
 
                     b.Property<int>("HP")
                         .HasColumnType("int");
@@ -634,16 +640,16 @@ namespace Imgeneus.Database.Migrations
                         .HasColumnType("smallint unsigned");
 
                     b.Property<string>("MobName")
-                        .HasColumnType("varchar(40) CHARACTER SET utf8mb4")
-                        .HasMaxLength(40);
+                        .HasMaxLength(40)
+                        .HasColumnType("varchar(40) CHARACTER SET utf8mb4");
 
                     b.Property<short>("MoneyMax")
-                        .HasColumnName("Money2")
-                        .HasColumnType("smallint");
+                        .HasColumnType("smallint")
+                        .HasColumnName("Money2");
 
                     b.Property<short>("MoneyMin")
-                        .HasColumnName("Money1")
-                        .HasColumnType("smallint");
+                        .HasColumnType("smallint")
+                        .HasColumnName("Money1");
 
                     b.Property<byte>("NormalStep")
                         .HasColumnType("tinyint unsigned");
@@ -1143,8 +1149,8 @@ namespace Imgeneus.Database.Migrations
                         .HasColumnType("smallint unsigned");
 
                     b.Property<byte>("Element")
-                        .HasColumnName("AttrType")
-                        .HasColumnType("tinyint unsigned");
+                        .HasColumnType("tinyint unsigned")
+                        .HasColumnName("AttrType");
 
                     b.Property<byte>("FixRange")
                         .HasColumnType("tinyint unsigned");
@@ -1347,8 +1353,8 @@ namespace Imgeneus.Database.Migrations
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasColumnType("varchar(30) CHARACTER SET utf8mb4")
-                        .HasMaxLength(30);
+                        .HasMaxLength(30)
+                        .HasColumnType("varchar(30) CHARACTER SET utf8mb4");
 
                     b.Property<byte>("Faction")
                         .HasColumnType("tinyint unsigned");
@@ -1364,19 +1370,19 @@ namespace Imgeneus.Database.Migrations
 
                     b.Property<string>("Password")
                         .IsRequired()
-                        .HasColumnType("varchar(16) CHARACTER SET utf8mb4")
-                        .HasMaxLength(16);
+                        .HasMaxLength(16)
+                        .HasColumnType("varchar(16) CHARACTER SET utf8mb4");
 
-                    b.Property<int>("Points")
-                        .HasColumnType("int");
+                    b.Property<uint>("Points")
+                        .HasColumnType("int unsigned");
 
                     b.Property<byte>("Status")
                         .HasColumnType("tinyint unsigned");
 
                     b.Property<string>("Username")
                         .IsRequired()
-                        .HasColumnType("varchar(19) CHARACTER SET utf8mb4")
-                        .HasMaxLength(19);
+                        .HasMaxLength(19)
+                        .HasColumnType("varchar(19) CHARACTER SET utf8mb4");
 
                     b.HasKey("Id");
 
@@ -1393,6 +1399,8 @@ namespace Imgeneus.Database.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Imgeneus.Database.Entities.DbCharacterActiveBuff", b =>
@@ -1408,6 +1416,10 @@ namespace Imgeneus.Database.Migrations
                         .HasForeignKey("SkillId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Character");
+
+                    b.Navigation("Skill");
                 });
 
             modelBuilder.Entity("Imgeneus.Database.Entities.DbCharacterFriend", b =>
@@ -1423,6 +1435,10 @@ namespace Imgeneus.Database.Migrations
                         .HasForeignKey("FriendId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Character");
+
+                    b.Navigation("Friend");
                 });
 
             modelBuilder.Entity("Imgeneus.Database.Entities.DbCharacterItems", b =>
@@ -1438,6 +1454,10 @@ namespace Imgeneus.Database.Migrations
                         .HasForeignKey("Type", "TypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Character");
+
+                    b.Navigation("Item");
                 });
 
             modelBuilder.Entity("Imgeneus.Database.Entities.DbCharacterQuest", b =>
@@ -1453,6 +1473,10 @@ namespace Imgeneus.Database.Migrations
                         .HasForeignKey("QuestId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Character");
+
+                    b.Navigation("Quest");
                 });
 
             modelBuilder.Entity("Imgeneus.Database.Entities.DbCharacterSkill", b =>
@@ -1468,6 +1492,10 @@ namespace Imgeneus.Database.Migrations
                         .HasForeignKey("SkillId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Character");
+
+                    b.Navigation("Skill");
                 });
 
             modelBuilder.Entity("Imgeneus.Database.Entities.DbQuickSkillBarItem", b =>
@@ -1477,6 +1505,28 @@ namespace Imgeneus.Database.Migrations
                         .HasForeignKey("CharacterId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Character");
+                });
+
+            modelBuilder.Entity("Imgeneus.Database.Entities.DbCharacter", b =>
+                {
+                    b.Navigation("ActiveBuffs");
+
+                    b.Navigation("Friends");
+
+                    b.Navigation("Items");
+
+                    b.Navigation("Quests");
+
+                    b.Navigation("QuickItems");
+
+                    b.Navigation("Skills");
+                });
+
+            modelBuilder.Entity("Imgeneus.Database.Entities.DbUser", b =>
+                {
+                    b.Navigation("Characters");
                 });
 #pragma warning restore 612, 618
         }

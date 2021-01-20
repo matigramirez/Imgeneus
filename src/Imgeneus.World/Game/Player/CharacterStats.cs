@@ -32,10 +32,15 @@ namespace Imgeneus.World.Game.Player
         public uint Exp { get; private set; }
         public ushort Kills { get; private set; }
         public ushort Deaths { get; private set; }
-        public ushort Victories { get; set; }
-        public ushort Defeats { get; set; }
+        public ushort Victories { get; private set; }
+        public ushort Defeats { get; private set; }
         public bool IsAdmin { get; set; }
         public bool IsRename { get; set; }
+
+        /// <summary>
+        /// Account points, used for item mall or online shop purchases.
+        /// </summary>
+        public uint Points { get; private set; }
 
         private byte[] _nameAsByteArray;
         public byte[] NameAsByteArray
@@ -70,11 +75,6 @@ namespace Imgeneus.World.Game.Player
         #endregion
 
         #region Max HP & SP & MP
-
-        /// <summary>
-        /// Event that's fired when max hp, mp and sp change.
-        /// </summary>
-        public event Action<Character> OnMax_HP_MP_SP_Changed;
 
         private void Character_OnMaxHPChanged(IKillable sender, int maxHP)
         {
@@ -755,12 +755,12 @@ namespace Imgeneus.World.Game.Player
 
                 case CharacterStatEnum.Dexterity:
                     Dexterity = value;
-                    SendMaxSP();
+                    InvokeMaxSPChanged();
                     break;
 
                 case CharacterStatEnum.Reaction:
                     Reaction = value;
-                    SendMaxHP();
+                    InvokeMaxHPChanged();
                     break;
 
                 case CharacterStatEnum.Intelligence:
@@ -773,7 +773,7 @@ namespace Imgeneus.World.Game.Player
 
                 case CharacterStatEnum.Wisdom:
                     Wisdom = value;
-                    SendMaxMP();
+                    InvokeMaxMPChanged();
                     break;
 
                 default:
@@ -873,6 +873,46 @@ namespace Imgeneus.World.Game.Player
             Deaths = deaths;
 
             _taskQueue.Enqueue(ActionType.SAVE_CHARACTER_DEATHS, Id, Deaths);
+        }
+
+        #endregion
+
+        #region Wins & Loses
+
+        /// <summary>
+        /// Sets the number of duel victories.
+        /// </summary>
+        public void SetVictories(ushort victories)
+        {
+            Victories = victories;
+
+            _taskQueue.Enqueue(ActionType.SAVE_CHARACTER_VICTORIES, Id, Victories);
+        }
+
+        /// <summary>
+        /// Sets the number of duel defeats.
+        /// </summary>
+        public void SetDefeats(ushort defeats)
+        {
+            Defeats = defeats;
+
+            _taskQueue.Enqueue(ActionType.SAVE_CHARACTER_DEFEATS, Id, Defeats);
+        }
+
+        #endregion
+
+        #region Account Points
+
+        /// <summary>
+        /// Attempts to set the player's account points.
+        /// </summary>
+        /// <param name="points">Points to set.</param>
+        public void SetPoints(uint points)
+        {
+            Points = points;
+
+            _taskQueue.Enqueue(ActionType.SAVE_ACCOUNT_POINTS, Client.UserID, Points);
+            SendAccountPoints();
         }
 
         #endregion

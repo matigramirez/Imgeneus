@@ -1,4 +1,5 @@
 using Imgeneus.Network.Data;
+using System.Text;
 
 namespace Imgeneus.Network.Packets.Game
 {
@@ -14,7 +15,11 @@ namespace Imgeneus.Network.Packets.Game
             TimeInterval = packet.Read<short>();
             var messageLength = packet.Read<byte>();
             // Message always ends with an empty character
-            Message = packet.ReadString(messageLength - 1);
+#if EP8_V2
+            Message = packet.ReadString(messageLength, Encoding.Unicode);
+#else
+            Message = packet.ReadString(messageLength);
+#endif
         }
     }
 }

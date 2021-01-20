@@ -64,7 +64,7 @@ namespace Imgeneus.Login
                 return;
             }
 
-            dbUser.LastConnectionTime = DateTime.Now;
+            dbUser.LastConnectionTime = DateTime.UtcNow;
             _database.Users.Update(dbUser);
             _database.SaveChanges();
 

@@ -2,7 +2,6 @@
 using System.Linq;
 using Imgeneus.Database.Constants;
 using Imgeneus.Database.Entities;
-using Imgeneus.Network.Client;
 using Imgeneus.Network.Data;
 using Imgeneus.Network.Packets;
 using Imgeneus.Network.Packets.Game;
@@ -17,6 +16,14 @@ using Imgeneus.World.Game.Zone;
 using Imgeneus.World.Game.Zone.Obelisks;
 using Imgeneus.World.Game.Zone.Portals;
 using Imgeneus.World.Serialization;
+
+#if EP8_V1
+using Imgeneus.World.Serialization.EP_8_V1;
+#elif EP8_V2
+using Imgeneus.World.Serialization.EP_8_V2;
+#else
+using Imgeneus.World.Serialization.EP_8_V1;
+#endif
 
 namespace Imgeneus.World.Packets
 {
@@ -97,6 +104,10 @@ namespace Imgeneus.World.Packets
             // Send move item.
             using var packet = new Packet(PacketType.INVENTORY_MOVE_ITEM);
 
+#if EP8_V2
+            packet.Write(0); // Unknown int in V2.
+#endif
+
             var bytes = new MovedItem(sourceItem).Serialize();
             packet.Write(bytes);
 
@@ -158,6 +169,13 @@ namespace Imgeneus.World.Packets
         {
             using var packet = new Packet(PacketType.REMOVE_ITEM);
             packet.Write(new RemovedInventoryItem(item, fullRemove).Serialize());
+            client.SendPacket(packet);
+        }
+
+        internal void SendItemExpiration(IWorldClient client, Item item)
+        {
+            using var packet = new Packet(PacketType.ITEM_EXPIRATION);
+            packet.Write(new InventoryItemExpiration(item).Serialize());
             client.SendPacket(packet);
         }
 
@@ -1149,6 +1167,13 @@ namespace Imgeneus.World.Packets
             packet.WriteByte((byte)(message.Length + 1));
             packet.Write(message);
             packet.WriteByte(0);
+            client.SendPacket(packet);
+        }
+
+        internal void SendAccountPoints(IWorldClient client, uint points)
+        {
+            using var packet = new Packet(PacketType.ACCOUNT_POINTS);
+            packet.Write(new AccountPoints(points).Serialize());
             client.SendPacket(packet);
         }
     }

@@ -140,7 +140,9 @@ namespace Imgeneus.World.Tests
                     { (30, 3), Gem_Str_Level_3 },
                     { (30, 7), Gem_Str_Level_7 },
                     { (100, 1), EtainPotion },
-                    { (25, 1), RedApple }
+                    { (25, 1), RedApple },
+                    { (42, 1), HorseSummonStone },
+                    { (42, 136), Nimbus1d }
                 });
 
             databasePreloader
@@ -159,6 +161,14 @@ namespace Imgeneus.World.Tests
                     { (Mode.Normal, 2), Level2_Mode2 },
                     { (Mode.Hard, 2), Level2_Mode3 },
                     { (Mode.Ultimate, 2), Level2_Mode4 },
+                    { (Mode.Beginner, 37), Level37_Mode1 },
+                    { (Mode.Normal, 37), Level37_Mode2 },
+                    { (Mode.Hard, 37), Level37_Mode3 },
+                    { (Mode.Ultimate, 37), Level37_Mode4 },
+                    { (Mode.Beginner, 38), Level38_Mode1 },
+                    { (Mode.Normal, 38), Level38_Mode2 },
+                    { (Mode.Hard, 38), Level38_Mode3 },
+                    { (Mode.Ultimate, 38), Level38_Mode4 },
                     { (Mode.Beginner, 79), Level79_Mode1 },
                     { (Mode.Normal, 79), Level79_Mode2 },
                     { (Mode.Hard, 79), Level79_Mode3 },
@@ -467,6 +477,19 @@ namespace Imgeneus.World.Tests
             ReqIg = 3
         };
 
+        protected DbItem HorseSummonStone = new DbItem()
+        {
+            Type = 42,
+            TypeId = 1
+        };
+
+        protected DbItem Nimbus1d = new DbItem()
+        {
+            Type = 42,
+            TypeId = 136,
+            Duration = 86400
+        };
+
         #endregion
 
         #region Levels
@@ -525,6 +548,62 @@ namespace Imgeneus.World.Tests
             Level = 2,
             Mode = Mode.Ultimate,
             Exp = 400
+        };
+
+        protected DbLevel Level37_Mode1 = new DbLevel()
+        {
+            Level = 37,
+            Mode = Mode.Beginner,
+            Exp = 171200
+        };
+
+        protected DbLevel Level37_Mode2 = new DbLevel()
+        {
+            Level = 37,
+            Mode = Mode.Normal,
+            Exp = 2418240
+        };
+
+        protected DbLevel Level37_Mode3 = new DbLevel()
+        {
+            Level = 37,
+            Mode = Mode.Hard,
+            Exp = 2418240
+        };
+
+        protected DbLevel Level37_Mode4 = new DbLevel()
+        {
+            Level = 37,
+            Mode = Mode.Ultimate,
+            Exp = 3022800
+        };
+
+        protected DbLevel Level38_Mode1 = new DbLevel()
+        {
+            Level = 38,
+            Mode = Mode.Beginner,
+            Exp = 171200
+        };
+
+        protected DbLevel Level38_Mode2 = new DbLevel()
+        {
+            Level = 38,
+            Mode = Mode.Normal,
+            Exp = 2714880
+        };
+
+        protected DbLevel Level38_Mode3 = new DbLevel()
+        {
+            Level = 38,
+            Mode = Mode.Hard,
+            Exp = 2714880
+        };
+
+        protected DbLevel Level38_Mode4 = new DbLevel()
+        {
+            Level = 38,
+            Mode = Mode.Ultimate,
+            Exp = 3396800
         };
 
         protected DbLevel Level79_Mode1 = new DbLevel()

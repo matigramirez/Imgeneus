@@ -211,7 +211,7 @@ namespace Imgeneus.World.Game.Zone
             character.OnSkillCastStarted += Character_OnSkillCastStarted;
             character.OnUsedItem += Character_OnUsedItem;
             character.OnMaxHPChanged += Character_OnMaxHPChanged;
-            character.OnMax_HP_MP_SP_Changed += Character_OnMax_HP_SP_MP_Changed;
+            character.OnMax_HP_MP_SP_Changed += Character_OnMax_HP_MP_SP_Changed;
             character.OnRecover += Character_OnRecover;
             character.OnFullRecover += Character_OnFullRecover;
             character.OnSkillKeep += Character_OnSkillKeep;
@@ -221,7 +221,7 @@ namespace Imgeneus.World.Game.Zone
             character.OnAppearanceChanged += Character_OnAppearanceChanged;
             character.OnStartSummonVehicle += Character_OnStartSummonVehicle;
             character.OnLevelUp += Character_OnLevelUp;
-            character.OnAdminLevelUp += Character_OnAdminLevelUp;
+            character.OnAdminLevelChange += Character_OnAdminLevelChange;
         }
 
         /// <summary>
@@ -240,7 +240,7 @@ namespace Imgeneus.World.Game.Zone
             character.OnSkillCastStarted -= Character_OnSkillCastStarted;
             character.OnUsedItem -= Character_OnUsedItem;
             character.OnMaxHPChanged -= Character_OnMaxHPChanged;
-            character.OnMax_HP_MP_SP_Changed -= Character_OnMax_HP_SP_MP_Changed;
+            character.OnMax_HP_MP_SP_Changed -= Character_OnMax_HP_MP_SP_Changed;
             character.OnRecover -= Character_OnRecover;
             character.OnFullRecover -= Character_OnFullRecover;
             character.OnSkillKeep -= Character_OnSkillKeep;
@@ -250,7 +250,7 @@ namespace Imgeneus.World.Game.Zone
             character.OnAppearanceChanged -= Character_OnAppearanceChanged;
             character.OnStartSummonVehicle -= Character_OnStartSummonVehicle;
             character.OnLevelUp -= Character_OnLevelUp;
-            character.OnAdminLevelUp -= Character_OnAdminLevelUp;
+            character.OnAdminLevelChange -= Character_OnAdminLevelChange;
         }
 
         #region Character listeners
@@ -379,10 +379,10 @@ namespace Imgeneus.World.Game.Zone
         /// <summary>
         /// Notifies other players that player's max HP, MP and SP changed
         /// </summary>
-        private void Character_OnMax_HP_SP_MP_Changed(Character sender)
+        private void Character_OnMax_HP_MP_SP_Changed(IKillable sender)
         {
             foreach (var player in GetAllPlayers(true))
-                _packetsHelper.SendMax_HP_MP_SP(player.Client, sender);
+                _packetsHelper.SendMax_HP_MP_SP(player.Client, (Character)sender);
         }
 
         private void Character_OnSkillKeep(IKillable sender, ActiveBuff buff, AttackResult result)
@@ -431,13 +431,14 @@ namespace Imgeneus.World.Game.Zone
         private void Character_OnLevelUp(Character sender)
         {
             foreach (var player in GetAllPlayers(true))
-                _packetsHelper.SendLevelUp(player.Client, sender);
+                // If sender has party, send admin level up
+                _packetsHelper.SendLevelUp(player.Client, sender, sender.HasParty);
         }
 
         /// <summary>
-        /// Notifies other players that an admin levelled up a player
+        /// Notifies other players that an admin changed a player's level
         /// </summary>
-        private void Character_OnAdminLevelUp(Character sender)
+        private void Character_OnAdminLevelChange(Character sender)
         {
             foreach (var player in GetAllPlayers(true))
                 _packetsHelper.SendLevelUp(player.Client, sender, true);
@@ -548,9 +549,13 @@ namespace Imgeneus.World.Game.Zone
             foreach (var player in GetAllPlayers(true))
                 _packetsHelper.SendMobDead(player.Client, sender, killer);
 
-            // Add experience to killer
+            // Add experience to killer character/party
             if (killer is Character killerCharacter)
-                killerCharacter.TryAddExperience((ushort)mob.Exp);
+                if (killerCharacter.HasParty)
+                    killerCharacter.AddPartyMobExperience(mob.Level, (ushort)mob.Exp);
+                else
+                    killerCharacter.AddMobExperience(mob.Level, (ushort)mob.Exp);
+
         }
 
         private void Mob_OnMove(Mob sender)

@@ -137,6 +137,7 @@
         ADD_ITEM = 0x0205, // 517
         REMOVE_ITEM = 0x0206, // 518
         SEND_EQUIPMENT = 0x0507, // 1287
+        ITEM_EXPIRATION = 0x22E, // 558
 
         // Trade
         TRADE_REQUEST = 0x0A01, // 2561
@@ -163,6 +164,9 @@
         PARTY_SET_MAX = 0x0C02, // 3074
         PARTY_ADDED_BUFF = 0x0C04, // 3076
         MAP_PARTY_SET = 0x0520, // 1312
+        PARTY_MEMBER_LEVEL = 0x0C09, // 3081
+        PARTY_MEMBER_MAX_HP_SP_MP = 0x0C08, // 3080
+        PARTY_MEMBER_HP_SP_MP = 0x0C03, // 3075
 
         // Raid
         RAID_LIST = 0x0B0B, // 2827
@@ -269,6 +273,9 @@
         // Experience and Leveling
         EXPERIENCE_GAIN = 0x0207, // 519
         CHARACTER_LEVEL_UP = 0x0508, // 1288
-        GM_CHARACTER_LEVEL_UP = 0x051E // 1310
+        GM_CHARACTER_LEVEL_UP = 0x051E, // 1310
+
+        // Account
+        ACCOUNT_POINTS = 0x2601 // 9729
     }
 }

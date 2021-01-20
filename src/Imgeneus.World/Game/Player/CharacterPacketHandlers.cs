@@ -12,24 +12,6 @@ namespace Imgeneus.World.Game.Player
 {
     public partial class Character
     {
-        /// <summary>
-        /// Sends to client character start-up information.
-        /// </summary>
-        private void SendCharacterInfo()
-        {
-            SendDetails();
-            SendAdditionalStats();
-            SendCurrentHitpoints();
-            SendInventoryItems(); // TODO: game.exe crashes, when number of items >= 80. Investigate why?
-            SendLearnedSkills();
-            SendOpenQuests();
-            SendFinishedQuests();
-            SendActiveBuffs();
-            SendMoveAndAttackSpeed();
-            SendFriends();
-            SendBlessAmount();
-        }
-
         private void HandleGMGetItemPacket(GMGetItemPacket gMGetItemPacket)
         {
             if (!IsAdmin)
@@ -45,7 +27,7 @@ namespace Imgeneus.World.Game.Player
                 var item = AddItemToInventory(newItem);
                 if (item != null)
                 {
-                    _packetsHelper.SendAddItem(Client, item);
+                    SendAddItemToInventory(item);
                     _packetsHelper.SendGmCommandSuccess(Client);
                 }
                 else

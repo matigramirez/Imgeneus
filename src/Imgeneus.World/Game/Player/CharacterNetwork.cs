@@ -197,7 +197,7 @@ namespace Imgeneus.World.Game.Player
                         Map.RemoveItem(CellId, mapItem.Id);
                         mapItem.Item.Bag = 1;
                         ChangeGold(Gold + (uint)mapItem.Item.Gem1.TypeId);
-                        _packetsHelper.SendAddItem(Client, mapItem.Item);
+                        SendAddItemToInventory(mapItem.Item);
                     }
                     else
                     {
@@ -209,7 +209,7 @@ namespace Imgeneus.World.Game.Player
                         else
                         {
                             Map.RemoveItem(CellId, mapItem.Id);
-                            _packetsHelper.SendAddItem(Client, inventoryItem);
+                            SendAddItemToInventory(inventoryItem);
                             if (Party != null)
                                 Party.MemberGetItem(this, inventoryItem);
                         }

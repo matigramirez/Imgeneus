@@ -24,31 +24,31 @@ These files are added to the ignore list, so you can be sure, that you won't com
 
 ## Solution description
 
-### Imgeneus.Core
+##### Imgeneus.Core
 Core contains some common helpers, extensions etc.
 
-### Imgeneus.Database
+##### Imgeneus.Database
 We are using EF Core for database connections and migrations. You can read more about EF [here](https://docs.microsoft.com/en-us/ef/core/).
 
-### Imgeneus.DatabaseBackgroundService
+##### Imgeneus.DatabaseBackgroundService
 Background service, that constantly saves changes to the database. You can read more about background services [here](https://docs.microsoft.com/en-us/aspnet/core/fundamentals/host/hosted-services?view=aspnetcore-5.0&tabs=visual-studio#queued-background-tasks).
 
-### Imgeneus.Network
+##### Imgeneus.Network
 Includes packet definition from client to server and cryptography implementation.
 
-### Imgeneus.Logs
+##### Imgeneus.Logs
 In-game logs, that are saved via SQLite in file.
 
-### Imgeneus.InterServer
+##### Imgeneus.InterServer
 Communication between servers (login and game) is done with the help of SignalR. You can read more about SignalR [here](https://docs.microsoft.com/en-us/aspnet/core/tutorials/signalr).
 
-### Imgeneus.Login
+##### Imgeneus.Login
 Login server, that handles all packets in the login screen. Redirects to the selected game server.
 
-### Imgeneus.World
+##### Imgeneus.World
 Game server. As well as login server, it's TCP server running on top of ASP.Net Core. You can read more about ASP.Net [here](https://docs.microsoft.com/en-us/aspnet/core).
 
-### Unit tests
+##### Unit tests
 Any game feature must have a corresponding unit test.
 
 ### Database migrations
@@ -64,6 +64,11 @@ Any game feature must have a corresponding unit test.
 - Configuration files type:  `JSON`
 - Environment: `Visual Studio 2019`
 
+#### Client versions support
+Our main goal is learning, clients are used only for testing. We are not trying to harm any server or dev team. That's why we are not exposing any clients or server name, where these clients are used. Next versions supported:
+* EP 8, you can find it on e**rs.com. In code marked as EP8_V1. __No longer supported__
+* EP 8, the newest version of private server. In code marked as EP8_V2.
+
 ## Results
 ![image1](images/image1.JPG?raw=true "Title")
 ![image2](images/image2.JPG?raw=true "Title")
@@ -74,10 +79,10 @@ Any game feature must have a corresponding unit test.
 * __anton1312__ - helped with packet encryption algorithm implementation in C#.
 * __Juuf__ - helped with Dye system packet structure.
 * __matigramirez__ - helped with the implementation of different features.
+* __Bowie__ - provided solid asm support.
 * maybe __YOU__?
 
-## Uknown issues
-1. Sometimes Login server can not decrypt the first packet (with user name and password). Try to restart game.exe several times. Might be, that client caches old encryption key (not sure).
-2. Many others, usually marked as `// TODO: <some comment>` throughout the code base.
+## Known issues
+Issues are usually marked as `// TODO: <some comment>` throughout the code base.
 
 Find the current state of development [here](https://trello.com/b/lHvyQDuH/shaiya-imgeneus).

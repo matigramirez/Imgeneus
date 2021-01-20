@@ -1,13 +1,15 @@
-﻿using Imgeneus.Database.Constants;
+﻿using System;
+using Imgeneus.Database.Constants;
 using Imgeneus.Database.Entities;
 using Imgeneus.Database.Preload;
 using Imgeneus.World.Game.Dyeing;
 using System.Collections.Generic;
 using System.Text;
+using System.Timers;
 
 namespace Imgeneus.World.Game.Player
 {
-    public class Item
+    public class Item : IDisposable
     {
         private readonly IDatabasePreloader _databasePreloader;
         private readonly DbItem _dbItem;
@@ -32,30 +34,33 @@ namespace Imgeneus.World.Game.Player
 
         public byte Count;
 
-        public Item(IDatabasePreloader databasePreloader, DbCharacterItems dbItem) : this(databasePreloader, dbItem.Type, dbItem.TypeId, dbItem.Count)
+        public Item(IDatabasePreloader databasePreloader, DbCharacterItems dbCharacterItem) : this(databasePreloader, dbCharacterItem.Type, dbCharacterItem.TypeId, dbCharacterItem.Count)
         {
-            Bag = dbItem.Bag;
-            Slot = dbItem.Slot;
-            Quality = dbItem.Quality;
+            Bag = dbCharacterItem.Bag;
+            Slot = dbCharacterItem.Slot;
+            Quality = dbCharacterItem.Quality;
 
-            if (!string.IsNullOrWhiteSpace(dbItem.Craftname))
-                ParseCraftname(dbItem.Craftname);
+            CreationTime = dbCharacterItem.CreationTime;
+            ExpirationTime = dbCharacterItem.ExpirationTime;
 
-            if (dbItem.HasDyeColor)
-                DyeColor = new DyeColor(dbItem.DyeColorAlpha, dbItem.DyeColorSaturation, dbItem.DyeColorR, dbItem.DyeColorG, dbItem.DyeColorB);
+            if (!string.IsNullOrWhiteSpace(dbCharacterItem.Craftname))
+                ParseCraftname(dbCharacterItem.Craftname);
 
-            if (dbItem.GemTypeId1 != 0)
-                Gem1 = new Gem(databasePreloader, dbItem.GemTypeId1, 0);
-            if (dbItem.GemTypeId2 != 0)
-                Gem2 = new Gem(databasePreloader, dbItem.GemTypeId2, 1);
-            if (dbItem.GemTypeId3 != 0)
-                Gem3 = new Gem(databasePreloader, dbItem.GemTypeId3, 2);
-            if (dbItem.GemTypeId4 != 0)
-                Gem4 = new Gem(databasePreloader, dbItem.GemTypeId4, 3);
-            if (dbItem.GemTypeId5 != 0)
-                Gem5 = new Gem(databasePreloader, dbItem.GemTypeId5, 4);
-            if (dbItem.GemTypeId6 != 0)
-                Gem6 = new Gem(databasePreloader, dbItem.GemTypeId6, 5);
+            if (dbCharacterItem.HasDyeColor)
+                DyeColor = new DyeColor(dbCharacterItem.DyeColorAlpha, dbCharacterItem.DyeColorSaturation, dbCharacterItem.DyeColorR, dbCharacterItem.DyeColorG, dbCharacterItem.DyeColorB);
+
+            if (dbCharacterItem.GemTypeId1 != 0)
+                Gem1 = new Gem(databasePreloader, dbCharacterItem.GemTypeId1, 0);
+            if (dbCharacterItem.GemTypeId2 != 0)
+                Gem2 = new Gem(databasePreloader, dbCharacterItem.GemTypeId2, 1);
+            if (dbCharacterItem.GemTypeId3 != 0)
+                Gem3 = new Gem(databasePreloader, dbCharacterItem.GemTypeId3, 2);
+            if (dbCharacterItem.GemTypeId4 != 0)
+                Gem4 = new Gem(databasePreloader, dbCharacterItem.GemTypeId4, 3);
+            if (dbCharacterItem.GemTypeId5 != 0)
+                Gem5 = new Gem(databasePreloader, dbCharacterItem.GemTypeId5, 4);
+            if (dbCharacterItem.GemTypeId6 != 0)
+                Gem6 = new Gem(databasePreloader, dbCharacterItem.GemTypeId6, 5);
         }
 
         public Item(IDatabasePreloader databasePreloader, byte type, byte typeId, byte count = 1)
@@ -64,16 +69,40 @@ namespace Imgeneus.World.Game.Player
             Type = type;
             TypeId = typeId;
             Count = count;
+            CreationTime = DateTime.UtcNow;
 
             if (Type != 0 && TypeId != 0 && Type != MONEY_ITEM_TYPE)
             {
                 _dbItem = _databasePreloader.Items[(Type, TypeId)];
+
                 // Prevent Count from exceeding MaxCount and from being 0 (zero)
                 var newCount = count > MaxCount ? MaxCount : count;
                 Count = newCount < 1 ? (byte)1 : newCount;
 
                 // Set quality to maximum quality
                 Quality = _dbItem.Quality;
+
+                // Temporary item check
+                if (_dbItem.Duration > 0)
+                {
+                    // Get ExpirationTime based on DbItem
+                    ExpirationTime = CreationTime.AddSeconds(_dbItem.Duration);
+                }
+            }
+
+            if (IsExpirable)
+            {
+                var interval = (DateTime)ExpirationTime - DateTime.UtcNow;
+
+                // Don't start timer for items that have more than 12 hours left
+                if (interval.TotalHours > 12)
+                    return;
+
+                _expirationTimer.Interval = interval.TotalMilliseconds;
+                _expirationTimer.AutoReset = false;
+                _expirationTimer.Elapsed += ExpirationTimer_Elapsed;
+
+                _expirationTimer.Start();
             }
         }
 
@@ -742,6 +771,49 @@ namespace Imgeneus.World.Game.Player
 
         #endregion
 
+        #region Expiration
+
+        /// <summary>
+        /// Time at which the item was created.
+        /// </summary>
+        public DateTime CreationTime { get; }
+
+        /// <summary>
+        /// Time at which the item expires.
+        /// </summary>
+        public DateTime? ExpirationTime { get; }
+
+        /// <summary>
+        /// Item has a fixed duration and is removed from the player's inventory after that duration has passed.
+        /// </summary>
+        public bool IsExpirable => ExpirationTime != null;
+
+        /// <summary>
+        /// Timer used by expirable items.
+        /// </summary>
+        private Timer _expirationTimer = new Timer();
+
+        private void ExpirationTimer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            OnExpiration?.Invoke(this);
+            _expirationTimer.Elapsed -= ExpirationTimer_Elapsed;
+        }
+
+        /// <summary>
+        /// Event that's fired when an item has expired.
+        /// </summary>
+        public event Action<Item> OnExpiration;
+
+        /// <summary>
+        /// Stops expiration timer.
+        /// </summary>
+        public void StopExpirationTimer()
+        {
+            _expirationTimer.Stop();
+        }
+
+        #endregion
+
         #region Helpers
 
         /// <summary>
@@ -963,6 +1035,14 @@ namespace Imgeneus.World.Game.Player
                 Count = Count,
                 DyeColor = DyeColor
             };
+        }
+
+        public void Dispose()
+        {
+            if (ExpirationTime != null)
+            {
+                _expirationTimer.Elapsed -= ExpirationTimer_Elapsed;
+            }
         }
     }
 }

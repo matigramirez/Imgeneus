@@ -45,7 +45,7 @@ namespace Imgeneus.Database.Entities
         /// <summary>
         /// Gets or sets the users's current points.
         /// </summary>
-        public int Points { get; set; }
+        public uint Points { get; set; }
 
         /// <summary>
         /// Gets or sets the user current faction.
@@ -57,7 +57,7 @@ namespace Imgeneus.Database.Entities
         /// Gets or sets the user current maximum mode allowed.
         /// </summary>
         [DefaultValue(0)]
-        public byte MaxMode { get; set; }
+        public Mode MaxMode { get; set; }
 
         /// <summary>
         /// Gets the user's creation time.
@@ -87,7 +87,7 @@ namespace Imgeneus.Database.Entities
         /// </summary>
         public DbUser()
         {
-            this.CreateTime = DateTime.Now;
+            this.CreateTime = DateTime.UtcNow;
             this.Characters = new HashSet<DbCharacter>();
         }
 

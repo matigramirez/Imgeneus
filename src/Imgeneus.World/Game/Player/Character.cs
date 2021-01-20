@@ -300,8 +300,8 @@ namespace Imgeneus.World.Game.Player
             {
                 if (reason == DuelCancelReason.Lose || reason == DuelCancelReason.AdmitDefeat)
                 {
-                    Defeats++;
-                    DuelOpponent.Victories++;
+                    SetDefeats(++Defeats);
+                    DuelOpponent.SetVictories(++DuelOpponent.Victories);
                 }
                 OnDuelFinish?.Invoke(reason);
             }
@@ -366,7 +366,8 @@ namespace Imgeneus.World.Game.Player
                 Victories = dbCharacter.Victories,
                 Defeats = dbCharacter.Defeats,
                 IsAdmin = dbCharacter.User.Authority == 0,
-                Country = dbCharacter.User.Faction
+                Country = dbCharacter.User.Faction,
+                Points = dbCharacter.User.Points
             };
 
             foreach (var skill in dbCharacter.Skills.Select(s => new Skill(s.Skill, s.Number, 0)))
@@ -397,11 +398,15 @@ namespace Imgeneus.World.Game.Player
         /// </summary>
         public static void ClearOutdatedValues(IDatabase database, DbCharacter dbCharacter)
         {
-            var outdatedBuffs = dbCharacter.ActiveBuffs.Where(b => b.ResetTime < DateTime.UtcNow);
+            // Clear outdated buffs
+            var outdatedBuffs = dbCharacter.ActiveBuffs.Where(b => b.ResetTime < DateTime.UtcNow.AddSeconds(30));
             database.ActiveBuffs.RemoveRange(outdatedBuffs);
+
+            // Clear expired items
+            var expiredItems = dbCharacter.Items.Where(i => i.ExpirationTime < DateTime.UtcNow.AddSeconds(30));
+            database.CharacterItems.RemoveRange(expiredItems);
 
             database.SaveChanges();
         }
-
     }
 }

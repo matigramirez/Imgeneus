@@ -11,6 +11,13 @@ namespace Imgeneus.World.Game.PartyAndRaid
     /// </summary>
     public abstract class BaseParty : IParty
     {
+        public Guid Id { get; private set; }
+
+        public BaseParty()
+        {
+            Id = Guid.NewGuid();
+        }
+
         #region Leader
 
         protected Character _leader;
@@ -69,6 +76,17 @@ namespace Imgeneus.World.Game.PartyAndRaid
         /// Party members.
         /// </summary>
         protected abstract IList<Character> _members { get; set; }
+
+        /// <inheritdoc/>
+        public event Action AllMembersLeft;
+
+        /// <summary>
+        /// Invoke <see cref="AllMembersLeft"/> event.
+        /// </summary>
+        protected void CallAllMembersLeft()
+        {
+            AllMembersLeft?.Invoke();
+        }
 
         /// <summary>
         /// Party members.

@@ -71,5 +71,20 @@ namespace Imgeneus.World.Game.Zone.MapConfig
                 return true;
             }
         }
+
+        /// <summary>
+        /// Map config, where any faction character must rebirth. Skip if set to null.
+        /// </summary>
+        public RebirthConfiguration RebirthMap { get; set; }
+
+        /// <summary>
+        /// Map config, where light character must rebirth.
+        /// </summary>
+        public RebirthConfiguration LightRebirthMap { get; set; }
+
+        /// <summary>
+        /// Map config, where light character must rebirth.
+        /// </summary>
+        public RebirthConfiguration DarkRebirthMap { get; set; }
     }
 }

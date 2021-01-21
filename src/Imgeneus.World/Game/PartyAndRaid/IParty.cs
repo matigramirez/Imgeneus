@@ -10,9 +10,19 @@ namespace Imgeneus.World.Game.PartyAndRaid
     public interface IParty
     {
         /// <summary>
+        /// Party id.
+        /// </summary>
+        public Guid Id { get; }
+
+        /// <summary>
         /// Party members.
         /// </summary>
         public IList<Character> Members { get; }
+
+        /// <summary>
+        /// Event, that is fired, as soon as party is empty.
+        /// </summary>
+        public event Action AllMembersLeft;
 
         /// <summary>
         /// Enter party.

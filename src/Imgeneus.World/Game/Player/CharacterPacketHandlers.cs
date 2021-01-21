@@ -584,7 +584,7 @@ namespace Imgeneus.World.Game.Player
 
         private void HandleGMTeleportToMap(GMTeleportMapPacket gmTeleportMapPacket)
         {
-            if (!_gameWorld.Maps.ContainsKey(gmTeleportMapPacket.MapId))
+            if (!_gameWorld.AvailableMapIds.Contains(gmTeleportMapPacket.MapId))
             {
                 _packetsHelper.SendGmCommandError(Client, PacketType.GM_TELEPORT_MAP);
                 return;
@@ -600,7 +600,7 @@ namespace Imgeneus.World.Game.Player
         {
             var (newPosX, newPosZ, mapId) = gmTeleportMapCoordinatesPacket;
 
-            if (!_gameWorld.Maps.ContainsKey(mapId))
+            if (!_gameWorld.AvailableMapIds.Contains(mapId))
             {
                 _packetsHelper.SendGmCommandError(Client, PacketType.GM_TELEPORT_MAP_COORDINATES);
                 return;

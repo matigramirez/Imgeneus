@@ -1,5 +1,4 @@
-﻿using Imgeneus.Core.DependencyInjection;
-using Imgeneus.Core.Extensions;
+﻿using Imgeneus.Core.Extensions;
 using Imgeneus.Database.Entities;
 using Imgeneus.Database.Preload;
 using Imgeneus.World.Game.Monster;
@@ -44,7 +43,7 @@ namespace Imgeneus.World.Game.Zone
         /// <summary>
         /// Is this map created for party, guild etc. ?
         /// </summary>
-        public virtual bool IsInstance { get => _definition.CreateType == CreateType.Default; }
+        public virtual bool IsInstance { get => false; }
 
         /// <summary>
         /// How map was created.
@@ -207,7 +206,7 @@ namespace Imgeneus.World.Game.Zone
         /// <summary>
         /// Thread-safe dictionary of connected players. Key is character id, value is character.
         /// </summary>
-        private readonly ConcurrentDictionary<int, Character> Players = new ConcurrentDictionary<int, Character>();
+        protected readonly ConcurrentDictionary<int, Character> Players = new ConcurrentDictionary<int, Character>();
 
         /// <summary>
         /// Tries to get player from map.
@@ -225,19 +224,17 @@ namespace Imgeneus.World.Game.Zone
         /// </summary>
         /// <param name="character">player, that we need to load</param>
         /// <returns>returns true if we could load player to map, otherwise false</returns>
-        public bool LoadPlayer(Character character)
+        public virtual bool LoadPlayer(Character character)
         {
+            if (_isDisposed)
+                throw new ObjectDisposedException(nameof(Map));
+
             var success = Players.TryAdd(character.Id, character);
 
             if (success)
             {
                 character.Map = this;
                 Cells[GetCellIndex(character)].AddPlayer(character);
-
-                // Send map values.
-                character.SendWeather();
-                character.SendObelisks();
-                character.SendMyShape(); // SHould fix the issue with dye color, when first connection.
 
                 character.OnPositionChanged += Character_OnPositionChanged;
                 _logger.LogDebug($"Player {character.Id} connected to map {Id}, cell index {character.CellId}.");
@@ -251,13 +248,13 @@ namespace Imgeneus.World.Game.Zone
         /// </summary>
         /// <param name="character">player, that we need to unload</param>
         /// <returns>returns true if we could unload player to map, otherwise false</returns>
-        public bool UnloadPlayer(Character character)
+        public virtual bool UnloadPlayer(Character character)
         {
             var success = Players.TryRemove(character.Id, out var removedCharacter);
 
             if (success)
             {
-                Cells[GetCellIndex(character)].RemovePlayer(character, true);
+                Cells[character.CellId].RemovePlayer(character, true);
                 UnregisterSearchForParty(character);
                 character.OnPositionChanged -= Character_OnPositionChanged;
                 character.OldCellId = -1;
@@ -300,7 +297,7 @@ namespace Imgeneus.World.Game.Zone
             Cells[newCellId].AddPlayer(sender);
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc/>
         public (float X, float Y, float Z) GetNearestSpawn(float currentX, float currentY, float currentZ, Fraction fraction)
         {
             SpawnConfiguration nearestSpawn = null;
@@ -321,7 +318,7 @@ namespace Imgeneus.World.Game.Zone
 
             if (nearestSpawn is null)
             {
-                // TODO: spawn on another map.
+                _logger.LogError($"Spawn for map {Id} is not found.");
             }
 
             var random = new Random();
@@ -329,6 +326,23 @@ namespace Imgeneus.World.Game.Zone
             var y = random.NextFloat(nearestSpawn.Y1, nearestSpawn.Y2);
             var z = random.NextFloat(nearestSpawn.Z1, nearestSpawn.Z2);
             return (x, y, z);
+        }
+
+        /// <inheritdoc/>
+        public (ushort MapId, float X, float Y, float Z) GetRebirthMap(Character player)
+        {
+            if (_definition.RebirthMap != null)
+                return (_definition.RebirthMap.MapId, _definition.RebirthMap.PosX, _definition.RebirthMap.PosY, _definition.RebirthMap.PosZ);
+
+            if (_definition.LightRebirthMap != null && player.Country == Fraction.Light)
+                return (_definition.LightRebirthMap.MapId, _definition.LightRebirthMap.PosX, _definition.LightRebirthMap.PosY, _definition.LightRebirthMap.PosZ);
+
+            if (_definition.DarkRebirthMap != null && player.Country == Fraction.Dark)
+                return (_definition.DarkRebirthMap.MapId, _definition.DarkRebirthMap.PosX, _definition.DarkRebirthMap.PosY, _definition.DarkRebirthMap.PosZ);
+
+            // There is no rebirth map, use the nearest spawn.
+            var spawn = GetNearestSpawn(player.PosX, player.PosY, player.PosZ, player.Country);
+            return (Id, spawn.X, spawn.Y, spawn.Z);
         }
 
         #region Party search
@@ -389,6 +403,9 @@ namespace Imgeneus.World.Game.Zone
         /// </summary>
         public void AddMob(Mob mob)
         {
+            if (_isDisposed)
+                throw new ObjectDisposedException(nameof(Map));
+
             Cells[GetCellIndex(mob)].AddMob(mob);
             //_logger.LogDebug($"Mob {mob.MobId} with global id {mob.Id} entered map {Id}");
 
@@ -401,7 +418,7 @@ namespace Imgeneus.World.Game.Zone
         /// <param name="mob"></param>
         public void RemoveMob(Mob mob)
         {
-            Cells[GetCellIndex(mob)].RemoveMob(mob);
+            Cells[mob.CellId].RemoveMob(mob);
 
             mob.OnDead -= Mob_OnDead;
             mob.TimeToRebirth -= RebirthMob;
@@ -417,6 +434,9 @@ namespace Imgeneus.World.Game.Zone
         /// <returns>either mob or null if mob is not presented</returns>
         public Mob GetMob(int cellId, int mobId)
         {
+            if (_isDisposed)
+                throw new ObjectDisposedException(nameof(Map));
+
             return Cells[cellId].GetMob(mobId, true);
         }
 
@@ -490,6 +510,9 @@ namespace Imgeneus.World.Game.Zone
         /// <param name="item">new added item</param>
         public void AddItem(MapItem item)
         {
+            if (_isDisposed)
+                throw new ObjectDisposedException(nameof(Map));
+
             item.Id = GenerateId();
             Cells[GetCellIndex(item)].AddItem(item);
             item.OnRemove += Item_OnRemove;
@@ -533,6 +556,9 @@ namespace Imgeneus.World.Game.Zone
         /// <param name="npc">new npc</param>
         public void AddNPC(int cellIndex, Npc npc)
         {
+            if (_isDisposed)
+                throw new ObjectDisposedException(nameof(Map));
+
             npc.Id = GenerateId();
             Cells[cellIndex].AddNPC(npc);
         }
@@ -693,6 +719,51 @@ namespace Imgeneus.World.Game.Zone
             }
 
             _logger.LogInformation($"Map {Id} created {Portals.Count} portals.");
+        }
+
+        #endregion
+
+        #region Dispose
+
+        private bool _isDisposed = false;
+
+        public void Dispose()
+        {
+            if (!Players.IsEmpty)
+                throw new Exception("Cannot dispose map, until all players have left this map!");
+
+            if (_isDisposed)
+                throw new ObjectDisposedException(nameof(Map));
+
+            _isDisposed = true;
+
+            foreach (var cell in Cells)
+            {
+                var mobs = cell.GetAllMobs(false);
+                var items = cell.GetAllItems(false);
+
+                foreach (var m in mobs)
+                    RemoveMob(m);
+
+                foreach (var itm in items)
+                    RemoveItem(itm.CellId, itm.Id);
+
+                cell.Dispose();
+            }
+
+            foreach (var obelisk in Obelisks.Values)
+            {
+                obelisk.OnObeliskBroken -= Obelisk_OnObeliskBroken;
+                obelisk.Dispose();
+            }
+
+            Cells.Clear();
+            Portals.Clear();
+            Obelisks.Clear();
+            PartySearchers.Clear();
+
+            _weatherTimer.Stop();
+            _weatherTimer.Elapsed -= WeatherTimer_Elapsed;
         }
 
         #endregion

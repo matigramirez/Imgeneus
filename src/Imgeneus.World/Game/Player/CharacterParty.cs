@@ -12,6 +12,11 @@ namespace Imgeneus.World.Game.Player
         /// </summary>
         public event Action<Character> OnPartyChanged;
 
+        /// <summary>
+        /// Party Id, where player used to be.
+        /// </summary>
+        public Guid PreviousPartyId { get; private set; } = Guid.NewGuid();
+
         private IParty _party;
 
         /// <summary>
@@ -38,6 +43,7 @@ namespace Imgeneus.World.Game.Player
             {
                 if (_party.Members.Contains(this)) // When the player is kicked of the party, the party doesn't contain him.
                     _party.LeaveParty(this);
+                PreviousPartyId = _party.Id;
                 _party = value;
             }
             // Enter party

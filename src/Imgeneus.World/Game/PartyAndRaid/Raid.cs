@@ -415,6 +415,7 @@ namespace Imgeneus.World.Game.PartyAndRaid
                 _membersDict.Clear();
                 lastMember.SetParty(null);
                 SendPlayerLeftRaid(lastMember.Client, lastMember);
+                CallAllMembersLeft();
             }
             else if (character == Leader)
             {

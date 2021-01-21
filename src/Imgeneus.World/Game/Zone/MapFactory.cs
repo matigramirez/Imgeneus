@@ -1,6 +1,7 @@
 ﻿using Imgeneus.Database.Preload;
 using Imgeneus.World.Game.Monster;
 using Imgeneus.World.Game.NPCs;
+using Imgeneus.World.Game.PartyAndRaid;
 using Imgeneus.World.Game.Zone.MapConfig;
 using Imgeneus.World.Game.Zone.Obelisks;
 using Microsoft.Extensions.Logging;
@@ -25,9 +26,14 @@ namespace Imgeneus.World.Game.Zone
         }
 
         /// <inheritdoc/>
-        public Map CreateMap(ushort id, MapDefinition definition, MapConfiguration config)
+        public IMap CreateMap(ushort id, MapDefinition definition, MapConfiguration config)
         {
             return new Map(id, definition, config, _logger, _databasePreloader, _mobFactory, _npcFactory, _obeliskFactory);
+        }
+
+        public IPartyMap CreatePartyMap(ushort id, MapDefinition definition, MapConfiguration config, IParty party)
+        {
+            return new PartyMap(party, id, definition, config, _logger, _databasePreloader, _mobFactory, _npcFactory, _obeliskFactory);
         }
     }
 }

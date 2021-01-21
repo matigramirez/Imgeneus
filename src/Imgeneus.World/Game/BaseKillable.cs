@@ -6,6 +6,7 @@ using System.Linq;
 using Imgeneus.Database.Constants;
 using Imgeneus.Database.Preload;
 using Imgeneus.World.Game.Monster;
+using Imgeneus.World.Game.PartyAndRaid;
 using Imgeneus.World.Game.Player;
 using Imgeneus.World.Game.Zone;
 using MvvmHelpers;
@@ -56,7 +57,26 @@ namespace Imgeneus.World.Game
 
         #region Map
 
-        public Map Map { get; set; }
+        private Map _map;
+        public Map Map
+        {
+            get => _map;
+
+            set
+            {
+                _map = value;
+
+                if (_map != null) // Map is set to null, when character is disposed.
+                    OnMapSet();
+            }
+        }
+
+        /// <summary>
+        /// Call it as soon as map set.
+        /// </summary>
+        protected virtual void OnMapSet()
+        {
+        }
 
         public int CellId { get; set; } = -1;
 
@@ -1233,8 +1253,10 @@ namespace Imgeneus.World.Game
         public event Action<IKillable> OnRebirthed;
 
         /// <inheritdoc />
-        public void Rebirth(float x, float y, float z)
+        public void Rebirth(ushort mapId, float x, float y, float z)
         {
+            // TODO: rebirth to another map.
+
             CurrentHP = MaxHP;
             CurrentMP = MaxMP;
             CurrentSP = MaxSP;

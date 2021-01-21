@@ -49,6 +49,7 @@ namespace Imgeneus.World.Game.Player
             }
 
             Character.ClearOutdatedValues(database, dbCharacter);
+            scopedProvider.GetService<IGameWorld>().EnsureMap(dbCharacter);
 
             var player = Character.FromDbCharacter(dbCharacter,
                                         scopedProvider.GetService<ILogger<Character>>(),

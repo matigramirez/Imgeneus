@@ -730,7 +730,7 @@ namespace Imgeneus.World.Game.Zone
         public void Dispose()
         {
             if (!Players.IsEmpty)
-                throw new Exception("Cannot dispose map, until at least one player is connected to this map!");
+                throw new Exception("Cannot dispose map, until all players have left this map!");
 
             if (_isDisposed)
                 throw new ObjectDisposedException(nameof(Map));

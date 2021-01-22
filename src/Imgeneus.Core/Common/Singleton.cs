@@ -10,7 +10,7 @@ namespace Imgeneus.Core.Common
         private static readonly Lazy<T> instance = new Lazy<T>(() => new T());
 
         /// <summary>
-        /// Gets the curent instance.
+        /// Gets the current instance.
         /// </summary>
         public static T Instance => instance.Value;
 

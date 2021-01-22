@@ -74,7 +74,7 @@ namespace Imgeneus.World.Game.Player
         }
 
         /// <summary>
-        /// Unsummons vehicle(mount).
+        /// Unmounts vehicle(mount).
         /// </summary>
         public void RemoveVehicle()
         {

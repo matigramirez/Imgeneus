@@ -521,7 +521,7 @@ namespace Imgeneus.World.Game.Player
             // Find free space.
             var free = FindFreeSlotInInventory();
 
-            // Calculated bag slot can not be 0, because 0 means worn item. Newerly created item can not be worn.
+            // Calculated bag slot can not be 0, because 0 means worn item. Newly created item can not be worn.
             if (free.Bag == 0 || free.Slot == -1)
             {
                 return null;
@@ -1045,7 +1045,7 @@ namespace Imgeneus.World.Game.Player
         }
 
         /// <summary>
-        /// Cures characterfrom some debuff.
+        /// Cures character from some debuff.
         /// </summary>
         private void UseCureDebuffPotion(StateType debuffType)
         {

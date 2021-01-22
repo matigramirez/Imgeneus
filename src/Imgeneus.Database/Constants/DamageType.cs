@@ -33,7 +33,7 @@
         HPPercentDamage = 5,
 
         /// <summary>
-        /// Deals damage, equals rec * coeficient.
+        /// Deals damage, equals rec * coefficient.
         /// </summary>
         RecDamageCoefficient = 6,
 

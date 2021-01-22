@@ -33,12 +33,12 @@ namespace Imgeneus.World.Game.Blessing
         public const int HP_SIT = 300;
 
         /// <summary>
-        /// When bless amount >= <see cref="LINK_EXTRACT_LAPIS"/> it addes several % to link and extrack lapis.
+        /// When bless amount >= <see cref="LINK_EXTRACT_LAPIS"/> it adds several % to link and extract lapis.
         /// </summary>
         public const int LINK_EXTRACT_LAPIS = 1200;
 
         /// <summary>
-        /// When bless amount >= <see cref="CAST_TIME_DISPOSABLE_ITEMS"/> it reduces cast time of dispoable items.
+        /// When bless amount >= <see cref="CAST_TIME_DISPOSABLE_ITEMS"/> it reduces cast time of disposable items.
         /// </summary>
         public const int CAST_TIME_DISPOSABLE_ITEMS = 1350;
 

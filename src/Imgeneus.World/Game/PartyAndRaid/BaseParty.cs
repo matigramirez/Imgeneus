@@ -100,7 +100,7 @@ namespace Imgeneus.World.Game.PartyAndRaid
         }
 
         /// <summary>
-        /// Subcribes to hp, mp, sp changes.
+        /// Subscribes to hp, mp, sp changes.
         /// </summary>
         protected void SubcribeToCharacterChanges(Character character)
         {
@@ -120,7 +120,7 @@ namespace Imgeneus.World.Game.PartyAndRaid
         }
 
         /// <summary>
-        /// Unsubcribes from hp, mp, sp changes.
+        /// Unsubscribes from hp, mp, sp changes.
         /// </summary>
         protected void UnsubcribeFromCharacterChanges(Character character)
         {

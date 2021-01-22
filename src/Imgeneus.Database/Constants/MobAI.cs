@@ -270,7 +270,7 @@
         BulldozerGuardianSoldier = 149,
 
         /// <summary>
-        /// Gost of Cristmas. AI 150-158.
+        /// Ghost of Christmas. AI 150-158.
         /// </summary>
         GostOfCristmas = 150,
 

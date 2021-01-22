@@ -39,7 +39,7 @@ namespace Imgeneus.World.Game
         /// <summary>
         /// Loads player into game world.
         /// </summary>
-        /// <param name="characterId">id of character in databse</param>
+        /// <param name="characterId">id of character in database</param>
         /// <param name="client">TCP connection with client</param>
         /// <returns>character, that is loaded into game world</returns>
         Task<Character> LoadPlayer(int characterId, WorldClient client);

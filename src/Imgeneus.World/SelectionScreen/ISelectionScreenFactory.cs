@@ -3,7 +3,7 @@
     public interface ISelectionScreenFactory
     {
         /// <summary>
-        /// Creates instanse of selection screen for each client.
+        /// Creates instance of selection screen for each client.
         /// </summary>
         public ISelectionScreenManager CreateSelectionManager(WorldClient client);
     }

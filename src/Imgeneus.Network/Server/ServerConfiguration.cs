@@ -10,7 +10,7 @@
         private const int defaultClientBufferSize = 2048;
 
         /// <summary>
-        /// Gets the server's listenng host.
+        /// Gets the server's listening host.
         /// </summary>
         public string Host { get; }
 

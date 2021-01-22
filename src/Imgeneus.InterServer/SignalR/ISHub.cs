@@ -23,7 +23,7 @@ namespace InterServer.SignalR
         };
 
         /// <summary>
-        /// SignalR message to methog name connection.
+        /// SignalR message to method name connection.
         /// </summary>
         public static readonly ReadOnlyDictionary<ISMessageType, string> MessageTypeToMethodName = new ReadOnlyDictionary<ISMessageType, string>(_messageTypeToMethodName);
 

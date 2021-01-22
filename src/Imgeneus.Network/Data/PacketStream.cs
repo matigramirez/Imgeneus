@@ -48,7 +48,7 @@ namespace Imgeneus.Network.Data
             // Read the packet length
             this.PacketLength = this.Read<ushort>();
 
-            // Read the pcket operation code
+            // Read the packet operation code
             this.PacketType = (PacketType)this.Read<ushort>();
         }
 

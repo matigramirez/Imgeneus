@@ -109,7 +109,7 @@ namespace Imgeneus.World.SelectionScreen
         }
 
         /// <summary>
-        /// Handles fraction change. Saves change to databse.
+        /// Handles fraction change. Saves change to database.
         /// </summary>
         private async void HandleChangeFraction(AccountFractionPacket accountFractionPacket)
         {

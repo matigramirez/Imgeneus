@@ -5,7 +5,7 @@ namespace Imgeneus.World.Game.Zone
     public interface IPartyMap : IMap
     {
         /// <summary>
-        /// Id of party forwhich map was created.
+        /// Id of party for which map was created.
         /// </summary>
         public Guid PartyId { get; }
 

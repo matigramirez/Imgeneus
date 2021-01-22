@@ -18,7 +18,7 @@ namespace Imgeneus.Database.Entities
         public string Name { get; set; }
 
         /// <summary>
-        /// Minimul level, when quest can be taken.
+        /// Minimum level required to take the quest.
         /// </summary>
         public ushort MinLevel { get; set; }
 
@@ -140,12 +140,12 @@ namespace Imgeneus.Database.Entities
         #region NPC quest Receiver
 
         /// <summary>
-        /// Quest type, that npc recieves.
+        /// Quest type, that npc receives.
         /// </summary>
         public byte QuestTypeReceiver { get; set; }
 
         /// <summary>
-        /// NPC, that recieves quest type.
+        /// NPC that receives this quest type.
         /// </summary>
         public byte ReceiverType { get; set; }
 

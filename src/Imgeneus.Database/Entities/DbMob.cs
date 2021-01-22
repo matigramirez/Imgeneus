@@ -157,7 +157,7 @@ namespace Imgeneus.Database.Entities
         #region Attack 1
 
         /// <summary>
-        ///  List of skills (NpcSkills.sdata).
+        ///  List of skills (NpcSkills.SData).
         /// </summary>
         public ushort AttackType1 { get; set; }
 
@@ -200,7 +200,7 @@ namespace Imgeneus.Database.Entities
         #region Attack 2
 
         /// <summary>
-        ///  List of skills (NpcSkills.sdata).
+        ///  List of skills (NpcSkills.SData).
         /// </summary>
         public ushort AttackType2 { get; set; }
 
@@ -246,7 +246,7 @@ namespace Imgeneus.Database.Entities
         #region Attack 3
 
         /// <summary>
-        ///  List of skills (NpcSkills.sdata).
+        ///  List of skills (NpcSkills.SData).
         /// </summary>
         public ushort AttackType3 { get; set; }
 

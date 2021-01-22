@@ -6,7 +6,7 @@ namespace Imgeneus.Database.Entities
     public class DbQuickSkillBarItem : DbEntity
     {
         /// <summary>
-        /// Character whome belongs this quick item.
+        /// Character to whom this quick item belongs to.
         /// </summary>
         public DbCharacter Character { get; set; }
 

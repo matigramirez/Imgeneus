@@ -5,7 +5,7 @@ using System.Net.Sockets;
 namespace Imgeneus.Network.Common
 {
     /// <summary>
-    /// Creates a single buffer which can be divided up and assigned 
+    /// Creates a single buffer which can be divided up and assigned
     /// to <see cref="SocketAsyncEventArgs"/> objects for use with each socket I/O operation.
     /// This enables buffers to be easily reused and guards against fragmenting heap memory.
     /// </summary>
@@ -36,9 +36,9 @@ namespace Imgeneus.Network.Common
         }
 
         /// <summary>
-        /// Assings a buffer from the buffer pool to specified <see cref="SocketAsyncEventArgs"/> object.
+        /// Assigns a buffer from the buffer pool to specified <see cref="SocketAsyncEventArgs"/> object.
         /// </summary>
-        /// <param name="args">The <see cref="SocketAsyncEventArgs"/> to assing buffer.</param>
+        /// <param name="args">The <see cref="SocketAsyncEventArgs"/> to assign buffer.</param>
         /// <returns>True if the buffer was successfully set, else false</returns>
         public bool SetBuffer(SocketAsyncEventArgs args)
         {

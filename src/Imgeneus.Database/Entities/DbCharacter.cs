@@ -179,7 +179,7 @@ namespace Imgeneus.Database.Entities
         public ushort Deaths { get; set; }
 
         /// <summary>
-        /// Gets or sets the character battle vitories.
+        /// Gets or sets the character battle victories.
         /// </summary>
         [DefaultValue(0)]
         public ushort Victories { get; set; }
@@ -197,7 +197,7 @@ namespace Imgeneus.Database.Entities
         public bool IsDelete { get; set; }
 
         /// <summary>
-        /// Gets or sets a flag that indicates if the character is avaible to rename.
+        /// Gets or sets a flag that indicates if the character is available to rename.
         /// </summary>
         [DefaultValue(false)]
         public bool IsRename { get; set; }
@@ -241,7 +241,7 @@ namespace Imgeneus.Database.Entities
         public ICollection<DbCharacterActiveBuff> ActiveBuffs { get; set; }
 
         /// <summary>
-        /// Quick items. E.g. skills on skill bar or motion on skill bar or iventory item on skill bar.
+        /// Quick items. E.g. skills on skill bar or motion on skill bar or inventory item on skill bar.
         /// </summary>
         public ICollection<DbQuickSkillBarItem> QuickItems { get; set; }
 

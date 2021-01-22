@@ -109,7 +109,7 @@ namespace Imgeneus.World.Game
         /// Resurrects killable to some coordinate.
         /// </summary>
         /// <param name="mapId">map id</param>
-        /// <param name="x">x coorditane</param>
+        /// <param name="x">x coordinate</param>
         /// <param name="y">y coordinate</param>
         /// <param name="z">z coordinate</param>
         public void Rebirth(ushort mapId, float x, float y, float z);

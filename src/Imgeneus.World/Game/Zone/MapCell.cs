@@ -118,7 +118,7 @@ namespace Imgeneus.World.Game.Zone
         /// <summary>
         /// Gets all players from map cell.
         /// </summary>
-        /// <param name="includeNeighborCells">if set to true includes characters fom neigbour cells</param>
+        /// <param name="includeNeighborCells">if set to true includes characters fom neighbor cells</param>
         public IEnumerable<Character> GetAllPlayers(bool includeNeighborCells)
         {
             var myPlayers = Players.Values;
@@ -506,7 +506,7 @@ namespace Imgeneus.World.Game.Zone
         /// <summary>
         /// Gets all mobs from map cell.
         /// </summary>
-        /// /// <param name="includeNeighborCells">if set to true includes mobs fom neigbour cells</param>
+        /// /// <param name="includeNeighborCells">if set to true includes mobs fom neighbor cells</param>
         public IEnumerable<Mob> GetAllMobs(bool includeNeighborCells)
         {
             var myMobs = Mobs.Values;
@@ -631,7 +631,7 @@ namespace Imgeneus.World.Game.Zone
             Npc npc;
             NPCs.TryGetValue(id, out npc);
 
-            if (npc is null && includeNeighborCells) // Maybe npc in neigbor cell?
+            if (npc is null && includeNeighborCells) // Maybe npc in neighbor cell?
                 foreach (var cellId in NeighborCells)
                 {
                     npc = Map.Cells[cellId].GetNPC(id, false);
@@ -680,7 +680,7 @@ namespace Imgeneus.World.Game.Zone
         /// <summary>
         /// Tries to get item from map cell.
         /// </summary>
-        /// <returns>if item is null, means that item doen't belong to player yet</returns>
+        /// <returns>if item is null, means that item doesn't belong to player yet</returns>
         public MapItem GetItem(int itemId, Character requester, bool includeNeighborCells)
         {
             MapItem mapItem;

@@ -14,7 +14,7 @@ namespace Imgeneus.Network.Server.Internal
         public ConcurrentStack<SocketAsyncEventArgs> WritePool { get; }
 
         /// <summary>
-        /// Creates a new <see cref="ServerSender"/> instace.
+        /// Creates a new <see cref="ServerSender"/> instance.
         /// </summary>
         public ServerSender()
         {

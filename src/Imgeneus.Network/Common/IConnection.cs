@@ -6,7 +6,7 @@ namespace Imgeneus.Network.Common
     public interface IConnection : IDisposable
     {
         /// <summary>
-        /// Gets the connection unique idenfified.
+        /// Gets the connection unique identifier.
         /// </summary>
         Guid Id { get; }
 

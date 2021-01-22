@@ -10,7 +10,7 @@ namespace Imgeneus.Network.Common
         public bool IsDispose => disposedValue;
 
         /// <summary>
-        /// Gets the connection unique idenfified.
+        /// Gets the connection unique identifier.
         /// </summary>
         public Guid Id { get; set; }
 
@@ -39,7 +39,7 @@ namespace Imgeneus.Network.Common
         }
 
         /// <summary>
-        /// Dipose the <see cref="Connection"/> resources.
+        /// Dispose the <see cref="Connection"/> resources.
         /// </summary>
         /// <param name="disposing">The disposing value.</param>
         protected virtual void Dispose(bool disposing)

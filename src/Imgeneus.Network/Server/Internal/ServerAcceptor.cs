@@ -7,7 +7,7 @@ namespace Imgeneus.Network.Server.Internal
         private readonly Server<T> server;
 
         /// <summary>
-        /// Crestes a new <see cref="ServerAcceptor{T}"/> instance.
+        /// Creates a new <see cref="ServerAcceptor{T}"/> instance.
         /// </summary>
         /// <param name="server"></param>
         public ServerAcceptor(Server<T> server)

@@ -104,7 +104,7 @@ namespace Imgeneus.World.Game.Player
         public bool IsSuccessful { get; private set; }
 
         /// <summary>
-        /// Checks if all quest requirements fullfilled.
+        /// Checks if all quest requirements fulfilled.
         /// </summary>
         public bool RequirementsFulfilled(IEnumerable<Item> inventoryItems)
         {
@@ -128,47 +128,47 @@ namespace Imgeneus.World.Game.Player
         #region Requirements
 
         /// <summary>
-        /// Item type, that player must have in order to complite quest.
+        /// Item type, that player must have in order to complete quest.
         /// </summary>
         public byte FarmItemType_1 { get => _dbQuest.FarmItemType_1; }
 
         /// <summary>
-        /// Item type id, that player must have in order to complite quest.
+        /// Item type id, that player must have in order to complete quest.
         /// </summary>
         public byte FarmItemTypeId_1 { get => _dbQuest.FarmItemTypeId_1; }
 
         /// <summary>
-        /// Number of items, that player must have in order to complite quest.
+        /// Number of items, that player must have in order to complete quest.
         /// </summary>
         public byte FarmItemCount_1 { get => _dbQuest.FarmItemCount_1; }
 
         /// <summary>
-        /// Item type, that player must have in order to complite quest.
+        /// Item type, that player must have in order to complete quest.
         /// </summary>
         public byte FarmItemType_2 { get => _dbQuest.FarmItemType_2; }
 
         /// <summary>
-        /// Item type id, that player must have in order to complite quest.
+        /// Item type id, that player must have in order to complete quest.
         /// </summary>
         public byte FarmItemTypeId_2 { get => _dbQuest.FarmItemTypeId_2; }
 
         /// <summary>
-        /// Number of items, that player must have in order to complite quest.
+        /// Number of items, that player must have in order to complete quest.
         /// </summary>
         public byte FarmItemCount_2 { get => _dbQuest.FarmItemCount_2; }
 
         /// <summary>
-        /// Item type, that player must have in order to complite quest.
+        /// Item type, that player must have in order to complete quest.
         /// </summary>
         public byte FarmItemType_3 { get => _dbQuest.FarmItemType_3; }
 
         /// <summary>
-        /// Item type id, that player must have in order to complite quest.
+        /// Item type id, that player must have in order to complete quest.
         /// </summary>
         public byte FarmItemTypeId_3 { get => _dbQuest.FarmItemTypeId_3; }
 
         /// <summary>
-        /// Number of items, that player must have in order to complite quest.
+        /// Number of items, that player must have in order to complete quest.
         /// </summary>
         public byte FarmItemCount_3 { get => _dbQuest.FarmItemCount_3; }
 

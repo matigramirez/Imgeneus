@@ -23,12 +23,12 @@ namespace Imgeneus.Database.Context
         public DbSet<DbCharacterItems> CharacterItems { get; set; }
 
         /// <summary>
-        /// Gets or sets chracter skills.
+        /// Gets or sets character skills.
         /// </summary>
         public DbSet<DbCharacterSkill> CharacterSkills { get; set; }
 
         /// <summary>
-        /// Gets or sets chracter quests.
+        /// Gets or sets character quests.
         /// </summary>
         public DbSet<DbCharacterQuest> CharacterQuests { get; set; }
 
@@ -63,17 +63,17 @@ namespace Imgeneus.Database.Context
         public DbSet<DbMobItems> MobItems { get; set; }
 
         /// <summary>
-        /// Quick items. E.g. skills on skill bar or motion on skill bar or iventory item on skill bar.
+        /// Quick items. E.g. skills on skill bar or motion on skill bar or inventory item on skill bar.
         /// </summary>
         public DbSet<DbQuickSkillBarItem> QuickItems { get; set; }
 
         /// <summary>
-        /// Available npcs. Taken from NPCQuest.Sdata.
+        /// Available npcs. Taken from NPCQuest.SData.
         /// </summary>
         public DbSet<DbNpc> Npcs { get; set; }
 
         /// <summary>
-        /// Available quests. Taken from NPCQuest.Sdata.
+        /// Available quests. Taken from NPCQuest.SData.
         /// </summary>
         public DbSet<DbQuest> Quests { get; set; }
 

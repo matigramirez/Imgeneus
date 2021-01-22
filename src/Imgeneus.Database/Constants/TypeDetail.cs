@@ -43,7 +43,7 @@
         Evolution = 90, // All transformation skills.
         AbilityExchange = 91, // "Berserker" or "Bloody Karma". Not used anymore?
         Untouchable = 92,
-        Detection = 93, // To get assisins from Stealth. Only for priests.
+        Detection = 93, // To get assassins from Stealth. Only for priests.
         ElementalAttack = 94,
         ElementalProtection = 95,
         DanceOfDeath = 96, // Only for rangers and assassins.
@@ -56,7 +56,7 @@
         TownPortal = 125,
         MentalImpact = 126, // Only for defenders.
         ThirdEye = 129, // Totem from new ep. SHows hidden players.
-        Transformation = 132, // New trasformation skill from new ep.
+        Transformation = 132, // New transformation skill from new ep.
         DungeonMapScroll = 150, // New ep skill, can be used only in dungeons.
         PersistBarrier = 300, // New ep skill, enables not-interrupting casts.
         CurseOfGoddess = 1062

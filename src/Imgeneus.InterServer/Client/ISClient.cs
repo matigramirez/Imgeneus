@@ -51,7 +51,7 @@ namespace InterServer.Client
         public event Action OnConnected;
 
         /// <summary>
-        /// Sends nessage to login server.
+        /// Sends message to login server.
         /// </summary>
         public async Task Send(ISMessage mesage)
         {

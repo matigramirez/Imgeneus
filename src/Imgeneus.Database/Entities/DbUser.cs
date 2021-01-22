@@ -43,7 +43,7 @@ namespace Imgeneus.Database.Entities
         public byte Authority { get; set; }
 
         /// <summary>
-        /// Gets or sets the users's current points.
+        /// Gets or sets the user's current points.
         /// </summary>
         public uint Points { get; set; }
 

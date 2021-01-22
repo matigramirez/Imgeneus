@@ -17,7 +17,7 @@ namespace InterServer.Server
         public IList<WorldServerInfo> WorldServers { get; }
 
         /// <summary>
-        /// Adds world to knwn servers.
+        /// Adds world to known servers.
         /// </summary>
         public void AddWorldServer(WorldServerInfo worldInfo);
 

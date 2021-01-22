@@ -48,7 +48,7 @@
         FeeNotPaid = 8,
 
         /// <summary>
-        /// Map is open onlt for party and in time frame. E.g. oblivion insula map.
+        /// Map is open only for party and in time frame. E.g. oblivion insula map.
         /// </summary>
         OnlyForPartyAndOnTime = 9,
 

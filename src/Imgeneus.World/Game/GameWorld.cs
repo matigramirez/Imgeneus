@@ -40,7 +40,7 @@ namespace Imgeneus.World.Game
             InitMaps();
         }
 
-        #region Maps 
+        #region Maps
 
         /// <inheritdoc/>
         public IList<ushort> AvailableMapIds { get; private set; } = new List<ushort>();
@@ -134,7 +134,7 @@ namespace Imgeneus.World.Game
                     return true;
                 }
 
-                // TODO: implement this check as soon as we have gulds.
+                // TODO: implement this check as soon as we have guilds.
                 if (destinationMapDef.CreateType == CreateType.Guild /*&& player.Guild is null*/)
                 {
                     reason = PortalTeleportNotAllowedReason.OnlyForGuilds;

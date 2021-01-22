@@ -68,7 +68,7 @@ namespace Imgeneus.Network.Common
         }
 
         /// <summary>
-        /// Sends a packet to a connetion.
+        /// Sends a packet to a connection.
         /// </summary>
         /// <param name="packetData"></param>
         public abstract void SendPacket(PacketData packetData);

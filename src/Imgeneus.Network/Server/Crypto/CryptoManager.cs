@@ -95,9 +95,9 @@ namespace Imgeneus.Network.Server.Crypto
         }
 
         /// <summary>
-        /// Decryptes bog int with rsa key. Pure rsa decryption, no padding.
+        /// Decrypts bog int with rsa key. Pure rsa decryption, no padding.
         /// </summary>
-        /// <param name="encryptedBytes">encrypted big int</param>
+        /// <param name="encrypted">encrypted big int</param>
         /// <returns>decrypted big int</returns>
         public BigInteger DecryptRSA(BigInteger encrypted)
         {
@@ -185,7 +185,7 @@ namespace Imgeneus.Network.Server.Crypto
         }
 
         /// <summary>
-        /// AES ctr encryption or xor encruption if character is in game.
+        /// AES ctr encryption or xor encryption if character is in game.
         /// </summary>
         /// <param name="bytesToEnrypt">bytes we want to encrypt.</param>
         /// <returns>encrypted bytes</returns>

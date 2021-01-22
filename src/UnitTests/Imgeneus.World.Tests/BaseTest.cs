@@ -441,7 +441,7 @@ namespace Imgeneus.World.Tests
             Type = 30,
             TypeId = 2,
             ConstStr = 5,
-            ReqIg = 255, // always sucess linking or extracting.
+            ReqIg = 255, // always success linking or extracting.
             Count = 255,
             Quality = 0
         };
@@ -451,7 +451,7 @@ namespace Imgeneus.World.Tests
             Type = 30,
             TypeId = 3,
             ConstStr = 7,
-            ReqIg = 255, // always sucess linking or extracting.
+            ReqIg = 255, // always success linking or extracting.
             Count = 255,
             Quality = 0
         };

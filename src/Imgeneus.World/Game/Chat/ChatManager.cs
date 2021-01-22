@@ -98,7 +98,7 @@ namespace Imgeneus.World.Game.Chat
         }
 
         /// <summary>
-        /// Send wisper to someone.
+        /// Send whisper to someone.
         /// </summary>
         /// <param name="character">To whom we are sending.</param>
         /// <param name="senderName">Message creator name.</param>

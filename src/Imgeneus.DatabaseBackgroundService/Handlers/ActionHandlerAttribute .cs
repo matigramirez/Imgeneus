@@ -13,7 +13,7 @@ namespace Imgeneus.DatabaseBackgroundService.Handlers
         /// <summary>
         /// Creates a new <see cref="ActionHandlerAttribute"/> instance.
         /// </summary>
-        /// <param name="header">The action attribute header.</param>
+        /// <param name="type">The action type to be executed.</param>
         public ActionHandlerAttribute(ActionType type)
         {
             Type = type;

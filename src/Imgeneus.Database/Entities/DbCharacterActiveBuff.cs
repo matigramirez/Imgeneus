@@ -17,7 +17,7 @@ namespace Imgeneus.Database.Entities
         public int SkillId { get; set; }
 
         /// <summary>
-        /// Wenn buff will end.
+        /// Time at which buff ends.
         /// </summary>
         public DateTime ResetTime { get; set; }
 

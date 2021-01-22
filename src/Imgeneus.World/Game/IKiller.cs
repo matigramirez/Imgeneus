@@ -47,9 +47,9 @@ namespace Imgeneus.World.Game
         /// </summary>
         /// <param name="skill">skill</param>
         /// <param name="initialTarget">target, that was initially selected</param>
-        /// <param name="target">current target, usualy is the same as initialTarget, but if it's AoE (area of effect) skill, then can be different from initial target</param>
+        /// <param name="target">current target, usually is the same as initialTarget, but if it's AoE (area of effect) skill, then can be different from initial target</param>
         /// <param name="attackResult">result after performing skill</param>
-        /// <param name="n">How many times this skill was called, used in multy skills.</param>
+        /// <param name="n">How many times this skill was called, used in multi skills.</param>
         public void PerformSkill(Skill skill, IKillable initialTarget, IKillable target, AttackResult attackResult, int n = 0)
         {
             switch (skill.Type)
@@ -259,7 +259,7 @@ namespace Imgeneus.World.Game
         {
             double damage = 0;
 
-            // First, caculate damage, that is made of stats, weapon and buffs.
+            // First, calculate damage, that is made of stats, weapon and buffs.
             switch (typeAttack)
             {
                 case TypeAttack.PhysicalAttack:
@@ -305,7 +305,7 @@ namespace Imgeneus.World.Game
             var elementFactor = GetElementFactor(element, target.DefenceElement);
             damage = damage * elementFactor;
 
-            // Third, caculate if critical damage should be added.
+            // Third, calculate if critical damage should be added.
             var criticalDamage = false;
             if (new Random().Next(1, 101) < CriticalSuccessRate(target))
             {

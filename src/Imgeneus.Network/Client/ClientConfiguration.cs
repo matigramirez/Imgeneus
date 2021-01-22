@@ -32,7 +32,7 @@
         public ClientRetryOptions RetryOptions { get; }
 
         /// <summary>
-        /// Gets the maximum numer of attempts for 
+        /// Gets the maximum number of retry attempts.
         /// </summary>
         public int MaxAttempts { get; }
 

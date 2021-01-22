@@ -3,11 +3,11 @@
     public interface IObeliskFactory
     {
         /// <summary>
-        /// Creates obelisk instanse.
+        /// Creates obelisk instance.
         /// </summary>
         /// <param name="config">obelisk config</param>
         /// <param name="map">obelisk's map</param>
-        /// <returns>obelisk instanse</returns>
+        /// <returns>obelisk instance</returns>
         public Obelisk CreateObelisk(ObeliskConfiguration config, Map map);
     }
 }

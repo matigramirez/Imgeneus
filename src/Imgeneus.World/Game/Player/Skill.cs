@@ -11,7 +11,7 @@ namespace Imgeneus.World.Game.Player
             Number = skillNumber;
             CooldownInSeconds = cooldown;
 
-            // DB values willl be stored.
+            // DB values will be stored.
             SkillId = dbSkill.SkillId;
             SkillLevel = dbSkill.SkillLevel;
             Type = dbSkill.TypeDetail;

@@ -72,7 +72,7 @@ namespace Imgeneus.World.Game.Player
 
             // TODO: remove items from inventory.
 
-            // TODO: add revard to player.
+            // TODO: add reward to player.
 
             quest.Finish(true);
             SendQuestFinished(quest, npcId);

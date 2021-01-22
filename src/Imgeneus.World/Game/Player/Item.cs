@@ -618,7 +618,7 @@ namespace Imgeneus.World.Game.Player
         public ushort ReqWis { get => _dbItem.ReqWis; }
 
         /// <summary>
-        /// Bool indicator, that shows if item can be rec-runed.
+        /// Bool indicator, that shows if item can be recreated (use rec runes on it).
         /// </summary>
         public bool IsComposable { get => _dbItem != null && ReqWis > 0; }
 

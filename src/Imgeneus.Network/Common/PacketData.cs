@@ -17,7 +17,7 @@ namespace Imgeneus.Network.Common
         /// <summary>
         /// Creates a new <see cref="PacketData"/> instance.
         /// </summary>
-        /// <param name="connection">The owener of this packet.</param>
+        /// <param name="connection">The owner of this packet.</param>
         /// <param name="data">The packet data as byte array.</param>
         public PacketData(IConnection connection, byte[] data)
         {

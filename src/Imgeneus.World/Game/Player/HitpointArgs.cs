@@ -1,7 +1,7 @@
 ﻿namespace Imgeneus.World.Game.Player
 {
     /// <summary>
-    /// Hitpoint args is used, when sending event about chnge of HP, SP or MP.
+    /// Hitpoint args is used, when sending event about change of HP, SP or MP.
     /// </summary>
     public class HitpointArgs
     {

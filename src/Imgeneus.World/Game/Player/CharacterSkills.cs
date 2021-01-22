@@ -52,7 +52,7 @@ namespace Imgeneus.World.Game.Player
 
             // Find out if the character has already learned the same skill, but lower level.
             var isSkillLearned = Skills.Values.FirstOrDefault(s => s.SkillId == skillId);
-            // If there is skil of lower level => delete it.
+            // If there is skill of lower level => delete it.
             if (isSkillLearned != null)
             {
                 _taskQueue.Enqueue(ActionType.REMOVE_SKILL,
@@ -91,7 +91,7 @@ namespace Imgeneus.World.Game.Player
 
             _logger.LogDebug($"Character {Id} learned skill {skill.SkillId} of level {skill.SkillLevel}");
 
-            // Activate passive skill as soon as it's learned. 
+            // Activate passive skill as soon as it's learned.
             if (skill.IsPassive)
                 UseSkill(skill);
         }

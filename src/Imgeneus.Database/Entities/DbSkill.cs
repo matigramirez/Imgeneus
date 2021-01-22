@@ -23,7 +23,7 @@ namespace Imgeneus.Database.Entities
         public string SkillName { get; set; }
 
         /// <summary>
-        /// Which fraction and profession can use this skill.
+        /// Which faction and profession can use this skill.
         /// </summary>
         public SkillUtilizer SkillUtilizer { get; set; }
 
@@ -444,12 +444,12 @@ namespace Imgeneus.Database.Entities
         Human,
 
         /// <summary>
-        /// Skill can be used only by elfs.
+        /// Skill can be used only by elves.
         /// </summary>
         Elf,
 
         /// <summary>
-        /// Skill can be used only by both humans and elfs.
+        /// Skill can be used only by both humans and elves.
         /// </summary>
         Light,
 
@@ -459,7 +459,7 @@ namespace Imgeneus.Database.Entities
         Deatheater,
 
         /// <summary>
-        /// Skill can be used only by both humans and vails.
+        /// Skill can be used only by vails.
         /// </summary>
         Vail,
 

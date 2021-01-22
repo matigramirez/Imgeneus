@@ -6,11 +6,11 @@ namespace Imgeneus.Core.Helpers
     public static class ConfigurationHelper
     {
         /// <summary>
-        /// Deserealized an object from json path.
+        /// Deserialized an object from json path.
         /// </summary>
         /// <typeparam name="T">The configuration class.</typeparam>
         /// <param name="path">The configuration file path.</param>
-        /// <returns>A deserealized object</returns>
+        /// <returns>A deserialized object</returns>
         public static T Load<T>(string path) where T : class, new()
         {
             if (!File.Exists(path))

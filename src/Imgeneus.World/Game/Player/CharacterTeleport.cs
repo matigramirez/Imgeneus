@@ -19,7 +19,7 @@ namespace Imgeneus.World.Game.Player
             // Send map values.
             SendWeather();
             SendObelisks();
-            SendMyShape(); // SHould fix the issue with dye color, when first connection.
+            SendMyShape(); // Should fix the issue with dye color, when first connection.
         }
 
         /// <summary>

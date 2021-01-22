@@ -112,7 +112,7 @@ namespace Imgeneus.World.Game.Linking
                 }
 
                 if (hammer.Special == SpecialEffect.PerfectExtractionHammer)
-                    rate = 100; // GM exrracting hammer. Usually it's item with Type = 44 and TypeId = 237 or create your own.
+                    rate = 100; // GM extracting hammer. Usually it's item with Type = 44 and TypeId = 237 or create your own.
             }
 
             return rate;

@@ -44,7 +44,7 @@ namespace Imgeneus.Network.Server
         public delegate IDeserializedPacket PacketDeserializeHandler(IPacketStream stream);
 
         /// <summary>
-        /// This dictionary contains inofmation how oacket stream should be transformed based on packet type.
+        /// This dictionary contains information how packet stream should be transformed based on packet type.
         /// </summary>
         Dictionary<PacketType, PacketDeserializeHandler> PacketHandlers { get; }
     }

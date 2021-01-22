@@ -100,7 +100,7 @@ namespace Imgeneus.Login
         };
 
         /// <summary>
-        /// All awailable packet handlers for login client.
+        /// All available packet handlers for login client.
         /// </summary>
         public override Dictionary<PacketType, PacketDeserializeHandler> PacketHandlers => _packetHandlers;
     }

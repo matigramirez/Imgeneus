@@ -22,7 +22,7 @@ namespace Imgeneus.World.Game.Monster
         public readonly MobAI AI;
 
         /// <summary>
-        /// Mob's move area. It can not move farrer than this area.
+        /// Mob's move area. It can not move further than this area.
         /// </summary>
         public readonly MoveArea MoveArea;
 

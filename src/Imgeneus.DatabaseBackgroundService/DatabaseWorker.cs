@@ -44,7 +44,7 @@ namespace Imgeneus.DatabaseBackgroundService
 
         private void Initialize()
         {
-            // Gets all public statis methods with PacketHandlerAttribute
+            // Gets all public static methods with PacketHandlerAttribute
             var handlers = new List<ActionMethodHandler>();
             foreach (var type in typeof(DatabaseWorker).Assembly.GetTypes())
             {

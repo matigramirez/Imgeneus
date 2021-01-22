@@ -295,7 +295,7 @@ namespace Imgeneus.World.Game
                 }
                 else
                 {
-                    // If bufs are the same level, we should only update reset time.
+                    // If buffs are the same level, we should only update reset time.
                     if (buff.SkillLevel == skill.SkillLevel)
                     {
                         buff.ResetTime = resetTime;
@@ -1197,7 +1197,7 @@ namespace Imgeneus.World.Game
         protected int _skillMagicAttackPower;
 
         /// <summary>
-        /// Wapon speed calculated from passive skill. Key is weapon, value is speed modificator.
+        /// Weapon speed calculated from passive skill. Key is weapon, value is speed modificator.
         /// </summary>
         protected readonly Dictionary<byte, byte> _weaponSpeedPassiveSkillModificator = new Dictionary<byte, byte>();
 

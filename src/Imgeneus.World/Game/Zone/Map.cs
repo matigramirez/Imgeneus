@@ -456,9 +456,9 @@ namespace Imgeneus.World.Game.Zone
         }
 
         /// <summary>
-        /// Called, when mob is rebirthed.
+        /// Called, when mob respawns.
         /// </summary>
-        /// <param name="sender">rebirthed mob</param>
+        /// <param name="sender">respawned mob</param>
         public void RebirthMob(Mob sender)
         {
             sender.TimeToRebirth -= RebirthMob;
@@ -521,7 +521,7 @@ namespace Imgeneus.World.Game.Zone
         /// <summary>
         /// Tries to get item from map.
         /// </summary>
-        /// <returns>if item is null, means that item doen't belong to player yet</returns>
+        /// <returns>if item is null, means that item doesn't belong to player yet</returns>
         public MapItem GetItem(int itemId, Character requester)
         {
             return Cells[requester.CellId].GetItem(itemId, requester, true);

@@ -6,7 +6,7 @@ namespace Imgeneus.World.Game.Player
     public interface ICharacterFactory
     {
         /// <summary>
-        /// Creates player instanse from db character id.
+        /// Creates player instance from db character id.
         /// </summary>
         public Task<Character> CreateCharacter(int id, WorldClient client);
     }

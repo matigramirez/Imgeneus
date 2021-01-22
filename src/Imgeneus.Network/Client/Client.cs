@@ -115,9 +115,9 @@ namespace Imgeneus.Network.Client
         protected abstract void OnDisconnected();
 
         /// <summary>
-        /// Triggered when a error on the socket happend
+        /// Triggered when a error on the socket happened
         /// </summary>
-        /// <param name="socketError"></param>
+        /// <param name="exception">Exception thrown by the socket</param>
         protected abstract void OnError(Exception exception);
 
         /// <summary>

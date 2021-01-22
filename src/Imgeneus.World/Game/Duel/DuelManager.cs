@@ -190,7 +190,7 @@ namespace Imgeneus.World.Game.Duel
                     StartDuel();
                 }
             }
-            else if (result == 1) // ok cliecked twice == declined
+            else if (result == 1) // ok clicked twice == declined
             {
                 Sender.IsDuelApproved = false;
 

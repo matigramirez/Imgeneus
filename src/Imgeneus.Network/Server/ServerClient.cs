@@ -75,7 +75,7 @@ namespace Imgeneus.Network.Server
         /// <summary>
         /// Perform bytes encryption before each send to client.
         /// </summary>
-        /// <param name="incomingBytes">incomming bytes</param>
+        /// <param name="packet">Packet stream</param>
         /// <returns>encrypted bytes</returns>
         private byte[] EncryptPacket(IPacketStream packet)
         {

@@ -63,6 +63,10 @@ namespace Imgeneus.World.Game.Player
                 Gem6 = new Gem(databasePreloader, dbCharacterItem.GemTypeId6, 5);
         }
 
+        public Item(IDatabasePreloader databasePreloader, BankItem bankItem) : this(databasePreloader, bankItem.Type, bankItem.TypeId, bankItem.Count)
+        {
+        }
+
         public Item(IDatabasePreloader databasePreloader, byte type, byte typeId, byte count = 1)
         {
             _databasePreloader = databasePreloader;

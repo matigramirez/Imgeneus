@@ -1170,6 +1170,19 @@ namespace Imgeneus.World.Packets
             client.SendPacket(packet);
         }
 
+        internal void SendBankItems(IWorldClient client, ICollection<BankItem> bankItems)
+        {
+            using var packet = new Packet(PacketType.BANK_ITEM_LIST);
+            packet.Write(new BankItemList(bankItems).Serialize());
+            client.SendPacket(packet);
+        }
+
+        internal void SendBankItemClaim(IWorldClient client, byte bankSlot, Item item)
+        {
+            using var packet = new Packet(PacketType.BANK_CLAIM_ITEM);
+            packet.Write(new BankItemClaim(bankSlot, item).Serialize());
+            client.SendPacket(packet);
+        }
         internal void SendAccountPoints(IWorldClient client, uint points)
         {
             using var packet = new Packet(PacketType.ACCOUNT_POINTS);

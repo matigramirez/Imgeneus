@@ -40,6 +40,7 @@ namespace Imgeneus.World.Game.Player
                                                         .Include(c => c.Quests)
                                                         .Include(c => c.QuickItems)
                                                         .Include(c => c.User)
+                                                        .ThenInclude(c => c.BankItems)
                                                         .FirstOrDefaultAsync(c => c.Id == characterId);
 
             if (dbCharacter is null)

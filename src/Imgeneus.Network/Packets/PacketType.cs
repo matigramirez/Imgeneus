@@ -275,6 +275,10 @@
         CHARACTER_LEVEL_UP = 0x0508, // 1288
         GM_CHARACTER_LEVEL_UP = 0x051E, // 1310
 
+        // Bank
+        BANK_ITEM_LIST = 0xB101, // 45313
+        BANK_CLAIM_ITEM = 0xB102, // 45314
+
         // Account
         ACCOUNT_POINTS = 0x2601 // 9729
     }

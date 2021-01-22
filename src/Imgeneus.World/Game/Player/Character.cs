@@ -399,6 +399,9 @@ namespace Imgeneus.World.Game.Player
             foreach (var friend in dbCharacter.Friends.Select(f => f.Friend))
                 character.Friends.TryAdd(friend.Id, new Friend(friend.Id, friend.Name, friend.Class, gameWorld.Players.ContainsKey(friend.Id)));
 
+            foreach (var bankItem in dbCharacter.User.BankItems.Where(bi => !bi.IsClaimed).Select(bi => new BankItem(bi)))
+                character.BankItems.TryAdd(bankItem.Slot, bankItem);
+
             character.Init();
 
             character.CurrentHP = dbCharacter.HealthPoints;

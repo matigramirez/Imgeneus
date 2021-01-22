@@ -84,6 +84,11 @@ namespace Imgeneus.Database
         public DbSet<DbLevel> Levels { get; set; }
 
         /// <summary>
+        /// Collection of user's bank items.
+        /// </summary>
+        public DbSet<DbBankItem> BankItems { get; set; }
+
+        /// <summary>
         /// Saves changes to database.
         /// </summary>
         public int SaveChanges();

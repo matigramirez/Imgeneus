@@ -591,6 +591,49 @@ namespace Imgeneus.DatabaseBackgroundService.Handlers
             await _database.SaveChangesAsync();
         }
 
+        [ActionHandler(ActionType.SAVE_BANK_ITEM)]
+        public async Task SaveBankItem(object[] args)
+        {
+            int userId = (int)args[0];
+            byte type = (byte)args[1];
+            byte typeId = (byte)args[2];
+            byte count = (byte)args[3];
+            byte slot = (byte)args[4];
+            DateTime obtainmentTime = (DateTime)args[5];
+            DateTime? claimTime = (DateTime?)args[6];
+            bool isClaimed = (bool)args[7];
+            bool isDeleted = (bool)args[8];
+
+            var bankItem = new DbBankItem();
+            bankItem.UserId = userId;
+            bankItem.Type = type;
+            bankItem.TypeId = typeId;
+            bankItem.Count = count;
+            bankItem.Slot = slot;
+            bankItem.ObtainmentTime = obtainmentTime;
+            bankItem.ClaimTime = claimTime;
+            bankItem.IsClaimed = isClaimed;
+            bankItem.IsDeleted = isDeleted;
+
+            _database.BankItems.Add(bankItem);
+            await _database.SaveChangesAsync();
+        }
+
+        [ActionHandler(ActionType.CLAIM_BANK_ITEM)]
+        public async Task ClaimBankItem(object[] args)
+        {
+            int userId = (int)args[0];
+            byte slot = (byte)args[1];
+            DateTime claimTime = (DateTime)args[2];
+            bool isClaimed = (bool)args[3];
+
+            var bankItem = _database.BankItems.First(ubi => ubi.UserId == userId && ubi.Slot == slot && !ubi.IsClaimed);
+            bankItem.ClaimTime = claimTime;
+            bankItem.IsClaimed = isClaimed;
+
+            await _database.SaveChangesAsync();
+        }
+
         [ActionHandler(ActionType.SAVE_ACCOUNT_POINTS)]
         internal async Task SaveAccountPoints(object[] args)
         {

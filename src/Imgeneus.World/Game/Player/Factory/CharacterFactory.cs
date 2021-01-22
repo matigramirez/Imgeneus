@@ -13,6 +13,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
 using Imgeneus.World.Game.Notice;
+using Imgeneus.World.Game.Zone.MapConfig;
 
 namespace Imgeneus.World.Game.Player
 {
@@ -57,6 +58,7 @@ namespace Imgeneus.World.Game.Player
                                         scopedProvider.GetService<ICharacterConfiguration>(),
                                         scopedProvider.GetService<IBackgroundTaskQueue>(),
                                         scopedProvider.GetService<IDatabasePreloader>(),
+                                        scopedProvider.GetService<IMapsLoader>(),
                                         scopedProvider.GetService<IChatManager>(),
                                         scopedProvider.GetService<ILinkingManager>(),
                                         scopedProvider.GetService<IDyeingManager>(),

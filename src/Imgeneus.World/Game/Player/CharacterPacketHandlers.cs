@@ -7,6 +7,8 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
 using Imgeneus.World.Game.Monster;
+using Imgeneus.World.Game.Zone;
+using System.Collections.Generic;
 
 namespace Imgeneus.World.Game.Player
 {
@@ -216,6 +218,14 @@ namespace Imgeneus.World.Game.Player
                 _packetsHelper.SendGmCommandError(Client, PacketType.GM_TELEPORT_TO_PLAYER);
             else
             {
+                // Teleport to party instance map.
+                if (player.Map is IPartyMap)
+                {
+                    SetParty(null);
+                    var mapId = _gameWorld.PartyMaps.FirstOrDefault(m => m.Value == player.Map).Key;
+                    PreviousPartyId = mapId;
+                }
+
                 Teleport(player.MapId, player.PosX, player.PosY, player.PosZ);
 
                 _packetsHelper.SendGmCommandSuccess(Client);

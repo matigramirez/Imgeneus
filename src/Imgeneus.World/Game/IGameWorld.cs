@@ -2,6 +2,7 @@
 using Imgeneus.World.Game.Player;
 using Imgeneus.World.Game.Zone;
 using Imgeneus.World.Game.Zone.Portals;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -22,6 +23,11 @@ namespace Imgeneus.World.Game
         /// Loaded maps. Key is map id, value is map.
         /// </summary>
         ConcurrentDictionary<ushort, IMap> Maps { get; }
+
+        /// <summary>
+        /// Thread-safe dictionary of maps. Where key is party id.
+        /// </summary>
+        ConcurrentDictionary<Guid, IPartyMap> PartyMaps { get; }
 
         /// <summary>
         /// Collection of map ids, that are available for GM teleport.

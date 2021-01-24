@@ -25,6 +25,7 @@ namespace Imgeneus.World.Tests
         protected Mock<IGameWorld> gameWorldMock = new Mock<IGameWorld>();
         protected Mock<IBackgroundTaskQueue> taskQueuMock = new Mock<IBackgroundTaskQueue>();
         protected Mock<IDatabasePreloader> databasePreloader = new Mock<IDatabasePreloader>();
+        protected Mock<IMapsLoader> mapsLoaderMock = new Mock<IMapsLoader>();
         protected Mock<ICharacterConfiguration> config = new Mock<ICharacterConfiguration>();
         protected Mock<ILogger<Map>> mapLoggerMock = new Mock<ILogger<Map>>();
         protected Mock<ILogger<Mob>> mobLoggerMock = new Mock<ILogger<Mob>>();
@@ -51,7 +52,7 @@ namespace Imgeneus.World.Tests
         private static int CharacterId;
         protected Character CreateCharacter(Map map = null)
         {
-            var character = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, chatMock.Object, linkingMock.Object, dyeingMock.Object, mobFactoryMock.Object, npcFactoryMock.Object, noticeManagerMock.Object);
+            var character = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, mapsLoaderMock.Object, chatMock.Object, linkingMock.Object, dyeingMock.Object, mobFactoryMock.Object, npcFactoryMock.Object, noticeManagerMock.Object);
 
             character.Client = worldClientMock.Object;
             character.Id = CharacterId++;

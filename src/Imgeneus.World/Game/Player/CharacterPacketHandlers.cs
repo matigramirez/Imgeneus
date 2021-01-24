@@ -594,16 +594,26 @@ namespace Imgeneus.World.Game.Player
 
         private void HandleGMTeleportToMap(GMTeleportMapPacket gmTeleportMapPacket)
         {
-            if (!_gameWorld.AvailableMapIds.Contains(gmTeleportMapPacket.MapId))
+            var mapId = gmTeleportMapPacket.MapId;
+
+            if (!_gameWorld.AvailableMapIds.Contains(mapId))
             {
                 _packetsHelper.SendGmCommandError(Client, PacketType.GM_TELEPORT_MAP);
                 return;
             }
 
+            float x = 100;
+            float z = 100;
+            var spawn = _mapLoader.LoadMapConfiguration(mapId).Spawns.FirstOrDefault(s => (s.Faction == 1 && Country == Fraction.Light) || (s.Faction == 2 && Country == Fraction.Dark));
+            if (spawn != null)
+            {
+                x = spawn.X1;
+                z = spawn.Z1;
+            }
+
             _packetsHelper.SendGmCommandSuccess(Client);
 
-            // TODO: Use fixed xz coordinates per map?
-            Teleport(gmTeleportMapPacket.MapId, 100, PosY, 100, true);
+            Teleport(mapId, x, PosY, z, true);
         }
 
         private void HandleGMTeleportToMapCoordinates(GMTeleportMapCoordinatesPacket gmTeleportMapCoordinatesPacket)

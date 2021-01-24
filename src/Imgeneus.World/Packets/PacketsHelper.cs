@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Imgeneus.Database.Constants;
 using Imgeneus.Database.Entities;
@@ -32,11 +33,23 @@ namespace Imgeneus.World.Packets
     /// </summary>
     internal class PacketsHelper
     {
-        internal void SendInventoryItems(IWorldClient client, ICollection<Item> inventoryItems)
+        internal void SendInventoryItems(IWorldClient client, Item[] inventoryItems)
         {
-            using var packet = new Packet(PacketType.CHARACTER_ITEMS);
-            packet.Write(new InventoryItems(inventoryItems).Serialize());
-            client.SendPacket(packet);
+            var steps = inventoryItems.Length / 50;
+            var left = inventoryItems.Length % 50;
+
+            for (var i = 0; i <= steps; i++)
+            {
+                var startIndex = i * 50;
+                var length = i == steps ? left : 50;
+
+                Item[] temp = new Item[length];
+                Array.Copy(inventoryItems, startIndex, temp, 0, length);
+
+                using var packet = new Packet(PacketType.CHARACTER_ITEMS);
+                packet.Write(new InventoryItems(temp).Serialize());
+                client.SendPacket(packet);
+            }
         }
 
         internal void SendCharacterTeleport(IWorldClient client, Character player, bool teleportedByAdmin)

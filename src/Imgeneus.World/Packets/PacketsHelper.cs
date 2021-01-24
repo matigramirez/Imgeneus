@@ -39,9 +39,9 @@ namespace Imgeneus.World.Packets
             client.SendPacket(packet);
         }
 
-        internal void SendCharacterTeleport(IWorldClient client, Character player)
+        internal void SendCharacterTeleport(IWorldClient client, Character player, bool teleportedByAdmin)
         {
-            using var packet = new Packet(PacketType.CHARACTER_MAP_TELEPORT);
+            using var packet = new Packet(teleportedByAdmin ? PacketType.CHARACTER_MAP_TELEPORT : PacketType.GM_TELEPORT_MAP_COORDINATES);
             packet.Write(player.Id);
             packet.Write(player.MapId);
             packet.Write(player.PosX);
@@ -320,17 +320,6 @@ namespace Imgeneus.World.Packets
         {
             using var packet = new Packet(PacketType.GM_CMD_ERROR);
             packet.Write((ushort)error);
-            client.SendPacket(packet);
-        }
-
-        internal void SendGmTeleport(IWorldClient client, Character character)
-        {
-            using var packet = new Packet(PacketType.GM_TELEPORT_MAP_COORDINATES);
-            packet.Write(character.Id);
-            packet.Write(character.MapId);
-            packet.Write(character.PosX);
-            packet.Write(character.PosY);
-            packet.Write(character.PosZ);
             client.SendPacket(packet);
         }
 

@@ -181,16 +181,8 @@ namespace Imgeneus.World.Game.Zone
         /// <param name="teleportedByAdmin">Indicates whether the teleport was issued by an admin or not</param>
         public void TeleportPlayer(Character character, bool teleportedByAdmin)
         {
-            if (teleportedByAdmin)
-            {
-                foreach (var p in GetAllPlayers(true))
-                    _packetsHelper.SendGmTeleport(p.Client, character);
-            }
-            else
-            {
-                foreach (var p in GetAllPlayers(true))
-                    _packetsHelper.SendCharacterTeleport(p.Client, character);
-            }
+            foreach (var p in GetAllPlayers(true))
+                _packetsHelper.SendCharacterTeleport(p.Client, character, teleportedByAdmin);
         }
 
         /// <summary>

@@ -42,7 +42,17 @@ namespace Imgeneus.World.Game.Player
             _taskQueue.Enqueue(ActionType.SAVE_MAP_ID, Id, MapId);
             _taskQueue.Enqueue(ActionType.SAVE_CHARACTER_MOVE, Id, x, y, z, Angle);
 
-            Map.TeleportPlayer(Id, teleportedByAdmin);
+            // If player is teleported inside one map, we should notify other players about this teleport.
+            // If player is teleported to another map, we should only send player left map packet (in Map.UnloadPlayer call).
+            if (prevMapId == MapId)
+            {
+                Map.TeleportPlayer(Id, teleportedByAdmin);
+            }
+            else // But we must always send the teleport packet directly to the player.
+            {
+                _packetsHelper.SendCharacterTeleport(Client, this, teleportedByAdmin);
+            }
+
             if (prevMapId != MapId)
             {
                 if (IsDuelApproved)

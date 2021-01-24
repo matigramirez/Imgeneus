@@ -47,21 +47,14 @@ namespace Imgeneus.World.Game.Player
             if (prevMapId == MapId)
             {
                 Map.TeleportPlayer(Id, teleportedByAdmin);
+                IsTeleporting = false;
             }
             else // But we must always send the teleport packet directly to the player.
             {
                 _packetsHelper.SendCharacterTeleport(Client, this, teleportedByAdmin);
-            }
-
-            if (prevMapId != MapId)
-            {
                 if (IsDuelApproved)
                     FinishDuel(DuelCancelReason.TooFarAway);
                 Map.UnloadPlayer(this);
-            }
-            else
-            {
-                IsTeleporting = false;
             }
         }
 

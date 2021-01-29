@@ -506,6 +506,15 @@ namespace Imgeneus.World.Game.PartyAndRaid
             client.SendPacket(packet);
         }
 
+        protected override void SendRemoveBuff(IWorldClient client, int senderId, ushort skillId, byte skillLevel)
+        {
+            using var packet = new Packet(PacketType.RAID_REMOVED_BUFF);
+            packet.Write(senderId);
+            packet.Write(skillId);
+            packet.Write(skillLevel);
+            client.SendPacket(packet);
+        }
+
         protected override void Send_Single_HP_SP_MP(IWorldClient client, int id, int value, byte type)
         {
             using var packet = new Packet(PacketType.RAID_CHARACTER_SP_MP);

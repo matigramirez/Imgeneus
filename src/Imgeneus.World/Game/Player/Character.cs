@@ -110,20 +110,6 @@ namespace Imgeneus.World.Game.Player
             Bless.Instance.OnDarkBlessChanged -= OnDarkBlessChanged;
             Bless.Instance.OnLightBlessChanged -= OnLightBlessChanged;
 
-            // Save new map position, if player was in instance map or if player was dead.
-            if (Map.IsInstance || Map.IsDungeon || IsDead)
-            {
-                var rebirthCoordinate = Map.GetRebirthMap(this);
-
-                if (IsDead)
-                {
-                    // TODO: Recover HP, MP, SP and save new number of deaths.
-                }
-
-                _taskQueue.Enqueue(ActionType.SAVE_MAP_ID, Id, rebirthCoordinate.MapId);
-                _taskQueue.Enqueue(ActionType.SAVE_CHARACTER_MOVE, Id, rebirthCoordinate.X, rebirthCoordinate.Y, rebirthCoordinate.Z, Angle);
-            }
-
             // Notify friends, that player is offline.
             foreach (var friend in Friends.Values)
             {

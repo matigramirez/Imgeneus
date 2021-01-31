@@ -849,7 +849,7 @@ namespace Imgeneus.World.Game.Player
         /// Increases the player's skill points by a certain amount
         /// </summary>
         /// <param name="amount"></param>
-        public void IncreaseSkillPoint(ushort amount) => SetSkillPoint(StatPoint += amount);
+        public void IncreaseSkillPoint(ushort amount) => SetSkillPoint(SkillPoint += amount);
 
         #endregion
 

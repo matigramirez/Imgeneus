@@ -983,6 +983,10 @@ namespace Imgeneus.World.Game.Player
                     UseNameChangeStone();
                     break;
 
+                case SpecialEffect.SkillResetStone:
+                    ResetSkills();
+                    break;
+
                 default:
                     _logger.LogError($"Uninplemented item effect {item.Special}.");
                     break;

@@ -56,6 +56,10 @@ namespace Imgeneus.World.Game.Trade
                     AddedItemToTrade((WorldClient)sender, tradeAddItemPacket);
                     break;
 
+                case TradeRemoveItemPacket tradeRemoveItemPacket:
+                    RemoveItemFromTrade((WorldClient)sender, tradeRemoveItemPacket);
+                    break;
+
                 case TradeAddMoneyPacket tradeAddMoneyPacket:
                     AddMoneyToTrade((WorldClient)sender, tradeAddMoneyPacket);
                     break;
@@ -128,11 +132,40 @@ namespace Imgeneus.World.Game.Trade
                 // Possible cheating?
                 return;
             }
+            if (trader.TradeItems.Where(x => x.Value == tradeItem).Count() != 0)
+            {
+                // Possible cheating? Player tries add item to trade twice.
+                return;
+
+            }
+
             tradeItem.TradeQuantity = tradeItem.Count > tradeAddItemPacket.Quantity ? tradeAddItemPacket.Quantity : tradeItem.Count;
-            trader.TradeItems.Add(tradeAddItemPacket.SlotInTradeWindow, tradeItem);
+            trader.TradeItems.TryAdd(tradeAddItemPacket.SlotInTradeWindow, tradeItem);
 
             SendAddedItemToTrade(trader.Client, tradeAddItemPacket.Bag, tradeAddItemPacket.Slot, tradeAddItemPacket.Quantity, tradeAddItemPacket.SlotInTradeWindow);
             SendAddedItemToTrade(partner.Client, tradeItem, tradeAddItemPacket.Quantity, tradeAddItemPacket.SlotInTradeWindow);
+        }
+
+        /// <summary>
+        /// Removes item from trade.
+        /// </summary>
+        /// <param name="sender">player, that removed item</param>
+        private void RemoveItemFromTrade(WorldClient sender, TradeRemoveItemPacket tradeRemoveItemPacket)
+        {
+            var trader = _gameWorld.Players[sender.CharID];
+            var partner = trader.TradePartner;
+
+            trader.TradeItems.TryRemove(tradeRemoveItemPacket.SlotInTradeWindow, out var removed);
+            if (removed is null)
+            {
+                // Possible cheating?
+                return;
+            }
+
+            TradeDecideDecline(sender);
+
+            SendRemovedItemFromTrade(trader.Client, 1);
+            SendRemovedItemFromTrade(partner.Client, 2);
         }
 
         /// <summary>
@@ -178,6 +211,14 @@ namespace Imgeneus.World.Game.Trade
         {
             using var packet = new Packet(PacketType.TRADE_RECEIVER_ADD_ITEM);
             packet.Write(new TradeItem(slotInTradeWindow, quantity, tradeItem).Serialize());
+            client.SendPacket(packet);
+        }
+
+
+        private void SendRemovedItemFromTrade(IWorldClient client, byte byWho)
+        {
+            using var packet = new Packet(PacketType.TRADE_REMOVE_ITEM);
+            packet.Write(byWho);
             client.SendPacket(packet);
         }
 

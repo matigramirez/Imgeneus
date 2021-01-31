@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Imgeneus.World.Game.Notice;
 using Imgeneus.World.Game.Zone.MapConfig;
+using System.Collections.Concurrent;
 
 namespace Imgeneus.World.Game.Player
 {
@@ -242,7 +243,7 @@ namespace Imgeneus.World.Game.Player
         /// <summary>
         /// Items, that are currently in trade window.
         /// </summary>
-        public Dictionary<byte, Item> TradeItems = new Dictionary<byte, Item>();
+        public ConcurrentDictionary<byte, Item> TradeItems = new ConcurrentDictionary<byte, Item>();
 
         /// <summary>
         /// Money in trade window.

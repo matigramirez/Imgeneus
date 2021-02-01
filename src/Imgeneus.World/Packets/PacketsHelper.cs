@@ -217,6 +217,14 @@ namespace Imgeneus.World.Packets
             client.SendPacket(packet);
         }
 
+        internal void SendResetSkills(IWorldClient client, ushort skillPoint)
+        {
+            using var packet = new Packet(PacketType.RESET_SKILLS);
+            packet.Write(true); // is success?
+            packet.Write(skillPoint);
+            client.SendPacket(packet);
+        }
+
         internal void SendAttackStart(IWorldClient client)
         {
             using var packet = new Packet(PacketType.ATTACK_START);

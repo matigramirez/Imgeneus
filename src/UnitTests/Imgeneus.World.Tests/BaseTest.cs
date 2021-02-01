@@ -234,7 +234,8 @@ namespace Imgeneus.World.Tests
             SkillName = "Strength Training Lv1",
             TypeAttack = TypeAttack.Passive,
             AbilityType1 = AbilityType.PhysicalAttackPower,
-            AbilityValue1 = 18
+            AbilityValue1 = 18,
+            SkillPoint = 1
         };
 
         protected DbSkill ManaTraining = new DbSkill()

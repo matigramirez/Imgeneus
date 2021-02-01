@@ -166,5 +166,7 @@ namespace Imgeneus.World.Game.Player
 
         public void SendBankItemClaim(byte bankSlot, Item item) => _packetsHelper.SendBankItemClaim(Client, bankSlot, item);
         public void SendAccountPoints() => _packetsHelper.SendAccountPoints(Client, Points);
+
+        public void SendResetSkills() => _packetsHelper.SendResetSkills(Client, SkillPoint);
     }
 }

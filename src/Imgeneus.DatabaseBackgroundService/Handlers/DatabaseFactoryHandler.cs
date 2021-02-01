@@ -134,7 +134,6 @@ namespace Imgeneus.DatabaseBackgroundService.Handlers
             ushort skillId = (ushort)args[1];
             byte skillLevel = (byte)args[2];
             byte skillNumber = (byte)args[3];
-            byte skillPoints = (byte)args[4];
 
             var dbSkill = _database.Skills.First(s => s.SkillId == skillId && s.SkillLevel == skillLevel);
             var skillToAdd = new DbCharacterSkill()
@@ -145,9 +144,6 @@ namespace Imgeneus.DatabaseBackgroundService.Handlers
             };
 
             _database.CharacterSkills.Add(skillToAdd);
-
-            var character = _database.Characters.Find(charId);
-            character.SkillPoint -= skillPoints;
 
             await _database.SaveChangesAsync();
         }
@@ -161,6 +157,16 @@ namespace Imgeneus.DatabaseBackgroundService.Handlers
 
             var skillToRemove = _database.CharacterSkills.First(s => s.CharacterId == charId && s.Skill.SkillId == skillId && s.Skill.SkillLevel == skillLevel);
             _database.CharacterSkills.Remove(skillToRemove);
+            await _database.SaveChangesAsync();
+        }
+
+        [ActionHandler(ActionType.REMOVE_ALL_SKILLS)]
+        internal async Task RemoveAllSkills(object[] args)
+        {
+            int charId = (int)args[0];
+
+            var skillsToRemove = _database.CharacterSkills.Where(s => s.CharacterId == charId);
+            _database.CharacterSkills.RemoveRange(skillsToRemove);
             await _database.SaveChangesAsync();
         }
 

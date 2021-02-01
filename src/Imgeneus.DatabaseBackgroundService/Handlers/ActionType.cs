@@ -38,6 +38,7 @@
         // Skills
         SAVE_SKILL,
         REMOVE_SKILL,
+        REMOVE_ALL_SKILLS,
 
         // Buffs
         SAVE_BUFF,

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Imgeneus.Database.Constants;
 using Imgeneus.Database.Entities;
@@ -42,12 +41,10 @@ namespace Imgeneus.World.Packets
             {
                 var startIndex = i * 50;
                 var length = i == steps ? left : 50;
-
-                Item[] temp = new Item[length];
-                Array.Copy(inventoryItems, startIndex, temp, 0, length);
+                var endIndex = startIndex + length;
 
                 using var packet = new Packet(PacketType.CHARACTER_ITEMS);
-                packet.Write(new InventoryItems(temp).Serialize());
+                packet.Write(new InventoryItems(inventoryItems[startIndex..endIndex]).Serialize());
                 client.SendPacket(packet);
             }
         }

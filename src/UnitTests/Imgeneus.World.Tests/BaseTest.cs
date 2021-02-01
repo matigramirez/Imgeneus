@@ -482,7 +482,7 @@ namespace Imgeneus.World.Tests
         {
             Type = 25,
             TypeId = 1,
-            Special = SpecialEffect.HealingPotion,
+            Special = SpecialEffect.None,
             ConstHP = 50
         };
 

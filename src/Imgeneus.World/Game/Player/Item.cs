@@ -136,6 +136,8 @@ namespace Imgeneus.World.Game.Player
         private Element ConstElement => _dbItem.Element;
         public int Sell => _dbItem.Sell;
         public byte ReqIg => _dbItem.ReqIg;
+        public ushort SkillId => _dbItem.Range;
+        public byte SkillLevel => _dbItem.AttackTime;
 
         /// <summary>
         /// Str contains yellow(default) stat + orange stat (take it from craft name later).

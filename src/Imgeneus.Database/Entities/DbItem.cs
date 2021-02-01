@@ -144,12 +144,15 @@ namespace Imgeneus.Database.Entities
         /// <summary>
         /// From how far away character can use this item.
         /// For mounts, its value specifies which character shape we should use.
+        /// For items, that activates skills, it's skill id.
         /// </summary>
         [Required]
         public ushort Range { get; set; }
 
         /// <summary>
-        /// How fast this item. For mounts it's casting time in seconds.
+        /// How fast this item.
+        /// For mounts it's casting time in seconds.
+        /// For items, that activates skills, it's skill level.
         /// </summary>
         [Required]
         public byte AttackTime { get; set; }

@@ -866,8 +866,13 @@ namespace Imgeneus.World.Game.Player
         {
             switch (item.Special)
             {
-                case SpecialEffect.HealingPotion:
-                    UseHealingPotion(item);
+                case SpecialEffect.None:
+                    if (item.HP > 0 || item.MP > 0 || item.SP > 0)
+                        UseHealingPotion(item);
+
+                    if (item.SkillId != 0)
+                        UseSkill(new Skill(_databasePreloader.Skills[(item.SkillId, item.SkillLevel)], 0, 0), this);
+
                     break;
 
                 case SpecialEffect.PercentHealingPotion:
@@ -1028,8 +1033,7 @@ namespace Imgeneus.World.Game.Player
         /// </summary>
         private void UseHealingPotion(Item potion)
         {
-            if (potion.HP > 0 || potion.MP > 0 || potion.SP > 0)
-                Recover(potion.HP, potion.MP, potion.SP);
+            Recover(potion.HP, potion.MP, potion.SP);
         }
 
         /// <summary>

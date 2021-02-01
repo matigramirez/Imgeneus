@@ -1255,8 +1255,6 @@ namespace Imgeneus.World.Game
         /// <inheritdoc />
         public void Rebirth(ushort mapId, float x, float y, float z)
         {
-            // TODO: rebirth to another map.
-
             CurrentHP = MaxHP;
             CurrentMP = MaxMP;
             CurrentSP = MaxSP;
@@ -1267,6 +1265,11 @@ namespace Imgeneus.World.Game
             PosZ = z;
 
             OnRebirthed?.Invoke(this);
+
+            if (mapId != Map.Id)
+            {
+                (this as Character).Teleport(mapId, x, y, z);
+            }
         }
 
         #endregion

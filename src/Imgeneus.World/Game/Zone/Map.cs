@@ -254,6 +254,12 @@ namespace Imgeneus.World.Game.Zone
 
             if (success)
             {
+                if (character.IsDead)
+                {
+                    var rebirthMap = GetRebirthMap(character);
+                    character.Rebirth(rebirthMap.MapId, rebirthMap.X, rebirthMap.Y, rebirthMap.Z);
+                }
+
                 Cells[character.CellId].RemovePlayer(character, true);
                 UnregisterSearchForParty(character);
                 character.OnPositionChanged -= Character_OnPositionChanged;

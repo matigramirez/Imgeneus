@@ -871,7 +871,7 @@ namespace Imgeneus.World.Game.Player
                         UseHealingPotion(item);
 
                     if (item.SkillId != 0)
-                        UseSkill(new Skill(_databasePreloader.Skills[(item.SkillId, item.SkillLevel)], 0, 0), this);
+                        UseSkill(new Skill(_databasePreloader.Skills[(item.SkillId, item.SkillLevel)], ITEM_SKILL_NUMBER, 0), this);
 
                     break;
 

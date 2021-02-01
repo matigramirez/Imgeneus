@@ -32,11 +32,21 @@ namespace Imgeneus.World.Packets
     /// </summary>
     internal class PacketsHelper
     {
-        internal void SendInventoryItems(IWorldClient client, ICollection<Item> inventoryItems)
+        internal void SendInventoryItems(IWorldClient client, Item[] inventoryItems)
         {
-            using var packet = new Packet(PacketType.CHARACTER_ITEMS);
-            packet.Write(new InventoryItems(inventoryItems).Serialize());
-            client.SendPacket(packet);
+            var steps = inventoryItems.Length / 50;
+            var left = inventoryItems.Length % 50;
+
+            for (var i = 0; i <= steps; i++)
+            {
+                var startIndex = i * 50;
+                var length = i == steps ? left : 50;
+                var endIndex = startIndex + length;
+
+                using var packet = new Packet(PacketType.CHARACTER_ITEMS);
+                packet.Write(new InventoryItems(inventoryItems[startIndex..endIndex]).Serialize());
+                client.SendPacket(packet);
+            }
         }
 
         internal void SendCharacterTeleport(IWorldClient client, Character player, bool teleportedByAdmin)

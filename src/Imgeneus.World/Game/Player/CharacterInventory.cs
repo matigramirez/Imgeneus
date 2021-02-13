@@ -988,6 +988,10 @@ namespace Imgeneus.World.Game.Player
                     UseNameChangeStone();
                     break;
 
+                case SpecialEffect.AnotherItemGenerator:
+                    // Generate another item based on item ReqVg.
+                    break;
+
                 default:
                     _logger.LogError($"Uninplemented item effect {item.Special}.");
                     break;

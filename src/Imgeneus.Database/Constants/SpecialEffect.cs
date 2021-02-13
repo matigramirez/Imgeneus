@@ -33,7 +33,7 @@
         TeleportationStone = 39,
         RepairHammer = 40,
         TargetResurrectionRune = 41,
-        FortuneBag = 42,
+        AnotherItemGenerator = 42,
         IncreaseFame = 43,
         AppearanceChange = 44,
         SexChange = 45,

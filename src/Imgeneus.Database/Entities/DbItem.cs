@@ -124,6 +124,7 @@ namespace Imgeneus.Database.Entities
         /// <summary>
         /// For linking hammer, it's how many times it increases the success linking rate.
         /// For lapis, if it's set to 1, lapis can break equipment while unsuccessful linking.
+        /// For items, that generate other items (e.g. "Mystra's Box") it's index in file PSM_Client\Bin\Data\ItemCreate.ini
         /// </summary>
         [Required]
         public ushort ReqVg { get; set; }

@@ -1,5 +1,6 @@
 ﻿using Imgeneus.Database.Constants;
 using Imgeneus.DatabaseBackgroundService.Handlers;
+using Imgeneus.Database.Entities;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -76,13 +77,14 @@ namespace Imgeneus.World.Game.Player
             }
 
             // Save char and learned skill.
-            _taskQueue.Enqueue(ActionType.SAVE_SKILL,
-                                Id, dbSkill.SkillId, dbSkill.SkillLevel, skillNumber, dbSkill.SkillPoint);
+            _taskQueue.Enqueue(ActionType.SAVE_SKILL, Id, dbSkill.SkillId, dbSkill.SkillLevel, skillNumber);
 
             // Remove previously learned skill.
             if (isSkillLearned != null) Skills.Remove(skillNumber);
 
             SkillPoint -= dbSkill.SkillPoint;
+            _taskQueue.Enqueue(ActionType.SAVE_CHARACTER_SKILLPOINT, Id, SkillPoint);
+
             var skill = new Skill(dbSkill, skillNumber, 0);
             Skills.Add(skillNumber, skill);
 
@@ -145,6 +147,26 @@ namespace Imgeneus.World.Game.Player
             {
                 UseSkill(skill);
             }
+        }
+
+        /// <summary>
+        /// Clears skills and adds skill points.
+        /// </summary>
+        public void ResetSkills()
+        {
+            ushort skillFactor = _characterConfig.GetLevelStatSkillPoints(Mode).SkillPoint;
+
+            SkillPoint = (ushort)(skillFactor * (Level - 1));
+
+            _taskQueue.Enqueue(ActionType.REMOVE_ALL_SKILLS, Id);
+            _taskQueue.Enqueue(ActionType.SAVE_CHARACTER_SKILLPOINT, Id, SkillPoint);
+
+            SendResetSkills();
+
+            foreach (var passive in PassiveBuffs.ToList())
+                passive.CancelBuff();
+
+            Skills.Clear();
         }
     }
 }

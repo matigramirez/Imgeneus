@@ -470,7 +470,7 @@ namespace Imgeneus.World.Game.Player
             if (item != Weapon && item != Mount)
                 SetAttackSpeedModifier(-1 * item.AttackSpeed);
 
-            if(item != Mount)
+            if (item != Mount)
                 MoveSpeed -= item.MoveSpeed;
         }
 
@@ -497,7 +497,7 @@ namespace Imgeneus.World.Game.Player
             if (item != Weapon && item != Mount)
                 SetAttackSpeedModifier(item.AttackSpeed);
 
-            if(item != Mount)
+            if (item != Mount)
                 MoveSpeed += item.MoveSpeed;
         }
 
@@ -989,7 +989,12 @@ namespace Imgeneus.World.Game.Player
                     break;
 
                 case SpecialEffect.AnotherItemGenerator:
-                    // Generate another item based on item ReqVg.
+                    // TODO: Generate another item based on item ReqVg.
+                    break;
+
+                case SpecialEffect.SkillResetStone:
+                    ResetSkills();
+
                     break;
 
                 default:

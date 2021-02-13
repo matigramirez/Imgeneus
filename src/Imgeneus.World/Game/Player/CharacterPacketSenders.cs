@@ -17,7 +17,7 @@ namespace Imgeneus.World.Game.Player
             SendDetails();
             SendAdditionalStats();
             SendCurrentHitpoints();
-            SendInventoryItems(); // TODO: game.exe crashes, when number of items >= 80. Investigate why?
+            SendInventoryItems();
             SendLearnedSkills();
             SendOpenQuests();
             SendFinishedQuests();
@@ -37,7 +37,7 @@ namespace Imgeneus.World.Game.Player
 
         private void SendInventoryItems()
         {
-            var inventoryItems = InventoryItems.Values.ToList();
+            var inventoryItems = InventoryItems.Values.ToArray();
             _packetsHelper.SendInventoryItems(Client, inventoryItems);
 
             foreach (var item in inventoryItems.Where(i => i.ExpirationTime != null))
@@ -166,5 +166,7 @@ namespace Imgeneus.World.Game.Player
 
         public void SendBankItemClaim(byte bankSlot, Item item) => _packetsHelper.SendBankItemClaim(Client, bankSlot, item);
         public void SendAccountPoints() => _packetsHelper.SendAccountPoints(Client, Points);
+
+        public void SendResetSkills() => _packetsHelper.SendResetSkills(Client, SkillPoint);
     }
 }

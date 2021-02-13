@@ -239,6 +239,9 @@
         BLESS_UPDATE = 0x020F, // 527
         BLESS_INIT = 0x0211, // 529
 
+        // Reset stones
+        RESET_SKILLS = 0x0215, // 533
+
         // Friends
         FRIEND_LIST = 0x2201, // 8705
         FRIEND_REQUEST = 0x2202, // 8706

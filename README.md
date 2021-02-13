@@ -80,6 +80,7 @@ Our main goal is learning, clients are used only for testing. We are not trying 
 * __Juuf__ - helped with Dye system packet structure.
 * __matigramirez__ - helped with the implementation of different features.
 * __Bowie__ - provided solid asm support.
+* __ZheinGlitch__ - helped with Chaotic square packet structure.
 * maybe __YOU__?
 
 ## Known issues

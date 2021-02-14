@@ -22,6 +22,8 @@ These files are added to the ignore list, so you can be sure, that you won't com
 
 3. Run Imgeneus.Login & Imgeneus.World projects. For this right click on solution => Properties => Startup Project => Multiple startup projects => Imgeneus.Login - Start; Imgeneus.World - Start.
 
+__You are not dev, feel lost but still want to start?__  Check out our [wiki page](https://github.com/aosyatnik/Imgeneus/wiki/Setup-for-non-devs).
+
 ## Solution description
 
 ##### Imgeneus.Core

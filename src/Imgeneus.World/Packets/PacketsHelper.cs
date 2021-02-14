@@ -182,6 +182,14 @@ namespace Imgeneus.World.Packets
             client.SendPacket(packet);
         }
 
+        internal void SendTeleportViaNpc(IWorldClient client, NpcTeleportNotAllowedReason reason, uint money)
+        {
+            using var packet = new Packet(PacketType.CHARACTER_TELEPORT_VIA_NPC);
+            packet.Write((byte)reason);
+            packet.Write(money);
+            client.SendPacket(packet);
+        }
+
         internal void SendItemExpiration(IWorldClient client, Item item)
         {
             using var packet = new Packet(PacketType.ITEM_EXPIRATION);

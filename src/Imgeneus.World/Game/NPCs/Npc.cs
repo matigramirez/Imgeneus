@@ -77,6 +77,39 @@ namespace Imgeneus.World.Game.NPCs
                     }
                 }
             }
+
+            // Set teleport gates.
+            var dbMapsString = dbNpc.Maps;
+            if (!string.IsNullOrWhiteSpace(dbMapsString))
+            {
+                var gates = dbMapsString.Split(" | ");
+                foreach (var gateStr in gates)
+                {
+                    try
+                    {
+                        var gateDefs = gateStr.Split(",");
+                        if (string.IsNullOrEmpty(gateDefs[4])) // Empty gate with 0-values.
+                        {
+                            continue;
+                        }
+
+                        var gate = new NpcGate()
+                        {
+                            MapId = ushort.Parse(gateDefs[0]),
+                            X = float.Parse(gateDefs[1]),
+                            Y = float.Parse(gateDefs[2]),
+                            Z = float.Parse(gateDefs[3]),
+                            Name = gateDefs[4],
+                            Cost = int.Parse(gateDefs[5])
+                        };
+                        _gates.Add(gate);
+                    }
+                    catch
+                    {
+                        _logger.LogError($"Couldn't parse npc gate definition, plase check this npc: {_dbNpc.Id}.");
+                    }
+                }
+            }
         }
 
         public int Id { get; set; }
@@ -183,6 +216,42 @@ namespace Imgeneus.World.Game.NPCs
 
                 return _readonlyEndQuestIds;
             }
+        }
+
+        #endregion
+
+        #region Gates
+
+        private readonly IList<NpcGate> _gates = new List<NpcGate>();
+        private IList<NpcGate> _readonlyGates;
+
+        /// <summary>
+        /// Gates, where npc can teleport.
+        /// </summary>
+        public IList<NpcGate> Gates
+        {
+            get
+            {
+                if (_readonlyGates is null)
+                    _readonlyGates = new ReadOnlyCollection<NpcGate>(_gates);
+                return _readonlyGates;
+            }
+        }
+
+        /// <summary>
+        /// Checks if Gate list contains gate at index. Logs warning, if gate is not found.
+        /// </summary>
+        /// <param name="index">index, that we want to check.</param>
+        /// <returns>return true, if there is some gate at index</returns>
+        public bool ContainsGate(byte index)
+        {
+            if (Gates.Count <= index)
+            {
+                _logger.LogWarning($"NPC {_dbNpc.Id} doesn't contain gate at index {index}. Check it out.");
+                return false;
+            }
+
+            return true;
         }
 
         #endregion

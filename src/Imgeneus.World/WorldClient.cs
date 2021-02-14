@@ -110,6 +110,7 @@ namespace Imgeneus.World
             { PacketType.CHARACTER_MOVE, (s) => new MoveCharacterPacket(s) },
             { PacketType.CHARACTER_ENTERED_MAP, (s) => new CharacterEnteredMapPacket(s) },
             { PacketType.CHARACTER_ENTERED_PORTAL, (s) => new CharacterEnteredPortalPacket(s) },
+            { PacketType.CHARACTER_TELEPORT_VIA_NPC, (s) => new CharacterTeleportViaNpcPacket(s) },
             { PacketType.CHARACTER_MOTION, (s) => new MotionPacket(s) },
             { PacketType.USE_CHARACTER_TARGET_SKILL, (s) => new CharacterSkillAttackPacket(s) },
             { PacketType.TARGET_SELECT_MOB, (s) => new MobInTargetPacket(s) },

@@ -139,6 +139,8 @@ namespace Imgeneus.World.Game.Player
 
         public void SendPortalTeleportNotAllowed(PortalTeleportNotAllowedReason reason) => _packetsHelper.SendPortalTeleportNotAllowed(Client, reason);
 
+        public void SendTeleportViaNpc(NpcTeleportNotAllowedReason reason) => _packetsHelper.SendTeleportViaNpc(Client, reason, Gold);
+
         public void SendUseVehicle(bool success, bool status) => _packetsHelper.SendUseVehicle(Client, success, status);
 
         public void SendMyShape() => _packetsHelper.SendCharacterShape(Client, this);

@@ -29,5 +29,10 @@
         Snowboard2 = 30,
         Snowboard3 = 32,
         VehicleCustom2 = 34,
+
+        /// <summary>
+        /// New vehicles, that are using model id instead of formula with Grow & Range.
+        /// </summary>
+        EP_8_Vehicles = 222
     }
 }

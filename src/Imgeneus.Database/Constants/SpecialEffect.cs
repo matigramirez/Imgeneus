@@ -2,7 +2,7 @@
 {
     public enum SpecialEffect : byte
     {
-        HealingPotion = 0,
+        None = 0,
         HypnosisCure = 1,
         StunCure = 2,
         SilenceCure = 3,
@@ -33,7 +33,7 @@
         TeleportationStone = 39,
         RepairHammer = 40,
         TargetResurrectionRune = 41,
-        FortuneBag = 42,
+        AnotherItemGenerator = 42,
         IncreaseFame = 43,
         AppearanceChange = 44,
         SexChange = 45,

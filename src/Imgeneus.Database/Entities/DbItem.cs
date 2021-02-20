@@ -124,6 +124,7 @@ namespace Imgeneus.Database.Entities
         /// <summary>
         /// For linking hammer, it's how many times it increases the success linking rate.
         /// For lapis, if it's set to 1, lapis can break equipment while unsuccessful linking.
+        /// For items, that generate other items (e.g. "Mystra's Box") it's index in file PSM_Client\Bin\Data\ItemCreate.ini
         /// </summary>
         [Required]
         public ushort ReqVg { get; set; }
@@ -144,12 +145,15 @@ namespace Imgeneus.Database.Entities
         /// <summary>
         /// From how far away character can use this item.
         /// For mounts, its value specifies which character shape we should use.
+        /// For items, that activates skills, it's skill id.
         /// </summary>
         [Required]
         public ushort Range { get; set; }
 
         /// <summary>
-        /// How fast this item. For mounts it's casting time in seconds.
+        /// How fast this item.
+        /// For mounts it's casting time in seconds.
+        /// For items, that activates skills, it's skill level.
         /// </summary>
         [Required]
         public byte AttackTime { get; set; }

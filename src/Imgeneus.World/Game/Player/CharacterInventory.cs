@@ -470,7 +470,7 @@ namespace Imgeneus.World.Game.Player
             if (item != Weapon && item != Mount)
                 SetAttackSpeedModifier(-1 * item.AttackSpeed);
 
-            if(item != Mount)
+            if (item != Mount)
                 MoveSpeed -= item.MoveSpeed;
         }
 
@@ -497,7 +497,7 @@ namespace Imgeneus.World.Game.Player
             if (item != Weapon && item != Mount)
                 SetAttackSpeedModifier(item.AttackSpeed);
 
-            if(item != Mount)
+            if (item != Mount)
                 MoveSpeed += item.MoveSpeed;
         }
 
@@ -866,8 +866,13 @@ namespace Imgeneus.World.Game.Player
         {
             switch (item.Special)
             {
-                case SpecialEffect.HealingPotion:
-                    UseHealingPotion(item);
+                case SpecialEffect.None:
+                    if (item.HP > 0 || item.MP > 0 || item.SP > 0)
+                        UseHealingPotion(item);
+
+                    if (item.SkillId != 0)
+                        UseSkill(new Skill(_databasePreloader.Skills[(item.SkillId, item.SkillLevel)], ITEM_SKILL_NUMBER, 0), this);
+
                     break;
 
                 case SpecialEffect.PercentHealingPotion:
@@ -983,8 +988,13 @@ namespace Imgeneus.World.Game.Player
                     UseNameChangeStone();
                     break;
 
+                case SpecialEffect.AnotherItemGenerator:
+                    // TODO: Generate another item based on item ReqVg.
+                    break;
+
                 case SpecialEffect.SkillResetStone:
                     ResetSkills();
+
                     break;
 
                 default:
@@ -1032,8 +1042,7 @@ namespace Imgeneus.World.Game.Player
         /// </summary>
         private void UseHealingPotion(Item potion)
         {
-            if (potion.HP > 0 || potion.MP > 0 || potion.SP > 0)
-                Recover(potion.HP, potion.MP, potion.SP);
+            Recover(potion.HP, potion.MP, potion.SP);
         }
 
         /// <summary>

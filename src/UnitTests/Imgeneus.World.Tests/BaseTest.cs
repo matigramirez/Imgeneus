@@ -125,7 +125,8 @@ namespace Imgeneus.World.Tests
                     { (762, 1), FireSkin },
                     { (765, 1), EarthSkin },
                     { (672, 1), Panic_Lvl1 },
-                    { (787, 1), Dispel }
+                    { (787, 1), Dispel },
+                    { (256, 1), Skill_HealthRemedy_Level1 }
                 });
             databasePreloader
                 .SetupGet((preloader) => preloader.Items)
@@ -144,7 +145,8 @@ namespace Imgeneus.World.Tests
                     { (100, 1), EtainPotion },
                     { (25, 1), RedApple },
                     { (42, 1), HorseSummonStone },
-                    { (42, 136), Nimbus1d }
+                    { (42, 136), Nimbus1d },
+                    { (100, 95), Item_HealthRemedy_Level_1  }
                 });
 
             databasePreloader
@@ -356,6 +358,17 @@ namespace Imgeneus.World.Tests
             TypeAttack = TypeAttack.MagicAttack,
         };
 
+        protected DbSkill Skill_HealthRemedy_Level1 = new DbSkill()
+        {
+            SkillId = 256,
+            SkillLevel = 1,
+            SkillName = "Health Remedy Lv1",
+            TypeDetail = TypeDetail.Buff,
+            TargetType = TargetType.Caster,
+            AbilityType1 = AbilityType.HP,
+            AbilityValue1 = 500
+        };
+
         #endregion
 
         #region Items
@@ -483,7 +496,7 @@ namespace Imgeneus.World.Tests
         {
             Type = 25,
             TypeId = 1,
-            Special = SpecialEffect.HealingPotion,
+            Special = SpecialEffect.None,
             ConstHP = 50
         };
 
@@ -498,6 +511,14 @@ namespace Imgeneus.World.Tests
             Type = 42,
             TypeId = 136,
             Duration = 86400
+        };
+
+        protected DbItem Item_HealthRemedy_Level_1 = new DbItem()
+        {
+            Type = 100,
+            TypeId = 95,
+            Range = 256,
+            AttackTime = 1
         };
 
         #endregion

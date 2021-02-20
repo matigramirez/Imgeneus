@@ -1,7 +1,4 @@
-using Imgeneus.Database.Constants;
-using Imgeneus.Database.Entities;
 using Imgeneus.World.Game.Player;
-using System.Collections.Generic;
 using System.ComponentModel;
 using Xunit;
 
@@ -9,33 +6,6 @@ namespace Imgeneus.World.Tests
 {
     public class CharacterBuffsTest : BaseTest
     {
-        private DbSkill skill1_level1 = new DbSkill()
-        {
-            SkillId = 1,
-            SkillLevel = 1,
-            TypeDetail = TypeDetail.Buff,
-            KeepTime = 3000 // 3 sec
-        };
-
-        private DbSkill skill1_level2 = new DbSkill()
-        {
-            SkillId = 1,
-            SkillLevel = 2,
-            TypeDetail = TypeDetail.Buff,
-            KeepTime = 5000 // 5 sec
-        };
-
-        public CharacterBuffsTest()
-        {
-            databasePreloader
-                .SetupGet((preloader) => preloader.Skills)
-                .Returns(new Dictionary<(ushort SkillId, byte SkillLevel), DbSkill>()
-                {
-                    { (1, 1) , skill1_level1 },
-                    { (1, 2) , skill1_level2 }
-                });
-        }
-
         [Fact]
         [Description("It should be possible to add a buff.")]
         public void Character_AddActiveBuff()
@@ -76,6 +46,28 @@ namespace Imgeneus.World.Tests
 
             character.AddActiveBuff(skill, character);
             Assert.True(character.ActiveBuffs[0].ResetTime > oldReselTime && character.ActiveBuffs[0].ResetTime != oldReselTime);
+        }
+
+        [Fact]
+        [Description("Buff is cleared after player's death.")]
+        public void Character_BuffClearedOnDeath()
+        {
+            var character = CreateCharacter();
+            var leadership = new Skill(Leadership, 1, 0);
+            var health_potion = new Skill(Skill_HealthRemedy_Level1, Character.ITEM_SKILL_NUMBER, 0);
+
+            character.AddActiveBuff(leadership, character);
+            character.AddActiveBuff(health_potion, character);
+
+            Assert.Equal(2, character.ActiveBuffs.Count);
+            Assert.Equal(Leadership.AbilityValue1, character.MinAttack);
+
+            character.DecreaseHP(100, CreateCharacter());
+
+            Assert.True(character.IsDead);
+            Assert.Single(character.ActiveBuffs);
+            Assert.Equal(Skill_HealthRemedy_Level1.SkillId, character.ActiveBuffs[0].SkillId);
+            Assert.Equal(0, character.MinAttack);
         }
     }
 }

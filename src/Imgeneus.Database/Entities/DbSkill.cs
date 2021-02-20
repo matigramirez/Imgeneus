@@ -415,9 +415,9 @@ namespace Imgeneus.Database.Entities
         public byte LimitHP { get; set; }
 
         /// <summary>
-        /// TODO: ?
+        /// Is buff should be cleared after character death?
         /// </summary>
-        public byte FixRange { get; set; }
+        public ClearAfterDeath FixRange { get; set; }
 
         /// <summary>
         /// TODO: ?

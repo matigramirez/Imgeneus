@@ -25,6 +25,8 @@ namespace Imgeneus.World.Game.Player
 
         public bool IsPassive => _skill.IsPassive;
 
+        public bool ShouldClearAfterDeath => _skill.ShouldClearAfterDeath;
+
         /// <summary>
         /// Who has created this buff.
         /// </summary>

@@ -51,6 +51,7 @@ namespace Imgeneus.World.Game.Player
             Element = dbSkill.Element;
             ApplyRange = dbSkill.ApplyRange;
             MultiAttack = dbSkill.MultiAttack;
+            ShouldClearAfterDeath = dbSkill.FixRange == ClearAfterDeath.Clear;
         }
 
         /// <summary>
@@ -177,6 +178,11 @@ namespace Imgeneus.World.Game.Player
         /// Skill damage will be multiplied by this number.
         /// </summary>
         public byte MultiAttack { get; }
+
+        /// <summary>
+        /// After character death this skill is cleared from buffs list?
+        /// </summary>
+        public bool ShouldClearAfterDeath { get; }
 
         /// <summary>
         /// How much stamina is needed in order to use this skill.

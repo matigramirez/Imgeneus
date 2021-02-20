@@ -939,6 +939,11 @@ namespace Imgeneus.World.Game
                             }
                         }
                     }
+
+                    // Clear buffs.
+                    var buffs = ActiveBuffs.Where(b => b.ShouldClearAfterDeath).ToList();
+                    foreach (var b in buffs)
+                        b.CancelBuff();
                 }
             }
         }

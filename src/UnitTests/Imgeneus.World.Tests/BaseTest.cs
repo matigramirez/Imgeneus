@@ -126,7 +126,11 @@ namespace Imgeneus.World.Tests
                     { (765, 1), EarthSkin },
                     { (672, 1), Panic_Lvl1 },
                     { (787, 1), Dispel },
-                    { (256, 1), Skill_HealthRemedy_Level1 }
+                    { (256, 1), Skill_HealthRemedy_Level1 },
+                    { (112, 1), Leadership },
+                    { (222, 1), EXP },
+                    { (0, 1) , skill1_level1 },
+                    { (0, 2) , skill1_level2 }
                 });
             databasePreloader
                 .SetupGet((preloader) => preloader.Items)
@@ -366,7 +370,54 @@ namespace Imgeneus.World.Tests
             TypeDetail = TypeDetail.Buff,
             TargetType = TargetType.Caster,
             AbilityType1 = AbilityType.HP,
-            AbilityValue1 = 500
+            AbilityValue1 = 500,
+            FixRange = ClearAfterDeath.KeepInMins
+        };
+
+        protected DbSkill Leadership = new DbSkill()
+        {
+            SkillId = 112,
+            SkillLevel = 1,
+            SkillName = "Leadership Lv1",
+            TypeDetail = TypeDetail.Buff,
+            TargetType = TargetType.AlliesNearCaster,
+            SuccessType = SuccessType.SuccessBasedOnValue,
+            SuccessValue = 100,
+            ApplyRange = 50,
+            AbilityType1 = AbilityType.PhysicalAttackPower,
+            AbilityValue1 = 13,
+            FixRange = ClearAfterDeath.Clear
+        };
+
+        protected DbSkill EXP = new DbSkill()
+        {
+            SkillId = 222,
+            SkillLevel = 1,
+            SkillName = "Increase EXP",
+            TypeDetail = TypeDetail.Buff,
+            TargetType = TargetType.Caster,
+            SuccessType = SuccessType.SuccessBasedOnValue,
+            SuccessValue = 100,
+            ApplyRange = 50,
+            AbilityType1 = AbilityType.ExpGainRate,
+            AbilityValue1 = 150,
+            FixRange = ClearAfterDeath.KeepInHours
+        };
+
+        protected DbSkill skill1_level1 = new DbSkill()
+        {
+            SkillId = 0,
+            SkillLevel = 1,
+            TypeDetail = TypeDetail.Buff,
+            KeepTime = 3000 // 3 sec
+        };
+
+        protected DbSkill skill1_level2 = new DbSkill()
+        {
+            SkillId = 0,
+            SkillLevel = 2,
+            TypeDetail = TypeDetail.Buff,
+            KeepTime = 5000 // 5 sec
         };
 
         #endregion

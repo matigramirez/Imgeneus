@@ -137,7 +137,7 @@ namespace Imgeneus.World.Game.Duel
                 return;
             }
             tradeItem.TradeQuantity = tradeItem.Count > quantity ? quantity : tradeItem.Count;
-            Sender.TradeItems.Add(slotInTradeWindow, tradeItem);
+            Sender.TradeItems.TryAdd(slotInTradeWindow, tradeItem);
 
             SendAddedItemToTrade(Sender.Client, bag, slot, quantity, slotInTradeWindow);
             SendAddedItemToTrade(Sender.DuelOpponent.Client, tradeItem, quantity, slotInTradeWindow);
@@ -150,7 +150,7 @@ namespace Imgeneus.World.Game.Duel
         private void HandleRemoveItem(byte slotInTradeWindow)
         {
             if (Sender.TradeItems.ContainsKey(slotInTradeWindow))
-                Sender.TradeItems.Remove(slotInTradeWindow);
+                Sender.TradeItems.TryRemove(slotInTradeWindow, out var removed);
             else
             {
                 // Possible cheating, maybe log it?

@@ -131,6 +131,10 @@ namespace Imgeneus.World.Game.Player
                     HandleEnterPortalPacket(enterPortalPacket);
                     break;
 
+                case CharacterTeleportViaNpcPacket teleportViaNpcPacket:
+                    HandleTeleportViaNpc(teleportViaNpcPacket);
+                    break;
+
                 case UseItemPacket useItemPacket:
                     UseItem(useItemPacket.Bag, useItemPacket.Slot);
                     break;

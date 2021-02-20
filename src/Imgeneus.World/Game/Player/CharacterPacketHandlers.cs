@@ -9,6 +9,7 @@ using System.Linq;
 using Imgeneus.World.Game.Monster;
 using Imgeneus.World.Game.Zone;
 using System.Collections.Generic;
+using Imgeneus.World.Game.Zone.Portals;
 
 namespace Imgeneus.World.Game.Player
 {
@@ -539,6 +540,41 @@ namespace Imgeneus.World.Game.Player
 
             if (!success)
                 SendPortalTeleportNotAllowed(reason);
+        }
+
+
+        private void HandleTeleportViaNpc(CharacterTeleportViaNpcPacket teleportViaNpcPacket)
+        {
+            var npc = Map.GetNPC(CellId, teleportViaNpcPacket.NpcId);
+            if (npc is null)
+            {
+                _logger.LogWarning($"Character {Id} is trying to get non-existing npc via teleport packet.");
+                return;
+            }
+
+            if (!npc.ContainsGate(teleportViaNpcPacket.GateId))
+                return;
+
+            var gate = npc.Gates[teleportViaNpcPacket.GateId];
+
+            if (Gold < gate.Cost)
+            {
+                SendTeleportViaNpc(NpcTeleportNotAllowedReason.NotEnoughMoney);
+                return;
+            }
+
+            var mapConfig = _mapLoader.LoadMapConfiguration(gate.MapId);
+            if (mapConfig is null)
+            {
+                SendTeleportViaNpc(NpcTeleportNotAllowedReason.MapCapacityIsFull);
+                return;
+            }
+
+            // TODO: there should be somewhere player's level check. But I can not find it in gate config.
+
+            ChangeGold((uint)(Gold - gate.Cost));
+            SendTeleportViaNpc(NpcTeleportNotAllowedReason.Success);
+            Teleport(gate.MapId, gate.X, gate.Y, gate.Z);
         }
 
         private void HandleGMCreateMob(GMCreateMobPacket gmCreateMobPacket)

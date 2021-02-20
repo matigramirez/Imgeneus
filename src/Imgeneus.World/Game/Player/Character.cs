@@ -380,8 +380,12 @@ namespace Imgeneus.World.Game.Player
             foreach (var skill in dbCharacter.Skills.Select(s => new Skill(s.Skill, s.Number, 0)))
                 character.Skills.Add(skill.Number, skill);
 
-            character.ActiveBuffs.AddRange(dbCharacter.ActiveBuffs.Select(b => ActiveBuff.FromDbCharacterActiveBuff(b)));
-            character.Quests.AddRange(dbCharacter.Quests.Select(q => new Quest(databasePreloader, q)));
+            var activeBuffs = dbCharacter.ActiveBuffs.Select(b => ActiveBuff.FromDbCharacterActiveBuff(b)).ToList();
+            character.ActiveBuffs.AddRange(activeBuffs);
+
+            var quests = dbCharacter.Quests.Select(q => new Quest(databasePreloader, q)).ToList();
+            character.Quests.AddRange(quests);
+
             character.QuickItems = dbCharacter.QuickItems;
 
             foreach (var item in dbCharacter.Items.Select(i => new Item(databasePreloader, i)))

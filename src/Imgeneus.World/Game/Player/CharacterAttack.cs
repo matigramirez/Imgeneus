@@ -1,4 +1,5 @@
-﻿using Imgeneus.Database.Constants;
+﻿using Imgeneus.Core.Extensions;
+using Imgeneus.Database.Constants;
 using Imgeneus.World.Game.Monster;
 using Microsoft.Extensions.Logging;
 using System;
@@ -204,7 +205,7 @@ namespace Imgeneus.World.Game.Player
 
                     case TargetType.PartyMembers:
                         if (Party != null)
-                            foreach (var member in Party.Members)
+                            foreach (var member in Party.Members.Where(m => m.Map == Map && MathExtensions.Distance(PosX, m.PosX, PosZ, m.PosZ) < skill.ApplyRange).ToList())
                                 targets.Add(member);
                         else
                             targets.Add(this);

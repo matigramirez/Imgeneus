@@ -762,6 +762,13 @@ namespace Imgeneus.World.Game
                         SetAttackSpeedModifier(-1 * abilityValue);
                     return;
 
+                case AbilityType.AbsorptionAura:
+                    if (addAbility)
+                        Absorption += abilityValue;
+                    else
+                        Absorption -= abilityValue;
+                    return;
+
                 default:
                     throw new NotImplementedException($"Not implemented ability type {abilityType}");
             }
@@ -1243,6 +1250,13 @@ namespace Imgeneus.World.Game
         /// How fast killable changes its' position.
         /// </summary>
         public abstract int MoveSpeed { get; protected set; }
+
+        #endregion
+
+        #region Absorption
+
+        /// <inheritdoc/>
+        public ushort Absorption { get; protected set; }
 
         #endregion
 

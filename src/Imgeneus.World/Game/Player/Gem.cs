@@ -79,5 +79,7 @@ namespace Imgeneus.World.Game.Player
         public byte ReqIg => _item.ReqIg;
 
         public ushort ReqVg => _item.ReqVg;
+
+        public byte Absorb => _item.Exp;
     }
 }

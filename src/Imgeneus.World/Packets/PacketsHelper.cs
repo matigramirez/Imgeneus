@@ -365,6 +365,13 @@ namespace Imgeneus.World.Packets
             client.SendPacket(packet);
         }
 
+        internal void SendAbsorbValue(IWorldClient client, ushort absorb)
+        {
+            using var packet = new Packet(PacketType.CHARACTER_ABSORPTION_DAMAGE);
+            packet.Write(absorb);
+            client.SendPacket(packet);
+        }
+
         internal void SendCooldownNotOver(IWorldClient client, Character sender, IKillable target, Skill skill)
         {
             PacketType type = target is Character ? PacketType.USE_CHARACTER_TARGET_SKILL : PacketType.USE_MOB_TARGET_SKILL;

@@ -466,6 +466,7 @@ namespace Imgeneus.World.Game.Player
             ExtraMP -= item.MP;
             ExtraDefense -= item.Defense;
             ExtraResistance -= item.Resistance;
+            Absorption -= item.Absorb;
 
             if (item != Weapon && item != Mount)
                 SetAttackSpeedModifier(-1 * item.AttackSpeed);
@@ -493,6 +494,7 @@ namespace Imgeneus.World.Game.Player
             ExtraMP += item.MP;
             ExtraDefense += item.Defense;
             ExtraResistance += item.Resistance;
+            Absorption += item.Absorb;
 
             if (item != Weapon && item != Mount)
                 SetAttackSpeedModifier(item.AttackSpeed);

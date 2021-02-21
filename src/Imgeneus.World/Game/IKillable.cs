@@ -101,6 +101,11 @@ namespace Imgeneus.World.Game
         public int MoveSpeed { get; }
 
         /// <summary>
+        /// Absorbs damage regardless of REC value.
+        /// </summary>
+        public ushort Absorption { get; }
+
+        /// <summary>
         /// Event, that is fired, when killable is resurrected.
         /// </summary>
         public event Action<IKillable> OnRebirthed;

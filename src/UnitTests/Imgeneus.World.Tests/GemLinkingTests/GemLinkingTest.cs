@@ -425,5 +425,85 @@ namespace Imgeneus.World.Tests.GemLinkingTests
             Assert.Equal(0, character.TotalStr);
             Assert.Empty(character.InventoryItems);
         }
+
+        [Fact]
+        [Description("When Absorption gem is linked it should increase absorb value.")]
+        public void Gem_Absorption()
+        {
+            var character = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, mapsLoaderMock.Object, chatMock.Object, new LinkingManager(databasePreloader.Object), dyeingMock.Object, mobFactoryMock.Object, npcFactoryMock.Object, noticeManagerMock.Object);
+            character.Client = worldClientMock.Object;
+
+            character.AddItemToInventory(new Item(databasePreloader.Object, JustiaArmor.Type, JustiaArmor.TypeId));
+            character.AddItemToInventory(new Item(databasePreloader.Object, PerfectLinkingHammer.Type, PerfectLinkingHammer.TypeId));
+            character.AddItemToInventory(new Item(databasePreloader.Object, Gem_Absorption_Level_4.Type, Gem_Absorption_Level_4.TypeId));
+
+            var armor = character.InventoryItems[(1, 0)];
+            var hammer = character.InventoryItems[(1, 1)];
+            var gem = character.InventoryItems[(1, 2)];
+
+            character.AddGem(gem.Bag, gem.Slot, armor.Bag, armor.Slot, hammer.Bag, hammer.Slot);
+
+            character.MoveItem(1, 0, 0, 1);
+            Assert.NotNull(character.Armor);
+            Assert.Equal(Gem_Absorption_Level_4.Exp, character.Absorption);
+            Assert.Equal(Gem_Absorption_Level_4.Exp, character.Armor.Absorb);
+            Assert.True(character.Absorption > 0);
+        }
+
+
+        [Fact]
+        [Description("When Absorption gem is linked it should increase absorb value.")]
+        public void Gem_Absorption_ItemIsOnCharacter()
+        {
+            var character = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, mapsLoaderMock.Object, chatMock.Object, new LinkingManager(databasePreloader.Object), dyeingMock.Object, mobFactoryMock.Object, npcFactoryMock.Object, noticeManagerMock.Object);
+            character.Client = worldClientMock.Object;
+
+            character.AddItemToInventory(new Item(databasePreloader.Object, JustiaArmor.Type, JustiaArmor.TypeId));
+            character.AddItemToInventory(new Item(databasePreloader.Object, PerfectLinkingHammer.Type, PerfectLinkingHammer.TypeId));
+            character.AddItemToInventory(new Item(databasePreloader.Object, Gem_Absorption_Level_4.Type, Gem_Absorption_Level_4.TypeId));
+            character.MoveItem(1, 0, 0, 1);
+
+            Assert.NotNull(character.Armor);
+            Assert.Equal(0, character.Absorption);
+
+            var hammer = character.InventoryItems[(1, 1)];
+            var gem = character.InventoryItems[(1, 2)];
+
+            character.AddGem(gem.Bag, gem.Slot, character.Armor.Bag, character.Armor.Slot, hammer.Bag, hammer.Slot);
+
+            Assert.Equal(Gem_Absorption_Level_4.Exp, character.Absorption);
+            Assert.True(character.Absorption > 0);
+        }
+
+        [Fact]
+        [Description("When several absorption gems are linked, total Absorption value should be sum of gems Absorption.")]
+        public void Gem_AbsorptionAreStackable()
+        {
+            var character = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, mapsLoaderMock.Object, chatMock.Object, new LinkingManager(databasePreloader.Object), dyeingMock.Object, mobFactoryMock.Object, npcFactoryMock.Object, noticeManagerMock.Object);
+            character.Client = worldClientMock.Object;
+
+            character.AddItemToInventory(new Item(databasePreloader.Object, JustiaArmor.Type, JustiaArmor.TypeId));
+            character.AddItemToInventory(new Item(databasePreloader.Object, PerfectLinkingHammer.Type, PerfectLinkingHammer.TypeId));
+            character.AddItemToInventory(new Item(databasePreloader.Object, Gem_Absorption_Level_4.Type, Gem_Absorption_Level_4.TypeId));
+
+            var armor = character.InventoryItems[(1, 0)];
+            var hammer = character.InventoryItems[(1, 1)];
+            var gem = character.InventoryItems[(1, 2)];
+
+            // Add lvl 4 gem.
+            character.AddGem(gem.Bag, gem.Slot, armor.Bag, armor.Slot, hammer.Bag, hammer.Slot);
+
+            character.AddItemToInventory(new Item(databasePreloader.Object, PerfectLinkingHammer.Type, PerfectLinkingHammer.TypeId));
+            character.AddItemToInventory(new Item(databasePreloader.Object, Gem_Absorption_Level_5.Type, Gem_Absorption_Level_5.TypeId));
+
+            // Add lvl 5 gem.
+            character.AddGem(gem.Bag, gem.Slot, armor.Bag, armor.Slot, hammer.Bag, hammer.Slot);
+
+            Assert.Equal(Gem_Absorption_Level_4.Exp + Gem_Absorption_Level_5.Exp, armor.Absorb);
+
+            // Wear armor.
+            character.MoveItem(1, 0, 0, 1);
+            Assert.Equal(Gem_Absorption_Level_4.Exp + Gem_Absorption_Level_5.Exp, character.Absorption);
+        }
     }
 }

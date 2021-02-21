@@ -537,6 +537,32 @@ namespace Imgeneus.World.Game.Player
         }
 
         /// <summary>
+        /// Items with "Absorption Lapis" can reduce damage.
+        /// </summary>
+        public ushort Absorb
+        {
+            get
+            {
+                ushort absorb = 0;
+
+                if (Gem1 != null)
+                    absorb += Gem1.Absorb;
+                if (Gem2 != null)
+                    absorb += Gem2.Absorb;
+                if (Gem3 != null)
+                    absorb += Gem3.Absorb;
+                if (Gem4 != null)
+                    absorb += Gem4.Absorb;
+                if (Gem5 != null)
+                    absorb += Gem5.Absorb;
+                if (Gem6 != null)
+                    absorb += Gem6.Absorb;
+
+                return (ushort)(_dbItem.Exp + absorb);
+            }
+        }
+
+        /// <summary>
         /// Special effect like teleport/cure/summon etc.
         /// </summary>
         public SpecialEffect Special => _dbItem.Special;

@@ -312,7 +312,12 @@ namespace Imgeneus.World.Game.Zone
         private void Character_OnUsedSkill(IKiller sender, IKillable target, Skill skill, AttackResult attackResult)
         {
             foreach (var player in GetAllPlayers(true))
+            {
                 _packetsHelper.SendCharacterUsedSkill(player.Client, (Character)sender, target, skill, attackResult);
+
+                if (attackResult.Absorb != 0 && player == target)
+                    _packetsHelper.SendAbsorbValue(player.Client, attackResult.Absorb);
+            }
         }
 
         /// <summary>
@@ -321,7 +326,12 @@ namespace Imgeneus.World.Game.Zone
         private void Character_OnAttack(IKiller sender, IKillable target, AttackResult attackResult)
         {
             foreach (var player in GetAllPlayers(true))
+            {
                 _packetsHelper.SendCharacterUsualAttack(player.Client, sender, target, attackResult);
+
+                if (attackResult.Absorb != 0 && player == target)
+                    _packetsHelper.SendAbsorbValue(player.Client, attackResult.Absorb);
+            }
         }
 
         /// <summary>
@@ -393,7 +403,12 @@ namespace Imgeneus.World.Game.Zone
         private void Character_OnUsedRangeSkill(IKiller sender, IKillable target, Skill skill, AttackResult attackResult)
         {
             foreach (var player in GetAllPlayers(true))
+            {
                 _packetsHelper.SendUsedRangeSkill(player.Client, (Character)sender, target, skill, attackResult);
+
+                if (attackResult.Absorb != 0 && player == target)
+                    _packetsHelper.SendAbsorbValue(player.Client, attackResult.Absorb);
+            }
         }
 
         private void Character_OnRebirthed(IKillable sender)
@@ -560,13 +575,23 @@ namespace Imgeneus.World.Game.Zone
         private void Mob_OnAttack(IKiller sender, IKillable target, AttackResult attackResult)
         {
             foreach (var player in GetAllPlayers(true))
+            {
                 _packetsHelper.SendMobAttack(player.Client, (Mob)sender, target.Id, attackResult);
+
+                if (attackResult.Absorb != 0 && player == target)
+                    _packetsHelper.SendAbsorbValue(player.Client, attackResult.Absorb);
+            }
         }
 
         private void Mob_OnUsedSkill(IKiller sender, IKillable target, Skill skill, AttackResult attackResult)
         {
             foreach (var player in GetAllPlayers(true))
+            {
                 _packetsHelper.SendMobUsedSkill(player.Client, (Mob)sender, target.Id, skill, attackResult);
+
+                if (attackResult.Absorb != 0 && player == target)
+                    _packetsHelper.SendAbsorbValue(player.Client, attackResult.Absorb);
+            }
         }
 
         private void Mob_OnRecover(IKillable sender)

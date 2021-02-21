@@ -72,6 +72,7 @@ namespace Imgeneus.World.Game.Player
                 ExtraMP += gem.MP;
                 ExtraDefense += gem.Defense;
                 ExtraResistance += gem.Resistance;
+                Absorption += gem.Absorb;
                 MoveSpeed += gem.MoveSpeed;
                 SetAttackSpeedModifier(gem.AttackSpeed);
 
@@ -321,6 +322,7 @@ namespace Imgeneus.World.Game.Player
                         ExtraMP -= gem.MP;
                         ExtraDefense -= gem.Defense;
                         ExtraResistance -= gem.Resistance;
+                        Absorption -= gem.Absorb;
                         MoveSpeed -= gem.MoveSpeed;
                         SetAttackSpeedModifier(gem.AttackSpeed * (-1));
 

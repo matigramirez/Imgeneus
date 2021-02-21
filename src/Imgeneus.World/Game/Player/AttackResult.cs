@@ -15,10 +15,16 @@
         /// </summary>
         public Damage Damage;
 
-        public AttackResult(AttackSuccess success, Damage damage)
+        /// <summary>
+        /// How much damage was absorbed.
+        /// </summary>
+        public ushort Absorb;
+
+        public AttackResult(AttackSuccess success, Damage damage, ushort absorb = 0)
         {
             Success = success;
             Damage = damage;
+            Absorb = absorb;
         }
     }
 

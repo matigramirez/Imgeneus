@@ -316,10 +316,23 @@ namespace Imgeneus.World.Game
             if (damage > 30000)
                 damage = 30000;
 
-            if (criticalDamage)
-                return new AttackResult(AttackSuccess.Critical, new Damage(Convert.ToUInt16(damage), 0, 0));
+            // Forth, subtract absorption value;
+            ushort absorb = 0;
+            if (target.Absorption < damage)
+            {
+                damage -= target.Absorption;
+                absorb = target.Absorption;
+            }
             else
-                return new AttackResult(AttackSuccess.Normal, new Damage(Convert.ToUInt16(damage), 0, 0));
+            {
+                absorb = Convert.ToUInt16(damage);
+                damage = 0;
+            }
+
+            if (criticalDamage)
+                return new AttackResult(AttackSuccess.Critical, new Damage(Convert.ToUInt16(damage), 0, 0), absorb);
+            else
+                return new AttackResult(AttackSuccess.Normal, new Damage(Convert.ToUInt16(damage), 0, 0), absorb);
         }
 
         /// <summary>

@@ -130,7 +130,8 @@ namespace Imgeneus.World.Tests
                     { (112, 1), Leadership },
                     { (222, 1), EXP },
                     { (0, 1) , skill1_level1 },
-                    { (0, 2) , skill1_level2 }
+                    { (0, 2) , skill1_level2 },
+                    { (418, 11), BlastAbsorbRedemySkill }
                 });
             databasePreloader
                 .SetupGet((preloader) => preloader.Items)
@@ -150,7 +151,10 @@ namespace Imgeneus.World.Tests
                     { (25, 1), RedApple },
                     { (42, 1), HorseSummonStone },
                     { (42, 136), Nimbus1d },
-                    { (100, 95), Item_HealthRemedy_Level_1  }
+                    { (100, 95), Item_HealthRemedy_Level_1  },
+                    { (101, 71), Item_AbsorbRemedy },
+                    { (30, 240), Gem_Absorption_Level_4 },
+                    { (30, 241), Gem_Absorption_Level_5 }
                 });
 
             databasePreloader
@@ -420,6 +424,18 @@ namespace Imgeneus.World.Tests
             KeepTime = 5000 // 5 sec
         };
 
+        protected DbSkill BlastAbsorbRedemySkill = new DbSkill()
+        {
+            SkillId = 418,
+            SkillLevel = 11,
+            TypeDetail = TypeDetail.Buff,
+            SuccessType = SuccessType.SuccessBasedOnValue,
+            SuccessValue = 100,
+            TargetType = TargetType.Caster,
+            AbilityType1 = AbilityType.AbsorptionAura,
+            AbilityValue1 = 20
+        };
+
         #endregion
 
         #region Items
@@ -533,6 +549,20 @@ namespace Imgeneus.World.Tests
             Quality = 0
         };
 
+        protected DbItem Gem_Absorption_Level_4 = new DbItem()
+        {
+            Type = 30,
+            TypeId = 240,
+            Exp = 20
+        };
+
+        protected DbItem Gem_Absorption_Level_5 = new DbItem()
+        {
+            Type = 30,
+            TypeId = 241,
+            Exp = 50
+        };
+
         protected DbItem EtainPotion = new DbItem()
         {
             Type = 100,
@@ -570,6 +600,14 @@ namespace Imgeneus.World.Tests
             TypeId = 95,
             Range = 256,
             AttackTime = 1
+        };
+
+        protected DbItem Item_AbsorbRemedy = new DbItem()
+        {
+            Type = 101,
+            TypeId = 71,
+            Range = 418,
+            AttackTime = 11
         };
 
         #endregion

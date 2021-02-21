@@ -104,7 +104,7 @@ namespace Imgeneus.Database.Entities
         public ushort ReqRec { get; set; }
 
         /// <summary>
-        /// Required intelligence to use it.
+        /// Required level.
         /// </summary>
         [Required]
         public ushort ReqInt { get; set; }
@@ -268,7 +268,7 @@ namespace Imgeneus.Database.Entities
         public byte Speed { get; set; }
 
         /// <summary>
-        /// ?
+        /// For lapis, it's absorption value.
         /// </summary>
         [Required]
         public byte Exp { get; set; }

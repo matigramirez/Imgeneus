@@ -118,5 +118,10 @@ namespace Imgeneus.World.Game
         /// <param name="y">y coordinate</param>
         /// <param name="z">z coordinate</param>
         public void Rebirth(ushort mapId, float x, float y, float z);
+
+        /// <summary>
+        /// Indicator, that shows if the entity cannot be damaged.
+        /// </summary>
+        public bool IsUntouchable { get; }
     }
 }

@@ -63,6 +63,7 @@ namespace Imgeneus.World.Game
                 case TypeDetail.RemoveAttribute:
                 case TypeDetail.ElementalAttack:
                 case TypeDetail.ElementalProtection:
+                case TypeDetail.Untouchable:
                     target.AddActiveBuff(skill, this);
 
                     if (initialTarget == target || this == target)
@@ -164,7 +165,7 @@ namespace Imgeneus.World.Game
         {
             // Uncomment this code, if you want to always hit target.
             // return true;
-            if (target is Mob && (target as Mob).State == MobState.BackToBirthPosition)
+            if (target.IsUntouchable)
                 return false;
 
             if (skill != null && (skill.StateType == StateType.FlatDamage || skill.StateType == StateType.DeathTouch))

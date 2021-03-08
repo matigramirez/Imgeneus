@@ -131,7 +131,9 @@ namespace Imgeneus.World.Tests
                     { (222, 1), EXP },
                     { (0, 1) , skill1_level1 },
                     { (0, 2) , skill1_level2 },
-                    { (418, 11), BlastAbsorbRedemySkill }
+                    { (418, 11), BlastAbsorbRedemySkill },
+                    { (655, 1), Untouchable },
+                    { (724, 1), BullsEye }
                 });
             databasePreloader
                 .SetupGet((preloader) => preloader.Items)
@@ -434,6 +436,27 @@ namespace Imgeneus.World.Tests
             TargetType = TargetType.Caster,
             AbilityType1 = AbilityType.AbsorptionAura,
             AbilityValue1 = 20
+        };
+
+        protected DbSkill Untouchable = new DbSkill()
+        {
+            SkillId = 655,
+            SkillLevel = 1,
+            SkillName = "Untouchable Lv1",
+            TypeDetail = TypeDetail.Untouchable,
+            SuccessType = SuccessType.SuccessBasedOnValue,
+            SuccessValue = 100,
+            TargetType = TargetType.Caster
+        };
+
+        protected DbSkill BullsEye = new DbSkill()
+        {
+            SkillId = 724,
+            SkillLevel = 1,
+            SkillName = "Bull's Eye",
+            SuccessType = SuccessType.SuccessBasedOnValue,
+            SuccessValue = 100,
+            TargetType = TargetType.SelectedEnemy
         };
 
         #endregion

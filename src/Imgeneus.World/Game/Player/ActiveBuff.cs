@@ -101,6 +101,17 @@ namespace Imgeneus.World.Game.Player
             }
         }
 
+        /// <summary>
+        /// Is skill makes entity untouchable?
+        /// </summary>
+        public bool IsUntouchable
+        {
+            get
+            {
+                return _skill.Type == TypeDetail.Untouchable;
+            }
+        }
+
         #endregion
 
         #region Buff reset

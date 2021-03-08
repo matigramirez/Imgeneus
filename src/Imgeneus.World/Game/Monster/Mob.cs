@@ -121,6 +121,18 @@ namespace Imgeneus.World.Game.Monster
 
         #endregion
 
+        #region Untouchable 
+
+        ///  <inheritdoc/>
+        public override bool IsUntouchable
+        {
+            get
+            {
+                return State == MobState.BackToBirthPosition;
+            }
+        }
+        #endregion
+
         /// <summary>
         /// Creates mob clone.
         /// </summary>

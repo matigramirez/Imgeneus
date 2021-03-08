@@ -6,7 +6,6 @@ using System.Linq;
 using Imgeneus.Database.Constants;
 using Imgeneus.Database.Preload;
 using Imgeneus.World.Game.Monster;
-using Imgeneus.World.Game.PartyAndRaid;
 using Imgeneus.World.Game.Player;
 using Imgeneus.World.Game.Zone;
 using MvvmHelpers;
@@ -514,6 +513,10 @@ namespace Imgeneus.World.Game
                     DefenceSkillElement = skill.Element;
                     break;
 
+                case TypeDetail.Untouchable:
+                    IsUntouchable = true;
+                    break;
+
                 default:
                     throw new NotImplementedException("Not implemented buff skill type.");
             }
@@ -588,6 +591,10 @@ namespace Imgeneus.World.Game
 
                 case TypeDetail.ElementalProtection:
                     DefenceSkillElement = Element.None;
+                    break;
+
+                case TypeDetail.Untouchable:
+                    IsUntouchable = ActiveBuffs.Any(b => b.IsUntouchable);
                     break;
 
                 default:
@@ -1257,6 +1264,13 @@ namespace Imgeneus.World.Game
 
         /// <inheritdoc/>
         public ushort Absorption { get; protected set; }
+
+        #endregion
+
+        #region Untouchable
+
+        ///  <inheritdoc/>
+        public virtual bool IsUntouchable { get; private set; }
 
         #endregion
 

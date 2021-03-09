@@ -140,6 +140,36 @@ namespace Imgeneus.Database.Entities
         public ushort Wisdom { get; set; }
 
         /// <summary>
+        /// Gets or sets strength stat, that is set automatically, when player selects auto settings.
+        /// </summary>
+        public byte AutoStr { get; set; }
+
+        /// <summary>
+        /// Gets or sets dexterity stat, that is set automatically, when player selects auto settings.
+        /// </summary>
+        public byte AutoDex { get; set; }
+
+        /// <summary>
+        /// Gets or sets rec stat, that is set automatically, when player selects auto settings.
+        /// </summary>
+        public byte AutoRec { get; set; }
+
+        /// <summary>
+        /// Gets or sets intelligence stat, that is set automatically, when player selects auto settings.
+        /// </summary>
+        public byte AutoInt { get; set; }
+
+        /// <summary>
+        /// Gets or sets luck stat, that is set automatically, when player selects auto settings.
+        /// </summary>
+        public byte AutoLuc { get; set; }
+
+        /// <summary>
+        /// Gets or sets wisdom stat, that is set automatically, when player selects auto settings.
+        /// </summary>
+        public byte AutoWis { get; set; }
+
+        /// <summary>
         /// Gets or sets the character health points.
         /// </summary>
         public ushort HealthPoints { get; set; }

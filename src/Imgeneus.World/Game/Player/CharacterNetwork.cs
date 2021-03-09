@@ -331,6 +331,10 @@ namespace Imgeneus.World.Game.Player
                     HandleUpdateStats(updateStatsPacket.Str, updateStatsPacket.Dex, updateStatsPacket.Rec, updateStatsPacket.Int, updateStatsPacket.Wis, updateStatsPacket.Luc);
                     break;
 
+                case AutoStatsSettingsPacket autoStatsSettingsPacket:
+                    HandleAutoStatsSettings(autoStatsSettingsPacket.Str, autoStatsSettingsPacket.Dex, autoStatsSettingsPacket.Rec, autoStatsSettingsPacket.Int, autoStatsSettingsPacket.Wis, autoStatsSettingsPacket.Luc);
+                    break;
+
                 case GMCreateMobPacket gMCreateMobPacket:
                     if (!IsAdmin)
                         return;
@@ -408,7 +412,7 @@ namespace Imgeneus.World.Game.Player
                     if (!IsAdmin)
                         return;
 
-                    if(_noticeManager.TrySendPlayerNotice(gmNoticePlayerPacket.Message, gmNoticePlayerPacket.TargetName,
+                    if (_noticeManager.TrySendPlayerNotice(gmNoticePlayerPacket.Message, gmNoticePlayerPacket.TargetName,
                         gmNoticePlayerPacket.TimeInterval))
                         _packetsHelper.SendGmCommandSuccess(Client);
                     else
@@ -462,7 +466,7 @@ namespace Imgeneus.World.Game.Player
 
                 case BankClaimItemPacket bankClaimItemPacket:
                     var result = TryClaimBankItem(bankClaimItemPacket.Slot, out _);
-                    if(!result)
+                    if (!result)
                         _packetsHelper.SendFullInventory(Client);
                     break;
             }

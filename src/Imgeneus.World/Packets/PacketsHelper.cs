@@ -204,6 +204,18 @@ namespace Imgeneus.World.Packets
             client.SendPacket(packet);
         }
 
+        internal void SendAutoStats(IWorldClient client, Character character)
+        {
+            using var packet = new Packet(PacketType.AUTO_STATS_LIST);
+            packet.Write(character.AutoStr);
+            packet.Write(character.AutoDex);
+            packet.Write(character.AutoRec);
+            packet.Write(character.AutoInt);
+            packet.Write(character.AutoWis);
+            packet.Write(character.AutoLuc);
+            client.SendPacket(packet);
+        }
+
         internal void SendMaxHitpoints(IWorldClient client, Character character, HitpointType type)
         {
             using var packet = new Packet(PacketType.CHARACTER_MAX_HITPOINTS);

@@ -439,6 +439,29 @@ namespace Imgeneus.DatabaseBackgroundService.Handlers
             await _database.SaveChangesAsync();
         }
 
+        [ActionHandler(ActionType.UPDATE_AUTO_STATS)]
+        internal async Task UpdateAutoStats(object[] args)
+        {
+            int characterId = (int)args[0];
+            byte str = (byte)args[1];
+            byte dex = (byte)args[2];
+            byte rec = (byte)args[3];
+            byte intl = (byte)args[4];
+            byte wis = (byte)args[5];
+            byte luc = (byte)args[6];
+
+            var character = _database.Characters.Find(characterId);
+
+            character.AutoStr = str;
+            character.AutoDex = dex;
+            character.AutoRec = rec;
+            character.AutoInt = intl;
+            character.AutoWis = wis;
+            character.AutoLuc = luc;
+
+            await _database.SaveChangesAsync();
+        }
+
         [ActionHandler(ActionType.SAVE_IS_RENAME)]
         internal async Task SaveRename(object[] args)
         {

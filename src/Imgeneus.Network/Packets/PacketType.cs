@@ -72,6 +72,8 @@
         UPDATE_STATS = 0x0208, // 520
         LEARN_NEW_SKILL = 0x0209, // 521
         STATS_RESET = 0x0214, // 532
+        AUTO_STATS_LIST = 0x0120, // 288
+        AUTO_STATS_SET = 0x0121, // 289
 
         // Target
         TARGET_SELECT_CHARACTER = 0x0302, // 770

@@ -34,6 +34,7 @@
 
         // Stats
         UPDATE_STATS,
+        UPDATE_AUTO_STATS,
 
         // Skills
         SAVE_SKILL,

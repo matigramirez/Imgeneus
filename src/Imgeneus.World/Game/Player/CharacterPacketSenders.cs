@@ -26,6 +26,7 @@ namespace Imgeneus.World.Game.Player
             SendFriends();
             SendBlessAmount();
             SendBankItems();
+            SendAutoStats();
 #if EP8_V1
             SendAccountPoints(); // WARNING: This is necessary if you have an in-game item mall.
 #endif
@@ -83,6 +84,8 @@ namespace Imgeneus.World.Game.Player
             if (Client != null) _packetsHelper.SendAdditionalStats(Client, this);
         }
 
+        private void SendAutoStats() => _packetsHelper.SendAutoStats(Client, this);
+
         private void SendMaxHP() => _packetsHelper.SendMaxHitpoints(Client, this, HitpointType.HP);
 
         private void SendMaxSP() => _packetsHelper.SendMaxHitpoints(Client, this, HitpointType.SP);
@@ -125,7 +128,7 @@ namespace Imgeneus.World.Game.Player
         {
             _packetsHelper.SendAddItem(Client, item);
 
-            if(item.ExpirationTime != null)
+            if (item.ExpirationTime != null)
                 _packetsHelper.SendItemExpiration(Client, item);
         }
 

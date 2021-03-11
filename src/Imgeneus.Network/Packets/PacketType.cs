@@ -28,6 +28,7 @@
         // Login Server
         LOGIN_HANDSHAKE = 0xA101, // 41217
         LOGIN_REQUEST = 0xA102,
+        OAUTH_LOGIN_REQUEST = 0xA110,
         SERVER_LIST = 0xA201,
         SELECT_SERVER = 0xA202,
 

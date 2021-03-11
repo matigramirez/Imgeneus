@@ -96,6 +96,7 @@ namespace Imgeneus.Login
         {
             { PacketType.LOGIN_HANDSHAKE, (s) => new LoginHandshakePacket(s) },
             { PacketType.LOGIN_REQUEST, (s) => new AuthenticationPacket(s) },
+            { PacketType.OAUTH_LOGIN_REQUEST, (s) => new OAuthAuthenticationPacket(s) },
             { PacketType.SELECT_SERVER, (s) =>  new SelectServerPacket(s) }
         };
 

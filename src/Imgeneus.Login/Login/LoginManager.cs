@@ -38,7 +38,10 @@ namespace Imgeneus.Login
             switch (packet)
             {
                 case AuthenticationPacket authenticationPacket:
-                    HandleAuthentication(authenticationPacket);
+                    HandleLoginRequest(authenticationPacket);
+                    break;
+                case OAuthAuthenticationPacket oauthPacket:
+                    HandleOauthAuthentication(oauthPacket);
                     break;
                 case SelectServerPacket selectServerPacket:
                     HandleSelectServer(selectServerPacket);
@@ -46,17 +49,42 @@ namespace Imgeneus.Login
             }
         }
 
-        private void HandleAuthentication(AuthenticationPacket authenticationPacket)
+        private void HandleLoginRequest(AuthenticationPacket authenticationPacket)
         {
-            var result = Authentication(authenticationPacket.Username, authenticationPacket.Password);
+            HandleAuthentication(authenticationPacket.Username, authenticationPacket.Password);
+        }
 
+        private void HandleOauthAuthentication(OAuthAuthenticationPacket packet)
+        {
+            // TODO(OAuth): Should we actually implement OAuth? Perhaps a custom updater distribution is desired.
+            // For now, let's just parse the key as a username/password combination.
+            var parts = packet.key.Split(":");
+            var username = parts.FirstOrDefault();
+            var password = parts.LastOrDefault();
+
+            if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
+            {
+                /*
+                 * The client doesn't handle unsuccessful login responses after attempting to login with an OAuth key,
+                 * as it expects the key to always be valid (having been authenticated in a prior step via the updater).
+                 */
+                _client.Disconnect();
+                return;
+            }
+            
+            HandleAuthentication(username, password);
+        }
+
+        private void HandleAuthentication(string username, string password)
+        {
+            var result = Authentication(username, password);
             if (result != AuthenticationResult.SUCCESS)
             {
                 LoginPacketFactory.AuthenticationFailed(_client, result);
                 return;
             }
 
-            DbUser dbUser = _database.Users.First(x => x.Username.Equals(authenticationPacket.Username, StringComparison.OrdinalIgnoreCase));
+            DbUser dbUser = _database.Users.First(x => x.Username.Equals(username, StringComparison.OrdinalIgnoreCase));
 
             if (_server.IsClientConnected(dbUser.Id))
             {

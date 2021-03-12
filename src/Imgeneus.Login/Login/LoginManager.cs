@@ -61,10 +61,21 @@ namespace Imgeneus.Login
             var parts = packet.key.Split(":");
             var username = parts.FirstOrDefault();
             var password = parts.LastOrDefault();
+
+            if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
+            {
+                /*
+                 * The client doesn't handle unsuccessful login responses after attempting to login with an OAuth key,
+                 * as it expects the key to always be valid (having been authenticated in a prior step via the updater).
+                 */
+                _client.Disconnect();
+                return;
+            }
+            
             HandleAuthentication(username, password);
         }
 
-        private void HandleAuthentication(String username, String password)
+        private void HandleAuthentication(string username, string password)
         {
             var result = Authentication(username, password);
             if (result != AuthenticationResult.SUCCESS)

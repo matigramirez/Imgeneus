@@ -4,7 +4,8 @@
     <OutputType>Library</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <LangVersion>8.0</LangVersion>
-    <Configurations>Debug;Release;EP8_V1;EP8_V2</Configurations>
+    <Configurations>Debug;Release;EP8_V1;EP8_V2;SHAIYA_US</Configurations>
+    <Platforms>AnyCPU</Platforms>
   </PropertyGroup>
 
   <ItemGroup>

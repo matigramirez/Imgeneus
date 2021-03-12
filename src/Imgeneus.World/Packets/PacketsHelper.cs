@@ -114,7 +114,7 @@ namespace Imgeneus.World.Packets
             // Send move item.
             using var packet = new Packet(PacketType.INVENTORY_MOVE_ITEM);
 
-#if EP8_V2
+#if (EP8_V2 || SHAIYA_US)
             packet.Write(0); // Unknown int in V2.
 #endif
 

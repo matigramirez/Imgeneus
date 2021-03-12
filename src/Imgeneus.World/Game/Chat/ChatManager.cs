@@ -156,7 +156,7 @@ namespace Imgeneus.World.Game.Chat
 
             packet.WriteByte((byte)message.Length);
 
-#if EP8_V2
+#if (EP8_V2 || SHAIYA_US)
             packet.WriteString(message, Encoding.Unicode);
 #else
             packet.WriteString(message);
@@ -175,7 +175,7 @@ namespace Imgeneus.World.Game.Chat
 
             packet.WriteByte((byte)message.Length);
 
-#if EP8_V2
+#if (EP8_V2 || SHAIYA_US)
             packet.WriteString(message, Encoding.Unicode);
 #else
             packet.WriteString(message);

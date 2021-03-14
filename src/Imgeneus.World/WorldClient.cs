@@ -208,7 +208,8 @@ namespace Imgeneus.World
             { PacketType.NOTICE_ADMINS, (s) => new GMNoticeAdminsPacket(s) },
             { PacketType.GM_CURE_PLAYER, (s) => new GMCurePlayerPacket(s) },
             { PacketType.GM_WARNING_PLAYER, (s) => new GMWarningPacket(s) },
-            { PacketType.BANK_CLAIM_ITEM, (s) => new BankClaimItemPacket(s) }
+            { PacketType.BANK_CLAIM_ITEM, (s) => new BankClaimItemPacket(s) },
+            { PacketType.GUILD_CREATE, (s) => new GuildCreatePacket(s) }
         };
 
         /// <inheritdoc />

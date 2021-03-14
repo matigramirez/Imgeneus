@@ -89,6 +89,11 @@ namespace Imgeneus.Database
         public DbSet<DbBankItem> BankItems { get; set; }
 
         /// <summary>
+        /// Collection of guilds.
+        /// </summary>
+        public DbSet<DbGuild> Guilds { get; set; }
+
+        /// <summary>
         /// Saves changes to database.
         /// </summary>
         public int SaveChanges();

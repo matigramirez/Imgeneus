@@ -285,6 +285,11 @@ namespace Imgeneus.Database.Entities
         /// </summary>
         public ICollection<DbCharacterFriend> Friends { get; set; }
 
+        /// <summary>
+        /// Character guild.
+        /// </summary>
+        public DbGuild Guild { get; set; }
+
         public DbCharacter()
         {
             Items = new HashSet<DbCharacterItems>();

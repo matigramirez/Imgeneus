@@ -275,6 +275,9 @@
         ITEM_COMPOSE_ABSOLUTE = 0x0834, // 2100
         ITEM_COMPOSE_ABSOLUTE_SELECT = 0x0835, // 2101
 
+        // Guild
+        GUILD_CREATE = 0x0D21, // 3361
+
         // Dyeing
         DYE_CONFIRM = 0x055B, // 1371
         DYE_REROLL = 0x055C, // 1372

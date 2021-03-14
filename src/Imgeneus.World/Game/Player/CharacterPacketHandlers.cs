@@ -708,5 +708,10 @@ namespace Imgeneus.World.Game.Player
 
             target?.Teleport(mapId, newPosX, PosY, newPosZ, true);
         }
+
+        private void HandleCreateGuild(string name, string message)
+        {
+            // TODO: handle guild creation!
+        }
     }
 }

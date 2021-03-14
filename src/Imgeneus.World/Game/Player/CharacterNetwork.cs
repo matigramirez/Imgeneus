@@ -335,6 +335,10 @@ namespace Imgeneus.World.Game.Player
                     HandleAutoStatsSettings(autoStatsSettingsPacket.Str, autoStatsSettingsPacket.Dex, autoStatsSettingsPacket.Rec, autoStatsSettingsPacket.Int, autoStatsSettingsPacket.Wis, autoStatsSettingsPacket.Luc);
                     break;
 
+                case GuildCreatePacket guildCreatePacket:
+                    HandleCreateGuild(guildCreatePacket.Name, guildCreatePacket.Message);
+                    break;
+
                 case GMCreateMobPacket gMCreateMobPacket:
                     if (!IsAdmin)
                         return;

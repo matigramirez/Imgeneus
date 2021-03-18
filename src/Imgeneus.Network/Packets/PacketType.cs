@@ -277,6 +277,7 @@
 
         // Guild
         GUILD_CREATE = 0x0D21, // 3361
+        GUILD_CREATE_AGREE = 0x0D22, // 3362
 
         // Dyeing
         DYE_CONFIRM = 0x055B, // 1371

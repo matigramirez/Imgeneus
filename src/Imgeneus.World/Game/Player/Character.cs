@@ -21,6 +21,7 @@ using System.Linq;
 using Imgeneus.World.Game.Notice;
 using Imgeneus.World.Game.Zone.MapConfig;
 using System.Collections.Concurrent;
+using Imgeneus.World.Game.Guild;
 
 namespace Imgeneus.World.Game.Player
 {
@@ -38,6 +39,7 @@ namespace Imgeneus.World.Game.Player
         private readonly IMobFactory _mobFactory;
         private readonly INpcFactory _npcFactory;
         private readonly INoticeManager _noticeManager;
+        private readonly IGuildManager _guildManager;
 
         public Character(ILogger<Character> logger,
                          IGameWorld gameWorld,
@@ -50,7 +52,8 @@ namespace Imgeneus.World.Game.Player
                          IDyeingManager dyeingManager,
                          IMobFactory mobFactory,
                          INpcFactory npcFactory,
-                         INoticeManager noticeManager) : base(databasePreloader)
+                         INoticeManager noticeManager,
+                         IGuildManager guildManager) : base(databasePreloader)
         {
             _logger = logger;
             _gameWorld = gameWorld;
@@ -63,6 +66,7 @@ namespace Imgeneus.World.Game.Player
             _mobFactory = mobFactory;
             _npcFactory = npcFactory;
             _noticeManager = noticeManager;
+            _guildManager = guildManager;
             _packetsHelper = new PacketsHelper();
 
             _castTimer.Elapsed += CastTimer_Elapsed;
@@ -339,9 +343,9 @@ namespace Imgeneus.World.Game.Player
         /// <summary>
         /// Creates character from database information.
         /// </summary>
-        public static Character FromDbCharacter(DbCharacter dbCharacter, ILogger<Character> logger, IGameWorld gameWorld, ICharacterConfiguration characterConfig, IBackgroundTaskQueue taskQueue, IDatabasePreloader databasePreloader, IMapsLoader mapsLoader, IChatManager chatManager, ILinkingManager linkingManager, IDyeingManager dyeingManager, IMobFactory mobFactory, INpcFactory npcFactory, INoticeManager noticeManager)
+        public static Character FromDbCharacter(DbCharacter dbCharacter, ILogger<Character> logger, IGameWorld gameWorld, ICharacterConfiguration characterConfig, IBackgroundTaskQueue taskQueue, IDatabasePreloader databasePreloader, IMapsLoader mapsLoader, IChatManager chatManager, ILinkingManager linkingManager, IDyeingManager dyeingManager, IMobFactory mobFactory, INpcFactory npcFactory, INoticeManager noticeManager, IGuildManager guildManger)
         {
-            var character = new Character(logger, gameWorld, characterConfig, taskQueue, databasePreloader, mapsLoader, chatManager, linkingManager, dyeingManager, mobFactory, npcFactory, noticeManager)
+            var character = new Character(logger, gameWorld, characterConfig, taskQueue, databasePreloader, mapsLoader, chatManager, linkingManager, dyeingManager, mobFactory, npcFactory, noticeManager, guildManger)
             {
                 Id = dbCharacter.Id,
                 Name = dbCharacter.Name,

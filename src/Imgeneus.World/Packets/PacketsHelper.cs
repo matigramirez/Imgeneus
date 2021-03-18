@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using Imgeneus.Database.Constants;
 using Imgeneus.Database.Entities;
 using Imgeneus.Network.Data;
@@ -8,6 +9,7 @@ using Imgeneus.Network.Packets.Game;
 using Imgeneus.Network.Serialization;
 using Imgeneus.World.Game;
 using Imgeneus.World.Game.Dyeing;
+using Imgeneus.World.Game.Guild;
 using Imgeneus.World.Game.Monster;
 using Imgeneus.World.Game.NPCs;
 using Imgeneus.World.Game.PartyAndRaid;
@@ -213,6 +215,15 @@ namespace Imgeneus.World.Packets
             packet.Write(character.AutoInt);
             packet.Write(character.AutoWis);
             packet.Write(character.AutoLuc);
+            client.SendPacket(packet);
+        }
+
+        internal void SendGuildCreateRequest(IWorldClient client, int creatorId, string guildName, string guildMessage)
+        {
+            using var packet = new Packet(PacketType.GUILD_CREATE_AGREE);
+            packet.Write(creatorId);
+            packet.WriteString(guildName, 25);
+            packet.WriteString(guildMessage, 65);
             client.SendPacket(packet);
         }
 
@@ -659,6 +670,12 @@ namespace Imgeneus.World.Packets
             using var packet = new Packet(PacketType.USE_VEHICLE);
             packet.Write(success);
             packet.Write(status);
+            client.SendPacket(packet);
+        }
+        internal void SendGuildCreateFailed(IWorldClient client, GuildCreateFailedReason reason)
+        {
+            using var packet = new Packet(PacketType.GUILD_CREATE);
+            packet.Write((byte)reason);
             client.SendPacket(packet);
         }
 

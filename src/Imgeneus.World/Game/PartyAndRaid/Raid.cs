@@ -356,6 +356,8 @@ namespace Imgeneus.World.Game.PartyAndRaid
 
                 SubcribeToCharacterChanges(newPartyMember);
 
+                CallMemberEnter();
+
                 // Notify others, that new raid member joined.
                 foreach (var member in Members)
                     SendPlayerJoinedParty(member.Client, newPartyMember);
@@ -372,6 +374,7 @@ namespace Imgeneus.World.Game.PartyAndRaid
                     SendPlayerLeftRaid(member.Client, leftPartyMember);
 
                 RemoveMember(leftPartyMember);
+                CallMemberLeft();
             }
         }
 

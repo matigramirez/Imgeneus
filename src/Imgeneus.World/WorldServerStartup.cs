@@ -6,6 +6,7 @@ using Imgeneus.Logs;
 using Imgeneus.World.Game;
 using Imgeneus.World.Game.Chat;
 using Imgeneus.World.Game.Dyeing;
+using Imgeneus.World.Game.Guild;
 using Imgeneus.World.Game.Linking;
 using Imgeneus.World.Game.Monster;
 using Imgeneus.World.Game.Notice;
@@ -63,6 +64,7 @@ namespace Imgeneus.World
             });
             services.AddSingleton<IChatManager, ChatManager>();
             services.AddSingleton<INoticeManager, NoticeManager>();
+            services.AddSingleton<IGuildManager, GuildManager>();
 
             services.AddTransient<ILogsDatabase, LogsDbContext>();
             services.AddTransient<ILinkingManager, LinkingManager>();

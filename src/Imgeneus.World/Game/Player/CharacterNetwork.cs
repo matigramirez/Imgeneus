@@ -339,6 +339,10 @@ namespace Imgeneus.World.Game.Player
                     HandleCreateGuild(guildCreatePacket.Name, guildCreatePacket.Message);
                     break;
 
+                case GuildAgreePacket guildAgreePacket:
+                    HandleGuildAgree(guildAgreePacket.Ok);
+                    break;
+
                 case GMCreateMobPacket gMCreateMobPacket:
                     if (!IsAdmin)
                         return;

@@ -14,6 +14,7 @@ using System;
 using System.Threading.Tasks;
 using Imgeneus.World.Game.Notice;
 using Imgeneus.World.Game.Zone.MapConfig;
+using Imgeneus.World.Game.Guild;
 
 namespace Imgeneus.World.Game.Player
 {
@@ -65,7 +66,8 @@ namespace Imgeneus.World.Game.Player
                                         scopedProvider.GetService<IDyeingManager>(),
                                         scopedProvider.GetService<IMobFactory>(),
                                         scopedProvider.GetService<INpcFactory>(),
-                                        scopedProvider.GetService<INoticeManager>());
+                                        scopedProvider.GetService<INoticeManager>(),
+                                        scopedProvider.GetService<IGuildManager>());
             player.Client = client;
             return player;
         }

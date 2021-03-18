@@ -4,6 +4,7 @@ using Imgeneus.World.Game.Monster;
 using Imgeneus.World.Game.Zone.Obelisks;
 using Imgeneus.World.Game.Zone.Portals;
 using System.Linq;
+using Imgeneus.World.Game.Guild;
 
 namespace Imgeneus.World.Game.Player
 {
@@ -173,5 +174,9 @@ namespace Imgeneus.World.Game.Player
         public void SendAccountPoints() => _packetsHelper.SendAccountPoints(Client, Points);
 
         public void SendResetSkills() => _packetsHelper.SendResetSkills(Client, SkillPoint);
+
+        public void SendGuildCreateFailed(GuildCreateFailedReason reason) => _packetsHelper.SendGuildCreateFailed(Client, reason);
+
+        public void SendGuildCreateRequest(int creatorId, string guildName, string guildMessage) => _packetsHelper.SendGuildCreateRequest(Client, creatorId, guildName, guildMessage);
     }
 }

@@ -78,6 +78,28 @@ namespace Imgeneus.World.Game.PartyAndRaid
         protected abstract IList<Character> _members { get; set; }
 
         /// <inheritdoc/>
+        public event Action<IParty> OnMemberEnter;
+
+        /// <summary>
+        /// Invoke <see cref="OnMemberEnter"/> event.
+        /// </summary>
+        protected void CallMemberEnter()
+        {
+            OnMemberEnter?.Invoke(this);
+        }
+
+        /// <inheritdoc/>
+        public event Action<IParty> OnMemberLeft;
+
+        /// <summary>
+        /// Invoke <see cref="OnMemberLeft"/> event.
+        /// </summary>
+        protected void CallMemberLeft()
+        {
+            OnMemberLeft?.Invoke(this);
+        }
+
+        /// <inheritdoc/>
         public event Action AllMembersLeft;
 
         /// <summary>

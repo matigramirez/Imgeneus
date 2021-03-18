@@ -20,6 +20,16 @@ namespace Imgeneus.World.Game.PartyAndRaid
         public IList<Character> Members { get; }
 
         /// <summary>
+        /// Event, that is fired, as soon as member enters party.
+        /// </summary>
+        public event Action<IParty> OnMemberEnter;
+
+        /// <summary>
+        /// Event, that is fired, as soon as member left party.
+        /// </summary>
+        public event Action<IParty> OnMemberLeft;
+
+        /// <summary>
         /// Event, that is fired, as soon as party is empty.
         /// </summary>
         public event Action AllMembersLeft;

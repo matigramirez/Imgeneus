@@ -10,6 +10,7 @@ using Imgeneus.World.Game.Monster;
 using Imgeneus.World.Game.Zone;
 using System.Collections.Generic;
 using Imgeneus.World.Game.Zone.Portals;
+using Imgeneus.World.Game.Guild;
 
 namespace Imgeneus.World.Game.Player
 {
@@ -711,7 +712,20 @@ namespace Imgeneus.World.Game.Player
 
         private void HandleCreateGuild(string name, string message)
         {
-            // TODO: handle guild creation!
+            var result = _guildManager.CanCreateGuild(this, name);
+            if (result != GuildCreateFailedReason.Success)
+            {
+                SendGuildCreateFailed(result);
+                return;
+            }
+
+            _guildManager.SendGuildRequest(this, name, message);
+        }
+
+
+        private void HandleGuildAgree(bool ok)
+        {
+            _guildManager.SetAgreeRequest(this, ok);
         }
     }
 }

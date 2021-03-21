@@ -11,7 +11,7 @@ namespace Imgeneus.World.Tests.GemLinkingTests
         [Description("It should be possible to link gem.")]
         public void GemAdd_LinkWithPerfectHammer()
         {
-            var character = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, mapsLoaderMock.Object, chatMock.Object, new LinkingManager(databasePreloader.Object), dyeingMock.Object, mobFactoryMock.Object, npcFactoryMock.Object, noticeManagerMock.Object);
+            var character = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, mapsLoaderMock.Object, chatMock.Object, new LinkingManager(databasePreloader.Object), dyeingMock.Object, mobFactoryMock.Object, npcFactoryMock.Object, noticeManagerMock.Object, guidManagerMock.Object);
             character.Client = worldClientMock.Object;
 
             character.AddItemToInventory(new Item(databasePreloader.Object, JustiaArmor.Type, JustiaArmor.TypeId));
@@ -38,7 +38,7 @@ namespace Imgeneus.World.Tests.GemLinkingTests
         [Description("When linking fails, it should not break item, if gem ReqVg is 0. Gem should disappear after linking.")]
         public void GemAdd_FailNotBreakItem()
         {
-            var character = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, mapsLoaderMock.Object, chatMock.Object, new LinkingManager(databasePreloader.Object), dyeingMock.Object, mobFactoryMock.Object, npcFactoryMock.Object, noticeManagerMock.Object);
+            var character = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, mapsLoaderMock.Object, chatMock.Object, new LinkingManager(databasePreloader.Object), dyeingMock.Object, mobFactoryMock.Object, npcFactoryMock.Object, noticeManagerMock.Object, guidManagerMock.Object);
             character.Client = worldClientMock.Object;
 
             character.AddItemToInventory(new Item(databasePreloader.Object, JustiaArmor.Type, JustiaArmor.TypeId));
@@ -63,7 +63,7 @@ namespace Imgeneus.World.Tests.GemLinkingTests
         [Description("When linking fails, it should break item, if gem ReqVg is 1. Gem and item should disappear after linking.")]
         public void GemAdd_FailBreakItem()
         {
-            var character = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, mapsLoaderMock.Object, chatMock.Object, new LinkingManager(databasePreloader.Object), dyeingMock.Object, mobFactoryMock.Object, npcFactoryMock.Object, noticeManagerMock.Object);
+            var character = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, mapsLoaderMock.Object, chatMock.Object, new LinkingManager(databasePreloader.Object), dyeingMock.Object, mobFactoryMock.Object, npcFactoryMock.Object, noticeManagerMock.Object, guidManagerMock.Object);
             character.Client = worldClientMock.Object;
 
             character.AddItemToInventory(new Item(databasePreloader.Object, JustiaArmor.Type, JustiaArmor.TypeId));
@@ -85,7 +85,7 @@ namespace Imgeneus.World.Tests.GemLinkingTests
         [Description("When linking gem to the item, that is on character, this should influence extra stats.")]
         public void GemAdd_ItemIsOnCharacter()
         {
-            var character = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, mapsLoaderMock.Object, chatMock.Object, new LinkingManager(databasePreloader.Object), dyeingMock.Object, mobFactoryMock.Object, npcFactoryMock.Object, noticeManagerMock.Object);
+            var character = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, mapsLoaderMock.Object, chatMock.Object, new LinkingManager(databasePreloader.Object), dyeingMock.Object, mobFactoryMock.Object, npcFactoryMock.Object, noticeManagerMock.Object, guidManagerMock.Object);
             character.Client = worldClientMock.Object;
 
             character.AddItemToInventory(new Item(databasePreloader.Object, JustiaArmor.Type, JustiaArmor.TypeId));
@@ -116,7 +116,7 @@ namespace Imgeneus.World.Tests.GemLinkingTests
         [Description("When linking gem to the item, that is on character, fails (i.e. item is destroyed) this should influence extra stats.")]
         public void GemAdd_ItemIsOnCharacterBreak()
         {
-            var character = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, mapsLoaderMock.Object, chatMock.Object, new LinkingManager(databasePreloader.Object), dyeingMock.Object, mobFactoryMock.Object, npcFactoryMock.Object, noticeManagerMock.Object);
+            var character = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, mapsLoaderMock.Object, chatMock.Object, new LinkingManager(databasePreloader.Object), dyeingMock.Object, mobFactoryMock.Object, npcFactoryMock.Object, noticeManagerMock.Object, guidManagerMock.Object);
             character.Client = worldClientMock.Object;
 
             character.AddItemToInventory(new Item(databasePreloader.Object, JustiaArmor.Type, JustiaArmor.TypeId));
@@ -139,7 +139,7 @@ namespace Imgeneus.World.Tests.GemLinkingTests
         [Description("Linking the same gems is forbidden")]
         public void GemAdd_SameGemsAreForbidden()
         {
-            var character = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, mapsLoaderMock.Object, chatMock.Object, new LinkingManager(databasePreloader.Object), dyeingMock.Object, mobFactoryMock.Object, npcFactoryMock.Object, noticeManagerMock.Object);
+            var character = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, mapsLoaderMock.Object, chatMock.Object, new LinkingManager(databasePreloader.Object), dyeingMock.Object, mobFactoryMock.Object, npcFactoryMock.Object, noticeManagerMock.Object, guidManagerMock.Object);
             character.Client = worldClientMock.Object;
 
             character.AddItemToInventory(new Item(databasePreloader.Object, JustiaArmor.Type, JustiaArmor.TypeId));
@@ -177,7 +177,7 @@ namespace Imgeneus.World.Tests.GemLinkingTests
         [Description("Linking different gems is ok")]
         public void GemAdd_DifferentGemsIsOK()
         {
-            var character = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, mapsLoaderMock.Object, chatMock.Object, new LinkingManager(databasePreloader.Object), dyeingMock.Object, mobFactoryMock.Object, npcFactoryMock.Object, noticeManagerMock.Object);
+            var character = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, mapsLoaderMock.Object, chatMock.Object, new LinkingManager(databasePreloader.Object), dyeingMock.Object, mobFactoryMock.Object, npcFactoryMock.Object, noticeManagerMock.Object, guidManagerMock.Object);
             character.Client = worldClientMock.Object;
 
             character.AddItemToInventory(new Item(databasePreloader.Object, JustiaArmor.Type, JustiaArmor.TypeId));
@@ -212,7 +212,7 @@ namespace Imgeneus.World.Tests.GemLinkingTests
         [Description("Linking should be possible only, if item has free slots.")]
         public void GemAdd_ItemMustHaveFreeSlots()
         {
-            var character = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, mapsLoaderMock.Object, chatMock.Object, new LinkingManager(databasePreloader.Object), dyeingMock.Object, mobFactoryMock.Object, npcFactoryMock.Object, noticeManagerMock.Object);
+            var character = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, mapsLoaderMock.Object, chatMock.Object, new LinkingManager(databasePreloader.Object), dyeingMock.Object, mobFactoryMock.Object, npcFactoryMock.Object, noticeManagerMock.Object, guidManagerMock.Object);
             character.Client = worldClientMock.Object;
 
             character.AddItemToInventory(new Item(databasePreloader.Object, WaterArmor.Type, WaterArmor.TypeId));
@@ -240,7 +240,7 @@ namespace Imgeneus.World.Tests.GemLinkingTests
         [Description("Lucky charm can save item, if it's in inventory.")]
         public void GemAdd_LuckyCharmSavesItem()
         {
-            var character = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, mapsLoaderMock.Object, chatMock.Object, new LinkingManager(databasePreloader.Object), dyeingMock.Object, mobFactoryMock.Object, npcFactoryMock.Object, noticeManagerMock.Object);
+            var character = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, mapsLoaderMock.Object, chatMock.Object, new LinkingManager(databasePreloader.Object), dyeingMock.Object, mobFactoryMock.Object, npcFactoryMock.Object, noticeManagerMock.Object, guidManagerMock.Object);
             character.Client = worldClientMock.Object;
 
             character.AddItemToInventory(new Item(databasePreloader.Object, JustiaArmor.Type, JustiaArmor.TypeId));
@@ -267,7 +267,7 @@ namespace Imgeneus.World.Tests.GemLinkingTests
         [Description("Lucky charm is used only, when it's needed.")]
         public void GemAdd_LuckyCharmUsedOnlyWhenNeeded()
         {
-            var character = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, mapsLoaderMock.Object, chatMock.Object, new LinkingManager(databasePreloader.Object), dyeingMock.Object, mobFactoryMock.Object, npcFactoryMock.Object, noticeManagerMock.Object);
+            var character = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, mapsLoaderMock.Object, chatMock.Object, new LinkingManager(databasePreloader.Object), dyeingMock.Object, mobFactoryMock.Object, npcFactoryMock.Object, noticeManagerMock.Object, guidManagerMock.Object);
             character.Client = worldClientMock.Object;
 
             character.AddItemToInventory(new Item(databasePreloader.Object, JustiaArmor.Type, JustiaArmor.TypeId));
@@ -297,7 +297,7 @@ namespace Imgeneus.World.Tests.GemLinkingTests
         [Description("It should be possible to exctract gem.")]
         public void GemRemove_ExtractWithPerfectHammer()
         {
-            var character = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, mapsLoaderMock.Object, chatMock.Object, new LinkingManager(databasePreloader.Object), dyeingMock.Object, mobFactoryMock.Object, npcFactoryMock.Object, noticeManagerMock.Object);
+            var character = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, mapsLoaderMock.Object, chatMock.Object, new LinkingManager(databasePreloader.Object), dyeingMock.Object, mobFactoryMock.Object, npcFactoryMock.Object, noticeManagerMock.Object, guidManagerMock.Object);
             character.Client = worldClientMock.Object;
 
             var armorItem = new Item(databasePreloader.Object, JustiaArmor.Type, JustiaArmor.TypeId)
@@ -324,7 +324,7 @@ namespace Imgeneus.World.Tests.GemLinkingTests
         [Description("It should be possible to exctract several gems without hammer. Extracted gems are added to inventory.")]
         public void GemRemove_ExtractWithoutPerfectHammer()
         {
-            var character = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, mapsLoaderMock.Object, chatMock.Object, new LinkingManager(databasePreloader.Object), dyeingMock.Object, mobFactoryMock.Object, npcFactoryMock.Object, noticeManagerMock.Object);
+            var character = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, mapsLoaderMock.Object, chatMock.Object, new LinkingManager(databasePreloader.Object), dyeingMock.Object, mobFactoryMock.Object, npcFactoryMock.Object, noticeManagerMock.Object, guidManagerMock.Object);
             character.Client = worldClientMock.Object;
 
             var armorItem = new Item(databasePreloader.Object, JustiaArmor.Type, JustiaArmor.TypeId)
@@ -364,7 +364,7 @@ namespace Imgeneus.World.Tests.GemLinkingTests
         [Description("Extracting gem without hammer may break item, if gem ReqVg is 1. ")]
         public void GemRemove_ExtractWithoutPerfectHammerBreaksItem()
         {
-            var character = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, mapsLoaderMock.Object, chatMock.Object, new LinkingManager(databasePreloader.Object), dyeingMock.Object, mobFactoryMock.Object, npcFactoryMock.Object, noticeManagerMock.Object);
+            var character = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, mapsLoaderMock.Object, chatMock.Object, new LinkingManager(databasePreloader.Object), dyeingMock.Object, mobFactoryMock.Object, npcFactoryMock.Object, noticeManagerMock.Object, guidManagerMock.Object);
             character.Client = worldClientMock.Object;
 
             var armorItem = new Item(databasePreloader.Object, JustiaArmor.Type, JustiaArmor.TypeId)
@@ -387,7 +387,7 @@ namespace Imgeneus.World.Tests.GemLinkingTests
         [Description("When extracting gem from the item, that is on character, this should influence extra stats.")]
         public void GemRemove_ItemIsOnCharacter()
         {
-            var character = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, mapsLoaderMock.Object, chatMock.Object, new LinkingManager(databasePreloader.Object), dyeingMock.Object, mobFactoryMock.Object, npcFactoryMock.Object, noticeManagerMock.Object);
+            var character = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, mapsLoaderMock.Object, chatMock.Object, new LinkingManager(databasePreloader.Object), dyeingMock.Object, mobFactoryMock.Object, npcFactoryMock.Object, noticeManagerMock.Object, guidManagerMock.Object);
             character.Client = worldClientMock.Object;
 
             var armorItem = new Item(databasePreloader.Object, JustiaArmor.Type, JustiaArmor.TypeId)
@@ -408,7 +408,7 @@ namespace Imgeneus.World.Tests.GemLinkingTests
         [Description("When extracting gem from the item, that is on character, this should influence extra stats. If gem ReqVg = 1, item should be broken.")]
         public void GemRemove_ItemIsOnCharacterBreakItem()
         {
-            var character = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, mapsLoaderMock.Object, chatMock.Object, new LinkingManager(databasePreloader.Object), dyeingMock.Object, mobFactoryMock.Object, npcFactoryMock.Object, noticeManagerMock.Object);
+            var character = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, mapsLoaderMock.Object, chatMock.Object, new LinkingManager(databasePreloader.Object), dyeingMock.Object, mobFactoryMock.Object, npcFactoryMock.Object, noticeManagerMock.Object, guidManagerMock.Object);
             character.Client = worldClientMock.Object;
 
             var armorItem = new Item(databasePreloader.Object, JustiaArmor.Type, JustiaArmor.TypeId)
@@ -430,7 +430,7 @@ namespace Imgeneus.World.Tests.GemLinkingTests
         [Description("When Absorption gem is linked it should increase absorb value.")]
         public void Gem_Absorption()
         {
-            var character = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, mapsLoaderMock.Object, chatMock.Object, new LinkingManager(databasePreloader.Object), dyeingMock.Object, mobFactoryMock.Object, npcFactoryMock.Object, noticeManagerMock.Object);
+            var character = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, mapsLoaderMock.Object, chatMock.Object, new LinkingManager(databasePreloader.Object), dyeingMock.Object, mobFactoryMock.Object, npcFactoryMock.Object, noticeManagerMock.Object, guidManagerMock.Object);
             character.Client = worldClientMock.Object;
 
             character.AddItemToInventory(new Item(databasePreloader.Object, JustiaArmor.Type, JustiaArmor.TypeId));
@@ -455,7 +455,7 @@ namespace Imgeneus.World.Tests.GemLinkingTests
         [Description("When Absorption gem is linked it should increase absorb value.")]
         public void Gem_Absorption_ItemIsOnCharacter()
         {
-            var character = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, mapsLoaderMock.Object, chatMock.Object, new LinkingManager(databasePreloader.Object), dyeingMock.Object, mobFactoryMock.Object, npcFactoryMock.Object, noticeManagerMock.Object);
+            var character = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, mapsLoaderMock.Object, chatMock.Object, new LinkingManager(databasePreloader.Object), dyeingMock.Object, mobFactoryMock.Object, npcFactoryMock.Object, noticeManagerMock.Object, guidManagerMock.Object);
             character.Client = worldClientMock.Object;
 
             character.AddItemToInventory(new Item(databasePreloader.Object, JustiaArmor.Type, JustiaArmor.TypeId));
@@ -479,7 +479,7 @@ namespace Imgeneus.World.Tests.GemLinkingTests
         [Description("When several absorption gems are linked, total Absorption value should be sum of gems Absorption.")]
         public void Gem_AbsorptionAreStackable()
         {
-            var character = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, mapsLoaderMock.Object, chatMock.Object, new LinkingManager(databasePreloader.Object), dyeingMock.Object, mobFactoryMock.Object, npcFactoryMock.Object, noticeManagerMock.Object);
+            var character = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, mapsLoaderMock.Object, chatMock.Object, new LinkingManager(databasePreloader.Object), dyeingMock.Object, mobFactoryMock.Object, npcFactoryMock.Object, noticeManagerMock.Object, guidManagerMock.Object);
             character.Client = worldClientMock.Object;
 
             character.AddItemToInventory(new Item(databasePreloader.Object, JustiaArmor.Type, JustiaArmor.TypeId));

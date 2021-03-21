@@ -16,6 +16,7 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using System.Collections.Generic;
 using Imgeneus.World.Game.Notice;
+using Imgeneus.World.Game.Guild;
 
 namespace Imgeneus.World.Tests
 {
@@ -38,6 +39,7 @@ namespace Imgeneus.World.Tests
         protected Mock<INpcFactory> npcFactoryMock = new Mock<INpcFactory>();
         protected Mock<IObeliskFactory> obeliskFactoryMock = new Mock<IObeliskFactory>();
         protected Mock<INoticeManager> noticeManagerMock = new Mock<INoticeManager>();
+        protected Mock<IGuildManager> guidManagerMock = new Mock<IGuildManager>();
 
         protected Map testMap => new Map(
                     Map.TEST_MAP_ID,
@@ -52,7 +54,7 @@ namespace Imgeneus.World.Tests
         private static int CharacterId;
         protected Character CreateCharacter(Map map = null)
         {
-            var character = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, mapsLoaderMock.Object, chatMock.Object, linkingMock.Object, dyeingMock.Object, mobFactoryMock.Object, npcFactoryMock.Object, noticeManagerMock.Object);
+            var character = new Character(loggerMock.Object, gameWorldMock.Object, config.Object, taskQueuMock.Object, databasePreloader.Object, mapsLoaderMock.Object, chatMock.Object, linkingMock.Object, dyeingMock.Object, mobFactoryMock.Object, npcFactoryMock.Object, noticeManagerMock.Object, guidManagerMock.Object);
 
             character.Client = worldClientMock.Object;
             character.Id = CharacterId++;

@@ -15,6 +15,8 @@ namespace Imgeneus.World.Game.Player
         /// </summary>
         private void SendCharacterInfo()
         {
+            // SendWorldDay(); TODO: why do we need it?
+            SendGuildList();
             SendDetails();
             SendAdditionalStats();
             SendCurrentHitpoints();
@@ -32,6 +34,8 @@ namespace Imgeneus.World.Game.Player
             SendAccountPoints(); // WARNING: This is necessary if you have an in-game item mall.
 #endif
         }
+
+        private void SendWorldDay() => _packetsHelper.SendWorldDay(Client);
 
         private void SendDetails() => _packetsHelper.SendDetails(Client, this);
 

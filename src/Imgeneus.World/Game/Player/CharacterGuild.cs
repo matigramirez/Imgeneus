@@ -1,4 +1,8 @@
-﻿namespace Imgeneus.World.Game.Player
+﻿using Imgeneus.Database.Entities;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
+namespace Imgeneus.World.Game.Player
 {
     public partial class Character
     {
@@ -16,5 +20,16 @@
         /// Guild name.
         /// </summary>
         public string GuildName { get; private set; }
+
+
+        /// <summary>
+        /// Sends list of guilds, right after selection screen.
+        /// </summary>
+        public void SendGuildList()
+        {
+            var guilds = _guildManager.GetAllGuilds();
+
+            _packetsHelper.SendGuildList(Client, guilds);
+        }
     }
 }

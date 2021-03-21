@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Imgeneus.Core.Extensions;
 using Imgeneus.Database.Constants;
 using Imgeneus.Database.Entities;
 using Imgeneus.Network.Data;
@@ -51,6 +53,26 @@ namespace Imgeneus.World.Packets
                 packet.Write(new InventoryItems(inventoryItems[startIndex..endIndex]).Serialize());
                 client.SendPacket(packet);
             }
+        }
+
+        internal void SendGuildList(IWorldClient client, IEnumerable<DbGuild> guilds)
+        {
+            using var start = new Packet(PacketType.GUILD_LIST_START);
+            client.SendPacket(start);
+
+            using var packet = new Packet(PacketType.GUILD_LIST);
+            packet.Write(new GuildList(guilds).Serialize());
+            client.SendPacket(packet);
+
+            using var end = new Packet(PacketType.GUILD_LIST_END);
+            client.SendPacket(end);
+        }
+
+        internal void SendWorldDay(IWorldClient client)
+        {
+            using var packet = new Packet(PacketType.WORLD_DAY);
+            packet.Write(new DateTime(2020, 01, 01, 12, 30, 00).ToShaiyaTime());
+            client.SendPacket(packet);
         }
 
         internal void SendCharacterTeleport(IWorldClient client, Character player, bool teleportedByAdmin)

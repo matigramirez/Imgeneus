@@ -5,6 +5,7 @@ using Imgeneus.World.Game.Player;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -190,6 +191,13 @@ namespace Imgeneus.World.Game.Guild
                 return true;
             else
                 return false;
+        }
+
+        /// <inheritdoc/>
+        public IEnumerable<DbGuild> GetAllGuilds()
+        {
+            // TODO: maybe do not select them all?
+            return _database.Guilds.ToList();
         }
     }
 }

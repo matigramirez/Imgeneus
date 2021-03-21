@@ -38,7 +38,7 @@ namespace Imgeneus.World.Serialization
             PosX = character.PosX;
             PosY = character.PosY;
             PosZ = character.PosZ;
-            GuildId = 0; // TODO: implement guilds.
+            GuildId = character.GuildId ?? 0;
             Vehicle = 0; // TODO: implement vehicle.
         }
     }

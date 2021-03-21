@@ -1,4 +1,6 @@
-﻿using Imgeneus.World.Game.Player;
+﻿using Imgeneus.Database.Entities;
+using Imgeneus.World.Game.Player;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Imgeneus.World.Game.Guild
@@ -30,5 +32,11 @@ namespace Imgeneus.World.Game.Guild
         /// <param name="rank">character rank in guild</param>
         /// <returns>true, if character was added to guild, otherwise false</returns>
         public Task<bool> TryAddMember(int guildId, Character member, byte rank);
+
+        /// <summary>
+        /// Get all guilds in this server.
+        /// </summary>
+        /// <returns>collection of guilds</returns>
+        public IEnumerable<DbGuild> GetAllGuilds();
     }
 }

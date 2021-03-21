@@ -50,6 +50,7 @@
         // Map
         MAP_ADD_ITEM = 0x0401, // 1025
         MAP_REMOVE_ITEM = 0x0402, // 1026
+        WORLD_DAY = 0x0404, // 1028
         CHARACTER_DEAD = 0x0405,
         MAP_WEATHER = 0x0451, // 1105
 
@@ -277,9 +278,12 @@
         ITEM_COMPOSE_ABSOLUTE_SELECT = 0x0835, // 2101
 
         // Guild
+        GUILD_LIST_START = 0x0D0D, // 3341 not sure?
+        GUILD_LIST_END = 0x0D0E, // 3342 not sure?
         GUILD_USER_LIST_ONLINE = 0x0D12, // 3346
         GUILD_CREATE = 0x0D21, // 3361
         GUILD_CREATE_AGREE = 0x0D22, // 3362
+        GUILD_LIST = 0x0D2F, // 3375
         GUILD_LIST_ADD = 0x0D30, // 3376
 
         // Dyeing

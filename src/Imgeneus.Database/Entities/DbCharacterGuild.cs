@@ -30,5 +30,13 @@ namespace Imgeneus.Database.Entities
         /// Date, when character left guild.
         /// </summary>
         public DateTime LeaveDate { get; set; }
+
+        public DbCharacterGuild(int characterId, int guildId, byte guildLevel)
+        {
+            CharacterId = characterId;
+            GuildId = guildId;
+            GuildLevel = guildLevel;
+            JoinDate = DateTime.UtcNow;
+        }
     }
 }

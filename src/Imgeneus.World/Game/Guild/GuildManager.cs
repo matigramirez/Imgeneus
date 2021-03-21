@@ -1,23 +1,28 @@
-﻿using Imgeneus.World.Game.PartyAndRaid;
+﻿using Imgeneus.Database;
+using Imgeneus.Database.Entities;
+using Imgeneus.World.Game.PartyAndRaid;
 using Imgeneus.World.Game.Player;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Concurrent;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Imgeneus.World.Game.Guild
 {
     public class GuildManager : IGuildManager
     {
         private readonly ILogger<IGuildManager> _logger;
+        private readonly IDatabase _database;
 
         public const uint MIN_GOLD = 10000000; // 10kk
-        public const byte MIN_MEMBERS_COUNT = 7;
+        public const byte MIN_MEMBERS_COUNT = 2;//7;
         public const byte MIN_LEVEL = 10;
 
-        public GuildManager(ILogger<IGuildManager> logger)
+        public GuildManager(ILogger<IGuildManager> logger, IDatabase database)
         {
             _logger = logger;
+            _database = database;
         }
 
         /// <inheritdoc/>
@@ -38,7 +43,7 @@ namespace Imgeneus.World.Game.Guild
                 // if(guildName.Contains(bannedWords))
                 // return GuildCreateFailedReason.WrongName;
 
-                if (guildCreator.Party.Members.All(x => !x.HasGuild))
+                if (guildCreator.Party.Members.Any(x => x.HasGuild))
                     return GuildCreateFailedReason.PartyMemberInAnotherGuild;
 
                 return GuildCreateFailedReason.Success;
@@ -58,7 +63,7 @@ namespace Imgeneus.World.Game.Guild
         /// <inheritdoc/>
         public void SendGuildRequest(Character guildCreator, string guildName, string guildMessage)
         {
-            var request = new GuildCreateRequest(guildCreator, guildCreator.Party.Members);
+            var request = new GuildCreateRequest(guildCreator, guildCreator.Party.Members.ToList(), guildName, guildMessage);
             var success = CreationRequests.TryAdd(guildCreator.Party, request);
 
             if (!success)
@@ -68,12 +73,7 @@ namespace Imgeneus.World.Game.Guild
             guildCreator.Party.OnMemberLeft += Party_OnMemberChange;
 
             foreach (var member in guildCreator.Party.Members)
-            {
-                if (member == guildCreator)
-                    continue;
-
                 member.SendGuildCreateRequest(guildCreator.Id, guildName, guildMessage);
-            }
         }
 
         private void Party_OnMemberChange(IParty party)
@@ -91,7 +91,7 @@ namespace Imgeneus.World.Game.Guild
         }
 
         /// <inheritdoc/>
-        public void SetAgreeRequest(Character character, bool agree)
+        public async void SetAgreeRequest(Character character, bool agree)
         {
             if (character.Party is null)
                 return;
@@ -109,7 +109,8 @@ namespace Imgeneus.World.Game.Guild
             if (!agree)
             {
                 CreationRequests.TryRemove(character.Party, out request);
-                request.GuildCreator.SendGuildCreateFailed(GuildCreateFailedReason.PartyMemberRejected);
+                foreach (var m in request.Members)
+                    m.SendGuildCreateFailed(GuildCreateFailedReason.PartyMemberRejected);
                 request.Dispose();
                 return;
             }
@@ -118,11 +119,73 @@ namespace Imgeneus.World.Game.Guild
             if (!allAgree)
                 return;
 
-            // TODO: handle call to db for guild creation!
-
             CreationRequests.TryRemove(character.Party, out request);
-            request.GuildCreator.SendGuildCreateFailed(GuildCreateFailedReason.Success);
+
+            if (request is null) // is it possible?
+            {
+                return;
+            }
+
+            var guild = await TryCreateGuild(request.Name, request.Message, request.GuildCreator);
+            if (guild is null) // Creation failed.
+            {
+                foreach (var m in request.Members)
+                    m.SendGuildCreateFailed(GuildCreateFailedReason.Unknown);
+                request.Dispose();
+                return;
+            }
+
+            foreach (var m in request.Members)
+            {
+                byte rank = 9;
+                if (m == request.GuildCreator)
+                    rank = 1;
+
+                await TryAddMember(guild.Id, m, rank);
+                m.SendGuildCreateSuccess(guild.Id, rank, guild.Name, request.Message);
+            }
+
+            request.GuildCreator.ChangeGold(request.GuildCreator.Gold - MIN_GOLD);
+            request.GuildCreator.SendGoldUpdate();
+
+            // TODO: send GUILD_USER_LIST_ONLINE
+            // TODO: send GUILD_LIST_ADD
+
             request.Dispose();
+        }
+
+        /// <summary>
+        /// Creates guild in database.
+        /// </summary>
+        /// <returns>Db guild, if it was created, otherwise null.</returns>
+        private async Task<DbGuild> TryCreateGuild(string name, string message, Character master)
+        {
+            var guild = new DbGuild(name, master.Id, master.Country);
+
+            _database.Guilds.Add(guild);
+
+            var result = await _database.SaveChangesAsync();
+            if (result > 0)
+                return guild;
+            else
+                return null;
+        }
+
+        /// <inheritdoc/>
+        public async Task<bool> TryAddMember(int guildId, Character member, byte rank)
+        {
+            var guild = await _database.Guilds.FindAsync(guildId);
+            if (guild is null)
+                return false;
+
+            var charGuild = new DbCharacterGuild(member.Id, guild.Id, rank);
+            guild.Members.Add(charGuild);
+
+            var result = await _database.SaveChangesAsync();
+            if (result > 0)
+                return true;
+            else
+                return false;
         }
     }
 }

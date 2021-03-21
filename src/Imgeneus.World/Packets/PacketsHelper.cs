@@ -227,6 +227,13 @@ namespace Imgeneus.World.Packets
             client.SendPacket(packet);
         }
 
+        internal void SendGoldUpdate(IWorldClient client, uint gold)
+        {
+            using var packet = new Packet(PacketType.SET_MONEY);
+            packet.Write(gold);
+            client.SendPacket(packet);
+        }
+
         internal void SendMaxHitpoints(IWorldClient client, Character character, HitpointType type)
         {
             using var packet = new Packet(PacketType.CHARACTER_MAX_HITPOINTS);
@@ -676,6 +683,17 @@ namespace Imgeneus.World.Packets
         {
             using var packet = new Packet(PacketType.GUILD_CREATE);
             packet.Write((byte)reason);
+            client.SendPacket(packet);
+        }
+
+        internal void SendGuildCreateSuccess(IWorldClient client, int guildId, byte rank, string guildName, string guildMessage)
+        {
+            using var packet = new Packet(PacketType.GUILD_CREATE);
+            packet.Write((byte)GuildCreateFailedReason.Success);
+            packet.Write(guildId);
+            packet.WriteByte(rank);
+            packet.WriteString(guildName, 25);
+            packet.WriteString(guildMessage, 65);
             client.SendPacket(packet);
         }
 

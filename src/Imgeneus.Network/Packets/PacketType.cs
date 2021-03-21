@@ -72,6 +72,7 @@
         // Char stats & skills
         UPDATE_STATS = 0x0208, // 520
         LEARN_NEW_SKILL = 0x0209, // 521
+        SET_MONEY = 0x0213, // 531
         STATS_RESET = 0x0214, // 532
         AUTO_STATS_LIST = 0x0120, // 288
         AUTO_STATS_SET = 0x0121, // 289
@@ -276,8 +277,10 @@
         ITEM_COMPOSE_ABSOLUTE_SELECT = 0x0835, // 2101
 
         // Guild
+        GUILD_USER_LIST_ONLINE = 0x0D12, // 3346
         GUILD_CREATE = 0x0D21, // 3361
         GUILD_CREATE_AGREE = 0x0D22, // 3362
+        GUILD_LIST_ADD = 0x0D30, // 3376
 
         // Dyeing
         DYE_CONFIRM = 0x055B, // 1371

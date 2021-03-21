@@ -21,14 +21,30 @@ namespace Imgeneus.World.Game.Guild
         /// </summary>
         public Character GuildCreator { get; private set; }
 
-        public GuildCreateRequest(Character guildCreator, IEnumerable<Character> members)
+        /// <summary>
+        /// All party members.
+        /// </summary>
+        public IEnumerable<Character> Members { get; private set; }
+
+        /// <summary>
+        /// Guild name.
+        /// </summary>
+        public string Name { get; private set; }
+
+        /// <summary>
+        /// Guild remark.
+        /// </summary>
+        public string Message { get; private set; }
+
+        public GuildCreateRequest(Character guildCreator, IEnumerable<Character> members, string name, string message)
         {
             GuildCreator = guildCreator;
+            Members = members;
+            Name = name;
+            Message = message;
 
             foreach (var m in members)
                 Acceptance.Add(m.Id, false);
-
-            Acceptance[guildCreator.Id] = true;
         }
 
         public void Dispose()

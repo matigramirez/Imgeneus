@@ -64,7 +64,15 @@ namespace Imgeneus.World
             });
             services.AddSingleton<IChatManager, ChatManager>();
             services.AddSingleton<INoticeManager, NoticeManager>();
-            services.AddSingleton<IGuildManager, GuildManager>();
+            services.AddSingleton<IGuildManager, GuildManager>(x =>
+            {
+                var scope = x.CreateScope();
+                var logger = scope.ServiceProvider.GetRequiredService<ILogger<IGuildManager>>();
+                var db = scope.ServiceProvider.GetRequiredService<IDatabase>();
+                return new GuildManager(logger, db);
+
+            });
+
 
             services.AddTransient<ILogsDatabase, LogsDbContext>();
             services.AddTransient<ILinkingManager, LinkingManager>();

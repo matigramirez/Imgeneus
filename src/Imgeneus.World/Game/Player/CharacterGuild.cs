@@ -5,6 +5,6 @@
         /// <summary>
         /// Bool indicator, that shows if character is guild member.
         /// </summary>
-        public bool HasGuild { get; }
+        public bool HasGuild { get; } = false;
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Imgeneus.World.Game.Player;
+using System.Threading.Tasks;
 
 namespace Imgeneus.World.Game.Guild
 {
@@ -20,5 +21,14 @@ namespace Imgeneus.World.Game.Guild
         /// <param name="character">player to whom the request was sent</param>
         /// <param name="agree">player's answer</param>
         public void SetAgreeRequest(Character character, bool agree);
+
+        /// <summary>
+        /// Tries to add character to guild.
+        /// </summary>
+        /// <param name="guildId">guild id</param>
+        /// <param name="member">new character</param>
+        /// <param name="rank">character rank in guild</param>
+        /// <returns>true, if character was added to guild, otherwise false</returns>
+        public Task<bool> TryAddMember(int guildId, Character member, byte rank);
     }
 }

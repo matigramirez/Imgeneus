@@ -177,6 +177,10 @@ namespace Imgeneus.World.Game.Player
 
         public void SendGuildCreateFailed(GuildCreateFailedReason reason) => _packetsHelper.SendGuildCreateFailed(Client, reason);
 
+        public void SendGuildCreateSuccess(int guildId, byte rank, string guildName, string guildMessage) => _packetsHelper.SendGuildCreateSuccess(Client, guildId, rank, guildName, guildMessage);
+
         public void SendGuildCreateRequest(int creatorId, string guildName, string guildMessage) => _packetsHelper.SendGuildCreateRequest(Client, creatorId, guildName, guildMessage);
+
+        public void SendGoldUpdate() => _packetsHelper.SendGoldUpdate(Client, Gold);
     }
 }

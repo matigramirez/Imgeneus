@@ -4,7 +4,7 @@ using Imgeneus.Database.Entities;
 using Imgeneus.Network.Serialization;
 using Imgeneus.World.Game.Player;
 
-namespace Imgeneus.World.Serialization.EP_8_V2
+namespace Imgeneus.World.Serialization.SHAIYA_US
 {
     public class CharacterShape : BaseSerializable
     {
@@ -51,30 +51,24 @@ namespace Imgeneus.World.Serialization.EP_8_V2
         public EquipmentItem[] EquipmentItems { get; } = new EquipmentItem[17];
 
         [FieldOrder(14)]
-        public byte[] UnknownBytes3 { get; } = new byte[9];
-
-        [FieldOrder(15)]
         public bool[] EquipmentItemHasColor { get; } = new bool[17];
 
-        [FieldOrder(16)]
+        [FieldOrder(15)]
         public int UnknownInt { get; }
 
-        [FieldOrder(17)]
+        [FieldOrder(16)]
         public DyeColorSerialized[] EquipmentItemColor { get; } = new DyeColorSerialized[17];
 
-        [FieldOrder(18)]
+        [FieldOrder(17)]
         public byte[] UnknownBytes2 { get; } = new byte[451];
 
-        [FieldOrder(19)]
+        [FieldOrder(18)]
         public byte[] Name;
 
+        [FieldOrder(19)]
+        public byte[] UnknownBytes3 = new byte[29];
+
         [FieldOrder(20)]
-        public byte[] Name2;
-
-        [FieldOrder(21)]
-        public byte[] UnknownBytes4 = new byte[29];
-
-        [FieldOrder(22)]
         public byte[] GuildName = new byte[25];
 
         public CharacterShape(Character character)
@@ -92,7 +86,6 @@ namespace Imgeneus.World.Serialization.EP_8_V2
             Mode = character.Mode;
             Kills = character.Kills;
             Name = character.NameAsByteArray;
-            Name2 = character.NameAsByteArray; // not sure why, but server definitely sends name twice
 
             for (byte i = 0; i < 17; i++)
             {

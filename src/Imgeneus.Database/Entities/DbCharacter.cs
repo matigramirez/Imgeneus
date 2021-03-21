@@ -285,10 +285,18 @@ namespace Imgeneus.Database.Entities
         /// </summary>
         public ICollection<DbCharacterFriend> Friends { get; set; }
 
+        public int? GuildId { get; set; }
+
         /// <summary>
         /// Character guild.
         /// </summary>
+        [ForeignKey(nameof(GuildId))]
         public DbGuild Guild { get; set; }
+
+        /// <summary>
+        /// Character rank in guild.
+        /// </summary>
+        public byte GuildRank { get; set; }
 
         public DbCharacter()
         {

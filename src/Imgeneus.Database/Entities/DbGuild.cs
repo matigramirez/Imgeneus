@@ -40,7 +40,7 @@ namespace Imgeneus.Database.Entities
         /// <summary>
         /// Guild members.
         /// </summary>
-        public ICollection<DbCharacterGuild> Members { get; set; }
+        public ICollection<DbCharacter> Members { get; set; }
 
         public DbGuild(string name, int masterId, Fraction country)
         {
@@ -48,7 +48,7 @@ namespace Imgeneus.Database.Entities
             MasterId = masterId;
             Country = country;
             CreateDate = DateTime.UtcNow;
-            Members = new HashSet<DbCharacterGuild>();
+            Members = new HashSet<DbCharacter>();
         }
     }
 }

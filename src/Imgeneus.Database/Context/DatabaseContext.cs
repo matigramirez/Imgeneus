@@ -110,8 +110,6 @@ namespace Imgeneus.Database.Context
 
             modelBuilder.Entity<DbCharacter>().HasMany(x => x.Friends).WithOne(x => x.Character);
 
-            modelBuilder.Entity<DbCharacter>().HasOne(x => x.Guild);
-
             modelBuilder.Entity<DbCharacterFriend>().HasKey(x => new { x.CharacterId, x.FriendId });
 
             #region Many to many relations
@@ -130,10 +128,6 @@ namespace Imgeneus.Database.Context
 
             // Bank Items
             modelBuilder.Entity<DbBankItem>().HasOne(x => x.User).WithMany(x => x.BankItems);
-
-            // Guilds
-            modelBuilder.Entity<DbCharacterGuild>().HasKey(x => new { x.CharacterId, x.GuildId });
-            modelBuilder.Entity<DbCharacterGuild>().HasOne(x => x.Guild).WithMany(x => x.Members);
 
             #endregion
         }

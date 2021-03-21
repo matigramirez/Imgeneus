@@ -384,7 +384,8 @@ namespace Imgeneus.World.Game.Player
                 Defeats = dbCharacter.Defeats,
                 IsAdmin = dbCharacter.User.Authority == 0,
                 Country = dbCharacter.User.Faction,
-                Points = dbCharacter.User.Points
+                Points = dbCharacter.User.Points,
+                GuildId = dbCharacter.GuildId
             };
 
             foreach (var skill in dbCharacter.Skills.Select(s => new Skill(s.Skill, s.Number, 0)))
@@ -406,6 +407,13 @@ namespace Imgeneus.World.Game.Player
 
             foreach (var bankItem in dbCharacter.User.BankItems.Where(bi => !bi.IsClaimed).Select(bi => new BankItem(bi)))
                 character.BankItems.TryAdd(bankItem.Slot, bankItem);
+
+            if (dbCharacter.Guild != null)
+            {
+                character.GuildName = dbCharacter.Guild.Name;
+
+                // TODO: send guild list.
+            }
 
             character.Init();
 

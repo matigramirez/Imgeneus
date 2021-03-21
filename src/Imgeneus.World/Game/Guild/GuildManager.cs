@@ -178,8 +178,12 @@ namespace Imgeneus.World.Game.Guild
             if (guild is null)
                 return false;
 
-            var charGuild = new DbCharacterGuild(member.Id, guild.Id, rank);
-            guild.Members.Add(charGuild);
+            var character = await _database.Characters.FindAsync(member.Id);
+            if (character is null)
+                return false;
+
+            guild.Members.Add(character);
+            character.GuildRank = rank;
 
             var result = await _database.SaveChangesAsync();
             if (result > 0)

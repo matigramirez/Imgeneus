@@ -3,14 +3,16 @@ using System;
 using Imgeneus.Database.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Imgeneus.Database.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20210321165158_RemoveCharacterGuild")]
+    partial class RemoveCharacterGuild
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -116,12 +118,6 @@ namespace Imgeneus.Database.Migrations
                     b.Property<uint>("Gold")
                         .HasColumnType("int unsigned");
 
-                    b.Property<int?>("GuildId")
-                        .HasColumnType("int");
-
-                    b.Property<byte>("GuildRank")
-                        .HasColumnType("tinyint unsigned");
-
                     b.Property<byte>("Hair")
                         .HasColumnType("tinyint unsigned");
 
@@ -203,8 +199,6 @@ namespace Imgeneus.Database.Migrations
                         .HasColumnType("smallint unsigned");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("GuildId");
 
                     b.HasIndex("UserId");
 
@@ -1510,17 +1504,11 @@ namespace Imgeneus.Database.Migrations
 
             modelBuilder.Entity("Imgeneus.Database.Entities.DbCharacter", b =>
                 {
-                    b.HasOne("Imgeneus.Database.Entities.DbGuild", "Guild")
-                        .WithMany("Members")
-                        .HasForeignKey("GuildId");
-
                     b.HasOne("Imgeneus.Database.Entities.DbUser", "User")
                         .WithMany("Characters")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Guild");
 
                     b.Navigation("User");
                 });
@@ -1644,11 +1632,6 @@ namespace Imgeneus.Database.Migrations
                     b.Navigation("QuickItems");
 
                     b.Navigation("Skills");
-                });
-
-            modelBuilder.Entity("Imgeneus.Database.Entities.DbGuild", b =>
-                {
-                    b.Navigation("Members");
                 });
 
             modelBuilder.Entity("Imgeneus.Database.Entities.DbUser", b =>

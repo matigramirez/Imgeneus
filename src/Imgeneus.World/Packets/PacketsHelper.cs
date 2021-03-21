@@ -23,6 +23,8 @@ using Imgeneus.World.Serialization;
 using Imgeneus.World.Serialization.EP_8_V1;
 #elif EP8_V2
 using Imgeneus.World.Serialization.EP_8_V2;
+#elif SHAIYA_US
+using Imgeneus.World.Serialization.SHAIYA_US;
 #else
 using Imgeneus.World.Serialization.EP_8_V1;
 #endif

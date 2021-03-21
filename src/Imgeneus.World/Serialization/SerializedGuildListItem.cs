@@ -30,8 +30,8 @@ namespace Imgeneus.World.Serialization
             Id = guild.Id;
             Name = guild.Name;
             MasterName = "TODO: master name";
-            //Message = Encoding.Unicode.GetBytes("guild message");
-            Message = Encoding.UTF8.GetBytes("guild message");
+            //Message = Encoding.Unicode.GetBytes("guild message"); // new eps
+            Message = Encoding.UTF8.GetBytes("guild message"); // old eps
         }
     }
 }

@@ -202,5 +202,15 @@ namespace Imgeneus.World.Game.Guild
 
             return _database.Guilds.Include(g => g.Master).Where(g => g.Country == country).ToArray();
         }
+
+        /// <inheritdoc/>
+        public async Task<IEnumerable<DbCharacter>> GetMemebers(int guildId)
+        {
+            var guild = await _database.Guilds.Include(g => g.Members).FirstOrDefaultAsync(g => g.Id == guildId);
+            if (guild is null)
+                return new List<DbCharacter>();
+
+            return guild.Members;
+        }
     }
 }

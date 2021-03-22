@@ -78,6 +78,29 @@ namespace Imgeneus.World.Packets
             client.SendPacket(end);
         }
 
+        internal void SendGuildMembersOnline(IWorldClient client, List<DbCharacter> members, bool online)
+        {
+            var steps = members.Count / 40;
+            var left = members.Count % 40;
+
+            for (var i = 0; i <= steps; i++)
+            {
+                var startIndex = i * 40;
+                var length = i == steps ? left : 40;
+                var endIndex = startIndex + length;
+
+                Packet packet;
+                if (online)
+                    packet = new Packet(PacketType.GUILD_USER_LIST_ONLINE);
+                else
+                    packet = new Packet(PacketType.GUILD_USER_LIST_NOT_ONLINE);
+
+                packet.Write(new GuildListOnline(members.GetRange(startIndex, endIndex)).Serialize());
+                client.SendPacket(packet);
+                packet.Dispose();
+            }
+        }
+
         internal void SendWorldDay(IWorldClient client)
         {
             using var packet = new Packet(PacketType.WORLD_DAY);

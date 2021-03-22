@@ -39,7 +39,7 @@ namespace Imgeneus.World.Game.Player
                                                         .Include(c => c.Items).ThenInclude(ci => ci.Item)
                                                         .Include(c => c.ActiveBuffs).ThenInclude(cb => cb.Skill)
                                                         .Include(c => c.Friends).ThenInclude(cf => cf.Friend)
-                                                        .Include(c => c.Guild)
+                                                        .Include(c => c.Guild).ThenInclude(g => g.Members)
                                                         .Include(c => c.Quests)
                                                         .Include(c => c.QuickItems)
                                                         .Include(c => c.User)
@@ -70,6 +70,9 @@ namespace Imgeneus.World.Game.Player
                                         scopedProvider.GetService<INoticeManager>(),
                                         scopedProvider.GetService<IGuildManager>());
             player.Client = client;
+            if (player.HasGuild)
+                player.SendGuildMembers(dbCharacter.Guild.Members);
+
             return player;
         }
     }

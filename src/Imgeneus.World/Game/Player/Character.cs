@@ -408,12 +408,7 @@ namespace Imgeneus.World.Game.Player
             foreach (var bankItem in dbCharacter.User.BankItems.Where(bi => !bi.IsClaimed).Select(bi => new BankItem(bi)))
                 character.BankItems.TryAdd(bankItem.Slot, bankItem);
 
-            if (dbCharacter.Guild != null)
-            {
-                character.GuildName = dbCharacter.Guild.Name;
-
-                // TODO: send guild list.
-            }
+            character.GuildName = dbCharacter.Guild != null ? dbCharacter.Guild.Name : string.Empty;
 
             character.Init();
 

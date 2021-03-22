@@ -112,6 +112,9 @@ namespace Imgeneus.Database.Context
 
             modelBuilder.Entity<DbCharacterFriend>().HasKey(x => new { x.CharacterId, x.FriendId });
 
+            modelBuilder.Entity<DbCharacter>().HasOne(x => x.Guild);
+            modelBuilder.Entity<DbGuild>().HasOne(x => x.Master);
+
             #region Many to many relations
             // Skills.
             modelBuilder.Entity<DbCharacterSkill>().HasKey(x => new { x.CharacterId, x.SkillId });

@@ -278,8 +278,8 @@
         ITEM_COMPOSE_ABSOLUTE_SELECT = 0x0835, // 2101
 
         // Guild
-        GUILD_LIST_START = 0x0D0D, // 3341 not sure?
-        GUILD_LIST_END = 0x0D0E, // 3342 not sure?
+        GUILD_LIST_LOADING_START = 0x0D0D, // 3341
+        GUILD_LIST_LOADING_END = 0x0D0E, // 3342
         GUILD_USER_LIST_ONLINE = 0x0D12, // 3346
         GUILD_CREATE = 0x0D21, // 3361
         GUILD_CREATE_AGREE = 0x0D22, // 3362

@@ -2,6 +2,7 @@
 using Imgeneus.Database.Entities;
 using Imgeneus.World.Game.PartyAndRaid;
 using Imgeneus.World.Game.Player;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Concurrent;
@@ -161,7 +162,7 @@ namespace Imgeneus.World.Game.Guild
         /// <returns>Db guild, if it was created, otherwise null.</returns>
         private async Task<DbGuild> TryCreateGuild(string name, string message, Character master)
         {
-            var guild = new DbGuild(name, master.Id, master.Country);
+            var guild = new DbGuild(name, message, master.Id, master.Country);
 
             _database.Guilds.Add(guild);
 
@@ -194,10 +195,12 @@ namespace Imgeneus.World.Game.Guild
         }
 
         /// <inheritdoc/>
-        public IEnumerable<DbGuild> GetAllGuilds()
+        public DbGuild[] GetAllGuilds(Fraction country = Fraction.NotSelected)
         {
-            // TODO: maybe do not select them all?
-            return _database.Guilds.ToList();
+            if (country == Fraction.NotSelected)
+                return _database.Guilds.Include(g => g.Master).ToArray();
+
+            return _database.Guilds.Include(g => g.Master).Where(g => g.Country == country).ToArray();
         }
     }
 }

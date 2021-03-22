@@ -16,22 +16,33 @@ namespace Imgeneus.World.Serialization
         [FieldOrder(2), FieldLength(21)]
         public string MasterName;
 
+#if EP8_V2 || SHAIYA_US
+        [FieldOrder(3), FieldLength(130)]
+        public byte[] Message;
+#else
         [FieldOrder(3), FieldLength(65)]
         public byte[] Message;
+#endif
 
         [FieldOrder(4)]
-        public byte Rank = 3;
+        public byte Rank;
 
         [FieldOrder(5)]
-        public uint Points = 6;
+        public int Points;
 
         public SerializedGuildListItem(DbGuild guild)
         {
             Id = guild.Id;
             Name = guild.Name;
-            MasterName = "TODO: master name";
-            //Message = Encoding.Unicode.GetBytes("guild message"); // new eps
-            Message = Encoding.UTF8.GetBytes("guild message"); // old eps
+            MasterName = guild.Master.Name;
+            Rank = guild.Rank;
+            Points = guild.Points;
+
+#if EP8_V2 || SHAIYA_US
+            Message = Encoding.Unicode.GetBytes(guild.Message);
+#else
+            Message = Encoding.UTF8.GetBytes(guild.Message);
+#endif
         }
     }
 }

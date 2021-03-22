@@ -55,16 +55,26 @@ namespace Imgeneus.World.Packets
             }
         }
 
-        internal void SendGuildList(IWorldClient client, IEnumerable<DbGuild> guilds)
+        internal void SendGuildList(IWorldClient client, DbGuild[] guilds)
         {
-            using var start = new Packet(PacketType.GUILD_LIST_START);
+            using var start = new Packet(PacketType.GUILD_LIST_LOADING_START);
             client.SendPacket(start);
 
-            using var packet = new Packet(PacketType.GUILD_LIST);
-            packet.Write(new GuildList(guilds).Serialize());
-            client.SendPacket(packet);
+            var steps = guilds.Length / 15;
+            var left = guilds.Length % 15;
 
-            using var end = new Packet(PacketType.GUILD_LIST_END);
+            for (var i = 0; i <= steps; i++)
+            {
+                var startIndex = i * 15;
+                var length = i == steps ? left : 15;
+                var endIndex = startIndex + length;
+
+                using var packet = new Packet(PacketType.GUILD_LIST);
+                packet.Write(new GuildList(guilds[startIndex..endIndex]).Serialize());
+                client.SendPacket(packet);
+            }
+
+            using var end = new Packet(PacketType.GUILD_LIST_LOADING_END);
             client.SendPacket(end);
         }
 

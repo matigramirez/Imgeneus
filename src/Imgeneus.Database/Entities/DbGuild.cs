@@ -13,9 +13,20 @@ namespace Imgeneus.Database.Entities
         public string Name { get; set; }
 
         /// <summary>
+        /// Guild message.
+        /// </summary>
+        public string Message { get; set; }
+
+        /// <summary>
         /// Character id, that is guild owner.
         /// </summary>
         public int MasterId { get; set; }
+
+        /// <summary>
+        /// Guild owner.
+        /// </summary>
+        [ForeignKey(nameof(MasterId))]
+        public DbCharacter Master { get; set; }
 
         /// <summary>
         /// Light or dark.
@@ -26,6 +37,11 @@ namespace Imgeneus.Database.Entities
         /// Guild points.
         /// </summary>
         public int Points { get; set; }
+
+        /// <summary>
+        /// Guild rank.
+        /// </summary>
+        public byte Rank { get; set; }
 
         /// <summary>
         /// Guild's creation date.
@@ -42,11 +58,13 @@ namespace Imgeneus.Database.Entities
         /// </summary>
         public ICollection<DbCharacter> Members { get; set; }
 
-        public DbGuild(string name, int masterId, Fraction country)
+        public DbGuild(string name, string message, int masterId, Fraction country)
         {
             Name = name;
+            Message = message;
             MasterId = masterId;
             Country = country;
+            Rank = 31; // Default rank.
             CreateDate = DateTime.UtcNow;
             Members = new HashSet<DbCharacter>();
         }

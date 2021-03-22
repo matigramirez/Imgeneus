@@ -1,6 +1,5 @@
 ﻿using Imgeneus.Database.Entities;
 using Imgeneus.World.Game.Player;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Imgeneus.World.Game.Guild
@@ -36,7 +35,8 @@ namespace Imgeneus.World.Game.Guild
         /// <summary>
         /// Get all guilds in this server.
         /// </summary>
+        /// <param name="country">optional param, fraction light or dark</param>
         /// <returns>collection of guilds</returns>
-        public IEnumerable<DbGuild> GetAllGuilds();
+        public DbGuild[] GetAllGuilds(Fraction country = Fraction.NotSelected);
     }
 }

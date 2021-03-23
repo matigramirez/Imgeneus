@@ -185,6 +185,10 @@ namespace Imgeneus.World.Game.Player
 
         public void SendGuildCreateRequest(int creatorId, string guildName, string guildMessage) => _packetsHelper.SendGuildCreateRequest(Client, creatorId, guildName, guildMessage);
 
+        public void SendGuildMemberIsOnline(int playerId) => _packetsHelper.SendGuildMemberIsOnline(Client, playerId);
+
+        public void SendGuildMemberIsOffline(int playerId) => _packetsHelper.SendGuildMemberIsOffline(Client, playerId);
+
         public void SendGoldUpdate() => _packetsHelper.SendGoldUpdate(Client, Gold);
     }
 }

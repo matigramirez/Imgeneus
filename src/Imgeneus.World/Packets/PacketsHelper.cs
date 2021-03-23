@@ -241,6 +241,22 @@ namespace Imgeneus.World.Packets
             client.SendPacket(packet);
         }
 
+        internal void SendGuildMemberIsOnline(IWorldClient client, int playerId)
+        {
+            using var packet = new Packet(PacketType.GUILD_USER_STATE);
+            packet.WriteByte(104);
+            packet.Write(playerId);
+            client.SendPacket(packet);
+        }
+
+        internal void SendGuildMemberIsOffline(IWorldClient client, int playerId)
+        {
+            using var packet = new Packet(PacketType.GUILD_USER_STATE);
+            packet.WriteByte(105);
+            packet.Write(playerId);
+            client.SendPacket(packet);
+        }
+
         internal void SendTeleportViaNpc(IWorldClient client, NpcTeleportNotAllowedReason reason, uint money)
         {
             using var packet = new Packet(PacketType.CHARACTER_TELEPORT_VIA_NPC);

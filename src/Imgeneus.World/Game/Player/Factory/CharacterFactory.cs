@@ -71,7 +71,10 @@ namespace Imgeneus.World.Game.Player
                                         scopedProvider.GetService<IGuildManager>());
             player.Client = client;
             if (player.HasGuild)
-                player.SendGuildMembers(dbCharacter.Guild.Members);
+            {
+                player.LoadGuildMembers(dbCharacter.Guild.Members);
+                player.NotifyGuildMembersOnline();
+            }
 
             return player;
         }

@@ -123,6 +123,9 @@ namespace Imgeneus.World.Game.Player
                     friendPlayer.FriendOffline(this);
             }
 
+            // Notify guild members, that player is offline.
+            NotifyGuildMembersOffline();
+
             // Save current buffs to database.
             _taskQueue.Enqueue(ActionType.REMOVE_BUFF_ALL, Id);
             foreach (var buff in ActiveBuffs)

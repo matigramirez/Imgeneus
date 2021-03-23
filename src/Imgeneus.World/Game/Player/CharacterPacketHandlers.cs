@@ -727,5 +727,17 @@ namespace Imgeneus.World.Game.Player
         {
             _guildManager.SetAgreeRequest(this, ok);
         }
+
+        private async void HandleGuildJoinRequest(int guildId)
+        {
+            if (HasGuild)
+            {
+                _packetsHelper.SendGuildJoinRequest(Client, false);
+                return;
+            }
+
+            var success = await _guildManager.RequestJoin(guildId, Id);
+            _packetsHelper.SendGuildJoinRequest(Client, success);
+        }
     }
 }

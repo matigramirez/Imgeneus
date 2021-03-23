@@ -45,5 +45,11 @@ namespace Imgeneus.World.Game.Guild
         /// </summary>
         /// <returns>collection of memebers</returns>
         public Task<IEnumerable<DbCharacter>> GetMemebers(int guildId);
+
+        /// <summary>
+        /// Player requests to join a guild.
+        /// </summary>
+        /// <returns>true is success</returns>
+        public Task<bool> RequestJoin(int guildId, int playerId);
     }
 }

@@ -16,16 +16,20 @@ namespace Imgeneus.World.Game.Guild
     {
         private readonly ILogger<IGuildManager> _logger;
         private readonly IDatabase _database;
+        private readonly IGameWorld _gameWorld;
 
         public const uint MIN_GOLD = 10000000; // 10kk
         public const byte MIN_MEMBERS_COUNT = 2;//7;
         public const byte MIN_LEVEL = 10;
 
-        public GuildManager(ILogger<IGuildManager> logger, IDatabase database)
+        public GuildManager(ILogger<IGuildManager> logger, IDatabase database, IGameWorld gameWorld)
         {
             _logger = logger;
             _database = database;
+            _gameWorld = gameWorld;
         }
+
+        #region Guild creation
 
         /// <inheritdoc/>
         public GuildCreateFailedReason CanCreateGuild(Character guildCreator, string guildName)
@@ -173,6 +177,10 @@ namespace Imgeneus.World.Game.Guild
                 return null;
         }
 
+        #endregion
+
+        #region Add members
+
         /// <inheritdoc/>
         public async Task<bool> TryAddMember(int guildId, Character member, byte rank)
         {
@@ -194,6 +202,10 @@ namespace Imgeneus.World.Game.Guild
                 return false;
         }
 
+        #endregion
+
+        #region List guilds
+
         /// <inheritdoc/>
         public DbGuild[] GetAllGuilds(Fraction country = Fraction.NotSelected)
         {
@@ -212,5 +224,55 @@ namespace Imgeneus.World.Game.Guild
 
             return guild.Members;
         }
+
+        #endregion
+
+        #region Request join
+
+        /// <summary>
+        /// Dictionary of join requests.
+        /// Key is player id.
+        /// Value is guild id.
+        /// </summary>
+        private readonly ConcurrentDictionary<int, int> JoinRequests = new ConcurrentDictionary<int, int>();
+
+        /// <inheritdoc/>
+        public async Task<bool> RequestJoin(int guildId, int playerId)
+        {
+            var guild = await _database.Guilds.FindAsync(guildId);
+            if (guild is null)
+                return false;
+
+            var character = await _database.Characters.FindAsync(playerId);
+            if (character is null)
+                return false;
+
+            if (JoinRequests.TryRemove(playerId, out var removed))
+            {
+                foreach (var m in guild.Members.Where(x => x.GuildRank > 4))
+                {
+                    if (!_gameWorld.Players.ContainsKey(m.Id))
+                        continue;
+
+                    var guildMember = _gameWorld.Players[m.Id];
+                    guildMember.SendGuildJoinRequestRemove(playerId);
+                }
+            }
+
+            JoinRequests.TryAdd(playerId, guildId);
+
+            foreach (var m in guild.Members.Where(x => x.GuildRank > 4))
+            {
+                if (!_gameWorld.Players.ContainsKey(m.Id))
+                    continue;
+
+                var guildMember = _gameWorld.Players[m.Id];
+                guildMember.SendGuildJoinRequestAdd(character);
+            }
+
+            return true;
+        }
+
+        #endregion
     }
 }

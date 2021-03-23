@@ -69,7 +69,8 @@ namespace Imgeneus.World
                 var scope = x.CreateScope();
                 var logger = scope.ServiceProvider.GetRequiredService<ILogger<IGuildManager>>();
                 var db = scope.ServiceProvider.GetRequiredService<IDatabase>();
-                return new GuildManager(logger, db);
+                var game = scope.ServiceProvider.GetRequiredService<IGameWorld>();
+                return new GuildManager(logger, db, game);
 
             });
 

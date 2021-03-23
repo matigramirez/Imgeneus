@@ -5,6 +5,7 @@ using Imgeneus.World.Game.Zone.Obelisks;
 using Imgeneus.World.Game.Zone.Portals;
 using System.Linq;
 using Imgeneus.World.Game.Guild;
+using Imgeneus.Database.Entities;
 
 namespace Imgeneus.World.Game.Player
 {
@@ -188,6 +189,10 @@ namespace Imgeneus.World.Game.Player
         public void SendGuildMemberIsOnline(int playerId) => _packetsHelper.SendGuildMemberIsOnline(Client, playerId);
 
         public void SendGuildMemberIsOffline(int playerId) => _packetsHelper.SendGuildMemberIsOffline(Client, playerId);
+
+        public void SendGuildJoinRequestAdd(DbCharacter character) => _packetsHelper.SendGuildJoinRequestAdd(Client, character);
+
+        public void SendGuildJoinRequestRemove(int playerId) => _packetsHelper.SendGuildJoinRequestRemove(Client, playerId);
 
         public void SendGoldUpdate() => _packetsHelper.SendGoldUpdate(Client, Gold);
     }

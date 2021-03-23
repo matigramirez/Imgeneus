@@ -49,7 +49,7 @@ namespace Imgeneus.World.Game.Player
         private void SendInventoryItems()
         {
             var inventoryItems = InventoryItems.Values.ToArray();
-            _packetsHelper.SendInventoryItems(Client, inventoryItems);
+            _packetsHelper.SendInventoryItems(Client, inventoryItems); // WARNING: some servers expanded invetory to 6 bags(os is 5 bags), if you send item in 6 bag, client will crash!
 
             foreach (var item in inventoryItems.Where(i => i.ExpirationTime != null))
                 SendItemExpiration(item);

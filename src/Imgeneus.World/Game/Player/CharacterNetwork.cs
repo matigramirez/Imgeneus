@@ -27,8 +27,6 @@ namespace Imgeneus.World.Game.Player
                 if (_client is null)
                 {
                     _client = value;
-                    SendCharacterInfo();
-
                     _client.OnPacketArrived += Client_OnPacketArrived;
                 }
                 else
@@ -56,8 +54,9 @@ namespace Imgeneus.World.Game.Player
             switch (packet)
             {
                 case ChangeEncryptionPacket changeEcryptionPacket:
-                    SendSkillBar();
+                    Client.CryptoManager.UseExpandedKey = true;
                     break;
+
                 case LearnNewSkillPacket learnNewSkillPacket:
                     HandleLearnNewSkill(learnNewSkillPacket);
                     break;

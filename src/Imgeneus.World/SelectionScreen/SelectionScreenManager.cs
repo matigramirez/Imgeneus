@@ -281,6 +281,8 @@ namespace Imgeneus.World.SelectionScreen
                 packet.WriteByte(0); // ok response
                 packet.Write(character.Id);
                 _client.SendPacket(packet);
+
+                character.SendCharacterInfo();
             }
         }
 

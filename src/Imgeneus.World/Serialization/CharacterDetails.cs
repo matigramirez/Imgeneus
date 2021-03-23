@@ -74,8 +74,8 @@ namespace Imgeneus.Network.Serialization
         [FieldOrder(22)]
         public uint Defeats { get; }
 
-        [FieldOrder(23)]
-        public string GuildName { get => "TestGuildName"; }
+        [FieldOrder(23), FieldLength(25)]
+        public string GuildName { get; }
 
         public CharacterDetails(Character character)
         {
@@ -104,6 +104,7 @@ namespace Imgeneus.Network.Serialization
             MaxHP = character.MaxHP;
             MaxMP = character.MaxMP;
             MaxSP = character.MaxSP;
+            GuildName = character.GuildName;
         }
     }
 }

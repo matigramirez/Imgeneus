@@ -23,7 +23,7 @@ namespace Imgeneus.World.Game.Player
         /// <summary>
         /// Guild member ids for easy notification.
         /// </summary>
-        private readonly List<int> GuildMemberIds = new List<int>();
+        private readonly List<DbCharacter> GuildMembers = new List<DbCharacter>();
 
         /// <summary>
         /// Sends list of guilds, right after selection screen.
@@ -39,18 +39,20 @@ namespace Imgeneus.World.Game.Player
         /// </summary>
         public void LoadGuildMembers(IEnumerable<DbCharacter> members)
         {
+            GuildMembers.AddRange(members);
+        }
+
+        public void SendGuildMembersOnline()
+        {
             var online = new List<DbCharacter>();
             var notOnline = new List<DbCharacter>();
 
-            foreach (var m in members)
+            foreach (var m in GuildMembers)
             {
                 if (_gameWorld.Players.ContainsKey(m.Id) || m.Id == Id)
                     online.Add(m);
                 else
                     notOnline.Add(m);
-
-                if (m.Id != Id)
-                    GuildMemberIds.Add(m.Id);
             }
 
             _packetsHelper.SendGuildMembersOnline(Client, online, true);
@@ -62,8 +64,12 @@ namespace Imgeneus.World.Game.Player
         /// </summary>
         public void NotifyGuildMembersOnline()
         {
-            foreach (var id in GuildMemberIds)
+            foreach (var m in GuildMembers)
             {
+                var id = m.Id;
+                if (id == Id)
+                    continue;
+
                 if (!_gameWorld.Players.ContainsKey(id))
                     continue;
 
@@ -81,8 +87,12 @@ namespace Imgeneus.World.Game.Player
         /// </summary>
         public void NotifyGuildMembersOffline()
         {
-            foreach (var id in GuildMemberIds)
+            foreach (var m in GuildMembers)
             {
+                var id = m.Id;
+                if (id == Id)
+                    continue;
+
                 if (!_gameWorld.Players.ContainsKey(id))
                     continue;
 

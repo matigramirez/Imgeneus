@@ -6,6 +6,7 @@ using Imgeneus.World.Game.Zone.Portals;
 using System.Linq;
 using Imgeneus.World.Game.Guild;
 using Imgeneus.Database.Entities;
+using Imgeneus.Network.Server;
 
 namespace Imgeneus.World.Game.Player
 {
@@ -14,10 +15,11 @@ namespace Imgeneus.World.Game.Player
         /// <summary>
         /// Sends to client character start-up information.
         /// </summary>
-        private void SendCharacterInfo()
+        public void SendCharacterInfo()
         {
-            // SendWorldDay(); TODO: why do we need it?
+            // SendWorldDay(); // TODO: why do we need it?
             SendGuildList();
+            SendGuildMembersOnline();
             SendDetails();
             SendAdditionalStats();
             SendCurrentHitpoints();
@@ -34,6 +36,8 @@ namespace Imgeneus.World.Game.Player
 #if EP8_V1
             SendAccountPoints(); // WARNING: This is necessary if you have an in-game item mall.
 #endif
+
+            SendSkillBar(); // Should be always the last! Changes packet encryption to xor!
         }
 
         private void SendWorldDay() => _packetsHelper.SendWorldDay(Client);

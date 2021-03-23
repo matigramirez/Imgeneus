@@ -216,7 +216,6 @@ namespace Imgeneus.World.Packets
             }
 
             client.SendPacket(packet);
-            client.CryptoManager.UseExpandedKey = true;
         }
 
         internal void SendAddItem(IWorldClient client, Item item)

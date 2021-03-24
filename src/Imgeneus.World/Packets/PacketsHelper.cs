@@ -270,6 +270,14 @@ namespace Imgeneus.World.Packets
             client.SendPacket(packet);
         }
 
+        internal void SendGuildUserListAdd(IWorldClient client, DbCharacter character, bool online)
+        {
+            using var packet = new Packet(PacketType.GUILD_USER_LIST_ADD);
+            packet.Write(online);
+            packet.Write(new GuildUserUnit(character).Serialize());
+            client.SendPacket(packet);
+        }
+
         internal void SendTeleportViaNpc(IWorldClient client, NpcTeleportNotAllowedReason reason, uint money)
         {
             using var packet = new Packet(PacketType.CHARACTER_TELEPORT_VIA_NPC);
@@ -694,6 +702,16 @@ namespace Imgeneus.World.Packets
         {
             using var packet = new Packet(PacketType.GUILD_JOIN_REQUEST);
             packet.Write(ok);
+            client.SendPacket(packet);
+        }
+
+        internal void SendGuildJoinResult(IWorldClient client, bool ok, DbGuild guild, byte rank = 9)
+        {
+            using var packet = new Packet(PacketType.GUILD_JOIN_RESULT_USER);
+            packet.Write(ok);
+            packet.Write(guild.Id);
+            packet.Write(rank);
+            packet.WriteString(guild.Name, 25);
             client.SendPacket(packet);
         }
 

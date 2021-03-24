@@ -147,7 +147,7 @@ namespace Imgeneus.World.Game.Guild
                 if (m == request.GuildCreator)
                     rank = 1;
 
-                await TryAddMember(guild.Id, m, rank);
+                await TryAddMember(guild.Id, m.Id, rank);
                 m.SendGuildCreateSuccess(guild.Id, rank, guild.Name, request.Message);
             }
 
@@ -182,24 +182,24 @@ namespace Imgeneus.World.Game.Guild
         #region Add members
 
         /// <inheritdoc/>
-        public async Task<bool> TryAddMember(int guildId, Character member, byte rank)
+        public async Task<DbCharacter> TryAddMember(int guildId, int characterId, byte rank = 9)
         {
             var guild = await _database.Guilds.FindAsync(guildId);
             if (guild is null)
-                return false;
+                return null;
 
-            var character = await _database.Characters.FindAsync(member.Id);
+            var character = await _database.Characters.FindAsync(characterId);
             if (character is null)
-                return false;
+                return null;
 
             guild.Members.Add(character);
             character.GuildRank = rank;
 
             var result = await _database.SaveChangesAsync();
             if (result > 0)
-                return true;
+                return character;
             else
-                return false;
+                return null;
         }
 
         #endregion
@@ -213,6 +213,12 @@ namespace Imgeneus.World.Game.Guild
                 return _database.Guilds.Include(g => g.Master).ToArray();
 
             return _database.Guilds.Include(g => g.Master).Where(g => g.Country == country).ToArray();
+        }
+
+        /// <inheritdoc/>
+        public async Task<DbGuild> GetGuild(int guildId)
+        {
+            return await _database.Guilds.FindAsync(guildId);
         }
 
         /// <inheritdoc/>
@@ -247,21 +253,11 @@ namespace Imgeneus.World.Game.Guild
             if (character is null)
                 return false;
 
-            if (JoinRequests.TryRemove(playerId, out var removed))
-            {
-                foreach (var m in guild.Members.Where(x => x.GuildRank > 4))
-                {
-                    if (!_gameWorld.Players.ContainsKey(m.Id))
-                        continue;
-
-                    var guildMember = _gameWorld.Players[m.Id];
-                    guildMember.SendGuildJoinRequestRemove(playerId);
-                }
-            }
+            await RemoveRequestJoin(playerId);
 
             JoinRequests.TryAdd(playerId, guildId);
 
-            foreach (var m in guild.Members.Where(x => x.GuildRank > 4))
+            foreach (var m in guild.Members.Where(x => x.GuildRank < 3))
             {
                 if (!_gameWorld.Players.ContainsKey(m.Id))
                     continue;
@@ -271,6 +267,26 @@ namespace Imgeneus.World.Game.Guild
             }
 
             return true;
+        }
+
+        /// <inheritdoc/>
+        public async Task RemoveRequestJoin(int playerId)
+        {
+            if (JoinRequests.TryRemove(playerId, out var removed))
+            {
+                var guild = await _database.Guilds.FindAsync(removed);
+                if (guild is null)
+                    return;
+
+                foreach (var m in guild.Members.Where(x => x.GuildRank < 3))
+                {
+                    if (!_gameWorld.Players.ContainsKey(m.Id))
+                        continue;
+
+                    var guildMember = _gameWorld.Players[m.Id];
+                    guildMember.SendGuildJoinRequestRemove(playerId);
+                }
+            }
         }
 
         #endregion

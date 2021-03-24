@@ -28,10 +28,10 @@ namespace Imgeneus.World.Game.Guild
         /// Tries to add character to guild.
         /// </summary>
         /// <param name="guildId">guild id</param>
-        /// <param name="member">new character</param>
+        /// <param name="characterId">new character</param>
         /// <param name="rank">character rank in guild</param>
-        /// <returns>true, if character was added to guild, otherwise false</returns>
-        public Task<bool> TryAddMember(int guildId, Character member, byte rank);
+        /// <returns>db character, if character was added to guild, otherwise null</returns>
+        public Task<DbCharacter> TryAddMember(int guildId, int characterId, byte rank = 9);
 
         /// <summary>
         /// Get all guilds in this server.
@@ -39,6 +39,11 @@ namespace Imgeneus.World.Game.Guild
         /// <param name="country">optional param, fraction light or dark</param>
         /// <returns>collection of guilds</returns>
         public DbGuild[] GetAllGuilds(Fraction country = Fraction.NotSelected);
+
+        /// <summary>
+        /// Finds guild by id.
+        /// </summary>
+        public Task<DbGuild> GetGuild(int guildId);
 
         /// <summary>
         /// Gets guild members.
@@ -51,5 +56,10 @@ namespace Imgeneus.World.Game.Guild
         /// </summary>
         /// <returns>true is success</returns>
         public Task<bool> RequestJoin(int guildId, int playerId);
+
+        /// <summary>
+        /// Removes player from join requests.
+        /// </summary>
+        public Task RemoveRequestJoin(int playerId);
     }
 }

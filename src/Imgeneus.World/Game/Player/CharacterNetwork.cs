@@ -346,6 +346,10 @@ namespace Imgeneus.World.Game.Player
                     HandleGuildJoinRequest(guildJoinRequestPacket.GuildId);
                     break;
 
+                case GuildJoinResultPacket guildJoinResultPacket:
+                    HandleJoinResult(guildJoinResultPacket.Ok, guildJoinResultPacket.CharacterId);
+                    break;
+
                 case GMCreateMobPacket gMCreateMobPacket:
                     if (!IsAdmin)
                         return;

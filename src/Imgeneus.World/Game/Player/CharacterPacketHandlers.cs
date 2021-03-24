@@ -739,5 +739,57 @@ namespace Imgeneus.World.Game.Player
             var success = await _guildManager.RequestJoin(guildId, Id);
             _packetsHelper.SendGuildJoinRequest(Client, success);
         }
+
+        private async void HandleJoinResult(bool ok, int characterId)
+        {
+            if (!HasGuild)
+                return;
+
+            var guild = await _guildManager.GetGuild((int)GuildId);
+            if (guild is null)
+                return;
+
+            await _guildManager.RemoveRequestJoin(characterId);
+
+            var onlinePlayer = _gameWorld.Players[characterId];
+            if (!ok)
+            {
+                if (onlinePlayer != null)
+                    onlinePlayer.SendGuildJoinResult(false, guild);
+
+                return;
+            }
+
+            var dbCharacter = await _guildManager.TryAddMember((int)GuildId, characterId);
+            if (dbCharacter is null)
+            {
+                if (onlinePlayer != null)
+                    onlinePlayer.SendGuildJoinResult(false, guild);
+
+                return;
+            }
+
+            // Update guild members.
+            foreach (var member in GuildMembers.ToList())
+            {
+                if (!_gameWorld.Players.ContainsKey(member.Id))
+                    continue;
+
+                var guildPlayer = _gameWorld.Players[member.Id];
+                guildPlayer.GuildMembers.Add(dbCharacter);
+                guildPlayer.SendGuildUserListAdd(dbCharacter, onlinePlayer != null);
+            }
+
+            // Send additional info to new member, if he is online.
+            if (onlinePlayer != null)
+            {
+                onlinePlayer.GuildId = guild.Id;
+                onlinePlayer.GuildName = guild.Name;
+                onlinePlayer.GuildMembers.AddRange(GuildMembers);
+
+                onlinePlayer.SendGuildJoinResult(true, guild);
+                onlinePlayer.SendGuildMembersOnline();
+            }
+        }
     }
 }

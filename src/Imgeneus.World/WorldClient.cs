@@ -211,7 +211,8 @@ namespace Imgeneus.World
             { PacketType.BANK_CLAIM_ITEM, (s) => new BankClaimItemPacket(s) },
             { PacketType.GUILD_CREATE, (s) => new GuildCreatePacket(s) },
             { PacketType.GUILD_CREATE_AGREE, (s) => new GuildAgreePacket(s) },
-            { PacketType.GUILD_JOIN_REQUEST, (s) => new GuildJoinRequestPacket(s) }
+            { PacketType.GUILD_JOIN_REQUEST, (s) => new GuildJoinRequestPacket(s) },
+            { PacketType.GUILD_JOIN_RESULT_USER, (s) => new GuildJoinResultPacket(s) }
         };
 
         /// <inheritdoc />

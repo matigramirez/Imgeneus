@@ -270,6 +270,14 @@ namespace Imgeneus.World.Packets
             client.SendPacket(packet);
         }
 
+        internal void SendGuildKickMember(IWorldClient client, bool ok, int characterId)
+        {
+            using var packet = new Packet(PacketType.GUILD_KICK);
+            packet.Write(ok);
+            packet.Write(characterId);
+            client.SendPacket(packet);
+        }
+
         internal void SendGuildUserListAdd(IWorldClient client, DbCharacter character, bool online)
         {
             using var packet = new Packet(PacketType.GUILD_USER_LIST_ADD);

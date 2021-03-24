@@ -34,6 +34,14 @@ namespace Imgeneus.World.Game.Guild
         public Task<DbCharacter> TryAddMember(int guildId, int characterId, byte rank = 9);
 
         /// <summary>
+        /// Tries to remove character from guild.
+        /// </summary>
+        /// <param name="guildId">guild id</param>
+        /// <param name="characterId">character id</param>
+        /// <returns>db character, if character was removed, otherwise null</returns>
+        public Task<DbCharacter> TryRemoveMember(int guildId, int characterId);
+
+        /// <summary>
         /// Get all guilds in this server.
         /// </summary>
         /// <param name="country">optional param, fraction light or dark</param>

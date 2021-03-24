@@ -179,7 +179,7 @@ namespace Imgeneus.World.Game.Guild
 
         #endregion
 
-        #region Add members
+        #region Add/remove members
 
         /// <inheritdoc/>
         public async Task<DbCharacter> TryAddMember(int guildId, int characterId, byte rank = 9)
@@ -201,6 +201,28 @@ namespace Imgeneus.World.Game.Guild
             else
                 return null;
         }
+
+        /// <inheritdoc/>
+        public async Task<DbCharacter> TryRemoveMember(int guildId, int characterId)
+        {
+            var guild = await _database.Guilds.FindAsync(guildId);
+            if (guild is null)
+                return null;
+
+            var character = await _database.Characters.FindAsync(characterId);
+            if (character is null)
+                return null;
+
+            guild.Members.Remove(character);
+            character.GuildRank = 0;
+
+            var result = await _database.SaveChangesAsync();
+            if (result > 0)
+                return character;
+            else
+                return null;
+        }
+
 
         #endregion
 

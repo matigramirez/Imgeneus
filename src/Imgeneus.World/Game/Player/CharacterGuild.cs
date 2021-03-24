@@ -21,6 +21,11 @@ namespace Imgeneus.World.Game.Player
         public string GuildName { get; private set; } = string.Empty;
 
         /// <summary>
+        /// Guild rank.
+        /// </summary>
+        public byte GuildRank { get; private set; }
+
+        /// <summary>
         /// Guild member ids for easy notification.
         /// </summary>
         private readonly List<DbCharacter> GuildMembers = new List<DbCharacter>();
@@ -103,6 +108,17 @@ namespace Imgeneus.World.Game.Player
 
                 player.SendGuildMemberIsOffline(Id);
             }
+        }
+
+        /// <summary>
+        /// Clears guild values from player. Not from DB!
+        /// </summary>
+        public void ClearGuild()
+        {
+            GuildId = null;
+            GuildName = string.Empty;
+            GuildRank = 0;
+            GuildMembers.Clear();
         }
     }
 }

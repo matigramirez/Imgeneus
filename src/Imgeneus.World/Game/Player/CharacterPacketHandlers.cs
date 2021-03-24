@@ -742,7 +742,7 @@ namespace Imgeneus.World.Game.Player
 
         private async void HandleJoinResult(bool ok, int characterId)
         {
-            if (!HasGuild)
+            if (!HasGuild || GuildRank > 3)
                 return;
 
             var guild = await _guildManager.GetGuild((int)GuildId);
@@ -785,10 +785,49 @@ namespace Imgeneus.World.Game.Player
             {
                 onlinePlayer.GuildId = guild.Id;
                 onlinePlayer.GuildName = guild.Name;
+                onlinePlayer.GuildRank = 9;
                 onlinePlayer.GuildMembers.AddRange(GuildMembers);
 
                 onlinePlayer.SendGuildJoinResult(true, guild);
                 onlinePlayer.SendGuildMembersOnline();
+            }
+        }
+
+
+        private async void HandleGuildKick(int removeId)
+        {
+            if (!HasGuild || GuildRank > 3)
+            {
+                SendGuildKickMember(false, removeId);
+                return;
+            }
+
+            var dbCharacter = await _guildManager.TryRemoveMember((int)GuildId, removeId);
+            if (dbCharacter is null)
+            {
+                SendGuildKickMember(false, removeId);
+                return;
+            }
+
+            // Update guild members.
+            foreach (var member in GuildMembers.ToList())
+            {
+                if (!_gameWorld.Players.ContainsKey(member.Id))
+                    continue;
+
+                var guildPlayer = _gameWorld.Players[member.Id];
+
+                if (guildPlayer.Id == removeId)
+                    guildPlayer.ClearGuild();
+                else
+                {
+                    var temp = guildPlayer.GuildMembers.FirstOrDefault(x => x.Id == removeId);
+
+                    if (temp != null)
+                        guildPlayer.GuildMembers.Remove(temp);
+                }
+
+                guildPlayer.SendGuildKickMember(true, removeId);
             }
         }
     }

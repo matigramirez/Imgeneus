@@ -412,6 +412,7 @@ namespace Imgeneus.World.Game.Player
                 character.BankItems.TryAdd(bankItem.Slot, bankItem);
 
             character.GuildName = dbCharacter.Guild != null ? dbCharacter.Guild.Name : string.Empty;
+            character.GuildRank = dbCharacter.GuildRank;
 
             character.Init();
 

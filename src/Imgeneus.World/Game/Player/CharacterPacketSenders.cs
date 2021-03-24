@@ -202,6 +202,8 @@ namespace Imgeneus.World.Game.Player
 
         public void SendGuildUserListAdd(DbCharacter character, bool online) => _packetsHelper.SendGuildUserListAdd(Client, character, online);
 
+        public void SendGuildKickMember(bool ok, int characterId) => _packetsHelper.SendGuildKickMember(Client, ok, characterId);
+
         public void SendGoldUpdate() => _packetsHelper.SendGoldUpdate(Client, Gold);
     }
 }

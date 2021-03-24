@@ -312,5 +312,35 @@ namespace Imgeneus.World.Game.Guild
         }
 
         #endregion
+
+        #region Rank change
+
+        /// <inheritdoc/>
+        public async Task<DbCharacter> TryChangeRank(int guildId, int playerId, bool demote)
+        {
+            var character = await _database.Characters.FirstOrDefaultAsync(x => x.GuildId == guildId && x.Id == playerId);
+            if (character is null)
+                return null;
+
+            if (demote && character.GuildRank == 9)
+                return null;
+
+            if (!demote && character.GuildRank == 2)
+                return null;
+
+            if (demote)
+                character.GuildRank++;
+            else
+                character.GuildRank--;
+
+            var result = await _database.SaveChangesAsync();
+            if (result > 0)
+                return character;
+            else
+                return null;
+
+        }
+
+        #endregion
     }
 }

@@ -354,6 +354,10 @@ namespace Imgeneus.World.Game.Player
                     HandleGuildKick(guildKickPacket.CharacterId);
                     break;
 
+                case GuildUserStatePacket guildUserStatePacket:
+                    HandleChangeRank(guildUserStatePacket.Demote, guildUserStatePacket.CharacterId);
+                    break;
+
                 case GMCreateMobPacket gMCreateMobPacket:
                     if (!IsAdmin)
                         return;

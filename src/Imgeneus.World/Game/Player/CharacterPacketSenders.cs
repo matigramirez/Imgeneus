@@ -204,6 +204,10 @@ namespace Imgeneus.World.Game.Player
 
         public void SendGuildKickMember(bool ok, int characterId) => _packetsHelper.SendGuildKickMember(Client, ok, characterId);
 
+        public void SendGuildMemberRemove(int characterId) => _packetsHelper.SendGuildMemberRemove(Client, characterId);
+
+        public void SendGuildUserChangeRank(int characterId, byte rank) => _packetsHelper.SendGuildUserChangeRank(Client, characterId, rank);
+
         public void SendGoldUpdate() => _packetsHelper.SendGoldUpdate(Client, Gold);
     }
 }

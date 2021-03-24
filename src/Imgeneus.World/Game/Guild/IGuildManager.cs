@@ -69,5 +69,14 @@ namespace Imgeneus.World.Game.Guild
         /// Removes player from join requests.
         /// </summary>
         public Task RemoveRequestJoin(int playerId);
+
+        /// <summary>
+        /// Change guild rank of character.
+        /// </summary>
+        /// <param name="guildId">guild id</param>
+        /// <param name="characterId">character id</param>
+        /// <param name="demote">decrease or increase rank?</param>
+        /// <returns>db character, if rank was changed, otherwise null</returns>
+        public Task<DbCharacter> TryChangeRank(int guildId, int characterId, bool demote);
     }
 }

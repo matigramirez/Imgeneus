@@ -793,7 +793,6 @@ namespace Imgeneus.World.Game.Player
             }
         }
 
-
         private async void HandleGuildKick(int removeId)
         {
             if (!HasGuild || GuildRank > 3)
@@ -825,9 +824,35 @@ namespace Imgeneus.World.Game.Player
 
                     if (temp != null)
                         guildPlayer.GuildMembers.Remove(temp);
+
+                    guildPlayer.SendGuildMemberRemove(removeId);
                 }
 
                 guildPlayer.SendGuildKickMember(true, removeId);
+            }
+        }
+
+        private async void HandleChangeRank(bool demote, int characterId)
+        {
+            if (!HasGuild || GuildRank > 3)
+                return;
+
+            var dbCharacter = await _guildManager.TryChangeRank((int)GuildId, characterId, demote);
+            if (dbCharacter is null)
+                return;
+
+            foreach (var member in GuildMembers.ToList())
+            {
+                if (!_gameWorld.Players.ContainsKey(member.Id))
+                    continue;
+
+                var guildPlayer = _gameWorld.Players[member.Id];
+                var changed = guildPlayer.GuildMembers.FirstOrDefault(x => x.Id == characterId);
+                if (changed is null)
+                    continue;
+
+                changed.GuildRank = dbCharacter.GuildRank;
+                guildPlayer.SendGuildUserChangeRank(changed.Id, changed.GuildRank);
             }
         }
     }

@@ -892,5 +892,27 @@ namespace Imgeneus.World.Game.Player
 
             SendGuildMemberLeaveResult(true);
         }
+
+        private async void HandleGuildDismantle()
+        {
+            if (!HasGuild || GuildRank != 1)
+                return;
+
+            var result = await _guildManager.TryDeleteGuild((int)GuildId);
+            if (!result)
+                return;
+
+            foreach (var member in GuildMembers.ToList())
+            {
+                if (!_gameWorld.Players.ContainsKey(member.Id))
+                    continue;
+
+                var guildPlayer = _gameWorld.Players[member.Id];
+                guildPlayer.ClearGuild();
+                guildPlayer.SendGuildDismantle();
+            }
+
+            // TODO: send guild remove from list
+        }
     }
 }

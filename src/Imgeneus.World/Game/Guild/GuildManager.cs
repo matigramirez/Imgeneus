@@ -179,6 +179,23 @@ namespace Imgeneus.World.Game.Guild
 
         #endregion
 
+        #region Guild remove
+
+        /// <inheritdoc/>
+        public async Task<bool> TryDeleteGuild(int guildId)
+        {
+            var guild = await _database.Guilds.FindAsync(guildId);
+            if (guild is null)
+                return false;
+
+            _database.Guilds.Remove(guild);
+
+            var result = await _database.SaveChangesAsync();
+            return result > 0;
+        }
+
+        #endregion
+
         #region Add/remove members
 
         /// <inheritdoc/>

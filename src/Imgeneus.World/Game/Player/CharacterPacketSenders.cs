@@ -212,6 +212,8 @@ namespace Imgeneus.World.Game.Player
 
         public void SendGuildMemberLeaveResult(bool ok) => _packetsHelper.SendGuildMemberLeaveResult(Client, ok);
 
+        public void SendGuildDismantle() => _packetsHelper.SendGuildDismantle(Client);
+
         public void SendGoldUpdate() => _packetsHelper.SendGoldUpdate(Client, Gold);
     }
 }

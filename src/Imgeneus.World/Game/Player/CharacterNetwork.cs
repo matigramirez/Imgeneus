@@ -362,6 +362,10 @@ namespace Imgeneus.World.Game.Player
                     HandleLeaveGuild();
                     break;
 
+                case GuildDismantlePacket guildDismantlePacket:
+                    HandleGuildDismantle();
+                    break;
+
                 case GMCreateMobPacket gMCreateMobPacket:
                     if (!IsAdmin)
                         return;

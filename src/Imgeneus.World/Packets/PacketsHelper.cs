@@ -278,6 +278,21 @@ namespace Imgeneus.World.Packets
             client.SendPacket(packet);
         }
 
+        internal void SendGuildMemberLeave(IWorldClient client, int playerId)
+        {
+            using var packet = new Packet(PacketType.GUILD_USER_STATE);
+            packet.WriteByte(102);
+            packet.Write(playerId);
+            client.SendPacket(packet);
+        }
+
+        internal void SendGuildMemberLeaveResult(IWorldClient client, bool ok)
+        {
+            using var packet = new Packet(PacketType.GUILD_LEAVE);
+            packet.Write(ok);
+            client.SendPacket(packet);
+        }
+
         internal void SendGuildUserChangeRank(IWorldClient client, int playerId, byte rank)
         {
             using var packet = new Packet(PacketType.GUILD_USER_STATE);

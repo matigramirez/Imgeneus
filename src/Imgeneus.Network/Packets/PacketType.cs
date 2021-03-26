@@ -280,6 +280,7 @@
         // Guild
         GUILD_JOIN_REQUEST = 0x0D07, // 3335
         GUILD_JOIN_RESULT_USER = 0x0D08, // 3336
+        GUILD_LEAVE = 0x0D09, // 3337
         GUILD_KICK = 0x0D0A, // 3338
         GUILD_USER_STATE = 0x0D0C, // 3340
         GUILD_LIST_LOADING_START = 0x0D0D, // 3341

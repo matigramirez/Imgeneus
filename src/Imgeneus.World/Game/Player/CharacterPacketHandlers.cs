@@ -855,5 +855,42 @@ namespace Imgeneus.World.Game.Player
                 guildPlayer.SendGuildUserChangeRank(changed.Id, changed.GuildRank);
             }
         }
+
+        private void HandleLeaveGuild()
+        {
+            if (!HasGuild)
+                return;
+
+            var dbCharacter = _guildManager.TryRemoveMember((int)GuildId, Id);
+            if (dbCharacter == null)
+            {
+                SendGuildMemberLeaveResult(false);
+                return;
+            }
+
+            foreach (var member in GuildMembers.ToList())
+            {
+                if (!_gameWorld.Players.ContainsKey(member.Id))
+                    continue;
+
+                var guildPlayer = _gameWorld.Players[member.Id];
+
+                if (guildPlayer.Id == Id)
+                {
+                    guildPlayer.ClearGuild();
+                }
+                else
+                {
+                    var temp = guildPlayer.GuildMembers.FirstOrDefault(x => x.Id == Id);
+
+                    if (temp != null)
+                        guildPlayer.GuildMembers.Remove(temp);
+
+                    guildPlayer.SendGuildMemberLeave(Id);
+                }
+            }
+
+            SendGuildMemberLeaveResult(true);
+        }
     }
 }

@@ -31,7 +31,7 @@ namespace Imgeneus.World.Game.Player
 
         public async Task<Character> CreateCharacter(int characterId, WorldClient client)
         {
-            using var scope = _provider.CreateScope();
+            var scope = _provider.CreateScope(); // TODO: dispose this scope, when player is disconnected.
             var scopedProvider = scope.ServiceProvider;
             using var database = scopedProvider.GetService<IDatabase>();
 
@@ -70,11 +70,6 @@ namespace Imgeneus.World.Game.Player
                                         scopedProvider.GetService<INoticeManager>(),
                                         scopedProvider.GetService<IGuildManager>());
             player.Client = client;
-            if (player.HasGuild)
-            {
-                player.LoadGuildMembers(dbCharacter.Guild.Members);
-                player.NotifyGuildMembersOnline();
-            }
 
             return player;
         }

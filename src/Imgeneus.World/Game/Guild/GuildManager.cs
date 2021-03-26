@@ -8,6 +8,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Imgeneus.World.Game.Guild
@@ -17,6 +18,7 @@ namespace Imgeneus.World.Game.Guild
         private readonly ILogger<IGuildManager> _logger;
         private readonly IDatabase _database;
         private readonly IGameWorld _gameWorld;
+        private SemaphoreSlim _sync = new SemaphoreSlim(1);
 
         public const uint MIN_GOLD = 10000000; // 10kk
         public const byte MIN_MEMBERS_COUNT = 2;//7;
@@ -64,7 +66,7 @@ namespace Imgeneus.World.Game.Guild
         /// <summary>
         /// Guild creation requests.
         /// </summary>
-        public ConcurrentDictionary<IParty, GuildCreateRequest> CreationRequests { get; private set; } = new ConcurrentDictionary<IParty, GuildCreateRequest>();
+        public static ConcurrentDictionary<IParty, GuildCreateRequest> CreationRequests { get; private set; } = new ConcurrentDictionary<IParty, GuildCreateRequest>();
 
         /// <inheritdoc/>
         public void SendGuildRequest(Character guildCreator, string guildName, string guildMessage)
@@ -176,11 +178,23 @@ namespace Imgeneus.World.Game.Guild
         /// <returns>Db guild, if it was created, otherwise null.</returns>
         private async Task<DbGuild> TryCreateGuild(string name, string message, Character master)
         {
+            await _sync.WaitAsync();
+
+            var result = await CreateGuild(name, message, master);
+
+            _sync.Release();
+
+            return result;
+        }
+
+        private async Task<DbGuild> CreateGuild(string name, string message, Character master)
+        {
             var guild = new DbGuild(name, message, master.Id, master.Country);
 
             _database.Guilds.Add(guild);
 
             var result = await _database.SaveChangesAsync();
+
             if (result > 0)
                 return guild;
             else
@@ -193,6 +207,17 @@ namespace Imgeneus.World.Game.Guild
 
         /// <inheritdoc/>
         public async Task<bool> TryDeleteGuild(int guildId)
+        {
+            await _sync.WaitAsync();
+
+            var result = await DeleteGuild(guildId);
+
+            _sync.Release();
+
+            return result;
+        }
+
+        private async Task<bool> DeleteGuild(int guildId)
         {
             var guild = await _database.Guilds.Include(x => x.Members).FirstOrDefaultAsync(x => x.Id == guildId);
             if (guild is null)
@@ -211,6 +236,7 @@ namespace Imgeneus.World.Game.Guild
                 foreach (var player in _gameWorld.Players.Values.ToList())
                     player.SendGuildListRemove(guildId);
             }
+
             return success;
         }
 
@@ -220,6 +246,17 @@ namespace Imgeneus.World.Game.Guild
 
         /// <inheritdoc/>
         public async Task<DbCharacter> TryAddMember(int guildId, int characterId, byte rank = 9)
+        {
+            await _sync.WaitAsync();
+
+            var result = await AddMember(guildId, characterId, rank);
+
+            _sync.Release();
+
+            return result;
+        }
+
+        private async Task<DbCharacter> AddMember(int guildId, int characterId, byte rank = 9)
         {
             var guild = await _database.Guilds.FindAsync(guildId);
             if (guild is null)
@@ -241,6 +278,18 @@ namespace Imgeneus.World.Game.Guild
 
         /// <inheritdoc/>
         public async Task<DbCharacter> TryRemoveMember(int guildId, int characterId)
+        {
+            await _sync.WaitAsync();
+
+            var result = await RemoveMember(guildId, characterId);
+
+            _sync.Release();
+
+            return result;
+
+        }
+
+        private async Task<DbCharacter> RemoveMember(int guildId, int characterId)
         {
             var guild = await _database.Guilds.FindAsync(guildId);
             if (guild is null)
@@ -355,6 +404,18 @@ namespace Imgeneus.World.Game.Guild
         /// <inheritdoc/>
         public async Task<DbCharacter> TryChangeRank(int guildId, int playerId, bool demote)
         {
+            await _sync.WaitAsync();
+
+            var result = await ChangeRank(guildId, playerId, demote);
+
+            _sync.Release();
+
+            return result;
+
+        }
+
+        private async Task<DbCharacter> ChangeRank(int guildId, int playerId, bool demote)
+        {
             var character = await _database.Characters.FirstOrDefaultAsync(x => x.GuildId == guildId && x.Id == playerId);
             if (character is null)
                 return null;
@@ -371,11 +432,11 @@ namespace Imgeneus.World.Game.Guild
                 character.GuildRank--;
 
             var result = await _database.SaveChangesAsync();
+
             if (result > 0)
                 return character;
             else
                 return null;
-
         }
 
         #endregion

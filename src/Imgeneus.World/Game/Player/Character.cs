@@ -411,8 +411,12 @@ namespace Imgeneus.World.Game.Player
             foreach (var bankItem in dbCharacter.User.BankItems.Where(bi => !bi.IsClaimed).Select(bi => new BankItem(bi)))
                 character.BankItems.TryAdd(bankItem.Slot, bankItem);
 
-            character.GuildName = dbCharacter.Guild != null ? dbCharacter.Guild.Name : string.Empty;
-            character.GuildRank = dbCharacter.GuildRank;
+            if (dbCharacter.Guild != null)
+            {
+                character.GuildName = dbCharacter.Guild.Name;
+                character.GuildRank = dbCharacter.GuildRank;
+                character.LoadGuildMembers(dbCharacter.Guild.Members);
+            }
 
             character.Init();
 

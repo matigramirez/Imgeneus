@@ -148,14 +148,24 @@ namespace Imgeneus.World.Game.Guild
                     rank = 1;
 
                 await TryAddMember(guild.Id, m.Id, rank);
-                m.SendGuildCreateSuccess(guild.Id, rank, guild.Name, request.Message);
+
+                m.GuildId = guild.Id;
+                m.GuildName = guild.Name;
+                m.GuildRank = rank;
+            }
+
+            foreach (var m in request.Members)
+            {
+                m.LoadGuildMembers(guild.Members);
+                m.SendGuildMembersOnline();
+                m.SendGuildCreateSuccess(guild.Id, m.GuildRank, guild.Name, request.Message);
             }
 
             request.GuildCreator.ChangeGold(request.GuildCreator.Gold - MIN_GOLD);
             request.GuildCreator.SendGoldUpdate();
 
-            // TODO: send GUILD_USER_LIST_ONLINE
-            // TODO: send GUILD_LIST_ADD
+            foreach (var player in _gameWorld.Players.Values.ToList())
+                player.SendGuildListAdd(guild);
 
             request.Dispose();
         }
@@ -184,14 +194,24 @@ namespace Imgeneus.World.Game.Guild
         /// <inheritdoc/>
         public async Task<bool> TryDeleteGuild(int guildId)
         {
-            var guild = await _database.Guilds.FindAsync(guildId);
+            var guild = await _database.Guilds.Include(x => x.Members).FirstOrDefaultAsync(x => x.Id == guildId);
             if (guild is null)
                 return false;
+
+            foreach (var m in guild.Members)
+                m.GuildRank = 0;
 
             _database.Guilds.Remove(guild);
 
             var result = await _database.SaveChangesAsync();
-            return result > 0;
+            var success = result > 0;
+
+            if (success)
+            {
+                foreach (var player in _gameWorld.Players.Values.ToList())
+                    player.SendGuildListRemove(guildId);
+            }
+            return success;
         }
 
         #endregion

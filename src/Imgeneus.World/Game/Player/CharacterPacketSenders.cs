@@ -214,6 +214,10 @@ namespace Imgeneus.World.Game.Player
 
         public void SendGuildDismantle() => _packetsHelper.SendGuildDismantle(Client);
 
+        public void SendGuildListAdd(DbGuild guild) => _packetsHelper.SendGuildListAdd(Client, guild);
+
+        public void SendGuildListRemove(int guildId) => _packetsHelper.SendGuildListRemove(Client, guildId);
+
         public void SendGoldUpdate() => _packetsHelper.SendGoldUpdate(Client, Gold);
     }
 }

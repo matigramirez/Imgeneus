@@ -294,6 +294,20 @@ namespace Imgeneus.World.Packets
             client.SendPacket(packet);
         }
 
+        internal void SendGuildListAdd(IWorldClient client, DbGuild guild)
+        {
+            using var packet = new Packet(PacketType.GUILD_LIST_ADD);
+            packet.Write(new GuildUnit(guild).Serialize());
+            client.SendPacket(packet);
+        }
+
+        internal void SendGuildListRemove(IWorldClient client, int guildId)
+        {
+            using var packet = new Packet(PacketType.GUILD_LIST_REMOVE);
+            packet.Write(guildId);
+            client.SendPacket(packet);
+        }
+
         internal void SendGuildMemberLeaveResult(IWorldClient client, bool ok)
         {
             using var packet = new Packet(PacketType.GUILD_LEAVE);

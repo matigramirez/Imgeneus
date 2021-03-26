@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Imgeneus.World.Serialization
 {
-    public class SerializedGuildListItem : BaseSerializable
+    public class GuildUnit : BaseSerializable
     {
         [FieldOrder(0)]
         public int Id;
@@ -30,7 +30,7 @@ namespace Imgeneus.World.Serialization
         [FieldOrder(5)]
         public int Points;
 
-        public SerializedGuildListItem(DbGuild guild)
+        public GuildUnit(DbGuild guild)
         {
             Id = guild.Id;
             Name = guild.Name;

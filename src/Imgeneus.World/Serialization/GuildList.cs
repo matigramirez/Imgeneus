@@ -12,13 +12,13 @@ namespace Imgeneus.World.Serialization
 
         [FieldOrder(1)]
         [FieldCount(nameof(Count))]
-        public List<SerializedGuildListItem> Items { get; } = new List<SerializedGuildListItem>();
+        public List<GuildUnit> Items { get; } = new List<GuildUnit>();
 
 
         public GuildList(IEnumerable<DbGuild> guilds)
         {
             foreach (var guild in guilds)
-                Items.Add(new SerializedGuildListItem(guild));
+                Items.Add(new GuildUnit(guild));
         }
 
     }

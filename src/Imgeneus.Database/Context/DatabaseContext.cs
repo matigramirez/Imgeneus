@@ -114,6 +114,9 @@ namespace Imgeneus.Database.Context
 
             modelBuilder.Entity<DbCharacter>().HasOne(x => x.Guild);
             modelBuilder.Entity<DbGuild>().HasOne(x => x.Master);
+            modelBuilder.Entity<DbGuild>().HasMany(x => x.Members)
+                                          .WithOne(x => x.Guild)
+                                          .OnDelete(DeleteBehavior.ClientSetNull);
 
             #region Many to many relations
             // Skills.

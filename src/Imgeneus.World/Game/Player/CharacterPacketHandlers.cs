@@ -911,8 +911,6 @@ namespace Imgeneus.World.Game.Player
                 guildPlayer.ClearGuild();
                 guildPlayer.SendGuildDismantle();
             }
-
-            // TODO: send guild remove from list
         }
     }
 }

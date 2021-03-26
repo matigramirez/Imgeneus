@@ -18,12 +18,12 @@ namespace Imgeneus.World.Game.Player
         /// <summary>
         /// Guild name.
         /// </summary>
-        public string GuildName { get; private set; } = string.Empty;
+        public string GuildName { get; set; } = string.Empty;
 
         /// <summary>
         /// Guild rank.
         /// </summary>
-        public byte GuildRank { get; private set; }
+        public byte GuildRank { get; set; }
 
         /// <summary>
         /// Guild member ids for easy notification.

@@ -10,7 +10,7 @@ namespace Imgeneus.World.Game.Guild
         /// <summary>
         /// Checks if character can create a guild.
         /// </summary>
-        public GuildCreateFailedReason CanCreateGuild(Character guildCreator, string guildName);
+        public Task<GuildCreateFailedReason> CanCreateGuild(Character guildCreator, string guildName);
 
         /// <summary>
         /// Sends guild create request to all party members.

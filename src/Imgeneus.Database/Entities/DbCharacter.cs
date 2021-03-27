@@ -244,6 +244,16 @@ namespace Imgeneus.Database.Entities
         public DateTime? DeleteTime { get; set; }
 
         /// <summary>
+        /// Date, when player joined some guild.
+        /// </summary>
+        public DateTime? GuildJoinTime { get; set; }
+
+        /// <summary>
+        /// Date, when player left some guild.
+        /// </summary>
+        public DateTime? GuildLeaveTime { get; set; }
+
+        /// <summary>
         /// Gets the character associated user id.
         /// </summary>
         [Required]

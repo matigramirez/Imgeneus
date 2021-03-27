@@ -2,6 +2,7 @@
 using Imgeneus.Database.Entities;
 using Imgeneus.World.Game.PartyAndRaid;
 using Imgeneus.World.Game.Player;
+using Imgeneus.World.Game.Time;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
@@ -18,23 +19,26 @@ namespace Imgeneus.World.Game.Guild
         private readonly ILogger<IGuildManager> _logger;
         private readonly IDatabase _database;
         private readonly IGameWorld _gameWorld;
+        private readonly ITimeService _timeService;
         private SemaphoreSlim _sync = new SemaphoreSlim(1);
 
         public const uint MIN_GOLD = 10000000; // 10kk
         public const byte MIN_MEMBERS_COUNT = 2;//7;
         public const byte MIN_LEVEL = 10;
+        public const byte MIN_PENALTY = 1; // 72 // in hours (3 days * 24) = 72
 
-        public GuildManager(ILogger<IGuildManager> logger, IDatabase database, IGameWorld gameWorld)
+        public GuildManager(ILogger<IGuildManager> logger, IDatabase database, IGameWorld gameWorld, ITimeService timeService)
         {
             _logger = logger;
             _database = database;
             _gameWorld = gameWorld;
+            _timeService = timeService;
         }
 
         #region Guild creation
 
         /// <inheritdoc/>
-        public GuildCreateFailedReason CanCreateGuild(Character guildCreator, string guildName)
+        public async Task<GuildCreateFailedReason> CanCreateGuild(Character guildCreator, string guildName)
         {
             try
             {
@@ -54,6 +58,18 @@ namespace Imgeneus.World.Game.Guild
                 if (guildCreator.Party.Members.Any(x => x.HasGuild))
                     return GuildCreateFailedReason.PartyMemberInAnotherGuild;
 
+                var penalty = false;
+                foreach (var m in guildCreator.Party.Members)
+                {
+                    if (await CheckPenalty(m.Id))
+                    {
+                        penalty = true;
+                        break;
+                    }
+                }
+                if (penalty)
+                    return GuildCreateFailedReason.PartyMemberGuildPenalty;
+
                 return GuildCreateFailedReason.Success;
             }
             catch (Exception ex)
@@ -64,6 +80,23 @@ namespace Imgeneus.World.Game.Guild
         }
 
         /// <summary>
+        /// Ensures, that character doesn't have a penalty.
+        /// </summary>
+        /// <returns>true is penalty</returns>
+        private async Task<bool> CheckPenalty(int characterId)
+        {
+            var character = await _database.Characters.FindAsync(characterId);
+            if (character is null)
+                return true;
+
+            if (character.GuildLeaveTime is null)
+                return false;
+
+            var leaveTime = (DateTime)character.GuildLeaveTime;
+            return _timeService.UtcNow.Subtract(leaveTime).TotalHours < MIN_PENALTY;
+        }
+
+        /// <summary>
         /// Guild creation requests.
         /// </summary>
         public static ConcurrentDictionary<IParty, GuildCreateRequest> CreationRequests { get; private set; } = new ConcurrentDictionary<IParty, GuildCreateRequest>();
@@ -71,7 +104,7 @@ namespace Imgeneus.World.Game.Guild
         /// <inheritdoc/>
         public void SendGuildRequest(Character guildCreator, string guildName, string guildMessage)
         {
-            var request = new GuildCreateRequest(guildCreator, guildCreator.Party.Members.ToList(), guildName, guildMessage);
+            var request = new GuildCreateRequest(guildCreator, guildCreator.Party.Members, guildName, guildMessage);
             var success = CreationRequests.TryAdd(guildCreator.Party, request);
 
             if (!success)
@@ -268,6 +301,7 @@ namespace Imgeneus.World.Game.Guild
 
             guild.Members.Add(character);
             character.GuildRank = rank;
+            character.GuildJoinTime = _timeService.UtcNow;
 
             var result = await _database.SaveChangesAsync();
             if (result > 0)
@@ -301,6 +335,7 @@ namespace Imgeneus.World.Game.Guild
 
             guild.Members.Remove(character);
             character.GuildRank = 0;
+            character.GuildLeaveTime = _timeService.UtcNow;
 
             var result = await _database.SaveChangesAsync();
             if (result > 0)

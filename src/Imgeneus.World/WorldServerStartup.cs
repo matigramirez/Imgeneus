@@ -12,6 +12,7 @@ using Imgeneus.World.Game.Monster;
 using Imgeneus.World.Game.Notice;
 using Imgeneus.World.Game.NPCs;
 using Imgeneus.World.Game.Player;
+using Imgeneus.World.Game.Time;
 using Imgeneus.World.Game.Zone;
 using Imgeneus.World.Game.Zone.MapConfig;
 using Imgeneus.World.Game.Zone.Obelisks;
@@ -69,6 +70,7 @@ namespace Imgeneus.World
             services.AddTransient<ILinkingManager, LinkingManager>();
             services.AddTransient<IDyeingManager, DyeingManager>();
             services.AddTransient<IGuildManager, GuildManager>();
+            services.AddTransient<ITimeService, TimeService>();
 
             services.AddSingleton<IBackgroundTaskQueue, BackgroundTaskQueue>();
             services.AddHostedService<DatabaseWorker>();

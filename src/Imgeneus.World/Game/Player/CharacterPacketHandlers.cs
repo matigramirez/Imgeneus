@@ -710,9 +710,9 @@ namespace Imgeneus.World.Game.Player
             target?.Teleport(mapId, newPosX, PosY, newPosZ, true);
         }
 
-        private void HandleCreateGuild(string name, string message)
+        private async void HandleCreateGuild(string name, string message)
         {
-            var result = _guildManager.CanCreateGuild(this, name);
+            var result = await _guildManager.CanCreateGuild(this, name);
             if (result != GuildCreateFailedReason.Success)
             {
                 SendGuildCreateFailed(result);

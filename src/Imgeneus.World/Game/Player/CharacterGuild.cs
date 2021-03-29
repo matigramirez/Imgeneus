@@ -28,7 +28,7 @@ namespace Imgeneus.World.Game.Player
         /// <summary>
         /// Guild member ids for easy notification.
         /// </summary>
-        private readonly List<DbCharacter> GuildMembers = new List<DbCharacter>();
+        public readonly List<DbCharacter> GuildMembers = new List<DbCharacter>();
 
         /// <summary>
         /// Sends list of guilds, right after selection screen.

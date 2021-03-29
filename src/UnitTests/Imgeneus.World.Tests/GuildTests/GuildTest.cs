@@ -231,5 +231,29 @@ namespace Imgeneus.World.Tests.GuildTests
             Assert.Equal(1, character1.GuildRank);
             Assert.Equal(9, character2.GuildRank);
         }
+
+        [Fact]
+        [Description("Player can request to join only 1 guild at a time.")]
+        public async void RequestJoin_Test()
+        {
+            var character = CreateCharacter(testMap);
+
+            var database = new Mock<IDatabase>();
+            database.Setup(x => x.Guilds.FindAsync(It.IsAny<int>())).ReturnsAsync(new DbGuild("test_guild", "test_message", 99, Fraction.Light));
+            database.Setup(x => x.Characters.FindAsync(It.IsAny<int>())).ReturnsAsync(new DbCharacter());
+
+            var guildManager = new GuildManager(guildLoggerMock.Object, Options.Create(new GuildConfiguration()), database.Object, gameWorldMock.Object, timeMock.Object);
+            await guildManager.RequestJoin(1, character.Id);
+
+            Assert.Single(GuildManager.JoinRequests);
+            Assert.True(GuildManager.JoinRequests.ContainsKey(character.Id));
+            Assert.Equal(1, GuildManager.JoinRequests[character.Id]);
+
+            await guildManager.RequestJoin(2, character.Id);
+
+            Assert.Single(GuildManager.JoinRequests);
+            Assert.True(GuildManager.JoinRequests.ContainsKey(character.Id));
+            Assert.Equal(2, GuildManager.JoinRequests[character.Id]);
+        }
     }
 }

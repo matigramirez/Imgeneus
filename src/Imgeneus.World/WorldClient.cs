@@ -148,6 +148,8 @@ namespace Imgeneus.World
             { PacketType.CHAT_PARTY, (s) => new ChatPartyPacket(s) },
             { PacketType.CHAT_MAP, (s) => new ChatMapPacket(s) },
             { PacketType.CHAT_WORLD, (s) => new ChatWorldPacket(s) },
+            { PacketType.CHAT_GUILD_ADMIN, (s) => new ChatGuildPacket(s) },
+            { PacketType.CHAT_GUILD, (s) => new ChatGuildPacket(s) },
             { PacketType.DUEL_REQUEST, (s) => new DuelRequestPacket(s) },
             { PacketType.DUEL_RESPONSE, (s) => new DuelResponsePacket(s) },
             { PacketType.DUEL_TRADE_ADD_ITEM, (s) => new DuelAddItemPacket(s) },

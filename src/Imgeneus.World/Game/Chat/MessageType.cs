@@ -6,6 +6,7 @@
         Whisper,
         Party,
         Map,
-        World
+        World,
+        Guild
     }
 }

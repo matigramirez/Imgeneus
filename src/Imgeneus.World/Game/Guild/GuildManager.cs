@@ -392,7 +392,7 @@ namespace Imgeneus.World.Game.Guild
         /// Key is player id.
         /// Value is guild id.
         /// </summary>
-        private readonly ConcurrentDictionary<int, int> JoinRequests = new ConcurrentDictionary<int, int>();
+        public static readonly ConcurrentDictionary<int, int> JoinRequests = new ConcurrentDictionary<int, int>();
 
         /// <inheritdoc/>
         public async Task<bool> RequestJoin(int guildId, int playerId)

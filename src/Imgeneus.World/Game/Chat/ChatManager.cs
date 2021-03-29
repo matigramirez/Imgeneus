@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Text;
 using Imgeneus.Database.Entities;
 using Imgeneus.DatabaseBackgroundService;
@@ -78,6 +79,23 @@ namespace Imgeneus.World.Game.Chat
                     }
                     break;
 
+                case MessageType.Guild:
+                    if (sender.HasGuild)
+                    {
+                        foreach (var guildMember in sender.GuildMembers.ToList())
+                        {
+                            if (!_gameWorld.Players.ContainsKey(guildMember.Id))
+                                continue;
+
+                            var player = _gameWorld.Players[guildMember.Id];
+                            SendGuild(player, sender.Name, message);
+                        }
+
+                        _taskQueue.Enqueue(ActionType.LOG_SAVE_CHAT_MESSAGE, sender.Client.UserID, sender.Id, sender.Name, MessageType.Guild.ToString(), message);
+                    }
+
+                    break;
+
                 default:
                     _logger.LogError("Not implemented message type.");
                     break;
@@ -139,6 +157,17 @@ namespace Imgeneus.World.Game.Chat
         private void SendWorld(Character character, string senderName, string message)
         {
             SendMessage(PacketType.CHAT_WORLD, character, senderName, message);
+        }
+
+        /// <summary>
+        /// Sends message to guild members.
+        /// </summary>
+        /// <param name="character">To whom we are sending</param>
+        /// <param name="name">Message creator name</param>
+        /// <param name="message">Message text</param>
+        private void SendGuild(Character character, string senderName, string message)
+        {
+            SendMessage(PacketType.CHAT_GUILD, character, senderName, message);
         }
 
         private void SendMessage(PacketType packetType, Character character, string senderName, string message, bool includeNameFlag = false)

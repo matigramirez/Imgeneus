@@ -158,6 +158,10 @@ namespace Imgeneus.World.Game.Player
                     _chatManager.SendMessage(this, Chat.MessageType.World, chatWorldPacket.Message);
                     break;
 
+                case ChatGuildPacket chatGuildPacket:
+                    _chatManager.SendMessage(this, Chat.MessageType.Guild, chatGuildPacket.Message);
+                    break;
+
                 case DuelDefeatPacket duelDefeatPacket:
                     FinishDuel(Duel.DuelCancelReason.AdmitDefeat);
                     break;

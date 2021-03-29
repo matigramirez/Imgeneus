@@ -206,6 +206,7 @@
         CHAT_NORMAL = 0x1101, // 4353
         CHAT_WHISPER = 0x1102, // 4354
         CHAT_WORLD = 0x1103, // 4355
+        CHAT_GUILD = 0x1104, // 4356
         CHAT_PARTY = 0x1105, // 4357
         CHAT_ANOUNCEMENT = 0x1108, // 4360
         CHAT_MAP = 0x1111, // 4369

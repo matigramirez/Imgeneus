@@ -200,7 +200,7 @@ namespace Imgeneus.World.Game.Guild
 
             foreach (var m in request.Members)
             {
-                m.LoadGuildMembers(guild.Members);
+                m.GuildMembers.AddRange(guild.Members);
                 m.SendGuildMembersOnline();
                 m.SendGuildCreateSuccess(guild.Id, m.GuildRank, guild.Name, request.Message);
             }

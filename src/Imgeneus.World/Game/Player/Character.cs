@@ -415,7 +415,7 @@ namespace Imgeneus.World.Game.Player
             {
                 character.GuildName = dbCharacter.Guild.Name;
                 character.GuildRank = dbCharacter.GuildRank;
-                character.LoadGuildMembers(dbCharacter.Guild.Members);
+                character.GuildMembers.AddRange(dbCharacter.Guild.Members);
             }
 
             character.Init();

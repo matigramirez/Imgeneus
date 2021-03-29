@@ -39,14 +39,6 @@ namespace Imgeneus.World.Game.Player
             _packetsHelper.SendGuildList(Client, guilds);
         }
 
-        /// <summary>
-        /// Loads guild members right after selection screen.
-        /// </summary>
-        public void LoadGuildMembers(IEnumerable<DbCharacter> members)
-        {
-            GuildMembers.AddRange(members);
-        }
-
         public void SendGuildMembersOnline()
         {
             var online = new List<DbCharacter>();

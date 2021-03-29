@@ -23,5 +23,15 @@ namespace Imgeneus.World.Game.Zone
         /// <param name="party">party instance</param>
         /// <returns>map instance</returns>
         public IPartyMap CreatePartyMap(ushort id, MapDefinition definition, MapConfiguration config, IParty party);
+
+        /// <summary>
+        /// Creates map instance only for guild.
+        /// </summary>
+        /// <param name="id">map id</param>
+        /// <param name="definition">some map settings</param>
+        /// <param name="config">size, mobs, npcs etc.</param>
+        /// <param name="guildId">guild id</param>
+        /// <returns>map instance</returns>
+        public IGuildMap CreateGuildMap(ushort id, MapDefinition definition, MapConfiguration config, int guildId);
     }
 }

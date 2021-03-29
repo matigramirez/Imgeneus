@@ -134,11 +134,15 @@ namespace Imgeneus.World.Game
                     return true;
                 }
 
-                // TODO: implement this check as soon as we have guilds.
-                if (destinationMapDef.CreateType == CreateType.Guild /*&& player.Guild is null*/)
+                if (destinationMapDef.CreateType == CreateType.Guild)
                 {
-                    reason = PortalTeleportNotAllowedReason.OnlyForGuilds;
-                    return false;
+                    if (!player.HasGuild)
+                    {
+                        reason = PortalTeleportNotAllowedReason.OnlyForGuilds;
+                        return false;
+                    }
+
+                    return true;
                 }
 
                 if (!destinationMapDef.IsOpen)
@@ -220,6 +224,15 @@ namespace Imgeneus.World.Game
             PartyMaps.TryRemove(senser.PartyId, out var removed);
             removed.Dispose();
         }
+
+        #endregion
+
+        #region Guild maps
+
+        /// <summary>
+        /// Thread-safe dictionary of maps. Where key is guild id.
+        /// </summary>
+        public ConcurrentDictionary<int, IGuildMap> GuildMaps { get; private set; } = new ConcurrentDictionary<int, IGuildMap>();
 
         #endregion
 
@@ -310,7 +323,29 @@ namespace Imgeneus.World.Game
                     }
 
                     map.LoadPlayer(player);
+                }
 
+                if (mapDef.CreateType == CreateType.Guild)
+                {
+                    int guildId = 0;
+                    if (player.GuildId is null) // probably guild id has changed during loading in portal?
+                    {
+                        _logger.LogWarning($"Trying to load character {player.Id} without guild id to guild specific map. Fallback to 0.");
+                    }
+                    else
+                    {
+                        guildId = (int)player.GuildId;
+                    }
+
+                    IGuildMap map;
+                    GuildMaps.TryGetValue(guildId, out map);
+                    if (map is null)
+                    {
+                        map = _mapFactory.CreateGuildMap(mapDef.Id, mapDef, _mapsLoader.LoadMapConfiguration(mapDef.Id), guildId);
+                        GuildMaps.TryAdd(guildId, map);
+                    }
+
+                    map.LoadPlayer(player);
                 }
             }
         }
@@ -343,6 +378,8 @@ namespace Imgeneus.World.Game
                     map = PartyMaps[player.Party.Id];
                 else if (PartyMaps.ContainsKey(player.PreviousPartyId))
                     map = PartyMaps[player.PreviousPartyId];
+                else if (player.HasGuild && GuildMaps.ContainsKey((int)player.GuildId))
+                    map = GuildMaps[(int)player.GuildId];
 
                 if (map is null)
                     _logger.LogError($"Couldn't find character's {characterId} map {player.MapId}.");

@@ -31,9 +31,16 @@ namespace Imgeneus.World.Game.Zone
             return new Map(id, definition, config, _logger, _databasePreloader, _mobFactory, _npcFactory, _obeliskFactory);
         }
 
+        /// <inheritdoc/>
         public IPartyMap CreatePartyMap(ushort id, MapDefinition definition, MapConfiguration config, IParty party)
         {
             return new PartyMap(party, id, definition, config, _logger, _databasePreloader, _mobFactory, _npcFactory, _obeliskFactory);
+        }
+
+        /// <inheritdoc/>
+        public IGuildMap CreateGuildMap(ushort id, MapDefinition definition, MapConfiguration config, int guildId)
+        {
+            return new GuildMap(guildId, id, definition, config, _logger, _databasePreloader, _mobFactory, _npcFactory, _obeliskFactory);
         }
     }
 }

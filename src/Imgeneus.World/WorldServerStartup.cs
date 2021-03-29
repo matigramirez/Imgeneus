@@ -40,6 +40,8 @@ namespace Imgeneus.World
                .Configure<IConfiguration>((settings, configuration) => configuration.GetSection("Database").Bind(settings));
             services.AddOptions<InterServerConfig>()
                .Configure<IConfiguration>((settings, configuration) => configuration.GetSection("InterServer").Bind(settings));
+            services.AddOptions<GuildConfiguration>()
+               .Configure<IConfiguration>((settings, configuration) => configuration.GetSection("Game:Guild").Bind(settings));
 
             services.RegisterDatabaseServices();
 

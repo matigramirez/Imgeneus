@@ -17,6 +17,9 @@ using Moq;
 using System.Collections.Generic;
 using Imgeneus.World.Game.Notice;
 using Imgeneus.World.Game.Guild;
+using Imgeneus.Database;
+using Imgeneus.World.Game.Time;
+using System.Collections.Concurrent;
 
 namespace Imgeneus.World.Tests
 {
@@ -26,11 +29,14 @@ namespace Imgeneus.World.Tests
         protected Mock<IGameWorld> gameWorldMock = new Mock<IGameWorld>();
         protected Mock<IBackgroundTaskQueue> taskQueuMock = new Mock<IBackgroundTaskQueue>();
         protected Mock<IDatabasePreloader> databasePreloader = new Mock<IDatabasePreloader>();
+        protected Mock<IDatabase> databaseMock = new Mock<IDatabase>();
+        protected Mock<ITimeService> timeMock = new Mock<ITimeService>();
         protected Mock<IMapsLoader> mapsLoaderMock = new Mock<IMapsLoader>();
         protected Mock<ICharacterConfiguration> config = new Mock<ICharacterConfiguration>();
         protected Mock<ILogger<Map>> mapLoggerMock = new Mock<ILogger<Map>>();
         protected Mock<ILogger<Mob>> mobLoggerMock = new Mock<ILogger<Mob>>();
         protected Mock<ILogger<Npc>> npcLoggerMock = new Mock<ILogger<Npc>>();
+        protected Mock<ILogger<IGuildManager>> guildLoggerMock = new Mock<ILogger<IGuildManager>>();
         protected Mock<IChatManager> chatMock = new Mock<IChatManager>();
         protected Mock<ILinkingManager> linkingMock = new Mock<ILinkingManager>();
         protected Mock<IDyeingManager> dyeingMock = new Mock<IDyeingManager>();
@@ -67,6 +73,9 @@ namespace Imgeneus.World.Tests
 
         public BaseTest()
         {
+            gameWorldMock.Setup(x => x.Players)
+                .Returns(new ConcurrentDictionary<int, Character>());
+
             config.Setup((conf) => conf.GetConfig(It.IsAny<int>()))
                   .Returns(new Character_HP_SP_MP() { HP = 100, MP = 200, SP = 300 });
 

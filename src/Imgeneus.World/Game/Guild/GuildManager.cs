@@ -5,6 +5,7 @@ using Imgeneus.World.Game.Player;
 using Imgeneus.World.Game.Time;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -22,17 +23,22 @@ namespace Imgeneus.World.Game.Guild
         private readonly ITimeService _timeService;
         private SemaphoreSlim _sync = new SemaphoreSlim(1);
 
-        public const uint MIN_GOLD = 10000000; // 10kk
-        public const byte MIN_MEMBERS_COUNT = 2;//7;
-        public const byte MIN_LEVEL = 10;
-        public const byte MIN_PENALTY = 1; // 72 // in hours (3 days * 24) = 72
+        private readonly uint _minGold;
+        private readonly byte _minMembersCount;
+        private readonly ushort _minLevel;
+        private readonly ushort _minPenalty;
 
-        public GuildManager(ILogger<IGuildManager> logger, IDatabase database, IGameWorld gameWorld, ITimeService timeService)
+        public GuildManager(ILogger<IGuildManager> logger, IOptions<GuildConfiguration> config, IDatabase database, IGameWorld gameWorld, ITimeService timeService)
         {
             _logger = logger;
             _database = database;
             _gameWorld = gameWorld;
             _timeService = timeService;
+
+            _minGold = config.Value.MinGold;
+            _minMembersCount = config.Value.MinMembers;
+            _minLevel = config.Value.MinLevel;
+            _minPenalty = config.Value.MinPenalty;
         }
 
         #region Guild creation
@@ -42,13 +48,16 @@ namespace Imgeneus.World.Game.Guild
         {
             try
             {
-                if (guildCreator.Gold < MIN_GOLD)
+                if (string.IsNullOrWhiteSpace(guildName))
+                    return GuildCreateFailedReason.WrongName;
+
+                if (guildCreator.Gold < _minGold)
                     return GuildCreateFailedReason.NotEnoughGold;
 
-                if (!guildCreator.HasParty || !(guildCreator.Party is Party) || guildCreator.Party.Members.Count != MIN_MEMBERS_COUNT)
+                if (!guildCreator.HasParty || !(guildCreator.Party is Party) || guildCreator.Party.Members.Count != _minMembersCount)
                     return GuildCreateFailedReason.NotEnoughMembers;
 
-                if (!guildCreator.Party.Members.All(x => x.Level > MIN_LEVEL))
+                if (!guildCreator.Party.Members.All(x => x.Level > _minLevel))
                     return GuildCreateFailedReason.LevelLimit;
 
                 // TODO: banned words?
@@ -93,7 +102,7 @@ namespace Imgeneus.World.Game.Guild
                 return false;
 
             var leaveTime = (DateTime)character.GuildLeaveTime;
-            return _timeService.UtcNow.Subtract(leaveTime).TotalHours < MIN_PENALTY;
+            return _timeService.UtcNow.Subtract(leaveTime).TotalHours < _minPenalty;
         }
 
         /// <summary>
@@ -196,7 +205,7 @@ namespace Imgeneus.World.Game.Guild
                 m.SendGuildCreateSuccess(guild.Id, m.GuildRank, guild.Name, request.Message);
             }
 
-            request.GuildCreator.ChangeGold(request.GuildCreator.Gold - MIN_GOLD);
+            request.GuildCreator.ChangeGold(request.GuildCreator.Gold - _minGold);
             request.GuildCreator.SendGoldUpdate();
 
             foreach (var player in _gameWorld.Players.Values.ToList())

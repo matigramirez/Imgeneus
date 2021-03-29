@@ -228,6 +228,11 @@ namespace Imgeneus.World.Game.Player
                     PreviousPartyId = mapId;
                 }
 
+                if (player.Map is IGuildMap)
+                {
+                    GuildId = player.GuildId;
+                }
+
                 Teleport(player.MapId, player.PosX, player.PosY, player.PosZ);
 
                 _packetsHelper.SendGmCommandSuccess(Client);

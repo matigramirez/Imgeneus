@@ -67,6 +67,11 @@ namespace Imgeneus.World.Game.Monster
         /// </summary>
         public short Exp { get; }
 
+        /// <summary>
+        /// During GBR how many points added to guild.
+        /// </summary>
+        public short GuildPoints => _dbMob.MoneyMax;
+
         #region Totel stats
 
         /// <inheritdoc />

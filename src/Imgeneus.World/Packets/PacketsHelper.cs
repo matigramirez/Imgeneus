@@ -301,6 +301,15 @@ namespace Imgeneus.World.Packets
             client.SendPacket(packet);
         }
 
+        internal void SendGBRPoints(IWorldClient client, int currentPoints, int maxPoints, int topGuild)
+        {
+            using var packet = new Packet(PacketType.GRB_POINTS);
+            packet.Write(currentPoints);
+            packet.Write(maxPoints);
+            packet.Write(topGuild);
+            client.SendPacket(packet);
+        }
+
         internal void SendGuildListRemove(IWorldClient client, int guildId)
         {
             using var packet = new Packet(PacketType.GUILD_LIST_REMOVE);

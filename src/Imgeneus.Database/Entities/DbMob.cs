@@ -42,6 +42,7 @@ namespace Imgeneus.Database.Entities
 
         /// <summary>
         /// Max amount of money, that character can get from the mob.
+        /// During GRB it's number of guild points.
         /// </summary>
         [Column("Money2")]
         public short MoneyMax { get; set; }

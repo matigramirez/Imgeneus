@@ -218,6 +218,8 @@ namespace Imgeneus.World.Game.Player
 
         public void SendGuildListRemove(int guildId) => _packetsHelper.SendGuildListRemove(Client, guildId);
 
+        public void SendGBRPoints(int currentPoints, int maxPoints, int topGuild) => _packetsHelper.SendGBRPoints(Client, currentPoints, maxPoints, topGuild);
+
         public void SendGoldUpdate() => _packetsHelper.SendGoldUpdate(Client, Gold);
     }
 }

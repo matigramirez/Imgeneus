@@ -1,4 +1,5 @@
 ﻿using Imgeneus.Database.Preload;
+using Imgeneus.World.Game.Guild;
 using Imgeneus.World.Game.Monster;
 using Imgeneus.World.Game.NPCs;
 using Imgeneus.World.Game.Time;
@@ -10,7 +11,8 @@ namespace Imgeneus.World.Game.Zone
 {
     public class GuildMap : Map, IGuildMap
     {
-        private readonly int _guildId;
+        protected readonly int _guildId;
+        protected readonly IGuildRankingManager _guildRankingManager;
 
         public int GuildId
         {
@@ -20,10 +22,11 @@ namespace Imgeneus.World.Game.Zone
             }
         }
 
-        public GuildMap(int guildId, ushort id, MapDefinition definition, MapConfiguration config, ILogger<Map> logger, IDatabasePreloader databasePreloader, IMobFactory mobFactory, INpcFactory npcFactory, IObeliskFactory obeliskFactory, ITimeService timeService)
+        public GuildMap(int guildId, IGuildRankingManager guildRankingManager, ushort id, MapDefinition definition, MapConfiguration config, ILogger<Map> logger, IDatabasePreloader databasePreloader, IMobFactory mobFactory, INpcFactory npcFactory, IObeliskFactory obeliskFactory, ITimeService timeService)
             : base(id, definition, config, logger, databasePreloader, mobFactory, npcFactory, obeliskFactory, timeService)
         {
             _guildId = guildId;
+            _guildRankingManager = guildRankingManager;
         }
 
     }

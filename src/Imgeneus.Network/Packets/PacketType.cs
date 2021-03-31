@@ -278,7 +278,7 @@
         ITEM_COMPOSE_ABSOLUTE = 0x0834, // 2100
         ITEM_COMPOSE_ABSOLUTE_SELECT = 0x0835, // 2101
 
-        // Guild
+        // Guild & Guild Rank Battle (GRB)
         GUILD_DISMANTLE = 0x0D03, // 3331
         GUILD_JOIN_REQUEST = 0x0D07, // 3335
         GUILD_JOIN_RESULT_USER = 0x0D08, // 3336
@@ -296,6 +296,7 @@
         GUILD_JOIN_LIST_REMOVE = 0x0D18, // 3352
         GUILD_CREATE = 0x0D21, // 3361
         GUILD_CREATE_AGREE = 0x0D22, // 3362
+        GRB_POINTS = 0x0D27, // 3367
         GUILD_LIST = 0x0D2F, // 3375
         GUILD_LIST_ADD = 0x0D30, // 3376
 

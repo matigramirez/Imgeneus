@@ -1,4 +1,5 @@
 ﻿using Imgeneus.Database.Preload;
+using Imgeneus.World.Game.Guild;
 using Imgeneus.World.Game.Monster;
 using Imgeneus.World.Game.NPCs;
 using Imgeneus.World.Game.PartyAndRaid;
@@ -17,8 +18,9 @@ namespace Imgeneus.World.Game.Zone
         private readonly INpcFactory _npcFactory;
         private readonly IObeliskFactory _obeliskFactory;
         private readonly ITimeService _timeService;
+        private readonly IGuildRankingManager _guildRankingManager;
 
-        public MapFactory(ILogger<Map> logger, IDatabasePreloader databasePreloader, IMobFactory mobFactory, INpcFactory npcFactory, IObeliskFactory obeliskFactory, ITimeService timeService)
+        public MapFactory(ILogger<Map> logger, IDatabasePreloader databasePreloader, IMobFactory mobFactory, INpcFactory npcFactory, IObeliskFactory obeliskFactory, ITimeService timeService, IGuildRankingManager guildRankingManger)
         {
             _logger = logger;
             _databasePreloader = databasePreloader;
@@ -26,6 +28,7 @@ namespace Imgeneus.World.Game.Zone
             _npcFactory = npcFactory;
             _obeliskFactory = obeliskFactory;
             _timeService = timeService;
+            _guildRankingManager = guildRankingManger;
         }
 
         /// <inheritdoc/>
@@ -43,7 +46,10 @@ namespace Imgeneus.World.Game.Zone
         /// <inheritdoc/>
         public IGuildMap CreateGuildMap(ushort id, MapDefinition definition, MapConfiguration config, int guildId)
         {
-            return new GuildMap(guildId, id, definition, config, _logger, _databasePreloader, _mobFactory, _npcFactory, _obeliskFactory, _timeService);
+            if (definition.CreateType == CreateType.GRB)
+                return new GRBMap(guildId, _guildRankingManager, id, definition, config, _logger, _databasePreloader, _mobFactory, _npcFactory, _obeliskFactory, _timeService);
+
+            return new GuildMap(guildId, _guildRankingManager, id, definition, config, _logger, _databasePreloader, _mobFactory, _npcFactory, _obeliskFactory, _timeService);
         }
     }
 }

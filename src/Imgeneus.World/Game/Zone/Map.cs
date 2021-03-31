@@ -456,7 +456,7 @@ namespace Imgeneus.World.Game.Zone
         /// </summary>
         /// <param name="sender">mob</param>
         /// <param name="killer">mob's killer</param>
-        private void Mob_OnDead(IKillable sender, IKiller killer)
+        protected virtual void Mob_OnDead(IKillable sender, IKiller killer)
         {
             var mob = (Mob)sender;
             mob.OnDead -= Mob_OnDead;

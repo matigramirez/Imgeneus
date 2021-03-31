@@ -56,7 +56,8 @@ namespace Imgeneus.World.Tests.MapTests
                     databasePreloader.Object,
                     new MobFactory(mobLoggerMock.Object, databasePreloader.Object),
                     npcFactoryMock.Object,
-                    obeliskFactoryMock.Object);
+                    obeliskFactoryMock.Object,
+                    timeMock.Object);
 
             Assert.NotNull(map.GetMob(0, 1));
             Assert.NotNull(map.GetMob(0, 2));

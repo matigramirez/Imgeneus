@@ -55,7 +55,8 @@ namespace Imgeneus.World.Tests
                     databasePreloader.Object,
                     mobFactoryMock.Object,
                     npcFactoryMock.Object,
-                    obeliskFactoryMock.Object);
+                    obeliskFactoryMock.Object,
+                    timeMock.Object);
 
         private static int CharacterId;
         protected Character CreateCharacter(Map map = null)

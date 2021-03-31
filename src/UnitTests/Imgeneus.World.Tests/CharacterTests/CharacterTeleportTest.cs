@@ -36,7 +36,8 @@ namespace Imgeneus.World.Tests.CharacterTests
                     databasePreloader.Object,
                     mobFactoryMock.Object,
                     npcFactoryMock.Object,
-                    obeliskFactoryMock.Object);
+                    obeliskFactoryMock.Object,
+                    timeMock.Object);
             var map2 = new Map(
                     2,
                     new MapDefinition(),
@@ -45,7 +46,8 @@ namespace Imgeneus.World.Tests.CharacterTests
                     databasePreloader.Object,
                     mobFactoryMock.Object,
                     npcFactoryMock.Object,
-                    obeliskFactoryMock.Object);
+                    obeliskFactoryMock.Object,
+                    timeMock.Object);
 
             var character = CreateCharacter();
             map1.LoadPlayer(character);

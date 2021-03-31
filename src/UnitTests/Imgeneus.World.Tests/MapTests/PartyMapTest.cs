@@ -28,7 +28,8 @@ namespace Imgeneus.World.Tests.MapTests
                                         databasePreloader.Object,
                                         mobFactoryMock.Object,
                                         npcFactoryMock.Object,
-                                        obeliskFactoryMock.Object);
+                                        obeliskFactoryMock.Object,
+                                        timeMock.Object);
             var allLeftWasCalled = false;
             partyMap.OnAllMembersLeft += (sender) =>
             {
@@ -68,7 +69,8 @@ namespace Imgeneus.World.Tests.MapTests
                                         databasePreloader.Object,
                                         mobFactoryMock.Object,
                                         npcFactoryMock.Object,
-                                        obeliskFactoryMock.Object);
+                                        obeliskFactoryMock.Object,
+                                        timeMock.Object);
             var allLeftWasCalled = false;
             partyMap.OnAllMembersLeft += (sender) =>
             {

@@ -19,5 +19,10 @@ namespace Imgeneus.World.Game.Zone.MapConfig
         /// Map is created for guild.
         /// </summary>
         Guild,
+
+        /// <summary>
+        /// Map is created for Guilds Rank Battle (GRB).
+        /// </summary>
+        GRB,
     }
 }

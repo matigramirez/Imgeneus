@@ -9,6 +9,7 @@
   <ItemGroup>
     <PackageReference Include="BinarySerializer" Version="8.5.3" />
     <PackageReference Include="Macross.Json.Extensions" Version="1.5.0" />
+    <PackageReference Include="NCrontab" Version="3.3.1" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
     <PackageReference Include="NLog" Version="4.7.6" />
     <PackageReference Include="NLog.Extensions.Logging" Version="1.6.5" />

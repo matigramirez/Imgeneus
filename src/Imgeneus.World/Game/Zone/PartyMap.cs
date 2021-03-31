@@ -3,6 +3,7 @@ using Imgeneus.World.Game.Monster;
 using Imgeneus.World.Game.NPCs;
 using Imgeneus.World.Game.PartyAndRaid;
 using Imgeneus.World.Game.Player;
+using Imgeneus.World.Game.Time;
 using Imgeneus.World.Game.Zone.MapConfig;
 using Imgeneus.World.Game.Zone.Obelisks;
 using Microsoft.Extensions.Logging;
@@ -26,8 +27,8 @@ namespace Imgeneus.World.Game.Zone
         /// <inheritdoc/>
         public event Action<IPartyMap> OnAllMembersLeft;
 
-        public PartyMap(IParty party, ushort id, MapDefinition definition, MapConfiguration config, ILogger<Map> logger, IDatabasePreloader databasePreloader, IMobFactory mobFactory, INpcFactory npcFactory, IObeliskFactory obeliskFactory)
-            : base(id, definition, config, logger, databasePreloader, mobFactory, npcFactory, obeliskFactory)
+        public PartyMap(IParty party, ushort id, MapDefinition definition, MapConfiguration config, ILogger<Map> logger, IDatabasePreloader databasePreloader, IMobFactory mobFactory, INpcFactory npcFactory, IObeliskFactory obeliskFactory, ITimeService timeService)
+            : base(id, definition, config, logger, databasePreloader, mobFactory, npcFactory, obeliskFactory, timeService)
         {
             _party = party;
 

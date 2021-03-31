@@ -48,5 +48,15 @@ namespace Imgeneus.World.Game.Zone
         /// Is this map created for party, guild etc. ?
         /// </summary>
         public bool IsInstance { get; }
+
+        /// <summary>
+        /// Fires event, when map is open.
+        /// </summary>
+        public event Action<IMap> OnOpen;
+
+        /// <summary>
+        /// Fires event, when map is closed.
+        /// </summary>
+        public event Action<IMap> OnClose;
     }
 }

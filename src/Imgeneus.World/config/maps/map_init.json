@@ -40,6 +40,25 @@
       "MapType": "Field"
     },
     {
+      "MapId": 50,
+      "MapType": "Field",
+      "CreateType": "GRB",
+      "OpenTime": "0 17 * * Sunday",
+      "CloseTime": "0 18 * * Sunday",
+      "LightRebirthMap": {
+        "MapId": 53,
+        "PosX": 50.43,
+        "PosY": 7.09,
+        "PosZ": 86.57
+      },
+      "DarkRebirthMap": {
+        "MapId": 54,
+        "PosX": 97.33,
+        "PosY": 5.89,
+        "PosZ": 42.03
+      }
+    },
+    {
       "MapId": 51,
       "MapType": "Field",
       "CreateType": "Guild",

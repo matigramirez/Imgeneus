@@ -4,6 +4,7 @@ using Imgeneus.Database.Preload;
 using Imgeneus.World.Game.Monster;
 using Imgeneus.World.Game.NPCs;
 using Imgeneus.World.Game.Player;
+using Imgeneus.World.Game.Time;
 using Imgeneus.World.Game.Zone.MapConfig;
 using Imgeneus.World.Game.Zone.Obelisks;
 using Imgeneus.World.Game.Zone.Portals;
@@ -12,6 +13,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Timers;
 
 namespace Imgeneus.World.Game.Zone
 {
@@ -29,6 +31,7 @@ namespace Imgeneus.World.Game.Zone
         private readonly IMobFactory _mobFactory;
         private readonly INpcFactory _npcFactory;
         private readonly IObeliskFactory _obeliskfactory;
+        private readonly ITimeService _timeService;
 
         /// <summary>
         /// Map id.
@@ -52,7 +55,7 @@ namespace Imgeneus.World.Game.Zone
 
         public static readonly ushort TEST_MAP_ID = 9999;
 
-        public Map(ushort id, MapDefinition definition, MapConfiguration config, ILogger<Map> logger, IDatabasePreloader databasePreloader, IMobFactory mobFactory, INpcFactory npcFactory, IObeliskFactory obeliskFactory)
+        public Map(ushort id, MapDefinition definition, MapConfiguration config, ILogger<Map> logger, IDatabasePreloader databasePreloader, IMobFactory mobFactory, INpcFactory npcFactory, IObeliskFactory obeliskFactory, ITimeService timeService)
         {
             Id = id;
             _definition = definition;
@@ -62,6 +65,7 @@ namespace Imgeneus.World.Game.Zone
             _mobFactory = mobFactory;
             _npcFactory = npcFactory;
             _obeliskfactory = obeliskFactory;
+            _timeService = timeService;
 
             Init();
         }
@@ -78,6 +82,7 @@ namespace Imgeneus.World.Game.Zone
             InitMobs();
             InitObelisks();
             InitPortals();
+            InitOpenCloseTimers();
         }
 
         #endregion
@@ -729,6 +734,55 @@ namespace Imgeneus.World.Game.Zone
 
         #endregion
 
+        #region Open/Closed
+
+        private Timer _openTimer = new Timer();
+
+        private Timer _closeTimer = new Timer();
+
+        /// <inheritdoc/>
+        public event Action<IMap> OnOpen;
+
+        /// <inheritdoc/>
+        public event Action<IMap> OnClose;
+
+        /// <summary>
+        /// Generates special timers for maps, that must be opened/closed in specific time range.
+        /// </summary>
+        private void InitOpenCloseTimers()
+        {
+            if (string.IsNullOrEmpty(_definition.OpenTime) || string.IsNullOrEmpty(_definition.CloseTime))
+                return;
+
+            _openTimer.Interval = _definition.NextOpenDate(_timeService.UtcNow).Subtract(_timeService.UtcNow).TotalMilliseconds;
+            _openTimer.Start();
+            _openTimer.AutoReset = false;
+            _openTimer.Elapsed += OpenTimer_Elapsed;
+
+            _closeTimer.Interval = _definition.NextCloseDate(_timeService.UtcNow).Subtract(_timeService.UtcNow).TotalMilliseconds;
+            _closeTimer.Start();
+            _closeTimer.AutoReset = false;
+            _closeTimer.Elapsed += CloseTimer_Elapsed;
+        }
+
+        private void OpenTimer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            OnOpen?.Invoke(this);
+        }
+
+        private void CloseTimer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            OnClose?.Invoke(this);
+
+            foreach (var player in Players.Values.ToList())
+            {
+                var map = GetRebirthMap(player);
+                player.Teleport(map.MapId, map.X, map.Y, map.Z);
+            }
+        }
+
+        #endregion
+
         #region Dispose
 
         private bool _isDisposed = false;
@@ -770,6 +824,12 @@ namespace Imgeneus.World.Game.Zone
 
             _weatherTimer.Stop();
             _weatherTimer.Elapsed -= WeatherTimer_Elapsed;
+
+            _openTimer.Stop();
+            _openTimer.Elapsed -= OpenTimer_Elapsed;
+
+            _closeTimer.Stop();
+            _closeTimer.Elapsed -= CloseTimer_Elapsed;
         }
 
         #endregion

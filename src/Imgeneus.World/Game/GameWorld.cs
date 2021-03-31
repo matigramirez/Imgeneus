@@ -6,6 +6,7 @@ using Imgeneus.World.Game.Blessing;
 using Imgeneus.World.Game.Duel;
 using Imgeneus.World.Game.PartyAndRaid;
 using Imgeneus.World.Game.Player;
+using Imgeneus.World.Game.Time;
 using Imgeneus.World.Game.Trade;
 using Imgeneus.World.Game.Zone;
 using Imgeneus.World.Game.Zone.MapConfig;
@@ -28,14 +29,16 @@ namespace Imgeneus.World.Game
         private readonly IMapsLoader _mapsLoader;
         private readonly IMapFactory _mapFactory;
         private readonly ICharacterFactory _characterFactory;
+        private readonly ITimeService _timeService;
         private MapDefinitions _mapDefinitions;
 
-        public GameWorld(ILogger<GameWorld> logger, IMapsLoader mapsLoader, IMapFactory mapFactory, ICharacterFactory characterFactory)
+        public GameWorld(ILogger<GameWorld> logger, IMapsLoader mapsLoader, IMapFactory mapFactory, ICharacterFactory characterFactory, ITimeService timeService)
         {
             _logger = logger;
             _mapsLoader = mapsLoader;
             _mapFactory = mapFactory;
             _characterFactory = characterFactory;
+            _timeService = timeService;
 
             InitMaps();
         }
@@ -145,7 +148,20 @@ namespace Imgeneus.World.Game
                     return true;
                 }
 
-                if (!destinationMapDef.IsOpen)
+                if (destinationMapDef.CreateType == CreateType.GRB)
+                {
+                    if (!destinationMapDef.IsOpen(_timeService.UtcNow))
+                    {
+                        reason = PortalTeleportNotAllowedReason.NotTimeForRankingBattle;
+                        return false;
+                    }
+
+                    // TODO: check AlreadyParticipatedInBattle
+
+                    return true;
+                }
+
+                if (!destinationMapDef.IsOpen(_timeService.UtcNow))
                 {
                     reason = PortalTeleportNotAllowedReason.OnlyForPartyAndOnTime;
                     return false;
@@ -325,10 +341,10 @@ namespace Imgeneus.World.Game
                     map.LoadPlayer(player);
                 }
 
-                if (mapDef.CreateType == CreateType.Guild)
+                if (mapDef.CreateType == CreateType.Guild || mapDef.CreateType == CreateType.GRB)
                 {
                     int guildId = 0;
-                    if (player.GuildId is null) // probably guild id has changed during loading in portal?
+                    if (player.GuildId is null) // probably guild id has changed during loading in portal? Or it's admin without guild tries to load into GBR map.
                     {
                         _logger.LogWarning($"Trying to load character {player.Id} without guild id to guild specific map. Fallback to 0.");
                     }

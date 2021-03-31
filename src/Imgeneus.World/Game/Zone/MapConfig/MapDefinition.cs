@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using NCrontab;
+using System;
+using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
 namespace Imgeneus.World.Game.Zone.MapConfig
@@ -63,13 +65,40 @@ namespace Imgeneus.World.Game.Zone.MapConfig
         /// <summary>
         /// Checks if map is open at that time.
         /// </summary>
-        public bool IsOpen
+        public bool IsOpen(DateTime now)
         {
-            get
-            {
-                // TODO: implement maps, that are open based on date time.
-                return true;
-            }
+            var startNext = NextOpenDate(now);
+            var endNext = NextCloseDate(now);
+
+            return endNext < startNext;
+        }
+
+        /// <summary>
+        /// Map's open time in NCrontab format. More info here: https://github.com/atifaziz/NCrontab
+        /// </summary>
+        public string OpenTime { get; set; }
+
+        /// <summary>
+        /// Generates the next open date.
+        /// </summary>
+        public DateTime NextOpenDate(DateTime now)
+        {
+            var start = CrontabSchedule.Parse(OpenTime);
+            return start.GetNextOccurrence(now);
+        }
+
+        /// <summary>
+        /// Map's open time in NCrontab format. More info here: https://github.com/atifaziz/NCrontab
+        /// </summary>
+        public string CloseTime { get; set; }
+
+        /// <summary>
+        /// Generates the next close date.
+        /// </summary>
+        public DateTime NextCloseDate(DateTime now)
+        {
+            var end = CrontabSchedule.Parse(CloseTime);
+            return end.GetNextOccurrence(now);
         }
 
         /// <summary>

@@ -9,7 +9,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Imgeneus.World.Game.Zone
 {
-    public class GuildMap : Map, IGuildMap
+    public abstract class GuildMap : Map, IGuildMap
     {
         protected readonly int _guildId;
         protected readonly IGuildRankingManager _guildRankingManager;

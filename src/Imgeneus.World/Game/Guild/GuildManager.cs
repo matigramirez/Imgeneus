@@ -524,6 +524,26 @@ namespace Imgeneus.World.Game.Guild
             return GuildHouseBuyReason.Ok;
         }
 
+        ///  <inheritdoc/>
+        public bool HasHouse(int guildId)
+        {
+            var guild = _database.Guilds.Find(guildId);
+            if (guild is null)
+                return false;
+
+            return guild.HasHouse;
+        }
+
+        ///  <inheritdoc/>
+        public byte GetRank(int guildId)
+        {
+            var guild = _database.Guilds.Find(guildId);
+            if (guild is null)
+                return 0;
+
+            return guild.Rank;
+        }
+
         #endregion
     }
 }

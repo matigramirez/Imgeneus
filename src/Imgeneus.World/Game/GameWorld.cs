@@ -137,7 +137,7 @@ namespace Imgeneus.World.Game
                     return true;
                 }
 
-                if (destinationMapDef.CreateType == CreateType.Guild)
+                if (destinationMapDef.CreateType == CreateType.GuildHouse)
                 {
                     if (!player.HasGuild)
                     {
@@ -145,11 +145,31 @@ namespace Imgeneus.World.Game
                         return false;
                     }
 
+                    if (!player.GuildHasHouse)
+                    {
+                        reason = PortalTeleportNotAllowedReason.NoGuildHouse;
+                        return false;
+                    }
+
+                    if (!player.GuildHasTopRank)
+                    {
+                        reason = PortalTeleportNotAllowedReason.OnlyTop30Guilds;
+                        return false;
+                    }
+
+                    // TODO: check weekly payment FeeNotPaid.
+
                     return true;
                 }
 
                 if (destinationMapDef.CreateType == CreateType.GRB)
                 {
+                    if (!player.HasGuild)
+                    {
+                        reason = PortalTeleportNotAllowedReason.OnlyForGuilds;
+                        return false;
+                    }
+
                     if (!destinationMapDef.IsOpen(_timeService.UtcNow))
                     {
                         reason = PortalTeleportNotAllowedReason.NotTimeForRankingBattle;
@@ -248,7 +268,12 @@ namespace Imgeneus.World.Game
         /// <summary>
         /// Thread-safe dictionary of maps. Where key is guild id.
         /// </summary>
-        public ConcurrentDictionary<int, IGuildMap> GuildMaps { get; private set; } = new ConcurrentDictionary<int, IGuildMap>();
+        public ConcurrentDictionary<int, IGuildMap> GuildHouseMaps { get; private set; } = new ConcurrentDictionary<int, IGuildMap>();
+
+        /// <summary>
+        /// Thread-safe dictionary of maps. Where key is guild id.
+        /// </summary>
+        public ConcurrentDictionary<int, IGuildMap> GRBMaps { get; private set; } = new ConcurrentDictionary<int, IGuildMap>();
 
         #endregion
 
@@ -341,7 +366,7 @@ namespace Imgeneus.World.Game
                     map.LoadPlayer(player);
                 }
 
-                if (mapDef.CreateType == CreateType.Guild || mapDef.CreateType == CreateType.GRB)
+                if (mapDef.CreateType == CreateType.GuildHouse || mapDef.CreateType == CreateType.GRB)
                 {
                     int guildId = 0;
                     if (player.GuildId is null) // probably guild id has changed during loading in portal? Or it's admin without guild tries to load into GBR map.
@@ -353,15 +378,33 @@ namespace Imgeneus.World.Game
                         guildId = (int)player.GuildId;
                     }
 
-                    IGuildMap map;
-                    GuildMaps.TryGetValue(guildId, out map);
-                    if (map is null)
+                    if (mapDef.CreateType == CreateType.GuildHouse)
                     {
-                        map = _mapFactory.CreateGuildMap(mapDef.Id, mapDef, _mapsLoader.LoadMapConfiguration(mapDef.Id), guildId);
-                        GuildMaps.TryAdd(guildId, map);
+                        IGuildMap map;
+                        GuildHouseMaps.TryGetValue(guildId, out map);
+                        if (map is null)
+                        {
+                            map = _mapFactory.CreateGuildMap(mapDef.Id, mapDef, _mapsLoader.LoadMapConfiguration(mapDef.Id), guildId);
+                            GuildHouseMaps.TryAdd(guildId, map);
+                        }
+
+                        map.LoadPlayer(player);
+                        return;
                     }
 
-                    map.LoadPlayer(player);
+                    if (mapDef.CreateType == CreateType.GRB)
+                    {
+                        IGuildMap map;
+                        GRBMaps.TryGetValue(guildId, out map);
+                        if (map is null)
+                        {
+                            map = _mapFactory.CreateGuildMap(mapDef.Id, mapDef, _mapsLoader.LoadMapConfiguration(mapDef.Id), guildId);
+                            GRBMaps.TryAdd(guildId, map);
+                        }
+
+                        map.LoadPlayer(player);
+                        return;
+                    }
                 }
             }
         }
@@ -394,8 +437,10 @@ namespace Imgeneus.World.Game
                     map = PartyMaps[player.Party.Id];
                 else if (PartyMaps.ContainsKey(player.PreviousPartyId))
                     map = PartyMaps[player.PreviousPartyId];
-                else if (player.HasGuild && GuildMaps.ContainsKey((int)player.GuildId))
-                    map = GuildMaps[(int)player.GuildId];
+                else if (player.HasGuild && GuildHouseMaps.ContainsKey((int)player.GuildId))
+                    map = GuildHouseMaps[(int)player.GuildId];
+                else if (player.HasGuild && GRBMaps.ContainsKey((int)player.GuildId))
+                    map = GRBMaps[(int)player.GuildId];
 
                 if (map is null)
                     _logger.LogError($"Couldn't find character's {characterId} map {player.MapId}.");

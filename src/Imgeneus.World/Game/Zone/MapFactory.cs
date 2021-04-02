@@ -49,7 +49,7 @@ namespace Imgeneus.World.Game.Zone
             if (definition.CreateType == CreateType.GRB)
                 return new GRBMap(guildId, _guildRankingManager, id, definition, config, _logger, _databasePreloader, _mobFactory, _npcFactory, _obeliskFactory, _timeService);
 
-            return new GuildMap(guildId, _guildRankingManager, id, definition, config, _logger, _databasePreloader, _mobFactory, _npcFactory, _obeliskFactory, _timeService);
+            return new GuildHouseMap(guildId, _guildRankingManager, id, definition, config, _logger, _databasePreloader, _mobFactory, _npcFactory, _obeliskFactory, _timeService);
         }
     }
 }

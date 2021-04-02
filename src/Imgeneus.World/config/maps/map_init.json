@@ -61,7 +61,7 @@
     {
       "MapId": 51,
       "MapType": "Field",
-      "CreateType": "Guild",
+      "CreateType": "GuildHouse",
       "RebirthMap": {
         "MapId": 53,
         "PosX": 50.43,

@@ -23,7 +23,7 @@
         NotAuthorized = 3,
 
         /// <summary>
-        /// Guilds with rank >= 30 can have guild house.
+        /// Guilds with rank <= 30 can have guild house.
         /// </summary>
         LowRank = 4
     }

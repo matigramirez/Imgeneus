@@ -35,7 +35,7 @@
         /// <summary>
         /// Only for guilds, that paid their guild house.
         /// </summary>
-        NotPaidGuildHouse = 6,
+        NoGuildHouse = 6,
 
         /// <summary>
         /// Can enter the guild house after 5 days of admission.

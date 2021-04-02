@@ -112,5 +112,27 @@ namespace Imgeneus.World.Game.Player
             GuildRank = 0;
             GuildMembers.Clear();
         }
+
+        public bool GuildHasHouse
+        {
+            get
+            {
+                if (!HasGuild)
+                    return false;
+
+                return _guildManager.HasHouse((int)GuildId);
+            }
+        }
+
+        public bool GuildHasTopRank
+        {
+            get
+            {
+                if (!HasGuild)
+                    return false;
+
+                return _guildManager.GetRank((int)GuildId) <= 30;
+            }
+        }
     }
 }

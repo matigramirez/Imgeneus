@@ -90,5 +90,15 @@ namespace Imgeneus.World.Game.Guild
         /// Tries to buy guild house.
         /// </summary>
         public Task<GuildHouseBuyReason> TryBuyHouse(Character character);
+
+        /// <summary>
+        /// Checks if guild has house.
+        /// </summary>
+        public bool HasHouse(int guildId);
+
+        /// <summary>
+        /// Gets guild rank.
+        /// </summary>
+        public byte GetRank(int guildId);
     }
 }

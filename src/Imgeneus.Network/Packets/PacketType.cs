@@ -297,10 +297,15 @@
         GUILD_CREATE = 0x0D21, // 3361
         GUILD_CREATE_AGREE = 0x0D22, // 3362
         GUILD_GET_ETIN = 0x0D23, // 3363
+        GUILD_NPC_LIST = 0x0D24, // 3364
+        GUILD_NPC_UPGRADE = 0x0D25, // 3365
+        GRB_NOTICE = 0x0D26, // 3366
         GRB_POINTS = 0x0D27, // 3367
         GUILD_LIST = 0x0D2F, // 3375
         GUILD_LIST_ADD = 0x0D30, // 3376
         GUILD_HOUSE_BUY = 0x0D34, // 3380
+        GUILD_PVP_WIN = 0x0D36, // 3382
+        GUILD_RANK_UPDATE = 0x0D37, // 3383
 
         // Dyeing
         DYE_CONFIRM = 0x055B, // 1371

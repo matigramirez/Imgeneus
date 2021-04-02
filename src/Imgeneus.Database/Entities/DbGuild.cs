@@ -58,6 +58,11 @@ namespace Imgeneus.Database.Entities
         /// </summary>
         public ICollection<DbCharacter> Members { get; set; }
 
+        /// <summary>
+        /// Shows if the guild has a guild house.
+        /// </summary>
+        public bool HasHouse { get; set; }
+
         public DbGuild(string name, string message, int masterId, Fraction country)
         {
             Name = name;

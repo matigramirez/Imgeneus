@@ -21,5 +21,15 @@
         /// Min number of hours since player since player created guild.
         /// </summary>
         public ushort MinPenalty { get; set; }
+
+        /// <summary>
+        /// Amount of money needed for buying guild house.
+        /// </summary>
+        public int HouseBuyMoney { get; set; }
+
+        /// <summary>
+        /// Weekly fee, needed for a basic guild house.
+        /// </summary>
+        public int HouseKeepEtin { get; set; }
     }
 }

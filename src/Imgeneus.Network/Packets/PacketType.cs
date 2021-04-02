@@ -296,9 +296,11 @@
         GUILD_JOIN_LIST_REMOVE = 0x0D18, // 3352
         GUILD_CREATE = 0x0D21, // 3361
         GUILD_CREATE_AGREE = 0x0D22, // 3362
+        GUILD_GET_ETIN = 0x0D23, // 3363
         GRB_POINTS = 0x0D27, // 3367
         GUILD_LIST = 0x0D2F, // 3375
         GUILD_LIST_ADD = 0x0D30, // 3376
+        GUILD_HOUSE_BUY = 0x0D34, // 3380
 
         // Dyeing
         DYE_CONFIRM = 0x055B, // 1371

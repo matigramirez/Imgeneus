@@ -255,5 +255,86 @@ namespace Imgeneus.World.Tests.GuildTests
             Assert.True(GuildManager.JoinRequests.ContainsKey(character.Id));
             Assert.Equal(2, GuildManager.JoinRequests[character.Id]);
         }
+
+        [Fact]
+        [Description("Player can buy guild house only if he is guild owner (i.e. rank is 1).")]
+        public async void TryBuyHouse_OnlyRank1Test()
+        {
+            var character = CreateCharacter(testMap);
+
+            var guildManager = new GuildManager(guildLoggerMock.Object, Options.Create(new GuildConfiguration()), databaseMock.Object, gameWorldMock.Object, timeMock.Object);
+
+            var result = await guildManager.TryBuyHouse(character);
+
+            Assert.Equal(GuildHouseBuyReason.NotAuthorized, result);
+        }
+
+        [Fact]
+        [Description("Player can buy guild house if he has enough gold.")]
+        public async void TryBuyHouse_NotEnoughtGoldTest()
+        {
+            var character = CreateCharacter(testMap);
+            character.GuildRank = 1;
+
+            var guildManager = new GuildManager(guildLoggerMock.Object, Options.Create(new GuildConfiguration() { HouseBuyMoney = 100 }), databaseMock.Object, gameWorldMock.Object, timeMock.Object);
+
+            var result = await guildManager.TryBuyHouse(character);
+
+            Assert.Equal(GuildHouseBuyReason.NoGold, result);
+        }
+
+        [Fact]
+        [Description("Player can buy guild house if his guild is in top 30 rank.")]
+        public async void TryBuyHouse_Top30Test()
+        {
+            var character = CreateCharacter(testMap);
+            character.GuildId = 1;
+            character.GuildRank = 1;
+
+            var database = new Mock<IDatabase>();
+            database.Setup(x => x.Guilds.FindAsync(It.IsAny<int>())).ReturnsAsync(new DbGuild("test_guild", "test_message", 99, Fraction.Light) { Rank = 31 });
+
+            var guildManager = new GuildManager(guildLoggerMock.Object, Options.Create(new GuildConfiguration()), database.Object, gameWorldMock.Object, timeMock.Object);
+
+            var result = await guildManager.TryBuyHouse(character);
+
+            Assert.Equal(GuildHouseBuyReason.LowRank, result);
+        }
+
+        [Fact]
+        [Description("Player can buy guild house only once.")]
+        public async void TryBuyHouse_HasHouseTest()
+        {
+            var character = CreateCharacter(testMap);
+            character.GuildId = 1;
+            character.GuildRank = 1;
+
+            var database = new Mock<IDatabase>();
+            database.Setup(x => x.Guilds.FindAsync(It.IsAny<int>())).ReturnsAsync(new DbGuild("test_guild", "test_message", 99, Fraction.Light) { Rank = 1, HasHouse = true });
+
+            var guildManager = new GuildManager(guildLoggerMock.Object, Options.Create(new GuildConfiguration()), database.Object, gameWorldMock.Object, timeMock.Object);
+
+            var result = await guildManager.TryBuyHouse(character);
+
+            Assert.Equal(GuildHouseBuyReason.AlreadyBought, result);
+        }
+
+        [Fact]
+        [Description("Player can buy guild house.")]
+        public async void TryBuyHouse_SuccessTest()
+        {
+            var character = CreateCharacter(testMap);
+            character.GuildId = 1;
+            character.GuildRank = 1;
+
+            var database = new Mock<IDatabase>();
+            database.Setup(x => x.Guilds.FindAsync(It.IsAny<int>())).ReturnsAsync(new DbGuild("test_guild", "test_message", 99, Fraction.Light) { Rank = 1, HasHouse = false });
+
+            var guildManager = new GuildManager(guildLoggerMock.Object, Options.Create(new GuildConfiguration()), database.Object, gameWorldMock.Object, timeMock.Object);
+
+            var result = await guildManager.TryBuyHouse(character);
+
+            Assert.Equal(GuildHouseBuyReason.Ok, result);
+        }
     }
 }

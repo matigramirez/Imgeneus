@@ -218,7 +218,8 @@ namespace Imgeneus.World
             { PacketType.GUILD_KICK, (s) => new GuildKickPacket(s) },
             { PacketType.GUILD_USER_STATE, (s) => new GuildUserStatePacket(s) },
             { PacketType.GUILD_LEAVE, (s) => new GuildLeavePacket(s) },
-            { PacketType.GUILD_DISMANTLE, (s) => new GuildDismantlePacket(s) }
+            { PacketType.GUILD_DISMANTLE, (s) => new GuildDismantlePacket(s) },
+            { PacketType.GUILD_HOUSE_BUY, (s) => new GuildHouseBuyPacket(s) }
         };
 
         /// <inheritdoc />

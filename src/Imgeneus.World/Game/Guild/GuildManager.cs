@@ -23,10 +23,7 @@ namespace Imgeneus.World.Game.Guild
         private readonly ITimeService _timeService;
         private SemaphoreSlim _sync = new SemaphoreSlim(1);
 
-        private readonly uint _minGold;
-        private readonly byte _minMembersCount;
-        private readonly ushort _minLevel;
-        private readonly ushort _minPenalty;
+        private readonly GuildConfiguration _config;
 
         public GuildManager(ILogger<IGuildManager> logger, IOptions<GuildConfiguration> config, IDatabase database, IGameWorld gameWorld, ITimeService timeService)
         {
@@ -35,10 +32,7 @@ namespace Imgeneus.World.Game.Guild
             _gameWorld = gameWorld;
             _timeService = timeService;
 
-            _minGold = config.Value.MinGold;
-            _minMembersCount = config.Value.MinMembers;
-            _minLevel = config.Value.MinLevel;
-            _minPenalty = config.Value.MinPenalty;
+            _config = config.Value;
         }
 
         #region Guild creation
@@ -51,13 +45,13 @@ namespace Imgeneus.World.Game.Guild
                 if (string.IsNullOrWhiteSpace(guildName))
                     return GuildCreateFailedReason.WrongName;
 
-                if (guildCreator.Gold < _minGold)
+                if (guildCreator.Gold < _config.MinGold)
                     return GuildCreateFailedReason.NotEnoughGold;
 
-                if (!guildCreator.HasParty || !(guildCreator.Party is Party) || guildCreator.Party.Members.Count != _minMembersCount)
+                if (!guildCreator.HasParty || !(guildCreator.Party is Party) || guildCreator.Party.Members.Count != _config.MinMembers)
                     return GuildCreateFailedReason.NotEnoughMembers;
 
-                if (!guildCreator.Party.Members.All(x => x.Level > _minLevel))
+                if (!guildCreator.Party.Members.All(x => x.Level > _config.MinLevel))
                     return GuildCreateFailedReason.LevelLimit;
 
                 // TODO: banned words?
@@ -102,7 +96,7 @@ namespace Imgeneus.World.Game.Guild
                 return false;
 
             var leaveTime = (DateTime)character.GuildLeaveTime;
-            return _timeService.UtcNow.Subtract(leaveTime).TotalHours < _minPenalty;
+            return _timeService.UtcNow.Subtract(leaveTime).TotalHours < _config.MinPenalty;
         }
 
         /// <summary>
@@ -205,7 +199,7 @@ namespace Imgeneus.World.Game.Guild
                 m.SendGuildCreateSuccess(guild.Id, m.GuildRank, guild.Name, request.Message);
             }
 
-            request.GuildCreator.ChangeGold(request.GuildCreator.Gold - _minGold);
+            request.GuildCreator.ChangeGold(request.GuildCreator.Gold - _config.MinGold);
             request.GuildCreator.SendGoldUpdate();
 
             foreach (var player in _gameWorld.Players.Values.ToList())
@@ -481,6 +475,53 @@ namespace Imgeneus.World.Game.Guild
                 return character;
             else
                 return null;
+        }
+
+        #endregion
+
+        #region Guild house
+
+        /// <inheritdoc/>
+        public async Task<GuildHouseBuyReason> TryBuyHouse(Character character)
+        {
+            await _sync.WaitAsync();
+
+            var result = await BuyHouse(character);
+
+            _sync.Release();
+
+            return result;
+        }
+
+        private async Task<GuildHouseBuyReason> BuyHouse(Character character)
+        {
+            if (character.GuildRank != 1)
+            {
+                return GuildHouseBuyReason.NotAuthorized;
+            }
+
+            if (character.Gold < _config.HouseBuyMoney)
+            {
+                return GuildHouseBuyReason.NoGold;
+            }
+
+            var guild = await GetGuild((int)character.GuildId);
+            if (guild is null || guild.Rank > 30)
+            {
+                return GuildHouseBuyReason.LowRank;
+            }
+
+            if (guild.HasHouse)
+            {
+                return GuildHouseBuyReason.AlreadyBought;
+            }
+
+            character.ChangeGold((uint)(character.Gold - _config.HouseBuyMoney));
+
+            guild.HasHouse = true;
+            await _database.SaveChangesAsync();
+
+            return GuildHouseBuyReason.Ok;
         }
 
         #endregion

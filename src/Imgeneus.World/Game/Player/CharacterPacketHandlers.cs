@@ -917,5 +917,14 @@ namespace Imgeneus.World.Game.Player
                 guildPlayer.SendGuildDismantle();
             }
         }
+
+        private async void HandleGuildHouseBuy()
+        {
+            if (!HasGuild)
+                return;
+
+            var reason = await _guildManager.TryBuyHouse(this);
+            _packetsHelper.SendGuildHouseBuy(Client, reason, Gold);
+        }
     }
 }

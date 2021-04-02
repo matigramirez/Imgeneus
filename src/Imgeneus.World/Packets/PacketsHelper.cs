@@ -842,6 +842,14 @@ namespace Imgeneus.World.Packets
             client.SendPacket(packet);
         }
 
+        internal void SendGuildHouseBuy(IWorldClient client, GuildHouseBuyReason reason, uint gold)
+        {
+            using var packet = new Packet(PacketType.GUILD_HOUSE_BUY);
+            packet.Write((byte)reason);
+            packet.Write(gold);
+            client.SendPacket(packet);
+        }
+
         internal void SendGmTeleportToPlayer(IWorldClient client, Character player)
         {
             using var packet = new Packet(PacketType.GM_TELEPORT_TO_PLAYER);

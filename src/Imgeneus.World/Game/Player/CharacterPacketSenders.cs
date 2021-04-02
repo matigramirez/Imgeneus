@@ -220,6 +220,14 @@ namespace Imgeneus.World.Game.Player
 
         public void SendGBRPoints(int currentPoints, int maxPoints, int topGuild) => _packetsHelper.SendGBRPoints(Client, currentPoints, maxPoints, topGuild);
 
+        public void SendGRBStartsSoon() => _packetsHelper.SendGRBNotice(Client, GRBNotice.StartsSoon);
+
+        public void SendGRBStarted() => _packetsHelper.SendGRBNotice(Client, GRBNotice.Started);
+
+        public void SendGRB10MinsLeft() => _packetsHelper.SendGRBNotice(Client, GRBNotice.Min10);
+
+        public void SendGRB1MinLeft() => _packetsHelper.SendGRBNotice(Client, GRBNotice.Min1);
+
         public void SendGoldUpdate() => _packetsHelper.SendGoldUpdate(Client, Gold);
     }
 }

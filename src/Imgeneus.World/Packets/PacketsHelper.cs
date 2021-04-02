@@ -301,6 +301,14 @@ namespace Imgeneus.World.Packets
             client.SendPacket(packet);
         }
 
+        internal void SendGRBNotice(IWorldClient client, GRBNotice notice)
+        {
+            using var packet = new Packet(PacketType.GRB_NOTICE);
+            packet.Write((ushort)50); // GRB map is always 50. Technically this doesn't really matter, because it's not used anywhere...
+            packet.Write((byte)notice);
+            client.SendPacket(packet);
+        }
+
         internal void SendGBRPoints(IWorldClient client, int currentPoints, int maxPoints, int topGuild)
         {
             using var packet = new Packet(PacketType.GRB_POINTS);

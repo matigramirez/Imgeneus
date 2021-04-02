@@ -65,9 +65,7 @@ namespace Imgeneus.World.Game.Guild
         /// </summary>
         private readonly Timer _startSoonTimer = new Timer() { AutoReset = false };
 
-        /// <summary>
-        /// GRB will start soon.
-        /// </summary>
+        /// <inheritdoc/>
         public event Action OnStartSoon;
 
         private void StartSoonTimer_Elapsed(object sender, ElapsedEventArgs e)
@@ -94,9 +92,7 @@ namespace Imgeneus.World.Game.Guild
         /// </summary>
         private readonly Timer _justStartedTimer = new Timer() { AutoReset = false };
 
-        /// <summary>
-        /// GRB started.
-        /// </summary>
+        /// <inheritdoc/>
         public event Action OnStarted;
 
         private void JustStartedTimer_Elapsed(object sender, ElapsedEventArgs e)
@@ -121,9 +117,7 @@ namespace Imgeneus.World.Game.Guild
         /// </summary>
         private readonly Timer _10MinLeftTimer = new Timer() { AutoReset = false };
 
-        /// <summary>
-        /// GRB will end in 10 mins.
-        /// </summary>
+        /// <inheritdoc/>
         public event Action On10MinsLeft;
 
         private void Min10LeftTimer_Elapsed(object sender, ElapsedEventArgs e)
@@ -150,9 +144,7 @@ namespace Imgeneus.World.Game.Guild
         /// </summary>
         private readonly Timer _1MinLeftTimer = new Timer() { AutoReset = false };
 
-        /// <summary>
-        ///  GRB will end in 1 min.
-        /// </summary>
+        /// <inheritdoc/>
         public event Action On1MinLeft;
 
         private void Min1LeftTimer_Elapsed(object sender, ElapsedEventArgs e)
@@ -179,14 +171,14 @@ namespace Imgeneus.World.Game.Guild
         /// </summary>
         private readonly Timer _calculateRanks = new Timer() { AutoReset = false };
 
-        /// <summary>
-        ///  New ranks are set.
-        /// </summary>
+        /// <inheritdoc/>
         public event Action OnRanksCalculated;
 
         private void CalculateRanks_Elapsed(object sender, ElapsedEventArgs e)
         {
             // TODO: calculate new ranks.
+
+            OnRanksCalculated?.Invoke();
 
             CalculateRanksTimer();
         }

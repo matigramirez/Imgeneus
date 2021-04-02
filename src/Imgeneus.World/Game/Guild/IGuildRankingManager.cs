@@ -25,5 +25,30 @@ namespace Imgeneus.World.Game.Guild
         /// Finds guild points by guild id.
         /// </summary>
         public int GetGuildPoints(int guildId);
+
+        /// <summary>
+        /// GRB will start soon.
+        /// </summary>
+        public event Action OnStartSoon;
+
+        /// <summary>
+        /// GRB started.
+        /// </summary>
+        public event Action OnStarted;
+
+        /// <summary>
+        /// GRB will end in 10 mins.
+        /// </summary>
+        public event Action On10MinsLeft;
+
+        /// <summary>
+        ///  GRB will end in 1 min.
+        /// </summary>
+        public event Action On1MinLeft;
+
+        /// <summary>
+        ///  New ranks are set.
+        /// </summary>
+        public event Action OnRanksCalculated;
     }
 }

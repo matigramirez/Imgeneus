@@ -4,6 +4,7 @@ using Imgeneus.Network.Packets.Game;
 using Imgeneus.Network.Server;
 using Imgeneus.World.Game.Blessing;
 using Imgeneus.World.Game.Duel;
+using Imgeneus.World.Game.Guild;
 using Imgeneus.World.Game.PartyAndRaid;
 using Imgeneus.World.Game.Player;
 using Imgeneus.World.Game.Time;
@@ -30,17 +31,20 @@ namespace Imgeneus.World.Game
         private readonly IMapFactory _mapFactory;
         private readonly ICharacterFactory _characterFactory;
         private readonly ITimeService _timeService;
+        private readonly IGuildRankingManager _guildRankingManager;
         private MapDefinitions _mapDefinitions;
 
-        public GameWorld(ILogger<GameWorld> logger, IMapsLoader mapsLoader, IMapFactory mapFactory, ICharacterFactory characterFactory, ITimeService timeService)
+        public GameWorld(ILogger<GameWorld> logger, IMapsLoader mapsLoader, IMapFactory mapFactory, ICharacterFactory characterFactory, ITimeService timeService, IGuildRankingManager guildRankingManager)
         {
             _logger = logger;
             _mapsLoader = mapsLoader;
             _mapFactory = mapFactory;
             _characterFactory = characterFactory;
             _timeService = timeService;
+            _guildRankingManager = guildRankingManager;
 
             InitMaps();
+            InitGRB();
         }
 
         #region Maps
@@ -263,7 +267,7 @@ namespace Imgeneus.World.Game
 
         #endregion
 
-        #region Guild maps
+        #region Guild
 
         /// <summary>
         /// Thread-safe dictionary of maps. Where key is guild id.
@@ -274,6 +278,41 @@ namespace Imgeneus.World.Game
         /// Thread-safe dictionary of maps. Where key is guild id.
         /// </summary>
         public ConcurrentDictionary<int, IGuildMap> GRBMaps { get; private set; } = new ConcurrentDictionary<int, IGuildMap>();
+
+        /// <summary>
+        /// Inits guild ranking battle timers.
+        /// </summary>
+        private void InitGRB()
+        {
+            _guildRankingManager.OnStartSoon += GuildRankingManager_OnStartSoon;
+            _guildRankingManager.OnStarted += GuildRankingManager_OnStarted;
+            _guildRankingManager.On10MinsLeft += GuildRankingManager_On10MinsLeft;
+            _guildRankingManager.On1MinLeft += GuildRankingManager_On1MinLeft;
+        }
+
+        private void GuildRankingManager_OnStartSoon()
+        {
+            foreach (var player in Players.Values.ToList())
+                player.SendGRBStartsSoon();
+        }
+
+        private void GuildRankingManager_OnStarted()
+        {
+            foreach (var player in Players.Values.ToList())
+                player.SendGRBStarted();
+        }
+
+        private void GuildRankingManager_On10MinsLeft()
+        {
+            foreach (var player in Players.Values.ToList())
+                player.SendGRB10MinsLeft();
+        }
+
+        private void GuildRankingManager_On1MinLeft()
+        {
+            foreach (var player in Players.Values.ToList())
+                player.SendGRB1MinLeft();
+        }
 
         #endregion
 

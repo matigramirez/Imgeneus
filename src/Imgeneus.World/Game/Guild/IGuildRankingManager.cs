@@ -1,7 +1,4 @@
-﻿using Imgeneus.Database.Entities;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System;
 
 namespace Imgeneus.World.Game.Guild
 {
@@ -12,7 +9,7 @@ namespace Imgeneus.World.Game.Guild
         /// </summary>
         /// <param name="guildId">guild id</param>
         /// <param name="points">points to add</param>
-        public Task AddPoints(int guildId, short points);
+        public void AddPoints(int guildId, short points);
 
         /// <summary>
         /// Event, that is fired, when guild changes number of points
@@ -20,15 +17,13 @@ namespace Imgeneus.World.Game.Guild
         public event Action<int, int> OnPointsChanged;
 
         /// <summary>
-        /// Selects top X guilds ordered bypoints.
+        /// Finds guild id with the max number of points.
         /// </summary>
-        /// <param name="count">top X</param>
-        /// <returns>collection of guilds</returns>
-        public IEnumerable<DbGuild> GetTopGuilds(int count);
+        public int GetTopGuild();
 
         /// <summary>
-        /// Finds guild by id.
+        /// Finds guild points by guild id.
         /// </summary>
-        public DbGuild GetGuild(int guildId);
+        public int GetGuildPoints(int guildId);
     }
 }

@@ -1,19 +1,13 @@
 ﻿using Imgeneus.Database;
-using Imgeneus.Database.Entities;
-using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Imgeneus.World.Game.Guild
 {
     public class GuildRankingManager : IGuildRankingManager
     {
         private readonly IDatabase _database;
-
-        private SemaphoreSlim _sync = new SemaphoreSlim(1);
 
         public GuildRankingManager(IDatabase database)
         {
@@ -23,34 +17,34 @@ namespace Imgeneus.World.Game.Guild
         /// <inheritdoc/>
         public event Action<int, int> OnPointsChanged;
 
+        /// <summary>
+        /// During GRB all guild points saved here.
+        /// Key is guild id. Value is points.
+        /// </summary>
+        private readonly ConcurrentDictionary<int, int> GuildPoints = new ConcurrentDictionary<int, int>();
+
         /// <inheritdoc/>
-        public async Task AddPoints(int guildId, short points)
+        public void AddPoints(int guildId, short points)
         {
-            await _sync.WaitAsync();
+            if (!GuildPoints.ContainsKey(guildId))
+                GuildPoints[guildId] = points;
+            else
+                GuildPoints[guildId] += points;
 
-            var guild = await _database.Guilds.FindAsync(guildId);
-            if (guild is null)
-                return;
-
-            guild.Points += points;
-
-            OnPointsChanged?.Invoke(guild.Id, guild.Points);
-
-            await _database.SaveChangesAsync();
-
-            _sync.Release();
+            OnPointsChanged?.Invoke(guildId, GuildPoints[guildId]);
         }
 
         /// <inheritdoc/>
-        public IEnumerable<DbGuild> GetTopGuilds(int count)
+        public int GetTopGuild()
         {
-            return _database.Guilds.OrderByDescending(x => x.Points).Take(count);
+            var key = GuildPoints.OrderByDescending(x => x.Value).Select(x => x.Key).FirstOrDefault();
+            return key;
         }
 
         /// <inheritdoc/>
-        public DbGuild GetGuild(int guildId)
+        public int GetGuildPoints(int guildId)
         {
-            return _database.Guilds.Find(guildId);
+            return GuildPoints[guildId];
         }
     }
 }

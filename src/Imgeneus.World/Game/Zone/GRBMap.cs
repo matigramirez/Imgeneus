@@ -20,17 +20,18 @@ namespace Imgeneus.World.Game.Zone
 
         private void GuildRankingManager_OnPointsChanged(int guildId, int points)
         {
-            var topGuild = _guildRankingManager.GetTopGuilds(1).FirstOrDefault();
-            var myGuild = _guildRankingManager.GetGuild(GuildId);
+            var topGuild = _guildRankingManager.GetTopGuild();
+            var topGuildPoints = _guildRankingManager.GetGuildPoints(topGuild);
+            var myPoints = _guildRankingManager.GetGuildPoints(GuildId);
 
             foreach (var player in Players.Values.ToList())
-                player.SendGBRPoints(myGuild.Points, topGuild.Points, topGuild.Id);
+                player.SendGBRPoints(myPoints, topGuildPoints, topGuild);
         }
 
-        protected override async void Mob_OnDead(IKillable sender, IKiller killer)
+        protected override void Mob_OnDead(IKillable sender, IKiller killer)
         {
             var mob = sender as Mob;
-            await _guildRankingManager.AddPoints(GuildId, mob.GuildPoints);
+            _guildRankingManager.AddPoints(GuildId, mob.GuildPoints);
 
             base.Mob_OnDead(sender, killer);
         }

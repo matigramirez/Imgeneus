@@ -267,6 +267,9 @@ namespace Imgeneus.World.Game.Guild
         /// <inheritdoc/>
         public int GetGuildPoints(int guildId)
         {
+            if (!GuildPoints.ContainsKey(guildId))
+                return 0;
+
             return GuildPoints[guildId];
         }
 

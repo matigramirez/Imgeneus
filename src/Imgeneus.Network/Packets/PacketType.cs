@@ -303,6 +303,7 @@
         GRB_POINTS = 0x0D27, // 3367
         GUILD_LIST = 0x0D2F, // 3375
         GUILD_LIST_ADD = 0x0D30, // 3376
+        GUILD_HOUSE_KEEP_ETIN = 0x0D33, // 3379
         GUILD_HOUSE_BUY = 0x0D34, // 3380
         GUILD_PVP_WIN = 0x0D36, // 3382
         GUILD_RANK_UPDATE = 0x0D37, // 3383

@@ -561,5 +561,15 @@ namespace Imgeneus.World.Game.Guild
         }
 
         #endregion
+
+        #region Etin
+
+        public async Task<int> GetEtin(int guildId)
+        {
+            var guild = await GetGuild(guildId);
+            return guild.Etin;
+        }
+
+        #endregion
     }
 }

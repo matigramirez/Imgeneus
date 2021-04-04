@@ -105,5 +105,10 @@ namespace Imgeneus.World.Game.Guild
         /// Reloads guild ranks after GRB.
         /// </summary>
         public void ReloadGuildRanks(IEnumerable<(int GuildId, int Points, byte Rank)> results);
+
+        /// <summary>
+        /// Gets guild's etin.
+        /// </summary>
+        public Task<int> GetEtin(int guildId);
     }
 }

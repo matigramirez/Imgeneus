@@ -374,6 +374,10 @@ namespace Imgeneus.World.Game.Player
                     HandleGuildHouseBuy();
                     break;
 
+                case GuildGetEtinPacket guildGetEtinPacket:
+                    HandleGetEtin();
+                    break;
+
                 case GMCreateMobPacket gMCreateMobPacket:
                     if (!IsAdmin)
                         return;

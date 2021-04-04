@@ -63,6 +63,11 @@ namespace Imgeneus.Database.Entities
         /// </summary>
         public bool HasHouse { get; set; }
 
+        /// <summary>
+        /// Guild etin. Etin is currency, that is used in guild house.
+        /// </summary>
+        public int Etin { get; set; }
+
         public DbGuild(string name, string message, int masterId, Fraction country)
         {
             Name = name;

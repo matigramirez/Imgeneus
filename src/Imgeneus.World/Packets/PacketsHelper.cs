@@ -846,6 +846,13 @@ namespace Imgeneus.World.Packets
             client.SendPacket(packet);
         }
 
+        internal void SendGetEtin(IWorldClient client, int etin)
+        {
+            using var packet = new Packet(PacketType.GUILD_GET_ETIN);
+            packet.Write(etin);
+            client.SendPacket(packet);
+        }
+
         internal void SendGmSummon(IWorldClient client, Character player)
         {
             using var packet = new Packet(PacketType.GM_SUMMON_PLAYER);

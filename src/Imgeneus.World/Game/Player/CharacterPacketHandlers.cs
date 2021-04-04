@@ -926,5 +926,15 @@ namespace Imgeneus.World.Game.Player
             var reason = await _guildManager.TryBuyHouse(this);
             _packetsHelper.SendGuildHouseBuy(Client, reason, Gold);
         }
+        private async void HandleGetEtin()
+        {
+            var etin = 0;
+            if (HasGuild)
+            {
+                etin = await _guildManager.GetEtin((int)GuildId);
+            }
+
+            _packetsHelper.SendGetEtin(Client, etin);
+        }
     }
 }

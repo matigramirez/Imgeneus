@@ -37,7 +37,7 @@ namespace Imgeneus.World.Game.Guild
         /// </summary>
         private void Init()
         {
-            if (_grbMap is null)
+            if (_grbMap is null || string.IsNullOrWhiteSpace(_grbMap.OpenTime) || string.IsNullOrWhiteSpace(_grbMap.CloseTime))
             {
                 _logger.LogWarning("GRB map defition is not found, Could not init guild ranking manager!");
                 return;
@@ -47,7 +47,7 @@ namespace Imgeneus.World.Game.Guild
             _justStartedTimer.Elapsed += JustStartedTimer_Elapsed;
             _10MinLeftTimer.Elapsed += Min10LeftTimer_Elapsed;
             _1MinLeftTimer.Elapsed += Min1LeftTimer_Elapsed;
-            _calculateRanks.Elapsed += CalculateRanks_Elapsed;
+            _calculateRanksTimer.Elapsed += CalculateRanks_Elapsed;
 
             CalculateStartSoonTimer();
             CalculateJustStartedTimer();
@@ -76,11 +76,20 @@ namespace Imgeneus.World.Game.Guild
 
         private void CalculateStartSoonTimer()
         {
-            var openDate = _grbMap.NextOpenDate(_timeService.UtcNow);
+            _startSoonTimer.Interval = GetStartSoonInterval();
+            _startSoonTimer.Start();
+        }
+
+        /// <summary>
+        /// Only for tests!
+        /// </summary>
+        /// <returns>Start soon interval used for <see cref="_startSoonTimer"/>.</returns>
+        public double GetStartSoonInterval()
+        {
+            var openDate = _grbMap.NextOpenDate(_timeService.UtcNow.AddMinutes(15));
             var before15Mins = openDate.Subtract(TimeSpan.FromMinutes(15));
 
-            _startSoonTimer.Interval = before15Mins.Subtract(_timeService.UtcNow).TotalMilliseconds;
-            _startSoonTimer.Start();
+            return before15Mins.Subtract(_timeService.UtcNow).TotalMilliseconds;
         }
 
         #endregion
@@ -103,9 +112,18 @@ namespace Imgeneus.World.Game.Guild
 
         private void CalculateJustStartedTimer()
         {
-            var openDate = _grbMap.NextOpenDate(_timeService.UtcNow);
-            _justStartedTimer.Interval = openDate.Subtract(_timeService.UtcNow).TotalMilliseconds;
+            _justStartedTimer.Interval = GetStartInterval();
             _justStartedTimer.Start();
+        }
+
+        /// <summary>
+        /// Only for tests!
+        /// </summary>
+        /// <returns>Start interval for <see cref="_justStartedTimer"/>.</returns>
+        public double GetStartInterval()
+        {
+            var openDate = _grbMap.NextOpenDate(_timeService.UtcNow);
+            return openDate.Subtract(_timeService.UtcNow).TotalMilliseconds;
         }
 
         #endregion
@@ -128,11 +146,19 @@ namespace Imgeneus.World.Game.Guild
 
         private void Calculate10MinsTimer()
         {
-            var endDate = _grbMap.NextCloseDate(_timeService.UtcNow);
-            var left10Mins = endDate.Subtract(TimeSpan.FromMinutes(10));
-
-            _10MinLeftTimer.Interval = left10Mins.Subtract(_timeService.UtcNow).TotalMilliseconds;
+            _10MinLeftTimer.Interval = Get10MinsLeftInterval();
             _10MinLeftTimer.Start();
+        }
+
+        /// <summary>
+        /// Only for tests!
+        /// </summary>
+        /// <returns>10 mins left interval for <see cref="_10MinLeftTimer"/>.</returns>
+        public double Get10MinsLeftInterval()
+        {
+            var endDate = _grbMap.NextCloseDate(_timeService.UtcNow.AddMinutes(10));
+            var left10Mins = endDate.Subtract(TimeSpan.FromMinutes(10));
+            return left10Mins.Subtract(_timeService.UtcNow).TotalMilliseconds;
         }
 
         #endregion
@@ -155,11 +181,19 @@ namespace Imgeneus.World.Game.Guild
 
         private void Calculate1MinTimer()
         {
-            var endDate = _grbMap.NextCloseDate(_timeService.UtcNow);
-            var left1Mins = endDate.Subtract(TimeSpan.FromMinutes(1));
-
-            _1MinLeftTimer.Interval = left1Mins.Subtract(_timeService.UtcNow).TotalMilliseconds;
+            _1MinLeftTimer.Interval = Get1MinLeftInterval();
             _1MinLeftTimer.Start();
+        }
+
+        /// <summary>
+        /// Only for tests!
+        /// </summary>
+        /// <returns>1 min left interval for <see cref="_1MinLeftTimer"/>.</returns>
+        public double Get1MinLeftInterval()
+        {
+            var endDate = _grbMap.NextCloseDate(_timeService.UtcNow.AddMinutes(1));
+            var left1Mins = endDate.Subtract(TimeSpan.FromMinutes(1));
+            return left1Mins.Subtract(_timeService.UtcNow).TotalMilliseconds;
         }
 
         #endregion
@@ -169,7 +203,7 @@ namespace Imgeneus.World.Game.Guild
         /// <summary>
         /// Normally 30 min after GRB server will calculate new ranks for the next week.
         /// </summary>
-        private readonly Timer _calculateRanks = new Timer() { AutoReset = false };
+        private readonly Timer _calculateRanksTimer = new Timer() { AutoReset = false };
 
         /// <inheritdoc/>
         public event Action OnRanksCalculated;
@@ -185,11 +219,19 @@ namespace Imgeneus.World.Game.Guild
 
         private void CalculateRanksTimer()
         {
-            var endDate = _grbMap.NextCloseDate(_timeService.UtcNow);
-            var after30Mins = endDate.AddMinutes(30);
+            _calculateRanksTimer.Interval = GetCalculateRanksInterval();
+            _calculateRanksTimer.Start();
+        }
 
-            _calculateRanks.Interval = after30Mins.Subtract(_timeService.UtcNow).TotalMilliseconds;
-            _calculateRanks.Start();
+        /// <summary>
+        /// Only for tests!
+        /// </summary>
+        /// <returns>30 min interval for <see cref="_calculateRanksTimer"/>.</returns>
+        public double GetCalculateRanksInterval()
+        {
+            var endDate = _grbMap.NextCloseDate(_timeService.UtcNow.Subtract(TimeSpan.FromMinutes(30)));
+            var after30Mins = endDate.AddMinutes(30);
+            return after30Mins.Subtract(_timeService.UtcNow).TotalMilliseconds;
         }
 
         #endregion

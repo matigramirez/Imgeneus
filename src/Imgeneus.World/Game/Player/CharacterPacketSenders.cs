@@ -228,6 +228,8 @@ namespace Imgeneus.World.Game.Player
 
         public void SendGRB1MinLeft() => _packetsHelper.SendGRBNotice(Client, GRBNotice.Min1);
 
+        public void SendGuildRanksCalculated() => _packetsHelper.SendGuildRanksCalculated(Client);
+
         public void SendGoldUpdate() => _packetsHelper.SendGoldUpdate(Client, Gold);
     }
 }

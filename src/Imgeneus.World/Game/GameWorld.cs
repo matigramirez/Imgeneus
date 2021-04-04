@@ -288,6 +288,7 @@ namespace Imgeneus.World.Game
             _guildRankingManager.OnStarted += GuildRankingManager_OnStarted;
             _guildRankingManager.On10MinsLeft += GuildRankingManager_On10MinsLeft;
             _guildRankingManager.On1MinLeft += GuildRankingManager_On1MinLeft;
+            _guildRankingManager.OnRanksCalculated += GuildRankingManager_OnRanksCalculated;
         }
 
         private void GuildRankingManager_OnStartSoon()
@@ -312,6 +313,13 @@ namespace Imgeneus.World.Game
         {
             foreach (var player in Players.Values.ToList())
                 player.SendGRB1MinLeft();
+        }
+
+
+        private void GuildRankingManager_OnRanksCalculated()
+        {
+            foreach (var player in Players.Values.ToList())
+                player.SendGuildRanksCalculated();
         }
 
         #endregion

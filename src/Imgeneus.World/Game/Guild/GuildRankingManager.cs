@@ -1,9 +1,12 @@
 ﻿using Imgeneus.Database;
+using Imgeneus.DatabaseBackgroundService;
+using Imgeneus.DatabaseBackgroundService.Handlers;
 using Imgeneus.World.Game.Time;
 using Imgeneus.World.Game.Zone.MapConfig;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
 using System.Timers;
 
@@ -14,16 +17,16 @@ namespace Imgeneus.World.Game.Guild
         private readonly ILogger<IGuildRankingManager> _logger;
         private readonly IMapsLoader _mapsLoader;
         private readonly ITimeService _timeService;
-        //private readonly IDatabase _database;
+        private readonly IBackgroundTaskQueue _taskQueue;
 
         private readonly MapDefinition _grbMap;
 
-        public GuildRankingManager(ILogger<IGuildRankingManager> logger, IMapsLoader mapsLoader, ITimeService timeService)
+        public GuildRankingManager(ILogger<IGuildRankingManager> logger, IMapsLoader mapsLoader, ITimeService timeService, IBackgroundTaskQueue backgroundTaskQueue)
         {
             _logger = logger;
             _mapsLoader = mapsLoader;
             _timeService = timeService;
-            //_database = database;
+            _taskQueue = backgroundTaskQueue;
 
             var defitions = _mapsLoader.LoadMapDefinitions();
             var grbMap = defitions.Maps.FirstOrDefault(x => x.CreateType == CreateType.GRB);
@@ -205,15 +208,9 @@ namespace Imgeneus.World.Game.Guild
         /// </summary>
         private readonly Timer _calculateRanksTimer = new Timer() { AutoReset = false };
 
-        /// <inheritdoc/>
-        public event Action OnRanksCalculated;
-
         private void CalculateRanks_Elapsed(object sender, ElapsedEventArgs e)
         {
-            // TODO: calculate new ranks.
-
-            OnRanksCalculated?.Invoke();
-
+            CalculateRanks();
             CalculateRanksTimer();
         }
 
@@ -271,6 +268,35 @@ namespace Imgeneus.World.Game.Guild
         public int GetGuildPoints(int guildId)
         {
             return GuildPoints[guildId];
+        }
+
+        #endregion
+
+        #region Calculate ranks
+
+        /// <inheritdoc/>
+        public event Action<IEnumerable<(int GuildId, int Points, byte Rank)>> OnRanksCalculated;
+
+        /// <inheritdoc/>
+        public void CalculateRanks()
+        {
+            _taskQueue.Enqueue(ActionType.GUILD_CLEAR_ALL_RANKS);
+
+            var guildRanks = new List<(int GuildId, int Points, byte Rank)>();
+
+            byte rank = 1;
+            foreach (var result in GuildPoints.OrderByDescending(x => x.Value).Take(30))
+            {
+                var guildId = result.Key;
+                var points = GuildPoints[guildId];
+                guildRanks.Add((guildId, points, rank));
+                _taskQueue.Enqueue(ActionType.GUILD_UPDATE_RANK_AND_POINTS, guildId, rank, points);
+
+                rank++;
+            }
+
+            OnRanksCalculated?.Invoke(guildRanks);
+            GuildPoints.Clear();
         }
 
         #endregion

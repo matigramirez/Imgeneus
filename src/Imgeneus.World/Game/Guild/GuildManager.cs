@@ -377,6 +377,22 @@ namespace Imgeneus.World.Game.Guild
             return guild.Members;
         }
 
+        /// <inheritdoc/>
+        public void ReloadGuildRanks(IEnumerable<(int GuildId, int Points, byte Rank)> results)
+        {
+            foreach (var res in results)
+            {
+                var guild = _database.Guilds.Find(res.GuildId);
+                if (guild is null)
+                    return;
+
+                guild.Points = res.Points;
+                guild.Rank = res.Rank;
+            }
+
+            // Likely no need to save to db since GuildRankingManager will enqueue save?
+        }
+
         #endregion
 
         #region Request join
@@ -437,7 +453,7 @@ namespace Imgeneus.World.Game.Guild
 
         #endregion
 
-        #region Rank change
+        #region Member rank change
 
         /// <inheritdoc/>
         public async Task<DbCharacter> TryChangeRank(int guildId, int playerId, bool demote)

@@ -315,11 +315,13 @@ namespace Imgeneus.World.Game
                 player.SendGRB1MinLeft();
         }
 
-
-        private void GuildRankingManager_OnRanksCalculated()
+        private void GuildRankingManager_OnRanksCalculated(IEnumerable<(int guildId, int points, byte rank)> results)
         {
             foreach (var player in Players.Values.ToList())
-                player.SendGuildRanksCalculated();
+            {
+                player.ReloadGuildRanks(results);
+                player.SendGuildRanksCalculated(results);
+            }
         }
 
         #endregion

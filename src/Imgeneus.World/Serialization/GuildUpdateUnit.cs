@@ -1,5 +1,4 @@
 ﻿using BinarySerialization;
-using Imgeneus.Database.Entities;
 using Imgeneus.Network.Serialization;
 
 namespace Imgeneus.World.Serialization
@@ -15,11 +14,11 @@ namespace Imgeneus.World.Serialization
         [FieldOrder(2)]
         public byte Rank;
 
-        public GuildUpdateUnit(DbGuild guild)
+        public GuildUpdateUnit((int GuildId, int Points, byte Rank) result)
         {
-            Id = guild.Id;
-            Points = guild.Points;
-            Rank = guild.Rank;
+            Id = result.GuildId;
+            Points = result.Points;
+            Rank = result.Rank;
         }
     }
 }

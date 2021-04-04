@@ -1,5 +1,4 @@
 ﻿using BinarySerialization;
-using Imgeneus.Database.Entities;
 using Imgeneus.Network.Serialization;
 using System.Collections.Generic;
 
@@ -14,7 +13,7 @@ namespace Imgeneus.World.Serialization
         [FieldCount(nameof(Count))]
         public List<GuildUpdateUnit> Items { get; } = new List<GuildUpdateUnit>();
 
-        public GuildRankUpdate(IEnumerable<DbGuild> guilds)
+        public GuildRankUpdate(IEnumerable<(int GuildId, int Points, byte Rank)> guilds)
         {
             foreach (var guild in guilds)
                 Items.Add(new GuildUpdateUnit(guild));

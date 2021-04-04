@@ -41,7 +41,7 @@ namespace Imgeneus.World.Tests.GuildTests
                             }
                       });
 
-            var rankingManager = new GuildRankingManager(new Mock<ILogger<IGuildRankingManager>>().Object, mapsLoader.Object, timeService.Object);
+            var rankingManager = new GuildRankingManager(new Mock<ILogger<IGuildRankingManager>>().Object, mapsLoader.Object, timeService.Object, taskQueuMock.Object);
 
             var interval = rankingManager.GetStartSoonInterval();
 
@@ -78,7 +78,7 @@ namespace Imgeneus.World.Tests.GuildTests
                             }
                       });
 
-            var rankingManager = new GuildRankingManager(new Mock<ILogger<IGuildRankingManager>>().Object, mapsLoader.Object, timeService.Object);
+            var rankingManager = new GuildRankingManager(new Mock<ILogger<IGuildRankingManager>>().Object, mapsLoader.Object, timeService.Object, taskQueuMock.Object);
 
             var interval = rankingManager.GetStartInterval();
 
@@ -115,7 +115,7 @@ namespace Imgeneus.World.Tests.GuildTests
                             }
                       });
 
-            var rankingManager = new GuildRankingManager(new Mock<ILogger<IGuildRankingManager>>().Object, mapsLoader.Object, timeService.Object);
+            var rankingManager = new GuildRankingManager(new Mock<ILogger<IGuildRankingManager>>().Object, mapsLoader.Object, timeService.Object, taskQueuMock.Object);
 
             var interval = rankingManager.Get10MinsLeftInterval();
 
@@ -152,7 +152,7 @@ namespace Imgeneus.World.Tests.GuildTests
                             }
                       });
 
-            var rankingManager = new GuildRankingManager(new Mock<ILogger<IGuildRankingManager>>().Object, mapsLoader.Object, timeService.Object);
+            var rankingManager = new GuildRankingManager(new Mock<ILogger<IGuildRankingManager>>().Object, mapsLoader.Object, timeService.Object, taskQueuMock.Object);
 
             var interval = rankingManager.Get1MinLeftInterval();
 
@@ -190,11 +190,78 @@ namespace Imgeneus.World.Tests.GuildTests
                             }
                       });
 
-            var rankingManager = new GuildRankingManager(new Mock<ILogger<IGuildRankingManager>>().Object, mapsLoader.Object, timeService.Object);
+            var rankingManager = new GuildRankingManager(new Mock<ILogger<IGuildRankingManager>>().Object, mapsLoader.Object, timeService.Object, taskQueuMock.Object);
 
             var interval = rankingManager.GetCalculateRanksInterval();
 
             Assert.Equal(expected, interval);
+        }
+
+        [Fact]
+        [Description("Ranking manager should calculate ranks based on guild points gained during GRB.")]
+        public void CalculateRanks_Test()
+        {
+            var mapsLoader = new Mock<IMapsLoader>();
+            mapsLoader.Setup(x => x.LoadMapDefinitions()).Returns(new MapDefinitions()
+            {
+                Maps = new List<MapDefinition>()
+            });
+            var rankingManager = new GuildRankingManager(new Mock<ILogger<IGuildRankingManager>>().Object, mapsLoader.Object, new Mock<ITimeService>().Object, taskQueuMock.Object);
+
+            rankingManager.AddPoints(1, 10);
+            rankingManager.AddPoints(1, 10);
+
+            rankingManager.AddPoints(2, 10);
+            rankingManager.AddPoints(2, 5);
+
+            rankingManager.AddPoints(3, 20);
+            rankingManager.AddPoints(3, 10);
+
+            int guild1_Points = 0;
+            byte guild1_Rank = 0;
+
+            int guild2_Points = 0;
+            byte guild2_Rank = 0;
+
+            int guild3_Points = 0;
+            byte guild3_Rank = 0;
+
+            rankingManager.OnRanksCalculated += (IEnumerable<(int GuildId, int Points, byte Rank)> results) =>
+            {
+                foreach (var res in results)
+                {
+                    if (res.GuildId == 1)
+                    {
+                        guild1_Points = res.Points;
+                        guild1_Rank = res.Rank;
+                        continue;
+                    }
+
+                    if (res.GuildId == 2)
+                    {
+                        guild2_Points = res.Points;
+                        guild2_Rank = res.Rank;
+                        continue;
+                    }
+
+                    if (res.GuildId == 3)
+                    {
+                        guild3_Points = res.Points;
+                        guild3_Rank = res.Rank;
+                        continue;
+                    }
+                }
+            };
+
+            rankingManager.CalculateRanks();
+
+            Assert.Equal(20, guild1_Points);
+            Assert.Equal(15, guild2_Points);
+            Assert.Equal(30, guild3_Points);
+
+            Assert.Equal(2, guild1_Rank);
+            Assert.Equal(3, guild2_Rank);
+            Assert.Equal(1, guild3_Rank);
         }
     }
 }

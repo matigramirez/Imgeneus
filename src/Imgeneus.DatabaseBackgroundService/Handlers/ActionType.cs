@@ -70,6 +70,10 @@
 
         // Bank
         SAVE_BANK_ITEM,
-        CLAIM_BANK_ITEM
+        CLAIM_BANK_ITEM,
+
+        // Guild
+        GUILD_CLEAR_ALL_RANKS,
+        GUILD_UPDATE_RANK_AND_POINTS,
     }
 }

@@ -100,5 +100,10 @@ namespace Imgeneus.World.Game.Guild
         /// Gets guild rank.
         /// </summary>
         public byte GetRank(int guildId);
+
+        /// <summary>
+        /// Reloads guild ranks after GRB.
+        /// </summary>
+        public void ReloadGuildRanks(IEnumerable<(int GuildId, int Points, byte Rank)> results);
     }
 }

@@ -674,5 +674,31 @@ namespace Imgeneus.DatabaseBackgroundService.Handlers
 
             await _database.SaveChangesAsync();
         }
+
+        [ActionHandler(ActionType.GUILD_CLEAR_ALL_RANKS)]
+        internal async Task GuildClearAllRanks(object[] args)
+        {
+            var guilds = _database.Guilds.ToList();
+            foreach (var g in guilds)
+            {
+                g.Rank = 31;
+            }
+
+            await _database.SaveChangesAsync();
+        }
+
+        [ActionHandler(ActionType.GUILD_UPDATE_RANK_AND_POINTS)]
+        internal async Task GuildUpdateRankAndPoints(object[] args)
+        {
+            int guildId = (int)args[0];
+            byte rank = (byte)args[1];
+            int points = (int)args[2];
+
+            var guild = _database.Guilds.Find(guildId);
+            guild.Rank = rank;
+            guild.Points = points;
+
+            await _database.SaveChangesAsync();
+        }
     }
 }

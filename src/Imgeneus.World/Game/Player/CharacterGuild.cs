@@ -134,5 +134,13 @@ namespace Imgeneus.World.Game.Player
                 return _guildManager.GetRank((int)GuildId) <= 30;
             }
         }
+
+        /// <summary>
+        /// Reloads guild ranks for <see cref="_guildManager"/>.
+        /// </summary>
+        public void ReloadGuildRanks(IEnumerable<(int guildId, int points, byte rank)> results)
+        {
+            _guildManager.ReloadGuildRanks(results);
+        }
     }
 }

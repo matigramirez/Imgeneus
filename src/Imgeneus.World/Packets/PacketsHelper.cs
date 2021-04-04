@@ -309,10 +309,10 @@ namespace Imgeneus.World.Packets
             client.SendPacket(packet);
         }
 
-        internal void SendGuildRanksCalculated(IWorldClient client)
+        internal void SendGuildRanksCalculated(IWorldClient client, IEnumerable<(int GuildId, int Points, byte Rank)> results)
         {
             using var packet = new Packet(PacketType.GUILD_RANK_UPDATE);
-            packet.Write(new GuildRankUpdate(new List<DbGuild>()).Serialize());
+            packet.Write(new GuildRankUpdate(results).Serialize());
             client.SendPacket(packet);
         }
 

@@ -7,6 +7,7 @@ using System.Linq;
 using Imgeneus.World.Game.Guild;
 using Imgeneus.Database.Entities;
 using Imgeneus.Network.Server;
+using System.Collections.Generic;
 
 namespace Imgeneus.World.Game.Player
 {
@@ -228,7 +229,7 @@ namespace Imgeneus.World.Game.Player
 
         public void SendGRB1MinLeft() => _packetsHelper.SendGRBNotice(Client, GRBNotice.Min1);
 
-        public void SendGuildRanksCalculated() => _packetsHelper.SendGuildRanksCalculated(Client);
+        public void SendGuildRanksCalculated(IEnumerable<(int GuildId, int Points, byte Rank)> results) => _packetsHelper.SendGuildRanksCalculated(Client, results);
 
         public void SendGoldUpdate() => _packetsHelper.SendGoldUpdate(Client, Gold);
     }

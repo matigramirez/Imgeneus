@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Imgeneus.World.Game.Guild
 {
@@ -49,6 +50,11 @@ namespace Imgeneus.World.Game.Guild
         /// <summary>
         ///  New ranks are set.
         /// </summary>
-        public event Action OnRanksCalculated;
+        public event Action<IEnumerable<(int GuildId, int Points, byte Rank)>> OnRanksCalculated;
+
+        /// <summary>
+        /// Calculates guild ranks based on guild points gained during GRB.
+        /// </summary>
+        public void CalculateRanks();
     }
 }

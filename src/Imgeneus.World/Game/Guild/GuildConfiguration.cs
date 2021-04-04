@@ -1,35 +1,26 @@
-﻿namespace Imgeneus.World.Game.Guild
+﻿using Imgeneus.Core.Helpers;
+
+namespace Imgeneus.World.Game.Guild
 {
-    public class GuildConfiguration
+    public class GuildConfiguration : IGuildConfiguration
     {
-        /// <summary>
-        /// Min number of players needed for guild creation.
-        /// </summary>
+        private const string ConfigFile = "config/Guild.json";
+
+        public static GuildConfiguration LoadFromConfigFile()
+        {
+            return ConfigurationHelper.Load<GuildConfiguration>(ConfigFile);
+        }
+
+        /// <inheritdoc/>
         public byte MinMembers { get; set; }
 
-        /// <summary>
-        /// Min level of players needed for guild creation.
-        /// </summary>
+        /// <inheritdoc/>
         public ushort MinLevel { get; set; }
 
-        /// <summary>
-        /// Min gold needed for guild creation.
-        /// </summary>
+        /// <inheritdoc/>
         public uint MinGold { get; set; }
 
-        /// <summary>
-        /// Min number of hours since player since player created guild.
-        /// </summary>
+        /// <inheritdoc/>
         public ushort MinPenalty { get; set; }
-
-        /// <summary>
-        /// Amount of money needed for buying guild house.
-        /// </summary>
-        public int HouseBuyMoney { get; set; }
-
-        /// <summary>
-        /// Weekly fee, needed for a basic guild house.
-        /// </summary>
-        public int HouseKeepEtin { get; set; }
     }
 }

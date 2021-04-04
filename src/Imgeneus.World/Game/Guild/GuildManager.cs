@@ -23,16 +23,18 @@ namespace Imgeneus.World.Game.Guild
         private readonly ITimeService _timeService;
         private SemaphoreSlim _sync = new SemaphoreSlim(1);
 
-        private readonly GuildConfiguration _config;
+        private readonly IGuildConfiguration _config;
+        private readonly IGuildHouseConfiguration _houseConfig;
 
-        public GuildManager(ILogger<IGuildManager> logger, IOptions<GuildConfiguration> config, IDatabase database, IGameWorld gameWorld, ITimeService timeService)
+        public GuildManager(ILogger<IGuildManager> logger, IGuildConfiguration config, IGuildHouseConfiguration houseConfig, IDatabase database, IGameWorld gameWorld, ITimeService timeService)
         {
             _logger = logger;
             _database = database;
             _gameWorld = gameWorld;
             _timeService = timeService;
 
-            _config = config.Value;
+            _config = config;
+            _houseConfig = houseConfig;
         }
 
         #region Guild creation
@@ -516,7 +518,7 @@ namespace Imgeneus.World.Game.Guild
                 return GuildHouseBuyReason.NotAuthorized;
             }
 
-            if (character.Gold < _config.HouseBuyMoney)
+            if (character.Gold < _houseConfig.HouseBuyMoney)
             {
                 return GuildHouseBuyReason.NoGold;
             }
@@ -532,7 +534,7 @@ namespace Imgeneus.World.Game.Guild
                 return GuildHouseBuyReason.AlreadyBought;
             }
 
-            character.ChangeGold((uint)(character.Gold - _config.HouseBuyMoney));
+            character.ChangeGold((uint)(character.Gold - _houseConfig.HouseBuyMoney));
 
             guild.HasHouse = true;
             await _database.SaveChangesAsync();

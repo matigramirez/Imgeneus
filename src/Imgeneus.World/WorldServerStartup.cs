@@ -56,6 +56,8 @@ namespace Imgeneus.World
             services.AddSingleton<IObeliskFactory, ObeliskFactory>();
             services.AddSingleton<ICharacterFactory, CharacterFactory>();
             services.AddSingleton<ICharacterConfiguration, CharacterConfiguration>((x) => CharacterConfiguration.LoadFromConfigFile());
+            services.AddSingleton<IGuildConfiguration, GuildConfiguration>((x) => GuildConfiguration.LoadFromConfigFile());
+            services.AddSingleton<IGuildHouseConfiguration, GuildHouseConfiguration>((x => GuildHouseConfiguration.LoadFromConfigFile()));
             services.AddSingleton<IDatabasePreloader, DatabasePreloader>((x) =>
             {
                 using (var scope = x.CreateScope())

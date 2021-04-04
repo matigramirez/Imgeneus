@@ -68,6 +68,11 @@ namespace Imgeneus.Database.Entities
         /// </summary>
         public int Etin { get; set; }
 
+        /// <summary>
+        /// TODO: ?
+        /// </summary>
+        public int KeepEtin { get; set; }
+
         public DbGuild(string name, string message, int masterId, Fraction country)
         {
             Name = name;

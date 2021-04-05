@@ -5,7 +5,17 @@
         /// <summary>
         /// NPC type, e.g. Merchant is 1, Gate keeper is 2, Blacksmith is 3, Warehouse is 6.
         /// </summary>
-        public byte NPCType { get; set; }
+        public byte NpcType { get; set; }
+
+        /// <summary>
+        /// NPC type id, only for lights.
+        /// </summary>
+        public ushort LightNpcTypeId { get; set; }
+
+        /// <summary>
+        /// NPC type id, only for darks.
+        /// </summary>
+        public ushort DarkNpcTypeId { get; set; }
 
         /// <summary>
         /// NPC group. Works only for Merchants. Like weapons, accessories etc.
@@ -15,7 +25,7 @@
         /// <summary>
         /// NPC level.
         /// </summary>
-        public byte LvlNPC { get; set; }
+        public byte NpcLvl { get; set; }
 
         /// <summary>
         /// Upgrade price for the next level.

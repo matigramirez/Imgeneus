@@ -20,8 +20,5 @@ namespace Imgeneus.World.Game.Guild
 
         /// <inheritdoc/>
         public IEnumerable<GuildHouseNpcInfo> NpcInfos { get; set; }
-
-        /// <inheritdoc/>
-        public IEnumerable<int> NpcIds { get; set; }
     }
 }

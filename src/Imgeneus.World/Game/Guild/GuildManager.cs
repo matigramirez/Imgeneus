@@ -5,7 +5,6 @@ using Imgeneus.World.Game.Player;
 using Imgeneus.World.Game.Time;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -560,6 +559,38 @@ namespace Imgeneus.World.Game.Guild
                 return 0;
 
             return guild.Rank;
+        }
+
+        ///  <inheritdoc/>
+        public bool CanUseNpc(int guildId, byte type, ushort typeId, out byte requiredRank)
+        {
+            requiredRank = 30;
+
+            var guild = _database.Guilds.Find(guildId);
+            if (guild is null || guild.Rank > 30)
+                return false;
+
+            GuildHouseNpcInfo npcInfo;
+            if (guild.Country == Fraction.Light)
+            {
+                npcInfo = _houseConfig.NpcInfos.FirstOrDefault(x => x.NpcType == type && x.LightNpcTypeId == typeId);
+            }
+            else
+            {
+                npcInfo = _houseConfig.NpcInfos.FirstOrDefault(x => x.NpcType == type && x.DarkNpcTypeId == typeId);
+            }
+
+            if (npcInfo is null)
+                return false;
+
+            requiredRank = npcInfo.MinRank;
+            return requiredRank >= guild.Rank;
+        }
+
+        ///  <inheritdoc/>
+        public bool HasNpcLevel(int guildId, byte type, ushort typeId)
+        {
+            return false;
         }
 
         #endregion

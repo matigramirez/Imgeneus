@@ -18,10 +18,5 @@ namespace Imgeneus.World.Game.Guild
         /// Guild house npc infos.
         /// </summary>
         public IEnumerable<GuildHouseNpcInfo> NpcInfos { get; }
-
-        /// <summary>
-        /// Direct NPC ids. Same as in database.
-        /// </summary>
-        public IEnumerable<int> NpcIds { get; }
     }
 }

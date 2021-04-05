@@ -224,13 +224,7 @@ namespace Imgeneus.World.Game.Player
                     break;
 
                 case NpcBuyItemPacket npcBuyItemPacket:
-                    var npc = Map.GetNPC(CellId, npcBuyItemPacket.NpcId);
-                    if (npc is null || !npc.ContainsProduct(npcBuyItemPacket.ItemIndex))
-                        return;
-                    var buyItem = npc.Products[npcBuyItemPacket.ItemIndex];
-                    var boughtItem = BuyItem(buyItem, npcBuyItemPacket.Count);
-                    if (boughtItem != null)
-                        _packetsHelper.SendBoughtItem(Client, boughtItem, Gold);
+                    HandleNpcBuyItem(npcBuyItemPacket.NpcId, npcBuyItemPacket.ItemIndex, npcBuyItemPacket.Count);
                     break;
 
                 case NpcSellItemPacket npcSellItemPacket:

@@ -872,6 +872,14 @@ namespace Imgeneus.World.Packets
             client.SendPacket(packet);
         }
 
+        internal void SendGuildHouseActionError(IWorldClient client, GuildHouseActionError error, byte rank)
+        {
+            using var packet = new Packet(PacketType.GUILD_HOUSE_ACTION_ERR);
+            packet.Write((byte)error);
+            packet.Write(rank);
+            client.SendPacket(packet);
+        }
+
         internal void SendGmTeleportToPlayer(IWorldClient client, Character player)
         {
             using var packet = new Packet(PacketType.GM_TELEPORT_TO_PLAYER);

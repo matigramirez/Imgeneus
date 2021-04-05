@@ -6,6 +6,7 @@ using Imgeneus.World.Game.Time;
 using Microsoft.Extensions.Options;
 using Moq;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading.Tasks;
 using Xunit;
@@ -18,13 +19,13 @@ namespace Imgeneus.World.Tests.GuildTests
         [Description("It should not be possible to create a guild, if not enough money.")]
         public async Task CanCreateGuild_MinGoldTest()
         {
-            var config = Options.Create(new GuildConfiguration()
+            var config = new GuildConfiguration()
             {
                 MinGold = 10
-            });
+            };
 
             var character = CreateCharacter();
-            var guildManager = new GuildManager(guildLoggerMock.Object, config, databaseMock.Object, gameWorldMock.Object, timeMock.Object);
+            var guildManager = new GuildManager(guildLoggerMock.Object, config, new GuildHouseConfiguration(), databaseMock.Object, gameWorldMock.Object, timeMock.Object);
             var result = await guildManager.CanCreateGuild(character, "guild_name");
 
             Assert.Equal((uint)0, character.Gold);
@@ -35,13 +36,13 @@ namespace Imgeneus.World.Tests.GuildTests
         [Description("It should not be possible to create a guild, if not enough party members.")]
         public async Task CanCreateGuild_MinMembersTest()
         {
-            var config = Options.Create(new GuildConfiguration()
+            var config = new GuildConfiguration()
             {
                 MinMembers = 2
-            });
+            };
 
             var character = CreateCharacter();
-            var guildManager = new GuildManager(guildLoggerMock.Object, config, databaseMock.Object, gameWorldMock.Object, timeMock.Object);
+            var guildManager = new GuildManager(guildLoggerMock.Object, config, new GuildHouseConfiguration(), databaseMock.Object, gameWorldMock.Object, timeMock.Object);
             var result = await guildManager.CanCreateGuild(character, "guild_name");
 
             Assert.Equal(GuildCreateFailedReason.NotEnoughMembers, result);
@@ -51,11 +52,11 @@ namespace Imgeneus.World.Tests.GuildTests
         [Description("It should not be possible to create a guild, if not enough party members level.")]
         public async Task CanCreateGuild_MinLevelTest()
         {
-            var config = Options.Create(new GuildConfiguration()
+            var config = new GuildConfiguration()
             {
                 MinMembers = 2,
                 MinLevel = 2
-            });
+            };
 
             var character1 = CreateCharacter(testMap);
             var character2 = CreateCharacter(testMap);
@@ -64,7 +65,7 @@ namespace Imgeneus.World.Tests.GuildTests
             character1.SetParty(party);
             character2.SetParty(party);
 
-            var guildManager = new GuildManager(guildLoggerMock.Object, config, databaseMock.Object, gameWorldMock.Object, timeMock.Object);
+            var guildManager = new GuildManager(guildLoggerMock.Object, config, new GuildHouseConfiguration(), databaseMock.Object, gameWorldMock.Object, timeMock.Object);
             var result = await guildManager.CanCreateGuild(character1, "guild_name");
 
             Assert.Equal(1, character1.Level);
@@ -77,10 +78,10 @@ namespace Imgeneus.World.Tests.GuildTests
         [Description("It should not be possible to create a guild, if one party meber belongs to another guild.")]
         public async Task CanCreateGuild_AnotherGuildTest()
         {
-            var config = Options.Create(new GuildConfiguration()
+            var config = new GuildConfiguration()
             {
                 MinMembers = 2
-            });
+            };
 
             var character1 = CreateCharacter(testMap);
             var character2 = CreateCharacter(testMap);
@@ -90,7 +91,7 @@ namespace Imgeneus.World.Tests.GuildTests
             character1.SetParty(party);
             character2.SetParty(party);
 
-            var guildManager = new GuildManager(guildLoggerMock.Object, config, databaseMock.Object, gameWorldMock.Object, timeMock.Object);
+            var guildManager = new GuildManager(guildLoggerMock.Object, config, new GuildHouseConfiguration(), databaseMock.Object, gameWorldMock.Object, timeMock.Object);
             var result = await guildManager.CanCreateGuild(character1, "guild_name");
 
             Assert.Equal(GuildCreateFailedReason.PartyMemberInAnotherGuild, result);
@@ -102,7 +103,7 @@ namespace Imgeneus.World.Tests.GuildTests
         {
             var character = CreateCharacter(testMap);
 
-            var guildManager = new GuildManager(guildLoggerMock.Object, Options.Create(new GuildConfiguration()), databaseMock.Object, gameWorldMock.Object, timeMock.Object);
+            var guildManager = new GuildManager(guildLoggerMock.Object, new GuildConfiguration(), new GuildHouseConfiguration(), databaseMock.Object, gameWorldMock.Object, timeMock.Object);
             var result = await guildManager.CanCreateGuild(character, "");
 
             Assert.Equal(GuildCreateFailedReason.WrongName, result);
@@ -112,11 +113,11 @@ namespace Imgeneus.World.Tests.GuildTests
         [Description("It should not be possible to create a guild if at least one party member has penalty.")]
         public async Task CanCreateGuild_PenaltyTest()
         {
-            var config = Options.Create(new GuildConfiguration()
+            var config = new GuildConfiguration()
             {
                 MinMembers = 2,
                 MinPenalty = 2 // 2 hours
-            });
+            };
 
             var character1 = CreateCharacter(testMap);
             var character2 = CreateCharacter(testMap);
@@ -139,7 +140,7 @@ namespace Imgeneus.World.Tests.GuildTests
             database.Setup(x => x.Characters.FindAsync(character2.Id))
                 .ReturnsAsync(new DbCharacter());
 
-            var guildManager = new GuildManager(guildLoggerMock.Object, config, database.Object, gameWorldMock.Object, time.Object);
+            var guildManager = new GuildManager(guildLoggerMock.Object, config, new GuildHouseConfiguration(), database.Object, gameWorldMock.Object, time.Object);
             var result = await guildManager.CanCreateGuild(character1, "guild_name");
 
             Assert.Equal(GuildCreateFailedReason.PartyMemberGuildPenalty, result);
@@ -149,10 +150,10 @@ namespace Imgeneus.World.Tests.GuildTests
         [Description("It should be possible to create a guild.")]
         public async Task CanCreateGuild_SuccessTest()
         {
-            var config = Options.Create(new GuildConfiguration()
+            var config = new GuildConfiguration()
             {
                 MinMembers = 2
-            });
+            };
 
             var character1 = CreateCharacter(testMap);
             var character2 = CreateCharacter(testMap);
@@ -165,7 +166,7 @@ namespace Imgeneus.World.Tests.GuildTests
             database.Setup(x => x.Characters.FindAsync(character1.Id)).ReturnsAsync(new DbCharacter());
             database.Setup(x => x.Characters.FindAsync(character2.Id)).ReturnsAsync(new DbCharacter());
 
-            var guildManager = new GuildManager(guildLoggerMock.Object, config, database.Object, gameWorldMock.Object, timeMock.Object);
+            var guildManager = new GuildManager(guildLoggerMock.Object, config, new GuildHouseConfiguration(), database.Object, gameWorldMock.Object, timeMock.Object);
             var result = await guildManager.CanCreateGuild(character1, "guild_name");
 
             Assert.Equal(GuildCreateFailedReason.Success, result);
@@ -175,10 +176,10 @@ namespace Imgeneus.World.Tests.GuildTests
         [Description("It should send guild create request to all party members. As soon as party changes, request is not valid.")]
         public void SendGuildRequest_PartyChangeTest()
         {
-            var config = Options.Create(new GuildConfiguration()
+            var config = new GuildConfiguration()
             {
                 MinMembers = 2
-            });
+            };
 
             var character1 = CreateCharacter(testMap);
             var character2 = CreateCharacter(testMap);
@@ -187,7 +188,7 @@ namespace Imgeneus.World.Tests.GuildTests
             character1.SetParty(party);
             character2.SetParty(party);
 
-            var guildManager = new GuildManager(guildLoggerMock.Object, config, databaseMock.Object, gameWorldMock.Object, timeMock.Object);
+            var guildManager = new GuildManager(guildLoggerMock.Object, config, new GuildHouseConfiguration(), databaseMock.Object, gameWorldMock.Object, timeMock.Object);
             guildManager.SendGuildRequest(character1, "guild_name", "guild_message");
 
             Assert.NotEmpty(GuildManager.CreationRequests);
@@ -203,10 +204,10 @@ namespace Imgeneus.World.Tests.GuildTests
         [Description("Guild should be created as soon as all party members agree to create it.")]
         public void SetAgreeRequest_Test()
         {
-            var config = Options.Create(new GuildConfiguration()
+            var config = new GuildConfiguration()
             {
                 MinMembers = 2
-            });
+            };
 
             var character1 = CreateCharacter(testMap);
             var character2 = CreateCharacter(testMap);
@@ -219,7 +220,7 @@ namespace Imgeneus.World.Tests.GuildTests
             database.Setup(x => x.Guilds.Add(It.IsAny<DbGuild>()));
             database.Setup(x => x.SaveChangesAsync(default)).ReturnsAsync(1);
 
-            var guildManager = new GuildManager(guildLoggerMock.Object, config, database.Object, gameWorldMock.Object, timeMock.Object);
+            var guildManager = new GuildManager(guildLoggerMock.Object, config, new GuildHouseConfiguration(), database.Object, gameWorldMock.Object, timeMock.Object);
             guildManager.SendGuildRequest(character1, "guild_name", "guild_message");
 
             guildManager.SetAgreeRequest(character1, true);
@@ -242,7 +243,7 @@ namespace Imgeneus.World.Tests.GuildTests
             database.Setup(x => x.Guilds.FindAsync(It.IsAny<int>())).ReturnsAsync(new DbGuild("test_guild", "test_message", 99, Fraction.Light));
             database.Setup(x => x.Characters.FindAsync(It.IsAny<int>())).ReturnsAsync(new DbCharacter());
 
-            var guildManager = new GuildManager(guildLoggerMock.Object, Options.Create(new GuildConfiguration()), database.Object, gameWorldMock.Object, timeMock.Object);
+            var guildManager = new GuildManager(guildLoggerMock.Object, new GuildConfiguration(), new GuildHouseConfiguration(), database.Object, gameWorldMock.Object, timeMock.Object);
             await guildManager.RequestJoin(1, character.Id);
 
             Assert.Single(GuildManager.JoinRequests);
@@ -262,7 +263,7 @@ namespace Imgeneus.World.Tests.GuildTests
         {
             var character = CreateCharacter(testMap);
 
-            var guildManager = new GuildManager(guildLoggerMock.Object, Options.Create(new GuildConfiguration()), databaseMock.Object, gameWorldMock.Object, timeMock.Object);
+            var guildManager = new GuildManager(guildLoggerMock.Object, new GuildConfiguration(), new GuildHouseConfiguration(), databaseMock.Object, gameWorldMock.Object, timeMock.Object);
 
             var result = await guildManager.TryBuyHouse(character);
 
@@ -276,7 +277,7 @@ namespace Imgeneus.World.Tests.GuildTests
             var character = CreateCharacter(testMap);
             character.GuildRank = 1;
 
-            var guildManager = new GuildManager(guildLoggerMock.Object, Options.Create(new GuildConfiguration() { HouseBuyMoney = 100 }), databaseMock.Object, gameWorldMock.Object, timeMock.Object);
+            var guildManager = new GuildManager(guildLoggerMock.Object, new GuildConfiguration(), new GuildHouseConfiguration() { HouseBuyMoney = 100 }, databaseMock.Object, gameWorldMock.Object, timeMock.Object);
 
             var result = await guildManager.TryBuyHouse(character);
 
@@ -294,7 +295,7 @@ namespace Imgeneus.World.Tests.GuildTests
             var database = new Mock<IDatabase>();
             database.Setup(x => x.Guilds.FindAsync(It.IsAny<int>())).ReturnsAsync(new DbGuild("test_guild", "test_message", 99, Fraction.Light) { Rank = 31 });
 
-            var guildManager = new GuildManager(guildLoggerMock.Object, Options.Create(new GuildConfiguration()), database.Object, gameWorldMock.Object, timeMock.Object);
+            var guildManager = new GuildManager(guildLoggerMock.Object, new GuildConfiguration(), new GuildHouseConfiguration(), database.Object, gameWorldMock.Object, timeMock.Object);
 
             var result = await guildManager.TryBuyHouse(character);
 
@@ -312,7 +313,7 @@ namespace Imgeneus.World.Tests.GuildTests
             var database = new Mock<IDatabase>();
             database.Setup(x => x.Guilds.FindAsync(It.IsAny<int>())).ReturnsAsync(new DbGuild("test_guild", "test_message", 99, Fraction.Light) { Rank = 1, HasHouse = true });
 
-            var guildManager = new GuildManager(guildLoggerMock.Object, Options.Create(new GuildConfiguration()), database.Object, gameWorldMock.Object, timeMock.Object);
+            var guildManager = new GuildManager(guildLoggerMock.Object, new GuildConfiguration(), new GuildHouseConfiguration(), database.Object, gameWorldMock.Object, timeMock.Object);
 
             var result = await guildManager.TryBuyHouse(character);
 
@@ -330,11 +331,83 @@ namespace Imgeneus.World.Tests.GuildTests
             var database = new Mock<IDatabase>();
             database.Setup(x => x.Guilds.FindAsync(It.IsAny<int>())).ReturnsAsync(new DbGuild("test_guild", "test_message", 99, Fraction.Light) { Rank = 1, HasHouse = false });
 
-            var guildManager = new GuildManager(guildLoggerMock.Object, Options.Create(new GuildConfiguration()), database.Object, gameWorldMock.Object, timeMock.Object);
+            var guildManager = new GuildManager(guildLoggerMock.Object, new GuildConfiguration(), new GuildHouseConfiguration(), database.Object, gameWorldMock.Object, timeMock.Object);
 
             var result = await guildManager.TryBuyHouse(character);
 
             Assert.Equal(GuildHouseBuyReason.Ok, result);
+        }
+
+        [Fact]
+        [Description("Guild house NPC can be used only if guild has right rank.")]
+        public void CanUseNpc_RequiredRankTest()
+        {
+            var database = new Mock<IDatabase>();
+            database.Setup(x => x.Guilds.Find(It.IsAny<int>())).Returns(new DbGuild("test_guild", "test_message", 99, Fraction.Light) { Rank = 10 });
+
+            var houseConfig = new GuildHouseConfiguration()
+            {
+                NpcInfos = new List<GuildHouseNpcInfo>()
+                {
+                    new GuildHouseNpcInfo()
+                    {
+                        NpcType = 1,
+                        LightNpcTypeId = 1,
+                        MinRank = 5
+                    }
+                }
+            };
+
+            var guildManager = new GuildManager(guildLoggerMock.Object, new GuildConfiguration(), houseConfig, database.Object, gameWorldMock.Object, timeMock.Object);
+
+            var canUse = guildManager.CanUseNpc(1, 1, 1, out var requiredRank);
+
+            Assert.False(canUse);
+            Assert.Equal(5, requiredRank);
+        }
+
+        [Fact]
+        [Description("Guild house NPC can be used only if guild has rank <= 30.")]
+        public void CanUseNpc_Rank31Test()
+        {
+            var database = new Mock<IDatabase>();
+            database.Setup(x => x.Guilds.Find(It.IsAny<int>())).Returns(new DbGuild("test_guild", "test_message", 99, Fraction.Light) { Rank = 31 });
+
+            var houseConfig = new GuildHouseConfiguration();
+
+            var guildManager = new GuildManager(guildLoggerMock.Object, new GuildConfiguration(), houseConfig, database.Object, gameWorldMock.Object, timeMock.Object);
+
+            var canUse = guildManager.CanUseNpc(1, 1, 1, out var requiredRank);
+
+            Assert.False(canUse);
+            Assert.Equal(30, requiredRank);
+        }
+
+        [Fact]
+        [Description("Guild house NPC can be used only if guild has right rank.")]
+        public void CanUseNpc_SuccessTest()
+        {
+            var database = new Mock<IDatabase>();
+            database.Setup(x => x.Guilds.Find(It.IsAny<int>())).Returns(new DbGuild("test_guild", "test_message", 99, Fraction.Light) { Rank = 5 });
+
+            var houseConfig = new GuildHouseConfiguration()
+            {
+                NpcInfos = new List<GuildHouseNpcInfo>()
+                {
+                    new GuildHouseNpcInfo()
+                    {
+                        NpcType = 1,
+                        LightNpcTypeId = 1,
+                        MinRank = 5
+                    }
+                }
+            };
+
+            var guildManager = new GuildManager(guildLoggerMock.Object, new GuildConfiguration(), houseConfig, database.Object, gameWorldMock.Object, timeMock.Object);
+
+            var canUse = guildManager.CanUseNpc(1, 1, 1, out var requiredRank);
+
+            Assert.True(canUse);
         }
     }
 }

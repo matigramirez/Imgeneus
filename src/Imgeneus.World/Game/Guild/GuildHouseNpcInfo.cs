@@ -33,7 +33,7 @@
         public ushort UpPrice { get; set; }
 
         /// <summary>
-        /// ?
+        /// Decreases price in %. E.g. weapons merchant sells items for less price.
         /// </summary>
         public byte PriceRate { get; set; }
 

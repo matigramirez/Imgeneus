@@ -578,7 +578,33 @@ namespace Imgeneus.World.Game.Player
             }
 
             if (!npc.ContainsGate(teleportViaNpcPacket.GateId))
+            {
+                _logger.LogWarning($"NPC type {npc.Type} type id {npc.TypeId} doesn't contain teleport gate {teleportViaNpcPacket.GateId}. Check it out!");
                 return;
+            }
+
+            if (Map is GuildHouseMap)
+            {
+                if (!HasGuild)
+                {
+                    _packetsHelper.SendGuildHouseActionError(Client, GuildHouseActionError.LowRank, 30);
+                    return;
+                }
+
+                var allowed = _guildManager.CanUseNpc((int)GuildId, npc.Type, npc.TypeId, out var requiredRank);
+                if (!allowed)
+                {
+                    _packetsHelper.SendGuildHouseActionError(Client, GuildHouseActionError.LowRank, requiredRank);
+                    return;
+                }
+
+                allowed = _guildManager.HasNpcLevel((int)GuildId, npc.Type, npc.TypeId);
+                if (!allowed)
+                {
+                    _packetsHelper.SendGuildHouseActionError(Client, GuildHouseActionError.LowLevel, 0);
+                    return;
+                }
+            }
 
             var gate = npc.Gates[teleportViaNpcPacket.GateId];
 
@@ -946,8 +972,14 @@ namespace Imgeneus.World.Game.Player
                 return;
             }
 
-            if (Map is GuildHouseMap && HasGuild)
+            if (Map is GuildHouseMap)
             {
+                if (!HasGuild)
+                {
+                    _packetsHelper.SendGuildHouseActionError(Client, GuildHouseActionError.LowRank, 30);
+                    return;
+                }
+
                 var allowed = _guildManager.CanUseNpc((int)GuildId, npc.Type, npc.TypeId, out var requiredRank);
                 if (!allowed)
                 {
@@ -967,6 +999,19 @@ namespace Imgeneus.World.Game.Player
             var boughtItem = BuyItem(buyItem, count);
             if (boughtItem != null)
                 _packetsHelper.SendBoughtItem(Client, boughtItem, Gold);
+        }
+
+        private void HandleGuildUpgradeNpc(byte npcType, byte npcGroup, byte npcLevel)
+        {
+            if (!HasGuild || (GuildRank != 1 && GuildRank != 2))
+            {
+                _packetsHelper.SendGuildUpgradeNpc(Client, GuildNpcUpgradeReason.Failed, npcType, npcGroup, npcLevel);
+                return;
+            }
+
+            // TODO: upgrade npc and calculate etins
+
+            _packetsHelper.SendGuildUpgradeNpc(Client, GuildNpcUpgradeReason.Ok, npcType, npcGroup, npcLevel);
         }
     }
 }

@@ -945,6 +945,17 @@ namespace Imgeneus.World.Packets
             client.SendPacket(packet);
         }
 
+        internal void SendGuildUpgradeNpc(IWorldClient client, GuildNpcUpgradeReason reason, byte npcType, byte npcGroup, byte npcLevel)
+        {
+            using var packet = new Packet(PacketType.GUILD_NPC_UPGRADE);
+            packet.Write((byte)reason);
+            packet.Write(npcType);
+            packet.Write(npcGroup);
+            packet.Write(npcLevel);
+            packet.WriteByte(1); // TODO: number? what is it?
+            client.SendPacket(packet);
+        }
+
         internal void SendGemPossibility(IWorldClient client, double rate, int gold)
         {
             using var packet = new Packet(PacketType.GEM_ADD_POSSIBILITY);

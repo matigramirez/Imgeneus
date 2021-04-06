@@ -92,6 +92,11 @@ namespace Imgeneus.Database.Context
         /// </summary>
         public DbSet<DbGuild> Guilds { get; set; }
 
+        /// <summary>
+        /// Connection between guild and its' npcs.
+        /// </summary>
+        public DbSet<DbGuildNpcLvl> GuildNpcLvls { get; set; }
+
         public DatabaseContext(DbContextOptions options) : base(options)
         {
         }
@@ -117,6 +122,8 @@ namespace Imgeneus.Database.Context
             modelBuilder.Entity<DbGuild>().HasMany(x => x.Members)
                                           .WithOne(x => x.Guild)
                                           .OnDelete(DeleteBehavior.ClientSetNull);
+
+            modelBuilder.Entity<DbGuildNpcLvl>().HasKey(x => new { x.GuildId, x.NpcType, x.Group });
 
             #region Many to many relations
             // Skills.

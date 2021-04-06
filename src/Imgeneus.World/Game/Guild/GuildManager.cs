@@ -590,7 +590,29 @@ namespace Imgeneus.World.Game.Guild
         ///  <inheritdoc/>
         public bool HasNpcLevel(int guildId, byte type, ushort typeId)
         {
-            return false;
+            var guild = _database.Guilds.Include(x => x.NpcLvls).FirstOrDefault(x => x.Id == guildId);
+            if (guild is null)
+                return false;
+
+            GuildHouseNpcInfo npcInfo;
+            if (guild.Country == Fraction.Light)
+            {
+                npcInfo = _houseConfig.NpcInfos.FirstOrDefault(x => x.NpcType == type && x.LightNpcTypeId == typeId);
+            }
+            else
+            {
+                npcInfo = _houseConfig.NpcInfos.FirstOrDefault(x => x.NpcType == type && x.DarkNpcTypeId == typeId);
+            }
+
+            if (npcInfo is null)
+                return false;
+
+            if (npcInfo.NpcLvl == 0)
+                return true;
+
+            var currentLevel = guild.NpcLvls.FirstOrDefault(x => x.NpcType == npcInfo.NpcType && x.Group == npcInfo.Group);
+
+            return currentLevel != null && currentLevel.NpcLevel >= npcInfo.NpcLvl;
         }
 
         #endregion

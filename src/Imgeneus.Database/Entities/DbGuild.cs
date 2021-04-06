@@ -73,6 +73,11 @@ namespace Imgeneus.Database.Entities
         /// </summary>
         public int KeepEtin { get; set; }
 
+        /// <summary>
+        /// Guild npc level settings.
+        /// </summary>
+        public ICollection<DbGuildNpcLvl> NpcLvls { get; set; }
+
         public DbGuild(string name, string message, int masterId, Fraction country)
         {
             Name = name;

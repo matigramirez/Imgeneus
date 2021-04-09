@@ -17,7 +17,7 @@ namespace Imgeneus.Database.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_GuildNpcLvl", x => new { x.GuildId, x.NpcType, x.Group });
+                    table.PrimaryKey("PK_GuildNpcLvl", x => new { x.GuildId, x.NpcType, x.Group, x.NpcLevel });
                     table.ForeignKey(
                         name: "FK_GuildNpcLvl_Guilds_GuildId",
                         column: x => x.GuildId,

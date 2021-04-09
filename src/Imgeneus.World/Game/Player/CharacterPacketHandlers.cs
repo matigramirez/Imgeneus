@@ -821,6 +821,7 @@ namespace Imgeneus.World.Game.Player
 
                 onlinePlayer.SendGuildJoinResult(true, guild);
                 onlinePlayer.SendGuildMembersOnline();
+                onlinePlayer.SendGuildNpcLvlList();
             }
         }
 

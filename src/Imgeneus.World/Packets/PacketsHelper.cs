@@ -119,6 +119,13 @@ namespace Imgeneus.World.Packets
             client.SendPacket(packet);
         }
 
+        internal void SendGuildNpcs(IWorldClient client, IEnumerable<DbGuildNpcLvl> npcs)
+        {
+            using var packet = new Packet(PacketType.GUILD_NPC_LIST);
+            packet.Write(new GuildNpcList(npcs).Serialize());
+            client.SendPacket(packet);
+        }
+
         internal void SendCurrentHitpoints(IWorldClient client, Character character)
         {
             using var packet = new Packet(PacketType.CHARACTER_CURRENT_HITPOINTS);
@@ -952,7 +959,7 @@ namespace Imgeneus.World.Packets
             packet.Write(npcType);
             packet.Write(npcGroup);
             packet.Write(npcLevel);
-            packet.WriteByte(1); // TODO: number? what is it?
+            packet.WriteByte(0); // TODO: number? what is it?!
             client.SendPacket(packet);
         }
 

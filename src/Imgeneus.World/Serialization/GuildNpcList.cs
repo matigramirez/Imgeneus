@@ -5,20 +5,19 @@ using System.Collections.Generic;
 
 namespace Imgeneus.World.Serialization
 {
-    public class GuildList : BaseSerializable
+    public class GuildNpcList : BaseSerializable
     {
         [FieldOrder(0)]
         public byte Count { get; }
 
         [FieldOrder(1)]
         [FieldCount(nameof(Count))]
-        public List<GuildUnit> Items { get; } = new List<GuildUnit>();
+        public List<GuildNpcUnit> Items { get; } = new List<GuildNpcUnit>();
 
-        public GuildList(IEnumerable<DbGuild> guilds)
+        public GuildNpcList(IEnumerable<DbGuildNpcLvl> npcs)
         {
-            foreach (var guild in guilds)
-                Items.Add(new GuildUnit(guild));
+            foreach (var npc in npcs)
+                Items.Add(new GuildNpcUnit(npc));
         }
-
     }
 }

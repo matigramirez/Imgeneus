@@ -33,6 +33,7 @@ namespace Imgeneus.World.Game.Player
             SendFriends();
             SendBlessAmount();
             SendBankItems();
+            SendGuildNpcLvlList();
             SendAutoStats();
 #if EP8_V1
             SendAccountPoints(); // WARNING: This is necessary if you have an in-game item mall.

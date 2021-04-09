@@ -112,6 +112,11 @@ namespace Imgeneus.World.Game.Guild
         public Task<int> GetEtin(int guildId);
 
         /// <summary>
+        /// Finds npcs & their levels assigned to this guild.
+        /// </summary>
+        public IEnumerable<DbGuildNpcLvl> GetGuildNpcs(int guildId);
+
+        /// <summary>
         /// Checks if guild has enough rank in order to use NPC.
         /// </summary>
         /// <param name="guildId">guild id</param>

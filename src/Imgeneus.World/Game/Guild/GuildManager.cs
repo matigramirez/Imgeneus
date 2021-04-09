@@ -615,6 +615,12 @@ namespace Imgeneus.World.Game.Guild
             return currentLevel != null && currentLevel.NpcLevel >= npcInfo.NpcLvl;
         }
 
+        ///  <inheritdoc/>
+        public IEnumerable<DbGuildNpcLvl> GetGuildNpcs(int guildId)
+        {
+            return _database.GuildNpcLvls.Where(x => x.GuildId == guildId).ToList();
+        }
+
         #endregion
 
         #region Etin

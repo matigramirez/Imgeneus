@@ -123,7 +123,7 @@ namespace Imgeneus.Database.Context
                                           .WithOne(x => x.Guild)
                                           .OnDelete(DeleteBehavior.ClientSetNull);
 
-            modelBuilder.Entity<DbGuildNpcLvl>().HasKey(x => new { x.GuildId, x.NpcType, x.Group });
+            modelBuilder.Entity<DbGuildNpcLvl>().HasKey(x => new { x.GuildId, x.NpcType, x.Group, x.NpcLevel });
 
             #region Many to many relations
             // Skills.

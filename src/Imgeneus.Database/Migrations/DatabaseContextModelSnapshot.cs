@@ -466,7 +466,7 @@ namespace Imgeneus.Database.Migrations
                     b.Property<byte>("NpcLevel")
                         .HasColumnType("tinyint unsigned");
 
-                    b.HasKey("GuildId", "NpcType", "Group");
+                    b.HasKey("GuildId", "NpcType", "Group", "NpcLevel");
 
                     b.ToTable("GuildNpcLvl");
                 });
@@ -1676,7 +1676,7 @@ namespace Imgeneus.Database.Migrations
             modelBuilder.Entity("Imgeneus.Database.Entities.DbGuildNpcLvl", b =>
                 {
                     b.HasOne("Imgeneus.Database.Entities.DbGuild", "Guild")
-                        .WithMany()
+                        .WithMany("NpcLvls")
                         .HasForeignKey("GuildId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1713,6 +1713,8 @@ namespace Imgeneus.Database.Migrations
             modelBuilder.Entity("Imgeneus.Database.Entities.DbGuild", b =>
                 {
                     b.Navigation("Members");
+
+                    b.Navigation("NpcLvls");
                 });
 
             modelBuilder.Entity("Imgeneus.Database.Entities.DbUser", b =>

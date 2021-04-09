@@ -94,6 +94,11 @@ namespace Imgeneus.Database
         public DbSet<DbGuild> Guilds { get; set; }
 
         /// <summary>
+        /// Connection between guild and its' npcs.
+        /// </summary>
+        public DbSet<DbGuildNpcLvl> GuildNpcLvls { get; set; }
+
+        /// <summary>
         /// Saves changes to database.
         /// </summary>
         public int SaveChanges();

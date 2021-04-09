@@ -1002,7 +1002,7 @@ namespace Imgeneus.World.Game.Player
                 _packetsHelper.SendBoughtItem(Client, boughtItem, Gold);
         }
 
-        private void HandleGuildUpgradeNpc(byte npcType, byte npcGroup, byte npcLevel)
+        private async void HandleGuildUpgradeNpc(byte npcType, byte npcGroup, byte npcLevel)
         {
             if (!HasGuild || (GuildRank != 1 && GuildRank != 2))
             {
@@ -1010,9 +1010,9 @@ namespace Imgeneus.World.Game.Player
                 return;
             }
 
-            // TODO: upgrade npc and calculate etins
+            var reason = await _guildManager.TryUpgradeNPC((int)GuildId, npcType, npcGroup, npcLevel);
 
-            _packetsHelper.SendGuildUpgradeNpc(Client, GuildNpcUpgradeReason.Ok, npcType, npcGroup, npcLevel);
+            _packetsHelper.SendGuildUpgradeNpc(Client, reason, npcType, npcGroup, npcLevel);
         }
     }
 }

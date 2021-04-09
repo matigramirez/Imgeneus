@@ -134,5 +134,14 @@ namespace Imgeneus.World.Game.Guild
         /// <param name="typeId">npc type is</param>
         /// <returns>true, if guild has right NPC level</returns>
         public bool HasNpcLevel(int guildId, byte type, ushort typeId);
+
+        /// <summary>
+        /// Tries to upgrade NPC. Updates guild etin as well.
+        /// </summary>
+        /// <param name="guildId">guild id</param>
+        /// <param name="npcType">npc type</param>
+        /// <param name="npcGroup">npc group</param>
+        /// <param name="npcLevel">npc next level</param>
+        public Task<GuildNpcUpgradeReason> TryUpgradeNPC(int guildId, byte npcType, byte npcGroup, byte npcLevel);
     }
 }

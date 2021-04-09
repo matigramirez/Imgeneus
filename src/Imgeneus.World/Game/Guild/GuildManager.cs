@@ -570,15 +570,7 @@ namespace Imgeneus.World.Game.Guild
             if (guild is null || guild.Rank > 30)
                 return false;
 
-            GuildHouseNpcInfo npcInfo;
-            if (guild.Country == Fraction.Light)
-            {
-                npcInfo = _houseConfig.NpcInfos.FirstOrDefault(x => x.NpcType == type && x.LightNpcTypeId == typeId);
-            }
-            else
-            {
-                npcInfo = _houseConfig.NpcInfos.FirstOrDefault(x => x.NpcType == type && x.DarkNpcTypeId == typeId);
-            }
+            var npcInfo = FindNpcInfo(guild.Country, type, typeId);
 
             if (npcInfo is null)
                 return false;
@@ -594,15 +586,7 @@ namespace Imgeneus.World.Game.Guild
             if (guild is null)
                 return false;
 
-            GuildHouseNpcInfo npcInfo;
-            if (guild.Country == Fraction.Light)
-            {
-                npcInfo = _houseConfig.NpcInfos.FirstOrDefault(x => x.NpcType == type && x.LightNpcTypeId == typeId);
-            }
-            else
-            {
-                npcInfo = _houseConfig.NpcInfos.FirstOrDefault(x => x.NpcType == type && x.DarkNpcTypeId == typeId);
-            }
+            var npcInfo = FindNpcInfo(guild.Country, type, typeId);
 
             if (npcInfo is null)
                 return false;
@@ -619,6 +603,80 @@ namespace Imgeneus.World.Game.Guild
         public IEnumerable<DbGuildNpcLvl> GetGuildNpcs(int guildId)
         {
             return _database.GuildNpcLvls.Where(x => x.GuildId == guildId).ToList();
+        }
+
+        ///  <inheritdoc/>
+        public async Task<GuildNpcUpgradeReason> TryUpgradeNPC(int guildId, byte npcType, byte npcGroup, byte nextLevel)
+        {
+            await _sync.WaitAsync();
+
+            var result = await UpgradeNPC(guildId, npcType, npcGroup, nextLevel);
+
+            _sync.Release();
+
+            return result;
+        }
+
+        private async Task<GuildNpcUpgradeReason> UpgradeNPC(int guildId, byte npcType, byte npcGroup, byte nextLevel)
+        {
+            var guild = _database.Guilds.Find(guildId);
+            if (guild is null || guild.Rank > 30)
+                return GuildNpcUpgradeReason.LowRank;
+
+            var currentLevel = _database.GuildNpcLvls.FirstOrDefault(x => x.GuildId == guildId && x.NpcType == npcType && x.Group == npcGroup);
+            if (currentLevel is null && nextLevel != 1) // current npc level is 0
+                return GuildNpcUpgradeReason.OneByOneLvl;
+
+            if (currentLevel != null && currentLevel.NpcLevel + 1 != nextLevel)
+                return GuildNpcUpgradeReason.OneByOneLvl;
+
+            var npcInfo = FindNpcInfo(npcType, npcGroup, nextLevel);
+            if (npcInfo is null)
+                return GuildNpcUpgradeReason.Failed;
+
+            if (guild.Rank > npcInfo.MinRank)
+                return GuildNpcUpgradeReason.LowRank;
+
+            if (npcInfo.UpPrice > guild.Etin)
+                return GuildNpcUpgradeReason.NoEtin;
+
+            if (currentLevel is null)
+            {
+                currentLevel = new DbGuildNpcLvl() { NpcType = npcType, Group = npcGroup, GuildId = guildId, NpcLevel = 0 };
+            }
+            else // Remove prevous level.
+            {
+                _database.GuildNpcLvls.Remove(currentLevel);
+                await _database.SaveChangesAsync();
+            }
+            currentLevel.NpcLevel++;
+
+            guild.Etin -= npcInfo.UpPrice;
+            _database.GuildNpcLvls.Add(currentLevel);
+
+            await _database.SaveChangesAsync();
+
+            return GuildNpcUpgradeReason.Ok;
+        }
+
+        private GuildHouseNpcInfo FindNpcInfo(Fraction country, byte npcType, ushort npcTypeId)
+        {
+            GuildHouseNpcInfo npcInfo;
+            if (country == Fraction.Light)
+            {
+                npcInfo = _houseConfig.NpcInfos.FirstOrDefault(x => x.NpcType == npcType && x.LightNpcTypeId == npcTypeId);
+            }
+            else
+            {
+                npcInfo = _houseConfig.NpcInfos.FirstOrDefault(x => x.NpcType == npcType && x.DarkNpcTypeId == npcTypeId);
+            }
+
+            return npcInfo;
+        }
+
+        private GuildHouseNpcInfo FindNpcInfo(byte npcType, byte npcGroup, byte npcLevel)
+        {
+            return _houseConfig.NpcInfos.FirstOrDefault(x => x.NpcType == npcType && x.Group == npcGroup && x.NpcLvl == npcLevel);
         }
 
         #endregion

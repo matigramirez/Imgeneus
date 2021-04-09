@@ -18,9 +18,9 @@ namespace Imgeneus.World.Game.Linking
 
         public Item Item { get; set; }
 
-        public (bool Success, byte Slot) AddGem(Item item, Item gem, Item hammer)
+        public (bool Success, byte Slot) AddGem(Item item, Item gem, Item hammer, byte extraRate)
         {
-            double rate = GetRate(gem, hammer);
+            double rate = GetRate(gem, hammer, extraRate);
             var rand = _random.Next(1, 101);
             var success = rate >= rand;
             byte slot = 0;
@@ -61,18 +61,19 @@ namespace Imgeneus.World.Game.Linking
             return (success, slot);
         }
 
-        public bool RemoveGem(Item item, Gem gem, Item hammer)
+        public bool RemoveGem(Item item, Gem gem, Item hammer, byte extraRate = 0)
         {
-            var rate = GetRemoveRate(gem, hammer);
+            var rate = GetRemoveRate(gem, hammer, extraRate);
             var rand = _random.Next(1, 101);
             var success = rate >= rand;
 
             return success;
         }
 
-        public double GetRate(Item gem, Item hammer)
+        public double GetRate(Item gem, Item hammer, byte extraRate)
         {
             double rate = GetRateByReqIg(gem.ReqIg);
+            rate += extraRate;
 
             if (hammer != null)
             {
@@ -96,9 +97,10 @@ namespace Imgeneus.World.Game.Linking
             return gold;
         }
 
-        public double GetRemoveRate(Gem gem, Item hammer)
+        public double GetRemoveRate(Gem gem, Item hammer, byte extraRate)
         {
             double rate = GetRateByReqIg(gem.ReqIg);
+            rate += extraRate;
 
             if (hammer != null)
             {

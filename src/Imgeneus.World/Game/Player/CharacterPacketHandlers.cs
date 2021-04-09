@@ -1011,6 +1011,11 @@ namespace Imgeneus.World.Game.Player
             }
 
             var reason = await _guildManager.TryUpgradeNPC((int)GuildId, npcType, npcGroup, npcLevel);
+            if (reason == GuildNpcUpgradeReason.Ok)
+            {
+                var etin = await _guildManager.GetEtin((int)GuildId);
+                _packetsHelper.SendGetEtin(Client, etin);
+            }
 
             _packetsHelper.SendGuildUpgradeNpc(Client, reason, npcType, npcGroup, npcLevel);
         }

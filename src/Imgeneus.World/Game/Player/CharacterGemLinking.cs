@@ -1,5 +1,6 @@
 ﻿using Imgeneus.Database.Constants;
 using Imgeneus.DatabaseBackgroundService.Handlers;
+using Imgeneus.World.Game.Zone;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security;
@@ -37,7 +38,7 @@ namespace Imgeneus.World.Game.Player
                     UseItem(saveItem.Bag, saveItem.Slot);
             }
 
-            var result = _linkingManager.AddGem(item, gem, hammer);
+            var result = _linkingManager.AddGem(item, gem, hammer, CalculateExtraRate());
             ChangeGold((uint)(Gold - linkingGold));
             if (gem.Count > 0)
             {
@@ -136,7 +137,7 @@ namespace Imgeneus.World.Game.Player
             if (hammerBag != 0)
                 InventoryItems.TryGetValue((hammerBag, hammerSlot), out hammer);
 
-            var rate = _linkingManager.GetRate(gem, hammer);
+            var rate = _linkingManager.GetRate(gem, hammer, CalculateExtraRate());
             var gold = _linkingManager.GetGold(gem);
 
             _packetsHelper.SendGemPossibility(Client, rate, gold);
@@ -196,7 +197,7 @@ namespace Imgeneus.World.Game.Player
                 if (hammer != null)
                     UseItem(hammer.Bag, hammer.Slot);
 
-                success = _linkingManager.RemoveGem(item, gem, hammer);
+                success = _linkingManager.RemoveGem(item, gem, hammer, CalculateExtraRate());
                 spentGold += _linkingManager.GetRemoveGold(gem);
 
                 if (success)
@@ -420,7 +421,7 @@ namespace Imgeneus.World.Game.Player
 
                 InventoryItems.TryGetValue((hammerBag, hammerSlot), out var hammer);
 
-                rate = _linkingManager.GetRemoveRate(gem, hammer);
+                rate = _linkingManager.GetRemoveRate(gem, hammer, CalculateExtraRate());
                 gold = _linkingManager.GetRemoveGold(gem);
             }
             else
@@ -450,6 +451,24 @@ namespace Imgeneus.World.Game.Player
             }
 
             _packetsHelper.SendGemRemovePossibility(Client, rate, gold);
+        }
+
+        /// <summary>
+        /// Extra rate is made of guild house blacksmith rate + bless rate.
+        /// </summary>
+        /// <returns></returns>
+        private byte CalculateExtraRate()
+        {
+            byte extraRate = 0;
+            if (HasGuild && Map is GuildHouseMap)
+            {
+                var rates = _guildManager.GetBlacksmithRates((int)GuildId);
+                extraRate += rates.LinkRate;
+            }
+
+            // TODO: add bless rate.
+
+            return extraRate;
         }
     }
 }

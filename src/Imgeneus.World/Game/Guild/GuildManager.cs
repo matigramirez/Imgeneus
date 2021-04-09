@@ -679,6 +679,20 @@ namespace Imgeneus.World.Game.Guild
             return _houseConfig.NpcInfos.FirstOrDefault(x => x.NpcType == npcType && x.Group == npcGroup && x.NpcLvl == npcLevel);
         }
 
+        ///  <inheritdoc/>
+        public (byte LinkRate, byte RepaireRate) GetBlacksmithRates(int guildId)
+        {
+            var npc = _database.GuildNpcLvls.FirstOrDefault(x => x.GuildId == guildId && x.NpcType == 3 && x.Group == 0);
+            if (npc is null)
+                return (0, 0);
+
+            var npcInfo = FindNpcInfo((byte)npc.NpcType, npc.Group, npc.NpcLevel);
+            if (npcInfo is null)
+                return (0, 0);
+
+            return (npcInfo.RapiceMixPercentRate, npcInfo.RapiceMixDecreRate);
+        }
+
         #endregion
 
         #region Etin

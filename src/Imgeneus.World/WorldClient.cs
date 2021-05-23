@@ -221,7 +221,8 @@ namespace Imgeneus.World
             { PacketType.GUILD_DISMANTLE, (s) => new GuildDismantlePacket(s) },
             { PacketType.GUILD_HOUSE_BUY, (s) => new GuildHouseBuyPacket(s) },
             { PacketType.GUILD_GET_ETIN, (s) => new GuildGetEtinPacket(s) },
-            { PacketType.GUILD_NPC_UPGRADE, (s) => new GuildNpcUpgradePacket(s) }
+            { PacketType.GUILD_NPC_UPGRADE, (s) => new GuildNpcUpgradePacket(s) },
+            { PacketType.GUILD_ETIN_RETURN, (s) => new GuildEtinReturnPacket(s) }
         };
 
         /// <inheritdoc />

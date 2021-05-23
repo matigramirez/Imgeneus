@@ -1,4 +1,5 @@
 ﻿using Imgeneus.Database;
+using Imgeneus.Database.Constants;
 using Imgeneus.Database.Entities;
 using Imgeneus.World.Game.PartyAndRaid;
 using Imgeneus.World.Game.Player;
@@ -701,6 +702,54 @@ namespace Imgeneus.World.Game.Guild
         {
             var guild = await GetGuild(guildId);
             return guild.Etin;
+        }
+
+        /// <inheritdoc/>
+        public async Task<IList<Item>> ReturnEtin(Character character)
+        {
+            await _sync.WaitAsync();
+
+            var result = new List<Item>();
+            var guild = await GetGuild((int)character.GuildId);
+
+            var totalEtin = 0;
+
+            var etins = character.InventoryItems.Select(x => x.Value).Where(itm => itm.Special == SpecialEffect.Etin_1 || itm.Special == SpecialEffect.Etin_10 || itm.Special == SpecialEffect.Etin_100 || itm.Special == SpecialEffect.Etin_1000).ToList();
+            foreach (var etin in etins)
+            {
+                character.RemoveItemFromInventory(etin);
+
+                var etinNumber = 0;
+                switch (etin.Special)
+                {
+                    case SpecialEffect.Etin_1:
+                        etinNumber = 1;
+                        break;
+
+                    case SpecialEffect.Etin_10:
+                        etinNumber = 10;
+                        break;
+
+                    case SpecialEffect.Etin_100:
+                        etinNumber = 100;
+                        break;
+
+                    case SpecialEffect.Etin_1000:
+                        etinNumber = 1000;
+                        break;
+                }
+
+                totalEtin += etinNumber * etin.Count;
+                result.Add(etin);
+            }
+
+            guild.Etin += totalEtin;
+
+            await _database.SaveChangesAsync();
+
+            _sync.Release();
+
+            return result;
         }
 
         #endregion

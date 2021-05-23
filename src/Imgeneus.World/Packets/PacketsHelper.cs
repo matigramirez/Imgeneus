@@ -952,6 +952,18 @@ namespace Imgeneus.World.Packets
             client.SendPacket(packet);
         }
 
+        internal void SendEtinReturnResult(IWorldClient client, IList<Item> etins)
+        {
+            using var packet = new Packet(PacketType.GUILD_ETIN_RETURN);
+            packet.WriteByte((byte)etins.Count);
+            foreach (var etin in etins)
+            {
+                packet.WriteByte(etin.Bag);
+                packet.WriteByte(etin.Slot);
+            }
+            client.SendPacket(packet);
+        }
+
         internal void SendGuildUpgradeNpc(IWorldClient client, GuildNpcUpgradeReason reason, byte npcType, byte npcGroup, byte npcLevel)
         {
             using var packet = new Packet(PacketType.GUILD_NPC_UPGRADE);

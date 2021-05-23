@@ -376,6 +376,10 @@ namespace Imgeneus.World.Game.Player
                     HandleGuildUpgradeNpc(guildNpcUpgradePacket.NpcType, guildNpcUpgradePacket.NpcGroup, guildNpcUpgradePacket.NpcLevel);
                     break;
 
+                case GuildEtinReturnPacket guildEtinReturnPacket:
+                    HandleEtinReturn();
+                    break;
+
                 case GMCreateMobPacket gMCreateMobPacket:
                     if (!IsAdmin)
                         return;

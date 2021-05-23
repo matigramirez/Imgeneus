@@ -1019,5 +1019,16 @@ namespace Imgeneus.World.Game.Player
 
             _packetsHelper.SendGuildUpgradeNpc(Client, reason, npcType, npcGroup, npcLevel);
         }
+
+
+        private async void HandleEtinReturn()
+        {
+            if (!HasGuild)
+                return;
+
+            var etins = await _guildManager.ReturnEtin(this);
+
+            _packetsHelper.SendEtinReturnResult(Client, etins);
+        }
     }
 }

@@ -168,7 +168,8 @@ namespace Imgeneus.World.Tests
                     { (100, 95), Item_HealthRemedy_Level_1  },
                     { (101, 71), Item_AbsorbRemedy },
                     { (30, 240), Gem_Absorption_Level_4 },
-                    { (30, 241), Gem_Absorption_Level_5 }
+                    { (30, 241), Gem_Absorption_Level_5 },
+                    { (43, 3), Etin_100 }
                 });
 
             databasePreloader
@@ -643,6 +644,13 @@ namespace Imgeneus.World.Tests
             TypeId = 71,
             Range = 418,
             AttackTime = 11
+        };
+
+        protected DbItem Etin_100 = new DbItem()
+        {
+            Type = 43,
+            TypeId = 3,
+            Special = SpecialEffect.Etin_100
         };
 
         #endregion

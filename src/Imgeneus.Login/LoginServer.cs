@@ -67,6 +67,8 @@ namespace Imgeneus.Login
         {
             base.OnClientConnected(client);
 
+            _logger.LogInformation($"Got connection from {client.RemoteEndPoint}. Sending handshake.");
+
             LoginPacketFactory.SendLoginHandshake(client);
 
             LoginManagers.Add(client.Id, _loginManagerFactory.CreateLoginManager(client, this));

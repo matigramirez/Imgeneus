@@ -2,6 +2,7 @@
 using Imgeneus.Database.Entities;
 using Imgeneus.World.Game.Guild;
 using Imgeneus.World.Game.PartyAndRaid;
+using Imgeneus.World.Game.Player;
 using Imgeneus.World.Game.Time;
 using Microsoft.Extensions.Options;
 using Moq;
@@ -408,6 +409,27 @@ namespace Imgeneus.World.Tests.GuildTests
             var canUse = guildManager.CanUseNpc(1, 1, 1, out var requiredRank);
 
             Assert.True(canUse);
+        }
+
+        [Fact]
+        [Description("It should be possible to return etin.")]
+        public async void ReturnEtinTest()
+        {
+            var character = CreateCharacter(testMap);
+            character.GuildId = 1;
+            character.AddItemToInventory(new Item(databasePreloader.Object, Etin_100.Type, Etin_100.TypeId));
+            Assert.NotEmpty(character.InventoryItems);
+
+            var guild = new DbGuild("test_guild", "test_message", 1, Fraction.Light) { Etin = 50 };
+            var database = new Mock<IDatabase>();
+            database.Setup(x => x.Guilds.FindAsync(It.IsAny<int>())).ReturnsAsync(guild);
+
+            var guildManager = new GuildManager(guildLoggerMock.Object, new GuildConfiguration(), new GuildHouseConfiguration(), database.Object, gameWorldMock.Object, timeMock.Object);
+
+            await guildManager.ReturnEtin(character);
+
+            Assert.Empty(character.InventoryItems);
+            Assert.Equal(150, guild.Etin);
         }
     }
 }

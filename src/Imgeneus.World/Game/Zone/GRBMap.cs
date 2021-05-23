@@ -35,5 +35,11 @@ namespace Imgeneus.World.Game.Zone
 
             base.Mob_OnDead(sender, killer);
         }
+
+        public override bool LoadPlayer(Player.Character character)
+        {
+            _guildRankingManager.ParticipatedPlayers.Add(character.Id);
+            return base.LoadPlayer(character);
+        }
     }
 }

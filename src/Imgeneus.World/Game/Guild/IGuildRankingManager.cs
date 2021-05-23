@@ -56,5 +56,10 @@ namespace Imgeneus.World.Game.Guild
         /// Calculates guild ranks based on guild points gained during GRB.
         /// </summary>
         public void CalculateRanks();
+
+        /// <summary>
+        /// Player ids, that took part in GRB.
+        /// </summary>
+        public HashSet<int> ParticipatedPlayers { get; }
     }
 }

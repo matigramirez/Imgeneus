@@ -275,6 +275,13 @@ namespace Imgeneus.World.Game.Guild
 
         #endregion
 
+        #region Participated players
+
+        /// <inheritdoc/>
+        public HashSet<int> ParticipatedPlayers { get; private set; } = new HashSet<int>();
+
+        #endregion
+
         #region Calculate ranks
 
         /// <inheritdoc/>
@@ -300,6 +307,7 @@ namespace Imgeneus.World.Game.Guild
 
             OnRanksCalculated?.Invoke(guildRanks);
             GuildPoints.Clear();
+            ParticipatedPlayers.Clear();
         }
 
         #endregion

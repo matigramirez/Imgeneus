@@ -180,7 +180,11 @@ namespace Imgeneus.World.Game
                         return false;
                     }
 
-                    // TODO: check AlreadyParticipatedInBattle
+                    if (_guildRankingManager.ParticipatedPlayers.Contains(player.Id))
+                    {
+                        reason = PortalTeleportNotAllowedReason.AlreadyParticipatedInBattle;
+                        return false;
+                    }
 
                     return true;
                 }
